@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Three.js webgl - RecastDetour</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #000;
+				color: #fff;
+				margin: 0px;
+				overflow: hidden;
+			}
+			#info {
+				color: #fff;
+				position: absolute;
+				top: 10px;
+				width: 100%;
+				text-align: center;
+				z-index: 100;
+				display:block;
+			}
+			#info a, .button {
+				color: #f00; font-weight: bold; text-decoration: underline; cursor: pointer
+			}
+			#loading {
+				position: absolute;
+				display: none;
+			}
+			#hud {
+				position: absolute;
+				top: 0;
+				left: 0;
+				bottom: 0;
+				width: 30%;
+				background: #222;
+				z-index: -10;
+			}
+		</style>
+		<link rel="stylesheet" type="text/css" href="animate.css">
+	</head>
+
+	<body>
+		<img id="loading" src="loading.gif">
+
+		<canvas id="canvas" style="display:none"></canvas>
+
+		<div id="hud"></div>
+		<div id="wrapper" class="animated"></div>
+
+		<script src="../build/three.js"></script>
+        <script src="../build/tween.min.js"></script>
+
+        <script src="js/lodash.js"></script>
+
+		<script src="js/Sparks.js"></script>
+        <script src='js/Extras.js'></script>
+
+        <script src='js/gaming/tower.js'></script>
+        <script src='js/huds/sidemenu.js'></script>
+
+        <script src='js/MD2CharacterComplex.js'></script>
+        <script src='js/Proctree.js'></script>
+        <script src='js/Proctree.three.js'></script>
+
+		<script src="js/loaders/OBJLoader.js"></script>
+		<script src="js/loaders/MTLLoader.js"></script>
+		<script src="js/loaders/OBJMTLLoader.js"></script>
+		<script src="js/loaders/ColladaLoader.js"></script>
+
+        <script src="js/controls/TrackballControls.js"></script>
+        <script src="js/controls/DotaControls.js"></script>
+        <script src="js/controls/EditorControls.js"></script>
+
+		<script src="js/geometries/ConvexGeometry.js"></script>
+
+		<script src="js/shaders/BleachBypassShader.js"></script>
+		<script src="js/shaders/ColorCorrectionShader.js"></script>
+		<script src="js/shaders/CopyShader.js"></script>
+		<script src="js/shaders/FXAAShader.js"></script>
+
+		<script src="js/postprocessing/EffectComposer.js"></script>
+		<script src="js/postprocessing/RenderPass.js"></script>
+		<script src="js/postprocessing/ShaderPass.js"></script>
+		<script src="js/postprocessing/MaskPass.js"></script>
+
+		<script src="js/Detector.js"></script>
+		<script src="js/libs/stats.min.js"></script>
+		<script src='js/libs/dat.gui.min.js'></script>
+
+		<script id="vertexshader" type="x-shader/x-vertex">
+			attribute float size;
+			attribute vec3 pcolor;
+
+			varying vec3 vColor;
+
+			void main() {
+
+				vColor = pcolor;
+
+				vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+				gl_PointSize = size * ( 200.0 / length( mvPosition.xyz ) );
+
+				gl_Position = projectionMatrix * mvPosition;
+
+			}
+		</script>
+
+		<script type="x-shader/x-fragment" id="fragmentshader">
+			uniform sampler2D texture;
+			varying vec3 vColor;
+			void main() {
+				vec4 outColor = texture2D( texture, gl_PointCoord );
+				gl_FragColor = outColor * vec4( vColor, 1.0 );
+			}
+		</script>
+
+	    <script type='text/javascript'>
+	      // have to exist
+		  window._getThreeJSMeshes = function(){ };
+
+	      // connect to canvas
+	      var Module = {
+	        preRun: [],
+	        postRun: [],
+	        print: (function() {
+	          return function(text) {
+	            text = Array.prototype.slice.call(arguments).join(' ');
+	            // These replacements are necessary if you render to raw HTML
+	            //text = text.replace(/&/g, "&amp;");
+	            //text = text.replace(/</g, "&lt;");
+	            //text = text.replace(/>/g, "&gt;");
+	            //text = text.replace('\n', '<br>', 'g');
+	            console.log(text);
+	            return;
+	          };
+	        })(),
+	        printErr: function(text) {
+	          text = Array.prototype.slice.call(arguments).join(' ');
+	          if (0) { // XXX disabled for safety typeof dump == 'function') {
+	            dump(text + '\n'); // fast, straight to the real console
+	          } else {
+	            console.log(text);
+	          }
+	        },
+	        canvas: document.getElementById('canvas'),
+	        setStatus: function(text) {
+	        },
+	        totalDependencies: 0,
+	        monitorRunDependencies: function(left) {
+	          this.totalDependencies = Math.max(this.totalDependencies, left);
+	          Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+	        }
+	      };
+	      Module.setStatus('Downloading...');
+	    </script>
+   		<script src="recast.emcc.dotademo.js"></script>
+
+   		<script type="text/javascript">
+			function build() {
+				var loading = document.getElementById('loading');
+				loading.style.display = 'block';
+				Module.build();
+				loading.style.display = 'none';
+			}
+			function meshFromVertices(vertices, mat_options) {
+				console.log('%o vertices object', vertices.length);
+
+				var object = new THREE.Object3D();
+				var materials = [ new THREE.MeshBasicMaterial(mat_options) ];
+
+				for (var i = 0; i < vertices.length; i++) {
+					if (!vertices[i+2]) break;
+					var child = THREE.SceneUtils.createMultiMaterialObject(
+						new THREE.ConvexGeometry([ vertices[i], vertices[i+1], vertices[i+2] ]),
+						materials);
+					object.add(child);
+				}
+				return object;
+			}
+			function lineFromVertices(vertices, mat_options) {
+				console.log('%o vertices line', vertices.length);
+				var material = new THREE.LineBasicMaterial(mat_options);
+				var geometry = new THREE.Geometry();
+				for (var i = 0; i < vertices.length; i++) {
+					geometry.vertices.push(vertices[i]);
+				}
+				var line = new THREE.Line(geometry, material);
+				return line;
+			}
+   		</script>
+
+		<script>
+			var container, stats;
+
+			var camera, scene, renderer, cameraControls, pointLight, directionalLight;
+
+			var startPosition = {
+				origin: new THREE.Vector3( 0, 0, 0 ),
+				maporigin: new THREE.Vector3( -142, 0, 139 ),
+				neartower: new THREE.Vector3(  -51, 0, 62 )
+			
+			}['neartower'];
+
+			var agent;
+
+			var ground, helper;
+
+			var PARTICLECLOUDS = [];
+			var TREES = [];
+
+			var treeObject;
+
+			var clickedPostions = [undefined, undefined];
+
+			var mouseX = 0, mouseY = 0, treesMesheNext = 0;
+
+			var windowHalfX = window.innerWidth / 2;
+			var windowHalfY = window.innerHeight / 2;
+
+            var clock = new THREE.Clock();
+
+			init();
+			animate();
+
+			function init( ready ) {
+
+				container = document.getElementById( 'wrapper' );
+				container.className = 'animated';
+				document.body.appendChild( container );
+
+				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera.position.set( startPosition.x + 20, 50, startPosition.z + 30 );
+
+				//camera.lookAt(new THREE.Vector3(0, 0, 0));
+				//camera.near = 20;
+
+				// scene
+
+				scene = new THREE.Scene();
+				scene.fog = new THREE.FogExp2( 0x0, 0.00055 );
+				scene.fog = new THREE.Fog( 0x000000, 1, 500 );
+
+				// Axis helper
+				var object = new THREE.AxisHelper( 100 );
+				object.position.set(0, 0, 0);
+				scene.add(object);
+
+                // Intersections helper
+                var geometry = new THREE.CylinderGeometry( 0, 1, 1, 3 );
+                geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, 0 ) );
+                geometry.applyMatrix( new THREE.Matrix4().makeRotationX( Math.PI / 2 ) );
+                helper = new THREE.Mesh( geometry, new THREE.MeshNormalMaterial() );
+                // scene.add(helper);
+
+                // Lights
+
+				var ambientLight = new THREE.AmbientLight( 0xffffff );
+				scene.add( ambientLight );
+
+				pointLight = new THREE.PointLight( 0xffffff, 1.25, 1000 );
+				pointLight.position.set( 0, 0, 600 );
+				scene.add( pointLight );
+
+				directionalLight = new THREE.SpotLight( 0xffffff );
+				//directionalLight.castShadow = true;
+				directionalLight.position.set( 0, 10, 0 );
+				scene.add( directionalLight );
+
+                // Agent
+                var configOgro = {
+                    baseUrl: "models/animated/ogro/",
+                    body: "ogro-light.js",
+                    skins: [
+                        // "grok.jpg",
+                        // "ogrobase.png",
+                        // "arboshak.png",
+                        // "ctf_r.png",
+                        // "ctf_b.png",
+                        // "darkam.png",
+                        // "freedom.png",
+                        // "gib.png",
+                        // "gordogh.png",
+                        // "igdosh.png",
+                        // "khorne.png",
+                        // "nabogro.png",
+                        "sharokh.png"
+                    ],
+                    weapons:  [ [ "weapon-light.js", "weapon.jpg" ] ],
+                    animations: {
+                        move: "run",
+                        idle: "stand",
+                        jump: "jump",
+                        attack: "attack",
+                        crouchMove: "cwalk",
+                        crouchIdle: "cstand",
+                        crouchAttach: "crattack"
+                    },
+                    walkSpeed: 350,
+                    crouchSpeed: 175
+                };
+
+                var nRows = 1;
+                var nSkins = configOgro.skins.length;
+
+                nCharacters = nSkins * nRows;
+
+                character = new THREE.MD2CharacterComplex();
+                character.scale = .3;
+                character.controls = {
+	                moveForward: false,
+	                moveBackward: false,
+	                moveLeft: false,
+	                moveRight: false
+	            };
+
+                character.root.aura = Extras.Aura('circle', 1000, THREE.ImageUtils.loadTexture( "textures/lensflare2.jpg" ), pointLight);
+                character.root.add(character.root.aura.particleCloud);
+                character.root.aura.start();
+		        container.addEventListener( 'render-update', _.bind( function(event){
+		        	character.root.aura.update( event.detail.delta );
+		        }, character.root.aura ) );
+
+                var baseCharacter = new THREE.MD2CharacterComplex();
+                baseCharacter.scale = 1;
+
+                baseCharacter.onLoadComplete = function () {
+                    character.shareParts( baseCharacter );
+                    //character.enableShadows( true );
+
+                    // disable speed
+                    character.maxSpeed = 
+                    character.maxReverseSpeed = 
+                    character.frontAcceleration = 
+                    character.backAcceleration = 
+                    character.frontDecceleration = 
+                    character.angularSpeed = 0;
+                    character.setWeapon( 0 );
+                    character.setSkin( 0 );
+
+                    character.root.position.x = 0;
+                    character.root.position.y = 0;
+                    character.root.position.z = 0;
+                    character.root.position.set( startPosition.x, 0, startPosition.z );
+
+                    //character.root.castShadow = true;
+
+                    THREEGAME.CHARACTERS.push( character.root );
+
+                    scene.add(character.root);
+                };
+
+                baseCharacter.loadParts( configOgro );
+
+				// LOAD_MANAGER
+				LOAD_MANAGER = new THREE.LoadingManager();
+				LOAD_MANAGER.onProgress = function ( item, loaded, total ) {
+					console.log( item, loaded, total );
+				};
+
+				// material parameters
+
+				var ambient = 0xaaaaaa, diffuse = 0xbbbbbb, specular = 0x060606, shininess = 30;
+
+				var uniforms;
+				var shader = THREE.ShaderLib[ "normalmap" ];
+				var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
+
+				uniforms[ "uNormalScale" ].value.set( 0.8, 0.8 );
+
+				uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( "obj/dota/dota_map_full_compress2_normals.jpg" );
+				uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( "obj/dota/dota_map_full_compress2.jpg" );
+				uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( "obj/dota/dota_map_full_compress2_specular.jpg" );
+
+				uniforms[ "enableAO" ].value = false;
+				uniforms[ "enableDiffuse" ].value = true;
+				uniforms[ "enableSpecular" ].value = true;
+
+				uniforms[ "uDiffuseColor" ].value.setHex( diffuse );
+				uniforms[ "uSpecularColor" ].value.setHex( specular );
+				uniforms[ "uAmbientColor" ].value.setHex( ambient );
+
+				uniforms[ "uShininess" ].value = shininess;
+
+				uniforms[ "wrapRGB" ].value.set( 0.575, 0.5, 0.5 );
+
+				var parameters = { fragmentShader: shader.fragmentShader, vertexShader: shader.vertexShader, uniforms: uniforms, lights: true, fog: true };
+				material = new THREE.ShaderMaterial( parameters );
+				// material.wrapAround = true;
+
+				// model
+				var loader = new THREE.OBJLoader( LOAD_MANAGER );
+				loader.load( 'obj/sc2/dota_simple.obj', function ( object ) {
+					ground = object;
+					//ground.receiveShadow = true;
+
+					ground.traverse( function ( child ) {
+						if ( child instanceof THREE.Mesh ) {
+							child.material = material;
+							child.geometry.computeVertexNormals();
+							child.geometry.computeTangents();
+						}
+					} );
+
+					scene.add( ground );
+					console.log('OBJECT ADDED', ground);
+				});
+
+				// model
+				setTimeout(function () {
+					var loader = new THREE.OBJLoader( LOAD_MANAGER );
+					loader.load( 'obj/sc2/dota_trees.obj', function ( object ) {
+						object.traverse( function ( child ) {
+							if ( child instanceof THREE.Mesh ) {
+								for (var i = 0; i < child.geometry.vertices.length && i < 100; i++) {
+									__add_tree(child.geometry.vertices[i]);
+								}
+							}
+						} );
+						scene.add(treeObject);
+					});
+				}, 3000);
+
+
+				//
+
+				stats = new Stats();
+				stats.domElement.style.position = 'absolute';
+				stats.domElement.style.top = '0px';
+				document.getElementById('hud').appendChild( stats.domElement );
+
+				renderer = new THREE.WebGLRenderer();
+				// renderer.shadowMapEnabled = true;
+				// renderer.shadowMapSoft = true;
+				// renderer.shadowCameraNear = 3;
+				// renderer.shadowCameraFar = camera.far;
+				// renderer.shadowCameraFov = 50;
+
+				renderer.autoClear = false;
+				renderer.gammaInput = true;
+				renderer.gammaOutput = true;
+				renderer.physicallyBasedShading = true;
+
+				// renderer.shadowMapBias = 0.0039;
+				// renderer.shadowMapDarkness = 0.5;
+				// renderer.shadowMapWidth = window.innerWidth;
+				// renderer.shadowMapHeight = window.innerHeight;
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+				var renderModel = new THREE.RenderPass( scene, camera );
+				var effectBleach = new THREE.ShaderPass( THREE.BleachBypassShader );
+				var effectColor = new THREE.ShaderPass( THREE.ColorCorrectionShader );
+				effectFXAA = new THREE.ShaderPass( THREE.FXAAShader );
+
+				effectFXAA.uniforms[ 'resolution' ].value.set( 1 / window.innerWidth, 1 / window.innerHeight );
+				effectBleach.uniforms[ 'opacity' ].value = 0.4;
+				effectColor.uniforms[ 'powRGB' ].value.set( 1.4, 1.45, 1.45 );
+				effectColor.uniforms[ 'mulRGB' ].value.set( 1.1, 1.1, 1.1 );
+				effectFXAA.renderToScreen = true;
+
+				composer = new THREE.EffectComposer( renderer );
+				composer.addPass( renderModel );
+				composer.addPass( effectBleach );
+				composer.addPass( effectColor );
+				composer.addPass( effectFXAA );
+
+				container.appendChild( renderer.domElement );
+
+				//document.addEventListener( 'keydown', onDocumentKeyDown, false );
+				document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+				document.addEventListener( 'resize', onWindowResize, false );
+
+                // CONTROLS
+
+                //cameraControls = new THREE.TrackballControls( camera, renderer.domElement );
+                cameraControls = new THREE.DotaControls( camera, renderer.domElement );
+				cameraControls.domElement = renderer.domElement;
+				cameraControls.rollSpeed = Math.PI / 24;
+				cameraControls.autoForward = false;
+				cameraControls.dragToLook = false;
+
+				// GUI
+
+				window.Config = {
+					cellSize: 0.8,
+					_cellSize: [ 0.01, 10.0 ],
+
+					cellHeight: 0.8,
+					_cellHeight: [ 0.1, 5.0 ],
+
+					agentHeight: 2.0,
+					_agentHeight: [ 0.01, 5.0 ],
+
+					agentRadius: 0.5,
+					_agentRadius: [ 0.01, 5.0 ],
+
+					agentMaxClimb: 4.0,
+					_agentMaxClimb: [ 0.5, 5.0 ],
+
+					agentMaxSlope: 30.0,
+					_agentMaxSlope: [ 0.5, 90.0 ],
+
+					regionMinSize: 1.0,
+					_regionMinSize: [ 1.0, 150.0 ],
+
+					regionMergeSize: 1.0,
+					_regionMergeSize: [ 1.0, 150.0 ],
+
+					monotonePartitioning: false,
+					_monotonePartitioning: [ true, false ],
+
+					edgeMaxLen: 0.1,
+					_edgeMaxLen: [ 0.1, 50.0 ],
+
+					edgeMaxError: 1.0,
+					_edgeMaxError: [ 0.1, 3.0 ],
+					
+					//vertsPerPoly: 3.0,
+					//vertsPerPoly: [ 3.0, 12.0 ],		
+
+					detailSampleDist: 0.0,
+					_detailSampleDist: [ 0.0, 16.0 ],
+
+					detailSampleMaxError: 8.0,
+					_detailSampleMaxError: [ 8.0, 16.0 ],
+
+					Next: 'Init OBJ',
+
+					initFromThreeJS: function() {
+						Module.init();
+						Config.Next = 'Build heightmap';
+					},
+					
+					init: function() {
+						Module.initWithFile('/build/obj/sc2/dota_simple.obj');
+						Config.Next = 'Build heightmap';
+						Module.build();
+					},
+					
+					detailMeshPoly: 0,
+					build: function() {
+						Module.build();
+						Config.Next = 'Draw NavMesh';
+					},
+
+					navMeshWireframe: false,
+					navMeshVertices: 0,
+					drawNavMesh: function() {
+						if (window.navigationMesh) {
+							scene.remove(window.navigationMesh);
+							delete window.navigationMesh;
+
+						} else {
+
+							//  Module.getNavMeshVertices(Runtime.addFunction(function(vertices){
+							window.__tmp_func = function(vertices){
+								Config.navMeshVertices = vertices.length;
+
+								if (window.navigationMesh) {
+									scene.remove(window.navigationMesh);
+								}
+
+								window.navigationMesh = meshFromVertices(vertices, {
+									color: 0xff0000,
+									ambient: 0xff0000,
+									side: THREE.DoubleSide,
+									wireframe: true,
+									transparent: true,
+									opacity: 0.5
+								})
+
+								if (window.navigationMesh) {
+									scene.add(window.navigationMesh);
+								}
+
+								Config.Next = 'Change values, rebuild';
+							};
+							Module.getNavMeshVertices('window.__tmp_func');
+						}
+					},
+
+					drawHeightfieldRegions: function() {
+						//  Module.getNavMeshVertices(Runtime.addFunction(function(vertices){
+						window.__tmp_func = function(vertices){
+							Config.hfRegionsVertices = vertices.length;
+
+							if (window.hfRegionsVertices) {
+								scene.remove(window.hfRegionsVertices);
+							}
+
+							window.hfRegionsVertices = meshFromVertices(vertices, {
+								color: 0xff0000,
+								ambient: 0xff0000,
+								side: THREE.DoubleSide,
+								wireframe: true,
+								transparent: true,
+								opacity: 0.5
+							});
+
+							if (window.hfRegionsVertices) {
+								scene.add(window.hfRegionsVertices);
+							}
+
+							Config.Next = 'Change values, rebuild';
+						};
+						Module.getNavHeightfieldRegions('window.__tmp_func');
+					},
+				};
+
+				gui = {}; //new dat.GUI();
+		
+
+				setTimeout(function() {
+					Module.set_cellSize(2);
+					Module.set_cellHeight(2);
+					Module.initWithFile('/build/obj/sc2/dota_simple.obj');
+					Module.build();
+				}, 5000);
+
+			}
+
+
+			function onWindowResize() {
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+			}
+
+
+            function onDocumentMouseUp(event) {
+                //event.preventDefault();
+
+                switch (event.button) {
+                    default: 
+                      var vector = new THREE.Vector3(
+                         (event.clientX / window.innerWidth) * 2 - 1,
+                        -(event.clientY / window.innerHeight) * 2 + 1,
+                        camera.near
+                      );
+                      
+                      var projector = new THREE.Projector();
+                      projector.unprojectVector(vector, camera);
+
+                      var raycaster = new THREE.Raycaster(camera.position,vector.sub(camera.position).normalize());
+
+                      var intersects = raycaster.intersectObjects(ground.children[0].children);
+
+                      if (intersects.length > 0) {
+
+                      	var i_pos = intersects[0].point;
+
+						console.log('intersect at %o %o', i_pos.x, i_pos.y, i_pos.z );
+
+                        // place helper
+                        helper.position.set(0, 0, 0);
+                        helper.lookAt(intersects[0].face.normal);
+                        helper.position.copy(i_pos);
+
+
+                        if (event.button == 2) {
+
+	                    	console.log('find a path between %o and %o', character.root.position, i_pos);
+
+	                    	// run the magic
+	                    	Module.findPath(
+	                    		character.root.position.x, character.root.position.y, character.root.position.z,
+	                    	  	i_pos.x, i_pos.y, i_pos.z,
+	                    	  	10000,
+	                    	  	'window.moveAlong'
+	                    	);
+
+	                    } else {
+
+	                    	// __add_tree(i_pos);
+
+	                    }
+
+                      } else {
+                          console.log('no intersect');
+                      }
+                      break; 
+
+                }
+            }
+
+			window.__debug_start_poly = function(vertices){
+				if (window._start_poly) {
+					scene.remove(window._start_poly);
+				}
+
+				window._start_poly = meshFromVertices(vertices, {
+					color: 0x00ff00,
+					ambient: 0x00ff00,
+					side: THREE.DoubleSide,
+					wireframe: true,
+					transparent: true,
+					opacity: 0.5
+				});
+
+				if (window._start_poly) {
+					scene.add(window._start_poly);
+				}
+			};
+
+			window.__drawPath = function(path) {
+				if (window.__path) {
+					scene.remove(window.__path);
+				}
+
+				window.__path = lineFromVertices(path, {
+					color: 0x00ff00,
+					ambient: 0x00ff00,
+					side: THREE.DoubleSide,
+					wireframe: false,
+					transparent: true,
+					opacity: 0.5
+				});
+
+				if (window.__path) {
+					scene.add(window.__path);
+				}
+			};
+
+
+			var loader = new THREE.ColladaLoader();
+			loader.load( 'obj/dota/tree_pine.dae', function ( object ) {
+				//object.scene.children[1].material.materials[0].depthTest = false;
+				object.scene.children[1].material.materials[0].transparent = true;
+				//object.scene.children[1].material.materials[1].depthTest = false;
+				object.scene.children[1].material.materials[1].transparent = true;
+				TREES.push(object.scene.children[1]);
+			});
+			loader.load( 'obj/dota/tree_oak.dae', function ( object ) {
+				//object.scene.children[0].material.materials[0].depthTest = false;
+				object.scene.children[0].material.materials[0].transparent = true;
+				//object.scene.children[0].material.materials[1].depthTest = false;
+				object.scene.children[0].material.materials[1].transparent = true;
+				object.scene.children[0].matrixAutoUpdate = false;
+
+				TREES.push(object.scene.children[0]);
+			});
+
+
+
+			window.__add_tree = function (position) {
+				
+				// clone a tree
+				var refTreeIndex = Math.round(Math.random());
+				var refTree = TREES[ refTreeIndex ];
+
+				var tree = new THREE.Mesh( refTree.geometry, refTree.material );	
+				tree.position = position;
+				tree.scale = new THREE.Vector3(4, 4, 4);
+				tree.rotation.y = Math.random() * 90 * ( Math.PI / 180 );
+
+				if (refTreeIndex == 0) {
+					tree.rotation.x = - 90 * ( Math.PI / 180 );
+				}
+				if (refTreeIndex == 1) {
+					//tree.rotation.x = 10 * ( Math.PI / 180 );
+					//tree.rotation.y = 10 * ( Math.PI / 180 );
+					tree.rotation.z = 70 * ( Math.PI / 180 );
+				}
+
+				tree.matrixAutoUpdate = false;
+				tree.updateMatrix();
+
+				treeObject = treeObject || new THREE.Object3D();
+				treeObject.add( tree );
+				//THREE.GeometryUtils.merge( treeObject.children[0].geometry , tree );
+			};
+
+
+			var defenseTower = new THREEGAME.DefenseTower( 0, 28, 1, {
+				fireSpeed: 10,
+				transform: function (loaded) {
+					var loaded = loaded.scene.children[ 0 ];
+					loaded.scale.set( 8, 8, 8 );
+					loaded.rotation.x = -90 * ( Math.PI / 180 );
+				}
+			});
+			scene.add(defenseTower)
+
+
+			window.moveAlong = function(linepoints) {
+
+				var endpoint = linepoints[linepoints.length-1];
+				var smoothness = 100;
+
+				// array of vectors to determine shape
+				var shape = new THREE.SplineCurve3( linepoints );
+
+	            if (character.currentTween) {
+	                character.currentTween.stop();
+	            }
+                character.currentTween = new TWEEN.Tween({ distance:0 })
+                    .to({ distance:1 }, shape.getLength() * 70) // use 
+	                .easing(TWEEN.Easing.Linear.None)
+	                .onStart(function(){
+	                    character.controls.moveForward = true;
+	                })
+	                .onComplete(function(){
+	                    character.controls.moveForward = false;
+	                })
+	                .onUpdate(function(){
+						// get the position data half way along the path
+						var pathPosition = shape.getPoint(this.distance);
+
+						// get the orientation angle quarter way along the path
+						var tangent = shape.getTangent(this.distance);
+						var angle = Math.atan2(-tangent.z, tangent.x);
+
+						// set angle of the man at that position
+						// character.root.rotation.y = angle;
+						character.meshes.forEach(function(m){
+							m.rotation.y = angle;
+						});
+						// character.root.updateMatrix();
+						//character.root.lookAt(pathPosition);
+
+						// move the man to that position
+						character.root.position.set(pathPosition.x, pathPosition.y, pathPosition.z);
+
+						character.root.updateMatrix();
+
+	                })
+	                .start();
+			};
+
+			//
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+				render();
+
+			}
+
+			function render() {
+				stats.update()
+                TWEEN.update();
+
+                var delta = clock.getDelta();
+
+				var event = new CustomEvent( 'render-update', {
+					detail: {
+						'delta': delta
+					},
+					bubbles: true,
+					cancelable: true
+				});
+
+				container.dispatchEvent(event);
+
+                //camera.position.set(character.root.position.clone());
+                //camera.position.x += 20; // crraaaapp //
+                //camera.position.z -= 30; // crraaaapp //
+
+                cameraControls.update( delta );
+                camera.position.y = 60; // crraaaapp //
+
+                character.update( delta );
+
+                directionalLight.position.clone( character.root.position );
+				directionalLight.position.y += 1;
+	
+				composer.render();
+			}
+
+		</script>
+
+	</body>
+</html>
