@@ -304,7 +304,7 @@ define('threearena/game',
 
         var defenseTower = new DefenseTower( 0, 28, 1, {
             fireSpeed: 10,
-            fireIntensity: 500,
+            fireIntensity: 50,
             transform: function (loaded) {
                 var loaded = loaded.scene.children[ 0 ];
                 loaded.scale.set( 8, 8, 8 );
@@ -334,8 +334,28 @@ define('threearena/game',
                         }
                     } );
                     self.scene.add(self._treesGroup);
-                    callback(null)
+                    callback(null);
                 });
+            },
+            function (callback) {
+                var loader = new THREE.OBJMTLLoader();
+                loader.addEventListener( 'load', function ( event ) {
+                    var object = event.content;
+                    object.position.set( -151, 0, 122 );
+                    object.children[0].scale.set( 0.1, 0.1, 0.1 );
+
+                    var aura = Particles.Aura('point', 10, THREE.ImageUtils.loadTexture( "/gamedata/textures/lensflare1_alpha.png" ));
+                    aura.particleCloud.position.set(0, 20, 6);
+                    object.add( aura.particleCloud );
+                    aura.start();
+                    window.addEventListener('render-update', function(event){
+                        aura.update(event.detail.delta);
+                    });
+
+                    self.scene.add(object);
+                    callback(null);
+                });
+                loader.load( '/gamedata/models/lightning_pole/lightning_pole.obj', '/gamedata/models/lightning_pole/lightning_pole.mtl' );
             },
             _.bind( this.afterCreate, this),
         ], main_callback);

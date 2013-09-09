@@ -27,6 +27,7 @@ define('threearena/particles/cloud',
 		var options = options || {};
 		this.length = length;
 		this.light = light;
+		this.emitterpos = options.emitterPosition || new THREE.Vector3( 0, 0, 0 );
 
 		this.delta = 0;
 		this.pool = new Pool();
@@ -102,8 +103,6 @@ define('threearena/particles/cloud',
 		this.hue = 0;
 
 		this.sparksEmitter = new SPARKS.Emitter( new SPARKS.SteadyCounter( 50 ) );
-
-		this.emitterpos = new THREE.Vector3( 0, 0, 0 );
 
 		this.sparksEmitter.addInitializer( new SPARKS.Position( new SPARKS.PointZone( this.emitterpos ) ) );
 		this.sparksEmitter.addInitializer( new SPARKS.Lifetime( .5, 1 ));
