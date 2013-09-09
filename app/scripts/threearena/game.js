@@ -2,10 +2,11 @@
 define('threearena/game',
     ['lodash', 'async', 'threejs', 'tweenjs',
 
-    './elements/tower', 
-    './particles/cloud', 
-    './controls/dota',
-    './pathfinding/recast.emcc.dotademo',
+    'threearena/utils',
+    'threearena/elements/tower', 
+    'threearena/particles/cloud', 
+    'threearena/controls/dota',
+    'threearena/pathfinding/recast.emcc.dotademo',
     
     'MD2CharacterComplex',
     'OBJLoader',
@@ -25,6 +26,7 @@ define('threearena/game',
     'MaskPass'
 ], function (_, async, THREE, TWEEN,
  
+    Utils,
     DefenseTower,
     Particles,
     CameraControls,
@@ -302,6 +304,7 @@ define('threearena/game',
 
         var defenseTower = new DefenseTower( 0, 28, 1, {
             fireSpeed: 10,
+            fireIntensity: 500,
             transform: function (loaded) {
                 var loaded = loaded.scene.children[ 0 ];
                 loaded.scale.set( 8, 8, 8 );
@@ -338,10 +341,20 @@ define('threearena/game',
         ], main_callback);
     };
 
-    Game.prototype.addCharacter = function(character) {
+    Game.prototype.addCharacter = function(character, spawnPosition) {
+
+        var spawnPosition = spawnPosition || this.settings.positions.spawn;
+
+        character.position.set( spawnPosition.x, spawnPosition.y, spawnPosition.z );
+
         this.pcs.push(character);
-        this.scene.add(character.root);
-        window.removeEventListener( 'render-update', character.update );
+        this.scene.add(character);
+    };
+
+    Game.prototype.removeCharacter = function(character) {
+
+        this.pcs = _.without(this.pcs, character);
+        this.scene.remove(character);
     };
 
     Game.prototype.afterCreate = function() {
@@ -398,59 +411,14 @@ define('threearena/game',
                 if (event.button == 2) {
                     var character = self.pcs[0];
 
-                    console.log('find a path between %o and %o', self.pcs[0].root.position, i_pos);
-
-                    window.moveAlong = function(linepoints) {
-
-                        var endpoint = linepoints[linepoints.length-1];
-                        var smoothness = 100;
-
-                        // array of vectors to determine shape
-                        var shape = new THREE.SplineCurve3( linepoints );
-
-                        if (character.currentTween) {
-                            character.currentTween.stop();
-                        }
-                        character.currentTween = new TWEEN.Tween({ distance:0 })
-                            .to({ distance:1 }, shape.getLength() * 70) // use 
-                            .easing(TWEEN.Easing.Linear.None)
-                            .onStart(function(){
-                                character.controls.moveForward = true;
-                            })
-                            .onComplete(function(){
-                                character.controls.moveForward = false;
-                            })
-                            .onUpdate(function(){
-                                // get the position data half way along the path
-                                var pathPosition = shape.getPoint(this.distance);
-
-                                // get the orientation angle quarter way along the path
-                                var tangent = shape.getTangent(this.distance);
-                                var angle = Math.atan2(-tangent.z, tangent.x);
-
-                                // set angle of the man at that position
-                                // character.root.rotation.y = angle;
-                                character.meshes.forEach(function(m){
-                                    m.rotation.y = angle;
-                                });
-                                // character.root.updateMatrix();
-                                //character.root.lookAt(pathPosition);
-
-                                // move the man to that position
-                                character.root.position.set(pathPosition.x, pathPosition.y, pathPosition.z);
-
-                                character.root.updateMatrix();
-
-                            })
-                            .start();
-                    };
+                    console.log('find a path between %o and %o', self.pcs[0].position, i_pos);
 
                     // run the magic
                     PathFinding.findPath(
-                        this.pcs[0].root.position.x, this.pcs[0].root.position.y, this.pcs[0].root.position.z,
+                        this.pcs[0].position.x, this.pcs[0].position.y, this.pcs[0].position.z,
                         i_pos.x, i_pos.y, i_pos.z,
                         10000,
-                        'window.moveAlong'
+                        Utils.gcb( _.bind( character.moveAlong, character) )
                     );
 
                 } else {

@@ -23,12 +23,22 @@ define('threearena/elements/lifebar',
     };
     LifeBar.prototype = new THREE.Object3D();
 
-    LifeBar.prototype.constructor.setLife = function( life ) {
-        this.lifebar.scale.setX( life );
+    LifeBar.prototype.setLife = function( life ) {
+        if (life > 0) {
+            this.lifebar.visible = true;
+            this.lifebar.scale.setX( life );
+        } else {
+            this.lifebar.visible = false;
+        }
     };
 
-    LifeBar.prototype.constructor.setMana = function( mana ) {
-        this.manabar.scale.setX( mana );
+    LifeBar.prototype.setMana = function( mana ) {
+        if (mana > 0) {
+            this.manabar.visible = true;
+            this.manabar.scale.setX( mana );
+        } else {
+            this.manabar.visible = false;
+        }
     };
 
     LifeBar.prototype.constructor = THREE.LifeBar;

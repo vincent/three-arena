@@ -1,6 +1,6 @@
 
 define('threearena/elements/tower',
-    ['lodash', 'threejs', '../particles/cloud'], function(_, THREE, Particles) {
+    ['lodash', 'threejs', 'threearena/particles/cloud', 'threearena/spell', 'threearena/entity'], function(_, THREE, Particles, Spell) {
 
     var DefenseTower = function( x, y, z, options ) {
 
@@ -16,6 +16,9 @@ define('threearena/elements/tower',
 
         this.bulletSpeed = options.bulletSpeed || 10;
         this.fireSpeed = options.fireSpeed || 1;
+
+        this.magicLifeDamage = options.magicLifeDamage || 1;
+        this.manaDamage = options.magicManaDamage || 1;
 
 
         /////
@@ -62,7 +65,7 @@ define('threearena/elements/tower',
 
         var self = this;
 
-        if ( this.aura ) {
+        if (this.aura) {
             this.aura.update( event.detail.delta );
         }
 
@@ -70,7 +73,7 @@ define('threearena/elements/tower',
 
         var charDistance;
         _.each( event.detail.game.pcs, function( c ) {
-            charDistance = c.root.position.distanceTo( self.position );
+            charDistance = c.position.distanceTo( self.position );
             if ( charDistance < 70 ) {
 
                 // this.fireSpeed += (70 - charDistance);
@@ -86,14 +89,14 @@ define('threearena/elements/tower',
 
     DefenseTower.prototype.fireTo = function( target ) {
 
-        if (this._firing) return;
+        if (this._firing || ! target instanceof Entity) return;
         this._firing = true;
         
         var startPosition = this.position.clone().setY( 28 );
-        var vectorPosition = target.root.position.clone().add(startPosition).divideScalar(2).setY( 28 + 5 );
+        var vectorPosition = target.position.clone().add(startPosition).divideScalar(2).setY( 28 + 5 );
 
         var self = this,
-            line = new THREE.SplineCurve3([ startPosition, vectorPosition, target.root.position ]),
+            line = new THREE.SplineCurve3([ startPosition, vectorPosition, target.position ]),
             cloud = new Particles.ParticleCloud( 10000, self.options.fireTexture, null, {
                 colorHSL: .5
             }),
@@ -133,8 +136,15 @@ define('threearena/elements/tower',
                 self.remove( cloud.particleCloud );
                 cloud.stop();
                 // self._firing = false;
-
                 delete cloud;
+
+                var spell = new Spell({
+                    name: 'firebullet',
+                    source: self,
+                    magicLifeDamage: self.magicLifeDamage,
+                    manaDamage: self.manaDamage,
+                });
+                target.hit( spell );
             })
             
             .onUpdate(function(){

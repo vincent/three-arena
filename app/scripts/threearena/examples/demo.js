@@ -1,6 +1,6 @@
 
 define('threearena/examples/demo',
-    ['lodash', 'threejs', '../game', '../particles/cloud', '../elements/lifebar'], function(_, THREE, Game, Particles, LifeBar){
+    ['lodash', 'threejs', '../game', '../character/ogro'], function(_, THREE, Game, Ogro){
     'use strict';
 
 	var Demo = function() {
@@ -40,98 +40,12 @@ define('threearena/examples/demo',
 
 		Game.apply(this, [ settings ]);
 	};
+
     Demo.prototype = _.clone(Game.prototype);
 
-
     Demo.prototype.afterCreate = function() {
-        this.addCharacter( this.ogro() );
-    };
 
-
-	Demo.prototype.ogro = function() {
-        // Agent
-        var self = this,
-            configOgro = {
-                baseUrl: "/gamedata/models/ogro/",
-                body: "ogro-light.js",
-                skins: [
-                    // "grok.jpg",
-                    // "ogrobase.png",
-                    // "arboshak.png",
-                    // "ctf_r.png",
-                    // "ctf_b.png",
-                    // "darkam.png",
-                    // "freedom.png",
-                    // "gib.png",
-                    // "gordogh.png",
-                    // "igdosh.png",
-                    // "khorne.png",
-                    // "nabogro.png",
-                    "sharokh.png"
-                ],
-                weapons:  [ [ "weapon-light.js", "weapon.jpg" ] ],
-                animations: {
-                    move: "run",
-                    idle: "stand",
-                    jump: "jump",
-                    attack: "attack",
-                    crouchMove: "cwalk",
-                    crouchIdle: "cstand",
-                    crouchAttach: "crattack"
-                },
-                walkSpeed: 350,
-                crouchSpeed: 175
-            };
-
-        var nRows = 1;
-        var nSkins = configOgro.skins.length;
-
-        var character = new THREE.MD2CharacterComplex();
-        character.scale = .3;
-        character.controls = {
-            moveForward: false,
-            moveBackward: false,
-            moveLeft: false,
-            moveRight: false
-        };
-
-        character.root.add(new LifeBar());
-
-        character.root.aura = Particles.Aura('circle', 1000, THREE.ImageUtils.loadTexture( "/gamedata/textures/lensflare2.jpg" ), null);
-        character.root.add(character.root.aura.particleCloud);
-        character.root.aura.start();
-        window.addEventListener( 'render-update', _.bind( function(event){
-        	character.root.aura.update( event.detail.delta );
-        }, character.root.aura ) );
-
-        var baseCharacter = new THREE.MD2CharacterComplex();
-        baseCharacter.scale = 1;
-
-        baseCharacter.onLoadComplete = function () {
-            character.shareParts( baseCharacter );
-            //character.enableShadows( true );
-
-            // disable speed
-            character.maxSpeed = 
-            character.maxReverseSpeed = 
-            character.frontAcceleration = 
-            character.backAcceleration = 
-            character.frontDecceleration = 
-            character.angularSpeed = 0;
-            character.setWeapon( 0 );
-            character.setSkin( 0 );
-
-            character.root.position.x = 0;
-            character.root.position.y = 0;
-            character.root.position.z = 0;
-            character.root.position.set( self.settings.positions.spawn.x, 0, self.settings.positions.spawn.z );
-
-            //character.root.castShadow = true;
-        };
-
-        baseCharacter.loadParts( configOgro );
-
-        return character;
+        this.addCharacter( new Ogro() );
     };
 
     return Demo;
