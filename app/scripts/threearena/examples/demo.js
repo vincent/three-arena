@@ -1,6 +1,6 @@
 
 define('threearena/examples/demo',
-    ['lodash', 'threejs', '../game', '../particles/cloud'], function(_, THREE, Game, Particles){
+    ['lodash', 'threejs', '../game', '../particles/cloud', '../elements/lifebar'], function(_, THREE, Game, Particles, LifeBar){
     'use strict';
 
 	var Demo = function() {
@@ -94,6 +94,8 @@ define('threearena/examples/demo',
             moveLeft: false,
             moveRight: false
         };
+
+        character.root.add(new LifeBar());
 
         character.root.aura = Particles.Aura('circle', 1000, THREE.ImageUtils.loadTexture( "/gamedata/textures/lensflare2.jpg" ), null);
         character.root.add(character.root.aura.particleCloud);
