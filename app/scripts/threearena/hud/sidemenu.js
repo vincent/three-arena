@@ -1,13 +1,16 @@
 
-define('threearena/huds/sidemenu',
+define('threearena/hud/sidemenu',
 	['lodash', 'threejs'], function(_, THREE) {
 
 	var Sidemenu = function () {
 		
 		this.root = document.getElementById('hud-container');
+		//document.getElementsByTagName('BODY')[0].innerHTML += this.css;
 
 		this.root.classList.add( 'animated' );
 	};
+
+	Sidemenu.prototype.css = '<style type="text/css"> #hud { position: absolute; top: 0; left: 0; bottom: 0; width: 30%; background: #222; z-index: -10; } </style>';
 
 	Sidemenu.prototype.open = function () {
 
@@ -29,9 +32,6 @@ define('threearena/huds/sidemenu',
 		return this.root.classList.contains( 'fadeInLeft' );
 	};
 
-	return {
-		Sidemenu: Sidemenu
-	}
-
+	return Sidemenu;
 });
 

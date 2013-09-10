@@ -3,6 +3,7 @@ define('threearena/game',
     ['lodash', 'async', 'threejs', 'tweenjs',
 
     'threearena/utils',
+    'threearena/hud',
     'threearena/elements/tower', 
     'threearena/particles/cloud', 
     'threearena/controls/dota',
@@ -24,30 +25,16 @@ define('threearena/game',
     'RenderPass',
     'ShaderPass',
     'MaskPass'
+
 ], function (_, async, THREE, TWEEN,
  
     Utils,
+    HUD,
     DefenseTower,
     Particles,
     CameraControls,
-    PathFinding,
+    PathFinding
  
-    MD2CharacterComplex,
-    OBJLoader,
-    MTLLoader,
-    OBJMTLLoader,
-    ColladaLoader,
-    TrackballControls,
-    EditorControls,
-    ConvexGeometry,
-    BleachBypassShader,
-    ColorCorrectionShader,
-    CopyShader,
-    FXAAShader,
-    EffectComposer,
-    RenderPass,
-    ShaderPass,
-    MaskPass
 ) {
     PathFinding = Module;
 
@@ -93,6 +80,8 @@ define('threearena/game',
 
         this.pcs = [];
 
+        this.hud = new HUD.GameHud('hud-container');
+
         //////////
 
         this._initCamera();
@@ -135,7 +124,7 @@ define('threearena/game',
         this.scene.fog = new THREE.Fog( 0x000000, 1, 500 );
     };
 
-    Game.prototype._initLights = function(first_argument) {
+    Game.prototype._initLights = function() {
 
         this.ambientLight = new THREE.AmbientLight( 0xffffff );
         this.scene.add( this.ambientLight );
@@ -149,7 +138,7 @@ define('threearena/game',
         this.scene.add( this.directionalLight );
     };
 
-    Game.prototype._initRenderer = function(first_argument) {
+    Game.prototype._initRenderer = function() {
         this.renderer = new THREE.WebGLRenderer();
         // this.renderer.shadowMapEnabled = true;
         // this.renderer.shadowMapSoft = true;
@@ -195,54 +184,11 @@ define('threearena/game',
     };
 
     Game.prototype._initGround = function( done ) {
+        var groundGeometry = new THREE.PlaneGeometry(500, 500, 1, 1);
+        var groundMaterial = new THREE.MeshBasicMaterial({ color:'#ddd' });
 
-        var self = this;
-
-        var ambient = 0xaaaaaa, diffuse = 0xbbbbbb, specular = 0x060606, shininess = 30;
-
-        var uniforms;
-        var shader = THREE.ShaderLib[ "normalmap" ];
-        var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
-
-        uniforms[ "uNormalScale" ].value.set( 0.8, 0.8 );
-
-        uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2_normals.jpg" );
-        uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2.jpg" );
-        uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2_specular.jpg" );
-
-        uniforms[ "enableAO" ].value = false;
-        uniforms[ "enableDiffuse" ].value = true;
-        uniforms[ "enableSpecular" ].value = true;
-
-        uniforms[ "uDiffuseColor" ].value.setHex( diffuse );
-        uniforms[ "uSpecularColor" ].value.setHex( specular );
-        uniforms[ "uAmbientColor" ].value.setHex( ambient );
-
-        uniforms[ "uShininess" ].value = shininess;
-
-        uniforms[ "wrapRGB" ].value.set( 0.575, 0.5, 0.5 );
-
-        var parameters = { fragmentShader: shader.fragmentShader, vertexShader: shader.vertexShader, uniforms: uniforms, lights: true, fog: true };
-        var material = new THREE.ShaderMaterial( parameters );
-        // material.wrapAround = true;
-
-        // model
-        var loader = new THREE.OBJLoader( );
-        loader.load( '/gamedata/dota_simple.obj', function ( object ) {
-            self.ground = object;
-            //self.ground.receiveShadow = true;
-
-            self.ground.traverse( function ( child ) {
-                if ( child instanceof THREE.Mesh ) {
-                    child.material = material;
-                    child.geometry.computeVertexNormals();
-                    child.geometry.computeTangents();
-                }
-            } );
-
-            self.scene.add( self.ground );
-            done();
-        });
+        this.ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        done();
     };
 
     Game.prototype._initTrees = function( main_callback ) {
@@ -255,7 +201,7 @@ define('threearena/game',
                 object.scene.children[1].material.materials[0].transparent = true;
                 object.scene.children[1].material.materials[1].transparent = true;
                 self._trees.push(object.scene.children[1]);
-                callback(null);
+                callback();
             });
         };
 
@@ -264,7 +210,7 @@ define('threearena/game',
                 object.scene.children[0].material.materials[0].transparent = true;
                 object.scene.children[0].material.materials[1].transparent = true;
                 self._trees.push(object.scene.children[0]);
-                callback(null);
+                callback();
             });
         };
 
@@ -334,7 +280,7 @@ define('threearena/game',
                         }
                     } );
                     self.scene.add(self._treesGroup);
-                    callback(null);
+                    callback();
                 });
             },
             function (callback) {
@@ -353,7 +299,7 @@ define('threearena/game',
                     });
 
                     self.scene.add(object);
-                    callback(null);
+                    callback();
                 });
                 loader.load( '/gamedata/models/lightning_pole/lightning_pole.obj', '/gamedata/models/lightning_pole/lightning_pole.mtl' );
             },
@@ -366,6 +312,11 @@ define('threearena/game',
         var spawnPosition = spawnPosition || this.settings.positions.spawn;
 
         character.position.set( spawnPosition.x, spawnPosition.y, spawnPosition.z );
+
+        // the first one, the main one
+        if (this.pcs.length === 0) {
+            this.hud.attachEntity(character);
+        }
 
         this.pcs.push(character);
         this.scene.add(character);
@@ -466,6 +417,8 @@ define('threearena/game',
     Game.prototype.start = function() {
 
         this._initListeners();
+
+        this.hud.open();
 
         this.animate();
     };

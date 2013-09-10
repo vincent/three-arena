@@ -1,6 +1,6 @@
 
 define('threearena/controls/dota',
-	['lodash', 'threejs', '../huds/sidemenu' ], function(_, THREE, HUD) {
+	['lodash', 'threejs'], function(_, THREE, HUD) {
 
 	var DotaControls = function ( object, domElement ) {
 
@@ -22,10 +22,6 @@ define('threearena/controls/dota',
 		this.activeZoneTime = 300;
 
 		this.activeZoneFactor = 30;
-		this.hudZoneFactor = 2;
-
-		this.hud = new HUD.Sidemenu(); // document.getElementById('hud');
-		this.hud.close();
 
 		// disable default target object behavior
 
@@ -141,6 +137,7 @@ define('threearena/controls/dota',
 
 			if (this._keyboardHasFocus) return;
 
+			/*
 			if (event.pageX < container.size[ 0 ] / 100 * this.hudZoneFactor) {
 
 				this.hud.open();
@@ -152,6 +149,7 @@ define('threearena/controls/dota',
 				this.hud.close();
 				this.enabled = true;
 			}
+			*/
 
 			if ( this.enabled ) {
 

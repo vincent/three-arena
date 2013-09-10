@@ -8,8 +8,10 @@ define('threearena/character/ogro',
         this.options = _.merge({
 
             life: 100,
-
             mana: 0,
+
+            name: 'Ogro',
+            image: '/gamedata/models/ogro/portrait.png',
 
             modelOptions: {
                 baseUrl: '/gamedata/models/ogro/',

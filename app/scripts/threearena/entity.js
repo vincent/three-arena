@@ -8,6 +8,9 @@ define('threearena/entity',
 
         this.state = _.merge({
 
+            name: Math.random(),
+            image: '/gamedata/unknown.png',
+
             life: 100,
             mana: 0,
 
@@ -39,8 +42,14 @@ define('threearena/entity',
 
     Entity.prototype.updateLifeBar = function( ) {
 
-        this.lifebar.setLife( this._baseLife > 0 ? 1 / this._baseLife * this.state.life : 0 );
-        this.lifebar.setMana( this._baseMana > 0 ? 1 / this._baseMana * this.state.mana : 0 );            
+        var eventData = {
+            life: this._baseLife > 0 ? 1 / this._baseLife * this.state.life : 0,
+            mana: this._baseMana > 0 ? 1 / this._baseMana * this.state.mana : 0
+        };
+
+        this.emit('changed', eventData);
+
+        this.lifebar.set(eventData);
     };
 
     Entity.prototype.isDead = function( ) {
@@ -78,8 +87,18 @@ define('threearena/entity',
 
     };
 
+    // TODO: Make entity an event emitter
+    Entity.prototype.events = {
+        'changed': [],
+    };
     Entity.prototype.emit = function( eventName, data ) {
-        // Entity should be an event emitter
+        _.each(this.events[eventName], function(callback){
+            callback(data);
+        });
+    };
+    Entity.prototype.on = function( eventName, callback ) {
+        this.events[eventName] = this.events[eventName] || [];
+        this.events[eventName].push(callback);
     };
 
     Entity.prototype.hit = function( spell ) {
@@ -101,7 +120,7 @@ define('threearena/entity',
         this.incrementMana( -manaDamageReceived );
         this.updateLifeBar();
 
-        log( 'combat', '%o hit %o with %o : %d + %d + %d (%s) - %s' ,
+        log(log.COMBAT, '%o hit %o with %o : %d + %d + %d (%s) - %s' ,
             spell.source, this,
             spell.name, magicLifeDamageReceived, meleeLifeDamageReceived, manaDamageReceived,
             (spell.isCritical ? 'critical' : 'normal'), damageAbsorbed
@@ -111,7 +130,7 @@ define('threearena/entity',
         if (! this.isDead()) {
 
             if (meleeLifeDamageReceived > 0) {
-                this.emit( 'lifedamage' , { amount: meleeLifeDamageReceived })
+                this.emit( 'changed' , { amount: meleeLifeDamageReceived })
             }
             if (manaDamageReceived > 0) {
                 this.emit( 'manadamage' , { amount: manaDamageReceived })

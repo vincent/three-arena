@@ -11,7 +11,7 @@ define('threearena/particles/cloud',
 			return this.__pools.pop();
 		}
 
-		console.log( "pool ran out!" )
+		//console.log( "pool ran out!" )
 		return null;
 	};
 

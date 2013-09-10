@@ -2,6 +2,10 @@ define('threearena/utils',
     ['lodash', 'threejs'], function(_, THREE) {
 
     return {
+        HUD_TYPE_STYLE: 1,
+        HUD_TYPE_TEXT:  2,
+        HUD_TYPE_IMAGE: 3,
+
         gcb: function( wrappedFunction ) {
 
             var now = new Date(),
