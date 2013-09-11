@@ -16,7 +16,7 @@
     width: 125px;
     height: 130px;
 }
-#hud-container .portrait .portrait-name {
+#hud-container .portrait .name {
     position: relative;
     top: 0;
     width: 100%;
@@ -24,51 +24,72 @@
     padding: 4px;
     color: #fff;
 }            
-#hud-container .portrait .portrait-image {
+#hud-container .portrait .image {
     background-size: cover;
     position: relative;
-    top: 0px;
+    top: 20px;
     width: 100%;
     left: 0px;
     height: 90px;
 }
-#hud-container .portrait .portrait-life {
-    width: 100%;
-    height: 10px;
-    position: relative;
-    bottom: 0;
-}
-#hud-container .portrait .portrait-life .bar {
-    background: #0F0;
-    height: 100%;
-    width: 0%;
-    font-size: 10px;
-    line-height: 9px;
-}
-#hud-container .portrait .portrait-mana {
-    width: 100%;
-    height: 10px;
-    position: relative;
-    bottom: 0;
-}
-#hud-container .portrait .portrait-mana .bar {
-    background: #00F;
-    height: 100%;
-    width: 0%;
-    font-size: 10px;
-    line-height: 9px;
-}
-#hud-container .actions {
+#hud-container .portrait .level {
     position: absolute;
-    top: 5%;
-    background: #F00;
-    width: 400px;
-    height: 100px;
-    right: 15%;
+    height: 20px;
+    width: 40px;
+    top: 20px;
+    left: 0;
 }
-#hud-container .actions > div {
-    height: 50%;
-    width: 15%;
-    float: left;
-    background: blueviolet;
+#hud-container .portrait .xp {
+    position: absolute;
+    left: 40px;
+    height: 20px;
+    width: 85px;
 }
+#hud-container .portrait .xp .bar {
+    background-image: url(/gamedata/textures/lifebar.png);
+    position: absolute;
+    width: 0%;
+}
+#hud-container .health .life {
+    width: 100%;
+    height: 10px;
+    position: relative;
+    bottom: 0;
+}
+#hud-container .health .life .bar {
+    background-image: url(/gamedata/textures/lifebar.png);
+    background-color: #0F0;
+    height: 10px;
+    width: 0%;
+    font-size: 10px;
+    line-height: 9px;
+}
+#hud-container .health {
+    position: absolute;
+    left: 40%;
+    height: 50px;
+    top: 0;
+    width: 200px;
+}
+#hud-container .health .mana {
+    width: 100%;
+    height: 10px;
+    position: relative;
+    bottom: 0;
+}
+#hud-container .health .mana .bar {
+    background-image: url(/gamedata/textures/lifebar.png);
+    background-color: #00D6FF;
+    height: 10px;
+    width: 0%;
+    font-size: 10px;
+    line-height: 9px;
+}
+#hud-container .abilities {
+    position: absolute;
+    left: 40%;
+    height: 50px;
+    top: 50px;
+    width: 200px;
+}
+

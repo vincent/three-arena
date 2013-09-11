@@ -41,7 +41,8 @@ define('threearena/hud/ingame',
 	GameHud.prototype.attachEntity = function (entity) {
 
 		if (entity instanceof Entity) {
-			ko.applyBindings(new EntityView(entity), document.getElementById('view-character'));
+			var viewModel = new EntityView(entity);
+			ko.applyBindings(viewModel, document.getElementById('view-character'));
 
 		} else {
 			throw entity + ' is not an entity';

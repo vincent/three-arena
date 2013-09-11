@@ -7,9 +7,15 @@ define('threearena/views/entityview',
         var self = this;
 
         _.each(entity.state, function(v, k) {
-            self[k] = ko.observable(v);
+            self[k] = ko.observable(v); // .extend({notify: 'always'});
         });
-     
+
+        this.xpprogress = ko.computed(function(){
+            return 'n/a';
+        }, this);
+
+
+        ////////////////////////////////     
         this.update = function(values) {
             _.each(entity.state, function(v, k) {
                 if (typeof self[k] !== 'undefined') {

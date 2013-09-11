@@ -183,7 +183,7 @@ define('threearena/game',
         this.cameraControls.domElement = this.renderer.domElement;
     };
 
-    Game.prototype._initGround = function( done ) {
+    Game.prototype._initGround = function(done) {
         var groundGeometry = new THREE.PlaneGeometry(500, 500, 1, 1);
         var groundMaterial = new THREE.MeshBasicMaterial({ color:'#ddd' });
 
@@ -191,7 +191,7 @@ define('threearena/game',
         done();
     };
 
-    Game.prototype._initTrees = function( main_callback ) {
+    Game.prototype._initTrees = function(main_callback) {
         var self = this;
 
         var loader = new THREE.ColladaLoader();
@@ -246,22 +246,22 @@ define('threearena/game',
         this._treesGroup.add( tree );
     };
 
-    Game.prototype._initTowers = function( done ) {
+    Game.prototype._initTowers = function(done) {
 
-        var defenseTower = new DefenseTower( 0, 28, 1, {
+        var defenseTower = new DefenseTower(0, 28, 1, {
             fireSpeed: 10,
             fireIntensity: 50,
             transform: function (loaded) {
-                var loaded = loaded.scene.children[ 0 ];
+                var loaded = loaded.scene.children[0];
                 loaded.scale.set( 8, 8, 8 );
-                loaded.rotation.x = -90 * ( Math.PI / 180 );
+                loaded.rotation.x = -90 * (Math.PI / 180);
             }
         });
         this.scene.add(defenseTower);
         done(null);
     };
 
-    Game.prototype._fillMap = function( main_callback ) {
+    Game.prototype._fillMap = function(main_callback) {
 
         var self = this;
 
@@ -270,10 +270,10 @@ define('threearena/game',
             _.bind( this._initTrees,  this),
             _.bind( this._initTowers, this),
             function (callback) {
-                var loader = new THREE.OBJLoader( );
-                loader.load( '/gamedata/dota_trees.obj', function ( object ) {
-                    object.traverse( function ( child ) {
-                        if ( child instanceof THREE.Mesh ) {
+                var loader = new THREE.OBJLoader();
+                loader.load('/gamedata/dota_trees.obj', function (object) {
+                    object.traverse(function (child) {
+                        if (child instanceof THREE.Mesh) {
                             for (var i = 0; i < child.geometry.vertices.length && i < 100; i++) {
                                 self.newTree(child.geometry.vertices[i]);
                             }
@@ -285,25 +285,26 @@ define('threearena/game',
             },
             function (callback) {
                 var loader = new THREE.OBJMTLLoader();
-                loader.addEventListener( 'load', function ( event ) {
+                loader.addEventListener('load', function (event) {
                     var object = event.content;
-                    object.position.set( -151, 0, 122 );
-                    object.children[0].scale.set( 0.1, 0.1, 0.1 );
+                    object.position.set(-151, 0, 122);
+                    object.children[0].scale.set(0.1, 0.1, 0.1);
 
-                    var aura = Particles.Aura('point', 10, THREE.ImageUtils.loadTexture( "/gamedata/textures/lensflare1_alpha.png" ));
+                    var aura = Particles.Aura('point', 10, THREE.ImageUtils.loadTexture('/gamedata/textures/lensflare1_alpha.png'));
                     aura.particleCloud.position.set(0, 20, 6);
-                    object.add( aura.particleCloud );
+                    object.add(aura.particleCloud);
                     aura.start();
-                    window.addEventListener('render-update', function(event){
-                        aura.update(event.detail.delta);
+
+                    window._ta_events.bind('update', function(game){
+                        aura.update(game.delta);
                     });
 
                     self.scene.add(object);
                     callback();
                 });
-                loader.load( '/gamedata/models/lightning_pole/lightning_pole.obj', '/gamedata/models/lightning_pole/lightning_pole.mtl' );
+                loader.load('/gamedata/models/lightning_pole/lightning_pole.obj', '/gamedata/models/lightning_pole/lightning_pole.mtl');
             },
-            _.bind( this.afterCreate, this),
+            _.bind(this.afterCreate, this),
         ], main_callback);
     };
 
@@ -311,7 +312,7 @@ define('threearena/game',
 
         var spawnPosition = spawnPosition || this.settings.positions.spawn;
 
-        character.position.set( spawnPosition.x, spawnPosition.y, spawnPosition.z );
+        character.position.set(spawnPosition.x, spawnPosition.y, spawnPosition.z);
 
         // the first one, the main one
         if (this.pcs.length === 0) {
@@ -336,8 +337,8 @@ define('threearena/game',
 
     Game.prototype._initListeners = function() {
 
-        this.settings.container.addEventListener( 'mouseup', _.bind( this.onDocumentMouseUp, this ), false );
-        this.settings.container.addEventListener( 'resize', _.bind( this.onWindowResize, this ), false );
+        this.settings.container.addEventListener('mouseup', _.bind( this.onDocumentMouseUp, this), false);
+        this.settings.container.addEventListener('resize', _.bind( this.onWindowResize, this), false);
     };
 
     Game.prototype.onWindowResize = function() {
@@ -416,6 +417,11 @@ define('threearena/game',
 
     Game.prototype.start = function() {
 
+        var ThreeArenaGlobalEvents = function(){};
+        MicroEvent.mixin(ThreeArenaGlobalEvents);
+
+        window._ta_events = new ThreeArenaGlobalEvents();
+
         this._initListeners();
 
         this.hud.open();
@@ -425,31 +431,26 @@ define('threearena/game',
 
     Game.prototype.render = function() {
 
+        var self = this;
+
         // stats.update()
         TWEEN.update();
 
-        var delta = this.clock.getDelta();
+        this.delta = this.clock.getDelta();
 
-        window.dispatchEvent(
-            new CustomEvent( 'render-update', {
-                detail: {
-                    delta: delta,
-                    game: this
-                },
-                bubbles: true,
-                cancelable: true
-            })
-        );
+        window._ta_events.trigger('update', this);
 
-        this.cameraControls.update( delta );
+        this.cameraControls.update(this.delta);
         this.camera.position.y = 60; // crraaaapp //
 
-        _.each(this.pcs, function( character ){
-            character.update( delta );
+        _.each(this.pcs, function(character){
+            character.update(self.delta);
         });
 
         this.composer.render();
     };
 
+    Entity.prototype.constructor = Entity;
+    MicroEvent.mixin(Game);
     return Game;
 });

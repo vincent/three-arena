@@ -18,6 +18,12 @@ define('threearena/entity',
             life: 100,
             mana: 0,
 
+            strength: 0,
+            agility: 0,
+            intelligence: 0,
+
+            abilities: [],
+
             level: 1,
 
             meleeDefense: 1,
@@ -88,70 +94,45 @@ define('threearena/entity',
     };
 
     Entity.prototype.moveAlong = function(linepoints) {
-
+        throw "Parent class Entity cannot move";
     };
-
-
-    // TODO: Make entity an event emitter
-    // Entity.prototype.events = {
-    //     'changed': [],
-    // };
-    // Entity.prototype.emit = function(eventName, data) {
-    //     _.each(this.events[eventName], function(callback){
-    //         callback(data);
-    //     });
-    // };
-    // Entity.prototype.on = function(eventName, callback) {
-    //     this.events[eventName] = this.events[eventName] || [];
-    //     this.events[eventName].push(callback);
-    // };
 
     Entity.prototype.hit = function(spell) {
 
-        var meleeLifeDamageReceived = 0,
-            magicLifeDamageReceived = 0,
-            manaDamageReceived = 0,
-            damageAbsorbed = 0,
-            dodged = 0;
+        var eventData = {
+            dodged: 0,
+            meleeLifeDamageReceived: 0,
+            magicLifeDamageReceived: 0,
+            manaDamageReceived: 0,
+            spell: spell
+        };
 
-        meleeLifeDamageReceived = spell.meleeLifeDamage - damageAbsorbed;
-        magicLifeDamageReceived = spell.magicLifeDamage - damageAbsorbed;
-        manaDamageReceived = spell.manaDamage  - damageAbsorbed;
+        eventData.meleeLifeDamageReceived = spell.meleeLifeDamage;
+        eventData.magicLifeDamageReceived = spell.magicLifeDamage;
+        eventData.manaDamageReceived = spell.manaDamage;
 
-        var totalLifeDamage = meleeLifeDamageReceived + magicLifeDamageReceived;
+        eventData.totalLifeDamage = eventData.meleeLifeDamageReceived + eventData.magicLifeDamageReceived;
 
         // apply hits
-        this.incrementLife(-totalLifeDamage);
-        this.incrementMana(-manaDamageReceived);
+        this.incrementLife(-eventData.totalLifeDamage);
+        this.incrementMana(-eventData.manaDamageReceived);
         this.updateLifeBar();
+
+        this.trigger('hit', eventData);
 
         log(log.COMBAT, '%o hit %o with %o : %d + %d + %d (%s) - %s' ,
             spell.source, this,
-            spell.name, magicLifeDamageReceived, meleeLifeDamageReceived, manaDamageReceived,
-            (spell.isCritical ? 'critical' : 'normal'), damageAbsorbed
+            spell.name, eventData.magicLifeDamageReceived, eventData.meleeLifeDamageReceived, eventData.manaDamageReceived,
+            (spell.isCritical ? 'critical' : 'normal'), eventData.damageAbsorbed
         );
 
         // send events
-        if (! this.isDead()) {
-
-            if (meleeLifeDamageReceived > 0) {
-                this.trigger('changed' , { amount: meleeLifeDamageReceived })
-            }
-            if (manaDamageReceived > 0) {
-                this.trigger('manadamage' , { amount: manaDamageReceived })
-            }
-            if (damageAbsorbed > 0) {
-                this.trigger('absorbeddamage' , { amount: damageAbsorbed })
-            }
-
-        } else {
-
-            this.trigger('death' , { amount: totalLifeDamage });
+        if (this.isDead()) {
+            this.trigger('death', eventData);
         }
     };
 
     Entity.prototype.constructor = Entity;
     MicroEvent.mixin(Entity);
-
     return Entity;
 });

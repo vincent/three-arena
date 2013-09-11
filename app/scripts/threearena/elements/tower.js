@@ -20,7 +20,6 @@ define('threearena/elements/tower',
         this.magicLifeDamage = options.magicLifeDamage || 1;
         this.manaDamage = options.magicManaDamage || 1;
 
-
         /////
 
         this._firing = false;
@@ -28,6 +27,8 @@ define('threearena/elements/tower',
 
         this.options = _.merge({
                     start: true,
+                 minRange: 0,
+                 maxRange: 70,
             fireIntensity: 20000,
                 transform: function( obj3d ){ return obj3d },
                orbTexture: options.texture || THREE.ImageUtils.loadTexture( "/gamedata/textures/lensflare1_alpha.png" ),
@@ -48,33 +49,33 @@ define('threearena/elements/tower',
             var lantern = loaded.scene.children[ 0 ];
             delete loaded;
 
-            self.add( lantern );
+            self.add(lantern);
 
-            var selfUpdate = _.bind( self.update, self );
+            var selfUpdate = _.bind(self.update, self);
 
-            if ( self.options.start ) {
+            if (self.options.start) {
                 self.aura.start();
                 
-                window.addEventListener( 'render-update', selfUpdate );
+                window._ta_events.bind('update', selfUpdate);
             }
         });
     };
     DefenseTower.prototype = new THREE.Object3D();
 
-    DefenseTower.prototype.update = function( event ) {
+    DefenseTower.prototype.update = function(game) {
 
         var self = this;
 
         if (this.aura) {
-            this.aura.update( event.detail.delta );
+            this.aura.update(game.delta);
         }
 
         if (this._firing) return;
 
         var charDistance;
-        _.each( event.detail.game.pcs, function( c ) {
-            charDistance = c.position.distanceTo( self.position );
-            if ( charDistance < 70 ) {
+        _.each(game.pcs, function(c) {
+            charDistance = c.position.distanceTo(self.position);
+            if (charDistance >= self.options.minRange && charDistance < self.options.maxRange) {
 
                 // this.fireSpeed += (70 - charDistance);
                 self.fireTo( c );
@@ -87,53 +88,53 @@ define('threearena/elements/tower',
         this._firing = false;
     };
 
-    DefenseTower.prototype.fireTo = function( target ) {
+    DefenseTower.prototype.fireTo = function(target) {
 
         if (this._firing || ! target instanceof Entity) return;
         this._firing = true;
         
-        var startPosition = this.position.clone().setY( 28 );
-        var vectorPosition = target.position.clone().add(startPosition).divideScalar(2).setY( 28 + 5 );
+        var startPosition = this.position.clone().setY(28);
+        var vectorPosition = target.position.clone().add(startPosition).divideScalar(2).setY(28 + 5);
 
         var self = this,
             line = new THREE.SplineCurve3([ startPosition, vectorPosition, target.position ]),
             cloud = new Particles.ParticleCloud( 10000, self.options.fireTexture, null, {
                 colorHSL: .5
             }),
-            cloudUpdate = _.bind( function(event){ cloud.update(event.detail.delta); }, cloud )
+            cloudUpdate = _.bind(function(game){
+                cloud.update(game.delta);
+            }, cloud)
             ;
 
         var tween = new TWEEN.Tween({ distance: 0 })
 
-            .to( { distance: 1 }, line.getLength() * self.bulletSpeed ) // use 
+            .to({ distance: 1 }, line.getLength() * self.bulletSpeed) // use 
 
             .easing(TWEEN.Easing.Linear.None)
 
             .onStart(function(){
-                window.addEventListener( 'render-update', cloudUpdate );
+                window._ta_events.bind('update', cloudUpdate);
 
-                self.add( cloud.particleCloud );
+                self.add(cloud.particleCloud);
                 cloud.start();
 
-                setTimeout( function(){
+                setTimeout(function(){
                     self._firing = false;
 
-                }, 4000 / self.fireSpeed );
+                }, 4000 / self.fireSpeed);
 
-
-                setTimeout( function(){
+                setTimeout(function(){
                     if (tween) { tween.stop(); }
-                    window.removeEventListener( 'render-update', cloudUpdate );
+                    window._ta_events.unbind('update', cloudUpdate);
 
-                    // self._firing = false;
-                    self.remove( cloud.particleCloud );
+                    self.remove(cloud.particleCloud);
                 }, 1000 );
             })
             
             .onComplete(function(){
-                window.removeEventListener( 'render-update', cloudUpdate );
+                window._ta_events.unbind('update', cloudUpdate);
 
-                self.remove( cloud.particleCloud );
+                self.remove(cloud.particleCloud);
                 cloud.stop();
                 // self._firing = false;
                 delete cloud;
@@ -144,24 +145,14 @@ define('threearena/elements/tower',
                     magicLifeDamage: self.magicLifeDamage,
                     manaDamage: self.manaDamage,
                 });
-                target.hit( spell );
+                target.hit(spell);
             })
             
             .onUpdate(function(){
                 // get the position data half way along the path
                 var pathPosition = line.getPoint(this.distance);
 
-                // get the orientation angle quarter way along the path
-                // var tangent = line.getTangent(this.distance);
-                // var angle = Math.atan2(-tangent.z, tangent.x);
-                // cloud.particleCloud.rotation.y = angle;
-
-                // random
-                // pathPosition.x += (Math.random()*2 -1) * .0001;
-                // pathPosition.y += (Math.random()*2 -1) * .0001;
-                // pathPosition.z += (Math.random()*2 -1) * .0001;
-
-                // move the man to that position
+                // move to that position
                 cloud.particleCloud.position.set(pathPosition.x, pathPosition.y, pathPosition.z);
 
                 cloud.particleCloud.updateMatrix();
