@@ -35,3 +35,10 @@ var EntityViewModel = function(entity) {
         </div>
 </div>
 ```
+
+ * In HUD class
+```javascript
+ko.applyBindings(new EntityView(entity), document.getElementById('view-character'));
+```
+
+ * The HTML is now bound to ```entity``` state values
