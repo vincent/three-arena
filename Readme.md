@@ -15,6 +15,7 @@ Show me the code
 * Libraries used
  - RequireJS
  - Lo-Dash
+ - Async
  - ThreeJS (r60), TweenJS, Sparks
  - Knockout
  - jQuery (only when really useful)

@@ -1,6 +1,7 @@
 THREE = {};
 
 require.config({
+    waitSeconds: 10 * 60 * 1000,
     paths: {
         cacheonly:      'libs/cacheonly',
 
