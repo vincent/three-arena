@@ -15,6 +15,6 @@ Show me the code
 * Libraries used
  - RequireJS
  - Lo-Dash
- - ThreeJS, TweenJS, Sparks
+ - ThreeJS (r60), TweenJS, Sparks
  - Knockout
  - jQuery (only when really useful)
