@@ -10,82 +10,12 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
         <!-- build:css(.tmp) styles/main.css -->
         <link rel="stylesheet" href="styles/main.css">
-        <style type="text/css"> 
-            #hud-container {
-                position: absolute;
-                bottom: 0;
-                height: 150px;
-                width: 100%;
-                background: #222;
-                z-index: -10;
-                display: none;
-            }
-            #hud-container .portrait {
-                position: relative;
-                left: 15%;
-                top: 5%;
-                -background: #F00;
-                width: 125px;
-                height: 130px;
-            }
-            #hud-container .portrait .portrait-name {
-                position: relative;
-                top: 0;
-                width: 100%;
-                height: 20px;
-                -background: greenyellow;
-                padding: 4px;
-                color: #fff;
-            }            
-            #hud-container .portrait .portrait-image {
-                background-size: cover;
-                position: relative;
-                top: 0px;
-                width: 100%;
-                left: 0px;
-                -background: #808080;
-                height: 90px;
-            }
-            #hud-container .portrait .portrait-life {
-                width: 100%;
-                height: 10px;
-                position: relative;
-                bottom: 0;
-            }
-            #hud-container .portrait .portrait-life .bar {
-                background: #0F0;
-                height: 100%;
-                width: 0%;
-            }
-            #hud-container .portrait .portrait-mana {
-                width: 100%;
-                height: 10px;
-                position: relative;
-                bottom: 0;
-            }
-            #hud-container .portrait .portrait-mana .bar {
-                background: #00F;
-                height: 100%;
-                width: 0%;
-            }
-            #hud-container .actions {
-                position: absolute;
-                top: 5%;
-                background: #F00;
-                width: 400px;
-                height: 100px;
-                right: 15%;
-            }
-            #hud-container .actions > div {
-                height: 50%;
-                width: 15%;
-                float: left;
-                background: blueviolet;
-            }
-        </style>
+        <link rel="stylesheet" href="styles/hud.css">
         <!-- endbuild -->
+
         <!-- build:js scripts/vendor/modernizr.js -->
         <script src="bower_components/modernizr/modernizr.js"></script>
         <!-- endbuild -->
@@ -126,68 +56,35 @@
         <div id="game-container">
             <div class="container">
 
-                <!--
-                <div class="header">
-                    <ul class="nav nav-pills pull-right">
-                        <li class="active"><a href="#">Home</a></li>
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Contact</a></li>
-                    </ul>
-                    <h3 class="text-muted">ThreeArena</h3>
-                </div>
-                -->
-
                 <div class="jumbotron">
                     <h1>Three Arena</h1>
                     <p class="lead">A Javascript DOTA - like</p>
                     <p><a class="btn btn-lg btn-success" id="game-play" href="#">Play !</a></p>
                 </div>
 
-                <!--
-                <div class="row marketing">
-                    <div class="col-lg-6">
-                        <h4>HTML5 Boilerplate</h4>
-                        <p>HTML5 Boilerplate is a professional front-end template for building fast, robust, and adaptable web apps or sites.</p>
-
-                        <h4>Bootstrap</h4>
-                        <p>Sleek, intuitive, and powerful mobile first front-end framework for faster and easier web development.</p>
-
-                        <h4>Modernizr</h4>
-                        <p>Modernizr is an open-source JavaScript library that helps you build the next generation of HTML5 and CSS3-powered websites.</p>
-
-
-                        <h4>RequireJS</h4>
-                        <p>RequireJS is a JavaScript file and module loader. It is optimized for in-browser use, but it can be used in other JavaScript environments, like Rhino and Node.</p>
-
-                    </div>
-                </div>
-
-                <div class="footer">
-                    <p>♥ from the Yeoman team</p>
-                </div>
-                -->
-
             </div>
         </div>
 
         <div id="hud-container">
 
-            <div class="portrait">
-                <div class="portrait-name"></div>
-                <div class="portrait-image"></div>
-                <div class="portrait-life">
-                    <div class="bar"></div>
+            <div id="view-character">
+                <div class="portrait">
+                    <div class="portrait-name" data-bind="text: name"></div>
+                    <div class="portrait-image" data-bind="style:{ backgroundImage: 'url(' + image() + ')' }"></div>
+                    <div class="portrait-life">
+                        <div class="bar" data-bind="text: life(), style: { width: life() + '%' }"></div>
+                    </div>
+                    <div class="portrait-mana">
+                        <div class="bar" data-bind="text: mana(), style: { width: mana() + '%' }"></div>
+                    </div>
                 </div>
-                <div class="portrait-mana">
-                    <div class="bar"></div>                    
-                </div>
-            </div>
 
-            <div class="actions">
-                <div class="actions-1"></div>
-                <div class="actions-2"></div>
-                <div class="actions-3"></div>
-                <div class="actions-4"></div>
+                <div class="actions">
+                    <div class="actions-1"></div>
+                    <div class="actions-2"></div>
+                    <div class="actions-3"></div>
+                    <div class="actions-4"></div>
+                </div>
             </div>
 
         </div>

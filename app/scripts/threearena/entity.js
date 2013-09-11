@@ -1,10 +1,12 @@
 
 define('threearena/entity',
-    ['lodash', 'threejs', 'threearena/log', 'threearena/utils', 'threearena/elements/lifebar'], function(_, THREE, log, Utils, LifeBar) {
+    ['lodash', 'threejs', 'knockout', 'threearena/log', 'threearena/utils', 'threearena/elements/lifebar'], function(_, THREE, ko, log, Utils, LifeBar) {
 
-    var Entity = function( options ) {
+    var Entity = function(options) {
 
-        THREE.Object3D.apply( this );
+        var self = this;
+
+        THREE.Object3D.apply(this);
 
         this.state = _.merge({
 
@@ -28,19 +30,19 @@ define('threearena/entity',
         this._baseMana = this.state.mana;
 
         this.attachLifeBar();
+        this.emit('changed', this.state);
     };
 
     Entity.prototype = new THREE.Object3D();
 
-    Entity.prototype.attachLifeBar = function( ) {
+    Entity.prototype.attachLifeBar = function() {
 
         this.lifebar = new LifeBar();
         this.updateLifeBar();
-
-        this.add( this.lifebar );
+        this.add(this.lifebar);
     };
 
-    Entity.prototype.updateLifeBar = function( ) {
+    Entity.prototype.updateLifeBar = function() {
 
         var eventData = {
             life: this._baseLife > 0 ? 1 / this._baseLife * this.state.life : 0,
@@ -52,12 +54,12 @@ define('threearena/entity',
         this.lifebar.set(eventData);
     };
 
-    Entity.prototype.isDead = function( ) {
+    Entity.prototype.isDead = function() {
 
         return this.state.life <= 0;
     };
 
-    Entity.prototype.incrementLife = function( inc ) {
+    Entity.prototype.incrementLife = function(inc) {
 
         if (!(this.state.life <= 0 && inc < 0)) {
             this.state.life += inc;
@@ -65,7 +67,7 @@ define('threearena/entity',
         return this.state.life;
     };
 
-    Entity.prototype.incrementMana = function( inc ) {
+    Entity.prototype.incrementMana = function(inc) {
 
         if (!(this.state.mana <= 0 && inc < 0)) {
             this.state.mana += inc;
@@ -73,35 +75,36 @@ define('threearena/entity',
         return this.state.mana;
     };
 
-    Entity.prototype.isAlive = function( ) {
+    Entity.prototype.isAlive = function() {
 
         return ! this.isDead();
     };
 
-    Entity.prototype.isOutOfMana = function( ) {
+    Entity.prototype.isOutOfMana = function() {
 
         return this.state.mana <= 0;
     };
 
-    Entity.prototype.moveAlong = function( linepoints ) {
+    Entity.prototype.moveAlong = function(linepoints) {
 
     };
+
 
     // TODO: Make entity an event emitter
     Entity.prototype.events = {
         'changed': [],
     };
-    Entity.prototype.emit = function( eventName, data ) {
+    Entity.prototype.emit = function(eventName, data) {
         _.each(this.events[eventName], function(callback){
             callback(data);
         });
     };
-    Entity.prototype.on = function( eventName, callback ) {
+    Entity.prototype.on = function(eventName, callback) {
         this.events[eventName] = this.events[eventName] || [];
         this.events[eventName].push(callback);
     };
 
-    Entity.prototype.hit = function( spell ) {
+    Entity.prototype.hit = function(spell) {
 
         var meleeLifeDamageReceived = 0,
             magicLifeDamageReceived = 0,
@@ -116,8 +119,8 @@ define('threearena/entity',
         var totalLifeDamage = meleeLifeDamageReceived + magicLifeDamageReceived;
 
         // apply hits
-        this.incrementLife( -totalLifeDamage );
-        this.incrementMana( -manaDamageReceived );
+        this.incrementLife(-totalLifeDamage);
+        this.incrementMana(-manaDamageReceived);
         this.updateLifeBar();
 
         log(log.COMBAT, '%o hit %o with %o : %d + %d + %d (%s) - %s' ,
@@ -130,18 +133,18 @@ define('threearena/entity',
         if (! this.isDead()) {
 
             if (meleeLifeDamageReceived > 0) {
-                this.emit( 'changed' , { amount: meleeLifeDamageReceived })
+                this.emit('changed' , { amount: meleeLifeDamageReceived })
             }
             if (manaDamageReceived > 0) {
-                this.emit( 'manadamage' , { amount: manaDamageReceived })
+                this.emit('manadamage' , { amount: manaDamageReceived })
             }
             if (damageAbsorbed > 0) {
-                this.emit( 'absorbeddamage' , { amount: damageAbsorbed })
+                this.emit('absorbeddamage' , { amount: damageAbsorbed })
             }
 
         } else {
 
-            this.emit( 'death' , { amount: totalLifeDamage });
+            this.emit('death' , { amount: totalLifeDamage });
         }
     };
 

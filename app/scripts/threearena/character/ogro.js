@@ -5,13 +5,13 @@ define('threearena/character/ogro',
 
         var self = this;
 
-        this.options = _.merge({
+        options = _.merge({
 
             life: 100,
             mana: 0,
 
             name: 'Ogro',
-            image: '/gamedata/models/ogro/portrait.png',
+            image: '/gamedata/models/ogro/portrait.gif',
 
             modelOptions: {
                 baseUrl: '/gamedata/models/ogro/',
@@ -47,7 +47,7 @@ define('threearena/character/ogro',
 
         }, options);
 
-        Character.apply( this, [ this.options ]);
+        Character.apply( this, [ options ]);
 
         this.character = new THREE.MD2CharacterComplex();
         this.character.scale = .3;
@@ -85,7 +85,7 @@ define('threearena/character/ogro',
             self.add(self.character.root);
         };
 
-        baseCharacter.loadParts( self.options.modelOptions );
+        baseCharacter.loadParts( options.modelOptions );
     };
 
     Ogro.prototype = new Character();

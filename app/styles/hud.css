@@ -1,0 +1,74 @@
+
+#hud-container {
+    position: absolute;
+    bottom: 0;
+    height: 150px;
+    width: 100%;
+    background: #222;
+    z-index: -10;
+    display: none;
+}
+#hud-container .portrait {
+    position: relative;
+    left: 15%;
+    top: 5%;
+    -background: #F00;
+    width: 125px;
+    height: 130px;
+}
+#hud-container .portrait .portrait-name {
+    position: relative;
+    top: 0;
+    width: 100%;
+    height: 20px;
+    padding: 4px;
+    color: #fff;
+}            
+#hud-container .portrait .portrait-image {
+    background-size: cover;
+    position: relative;
+    top: 0px;
+    width: 100%;
+    left: 0px;
+    height: 90px;
+}
+#hud-container .portrait .portrait-life {
+    width: 100%;
+    height: 10px;
+    position: relative;
+    bottom: 0;
+}
+#hud-container .portrait .portrait-life .bar {
+    background: #0F0;
+    height: 100%;
+    width: 0%;
+    font-size: 10px;
+    line-height: 9px;
+}
+#hud-container .portrait .portrait-mana {
+    width: 100%;
+    height: 10px;
+    position: relative;
+    bottom: 0;
+}
+#hud-container .portrait .portrait-mana .bar {
+    background: #00F;
+    height: 100%;
+    width: 0%;
+    font-size: 10px;
+    line-height: 9px;
+}
+#hud-container .actions {
+    position: absolute;
+    top: 5%;
+    background: #F00;
+    width: 400px;
+    height: 100px;
+    right: 15%;
+}
+#hud-container .actions > div {
+    height: 50%;
+    width: 15%;
+    float: left;
+    background: blueviolet;
+}

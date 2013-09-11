@@ -1,21 +1,21 @@
 define('threearena/character',
     ['lodash', 'threejs', 'threearena/log', 'threearena/utils', 'threearena/entity'], function(_, THREE, log, Utils, Entity) {
 
-    var Character = function( options ) {
+    var Character = function(options) {
 
-        Entity.apply( this );
+        Entity.apply(this, [ options ]);
     };
 
     Character.prototype = new Entity();
 
     ////////////////
 
-    Character.prototype.update = function( delta ) {
+    Character.prototype.update = function(delta) {
 
-        this.character.update( delta )
+        this.character.update(delta)
     };
 
-    Character.prototype.moveAlong = function( linepoints ) {
+    Character.prototype.moveAlong = function(linepoints) {
 
         var self = this;
         
@@ -25,7 +25,7 @@ define('threearena/character',
             delete self.currentTween;
         }
 
-        this.currentTween = Utils.moveAlong( self, linepoints, {
+        this.currentTween = Utils.moveAlong(self, linepoints, {
             onStart: function(){
                 self.character.controls.moveForward = true;
             },
