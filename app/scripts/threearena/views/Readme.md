@@ -8,7 +8,6 @@ Example
 
  * EntityView
 ```javascript
-
 var EntityViewModel = function(entity) {
 
     this.life = ko.observable();
@@ -22,11 +21,11 @@ var EntityViewModel = function(entity) {
 
  * HUD template
 ```html
-
 <div id="view-character">
-
         <div class="portrait-name" data-bind="text: name"></div>
+
         <div class="portrait-image" data-bind="style:{ backgroundImage: 'url(' + image() + ')' }"></div>
+
         <div class="portrait-life">
             <div class="bar" data-bind="text: life(), style: { width: life() + '%' }"></div>
         </div>
@@ -34,6 +33,5 @@ var EntityViewModel = function(entity) {
         <div class="portrait-mana">
             <div class="bar" data-bind="text: mana(), style: { width: mana() + '%' }"></div>
         </div>
-
 </div>
 ```
