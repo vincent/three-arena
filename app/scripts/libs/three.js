@@ -1,6 +1,7 @@
 THREE = {};
 define([
 	'threejs',
+	'MD2Character',
 	'MD2CharacterComplex',
 	'OBJLoader',
 	'MTLLoader',
@@ -19,6 +20,7 @@ define([
 	'MaskPass'
 ], function (
 	THREE,
+	MD2Character,
 	MD2CharacterComplex,
 	OBJLoader,
 	MTLLoader,

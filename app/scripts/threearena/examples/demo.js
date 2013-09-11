@@ -1,6 +1,8 @@
 
 define('threearena/examples/demo',
-    ['lodash', 'threejs', '../game', '../character/ogro'], function(_, THREE, Game, Ogro){
+    ['lodash', 'threejs', '../game', '../character/ogro', 'threearena/character/ratamahatta'],
+
+    function(_, THREE, Game, Ogro, Ratamahatta){
     'use strict';
 
 	var Demo = function() {
@@ -13,7 +15,7 @@ define('threearena/examples/demo',
                 spawn: new THREE.Vector3( 0, 0, 0 ),
                 origin: new THREE.Vector3( 0, 0, 0 ),
                 maporigin: new THREE.Vector3( -142, 0, 139 ),
-                neartower: new THREE.Vector3(  -51, 0, 62 )
+                neartower: new THREE.Vector3(  -51, 14, 62 )
             },
 
 			preload: [
@@ -44,8 +46,14 @@ define('threearena/examples/demo',
     Demo.prototype = _.clone(Game.prototype);
 
     Demo.prototype.afterCreate = function() {
+        window.character = new Ogro();
+        this.addCharacter( window.character );
 
-        this.addCharacter( new Ogro() );
+        var ennemy = new Ogro();
+        //this.addCharacter( ennemy );
+
+        var ennemy2 = new Ratamahatta();
+        this.addCharacter( ennemy2 , this.settings.positions.maporigin );
     };
 
     Demo.prototype._initGround = function( done ) {
@@ -82,7 +90,7 @@ define('threearena/examples/demo',
 
         // model
         var loader = new THREE.OBJLoader( );
-        loader.load( '/gamedata/dota_simple.obj', function ( object ) {
+        loader.load( '/gamedata/maps/mountains.obj', function ( object ) {
             self.ground = object;
             //self.ground.receiveShadow = true;
 

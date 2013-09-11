@@ -94,7 +94,7 @@ define('threearena/elements/tower',
         this._firing = true;
         
         var startPosition = this.position.clone().setY(28);
-        var vectorPosition = target.position.clone().add(startPosition).divideScalar(2).setY(28 + 5);
+        var vectorPosition = target.position.clone().add(startPosition).divideScalar(2).setY(28 + 0);
 
         var self = this,
             line = new THREE.SplineCurve3([ startPosition, vectorPosition, target.position ]),

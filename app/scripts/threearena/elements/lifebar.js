@@ -29,16 +29,22 @@ define('threearena/elements/lifebar',
     };
 
     LifeBar.prototype.setLife = function(life) {
-        if (life > 0) {
-            this.lifebar.visible = true;
+        if (life === false) {
+            this.remove(this.lifebar);
+
+        } else if (life > 0) {
             this.lifebar.scale.setX(life);
+
         } else {
             this.lifebar.visible = false;
         }
     };
 
     LifeBar.prototype.setMana = function(mana) {
-        if (mana > 0) {
+        if (mana === false) {
+            this.remove(this.manabar);
+
+        } else if (mana > 0) {
             this.manabar.visible = true;
             this.manabar.scale.setX(mana);
         } else {

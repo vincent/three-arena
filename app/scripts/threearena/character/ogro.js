@@ -8,7 +8,7 @@ define('threearena/character/ogro',
         options = _.merge({
 
             life: 100,
-            mana: 0,
+            mana: false,
 
             name: 'Ogro',
             image: '/gamedata/models/ogro/portrait.gif',
@@ -41,7 +41,7 @@ define('threearena/character/ogro',
                     crouchIdle: 'cstand',
                     crouchAttach: 'crattack'
                 },
-                walkSpeed: 350,
+                walkSpeed: 300,
                 crouchSpeed: 175
             }
 
@@ -50,7 +50,7 @@ define('threearena/character/ogro',
         Character.apply( this, [ options ]);
 
         this.character = new THREE.MD2CharacterComplex();
-        this.character.scale = .3;
+        this.character.scale = .15;
         this.character.controls = {
             moveForward: false,
             moveBackward: false,

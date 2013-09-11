@@ -53,8 +53,8 @@ define('threearena/entity',
     Entity.prototype.updateLifeBar = function() {
 
         var eventData = {
-            life: this._baseLife > 0 ? 1 / this._baseLife * this.state.life : 0,
-            mana: this._baseMana > 0 ? 1 / this._baseMana * this.state.mana : 0
+            life: this._baseLife === false ? false : this._baseLife > 0 ? 1 / this._baseLife * this.state.life : 0,
+            mana: this._baseMana === false ? false : this._baseMana > 0 ? 1 / this._baseMana * this.state.mana : 0
         };
 
         this.trigger('changed', eventData);

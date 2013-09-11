@@ -15,6 +15,7 @@ require.config({
         tweenjs:        '../bower_components/threejs/examples/js/libs/tween.min',
         knockoutmapping:'../bower_components/knockout-mapping/knockout.mapping',
 
+        MD2Character:   '../bower_components/threejs/examples/js/MD2Character',
         MD2CharacterComplex: '../bower_components/threejs/examples/js/MD2CharacterComplex',
         OBJLoader:      '../bower_components/threejs/examples/js/loaders/OBJLoader',
         MTLLoader:      '../bower_components/threejs/examples/js/loaders/MTLLoader',
@@ -45,6 +46,9 @@ require.config({
         },
         threearena: {
             exports: 'THREEARENA',
+        },
+        MD2Character: {
+            exports: 'THREE.MD2Character'
         },
         MD2CharacterComplex: {
             exports: 'THREE.MD2CharacterComplex'

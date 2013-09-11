@@ -7,8 +7,9 @@ define('threearena/game',
     'threearena/elements/tower', 
     'threearena/particles/cloud', 
     'threearena/controls/dota',
-    'threearena/pathfinding/recast.emcc.dotademo',
+    'threearena/pathfinding/recast.emcc.dota.mountains',
     
+    'MD2Character',
     'MD2CharacterComplex',
     'OBJLoader',
     'MTLLoader',
@@ -58,9 +59,9 @@ define('threearena/game',
     Game.prototype.preload = function(done) {
 
         Config = {};
-        PathFinding.set_cellSize(2);
-        PathFinding.set_cellHeight(2);
-        PathFinding.initWithFile('/build/obj/sc2/dota_simple.obj');
+        PathFinding.set_cellSize(1);
+        PathFinding.set_cellHeight(1);
+        PathFinding.initWithFile('/gamedata/maps/mountains.obj');
         PathFinding.build();
         require(this.settings.preload, done);
 
@@ -121,7 +122,7 @@ define('threearena/game',
 
         this.scene = new THREE.Scene();
         this.scene.fog = new THREE.FogExp2( 0x0, 0.00055 );
-        this.scene.fog = new THREE.Fog( 0x000000, 1, 500 );
+        this.scene.fog = new THREE.Fog( 0x000000, 1, 200 );
     };
 
     Game.prototype._initLights = function() {
@@ -274,7 +275,7 @@ define('threearena/game',
                 loader.load('/gamedata/dota_trees.obj', function (object) {
                     object.traverse(function (child) {
                         if (child instanceof THREE.Mesh) {
-                            for (var i = 0; i < child.geometry.vertices.length && i < 100; i++) {
+                            for (var i = 0; i < child.geometry.vertices.length && i < 50; i++) {
                                 self.newTree(child.geometry.vertices[i]);
                             }
                         }
@@ -287,11 +288,12 @@ define('threearena/game',
                 var loader = new THREE.OBJMTLLoader();
                 loader.addEventListener('load', function (event) {
                     var object = event.content;
-                    object.position.set(-151, 0, 122);
-                    object.children[0].scale.set(0.1, 0.1, 0.1);
+                    //object.position.set(-151, 0, 122);
+                    object.position.set(-70, 17, 60);
+                    object.children[0].scale.set(0.05, 0.05, 0.05);
 
                     var aura = Particles.Aura('point', 10, THREE.ImageUtils.loadTexture('/gamedata/textures/lensflare1_alpha.png'));
-                    aura.particleCloud.position.set(0, 20, 6);
+                    aura.particleCloud.position.set(1, 12, 5);
                     object.add(aura.particleCloud);
                     aura.start();
 
