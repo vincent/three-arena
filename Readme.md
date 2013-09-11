@@ -2,6 +2,7 @@ Three Arena
 ===
 
 > A Dota-like game experiment
+> Demo http://ec2-54-228-33-93.eu-west-1.compute.amazonaws.com:9000
 
 Current status
 ===
