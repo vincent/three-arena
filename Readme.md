@@ -11,7 +11,7 @@ Current status
 Show me the code
 ===
 
-* The main game codebase is in app/scripts/threearena
+* The main game codebase is in the [threearena directory](app/scripts/threearena)
 * Libraries used
  - RequireJS
  - Lo-Dash
