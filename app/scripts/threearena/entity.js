@@ -1,6 +1,8 @@
 
 define('threearena/entity',
-    ['lodash', 'threejs', 'knockout', 'threearena/log', 'threearena/utils', 'threearena/elements/lifebar'], function(_, THREE, ko, log, Utils, LifeBar) {
+    ['lodash', 'microevent', 'threejs', 'knockout', 'threearena/log', 'threearena/utils', 'threearena/elements/lifebar'],
+
+    function(_, MicroEvent, THREE, ko, log, Utils, LifeBar) {
 
     var Entity = function(options) {
 
@@ -30,7 +32,7 @@ define('threearena/entity',
         this._baseMana = this.state.mana;
 
         this.attachLifeBar();
-        this.emit('changed', this.state);
+        this.trigger('changed', this.state);
     };
 
     Entity.prototype = new THREE.Object3D();
@@ -49,7 +51,7 @@ define('threearena/entity',
             mana: this._baseMana > 0 ? 1 / this._baseMana * this.state.mana : 0
         };
 
-        this.emit('changed', eventData);
+        this.trigger('changed', eventData);
 
         this.lifebar.set(eventData);
     };
@@ -91,18 +93,18 @@ define('threearena/entity',
 
 
     // TODO: Make entity an event emitter
-    Entity.prototype.events = {
-        'changed': [],
-    };
-    Entity.prototype.emit = function(eventName, data) {
-        _.each(this.events[eventName], function(callback){
-            callback(data);
-        });
-    };
-    Entity.prototype.on = function(eventName, callback) {
-        this.events[eventName] = this.events[eventName] || [];
-        this.events[eventName].push(callback);
-    };
+    // Entity.prototype.events = {
+    //     'changed': [],
+    // };
+    // Entity.prototype.emit = function(eventName, data) {
+    //     _.each(this.events[eventName], function(callback){
+    //         callback(data);
+    //     });
+    // };
+    // Entity.prototype.on = function(eventName, callback) {
+    //     this.events[eventName] = this.events[eventName] || [];
+    //     this.events[eventName].push(callback);
+    // };
 
     Entity.prototype.hit = function(spell) {
 
@@ -133,22 +135,23 @@ define('threearena/entity',
         if (! this.isDead()) {
 
             if (meleeLifeDamageReceived > 0) {
-                this.emit('changed' , { amount: meleeLifeDamageReceived })
+                this.trigger('changed' , { amount: meleeLifeDamageReceived })
             }
             if (manaDamageReceived > 0) {
-                this.emit('manadamage' , { amount: manaDamageReceived })
+                this.trigger('manadamage' , { amount: manaDamageReceived })
             }
             if (damageAbsorbed > 0) {
-                this.emit('absorbeddamage' , { amount: damageAbsorbed })
+                this.trigger('absorbeddamage' , { amount: damageAbsorbed })
             }
 
         } else {
 
-            this.emit('death' , { amount: totalLifeDamage });
+            this.trigger('death' , { amount: totalLifeDamage });
         }
     };
 
     Entity.prototype.constructor = Entity;
+    MicroEvent.mixin(Entity);
 
     return Entity;
 });

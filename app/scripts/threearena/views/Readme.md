@@ -15,7 +15,7 @@ var EntityViewModel = function(entity) {
  
     this.update = function(newState){ ... }
 
-    entity.on('changed', this.update);
+    entity.bind('changed', this.update);
 };
 ```
 

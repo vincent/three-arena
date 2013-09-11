@@ -8,10 +8,11 @@ require.config({
         jquery:         '../bower_components/jquery/jquery',
         lodash:         '../bower_components/lodash/lodash',
         async:          '../bower_components/async/lib/async',
-        tweenjs:        '../bower_components/threejs/examples/js/libs/tween.min',
-        sparks:         '../bower_components/threejs/examples/js/Sparks',
         threejs:        '../bower_components/threejs/build/three',
         knockout:       '../bower_components/knockout.js/knockout', // not by KO's mainteners
+        microevent:     '../bower_components/microevent/microevent',
+        sparks:         '../bower_components/threejs/examples/js/Sparks',
+        tweenjs:        '../bower_components/threejs/examples/js/libs/tween.min',
         knockoutmapping:'../bower_components/knockout-mapping/knockout.mapping',
 
         MD2CharacterComplex: '../bower_components/threejs/examples/js/MD2CharacterComplex',

@@ -18,7 +18,7 @@ define('threearena/views/entityview',
             });
         };
 
-        entity.on('changed', _.bind( this.update, this ));
+        entity.bind('changed', _.bind( this.update, this ));
     };
 
     return EntityViewModel;
