@@ -22,24 +22,37 @@ define('threearena/utils',
                 from: 0,
                 to: 1,
 
+                start: true,
+
+                onStart: null,
+                onComplete: null,
+                onUpdate: null,
+
                 smoothness: 100,
                 easing: TWEEN.Easing.Linear.None,
 
             }, options);
 
             // array of vectors to determine shape
-            var shape = ( shape instanceof THREE.Shape ? shape : new THREE.SplineCurve3( shape ) );
+            var shape;
+            if (shape instanceof THREE.Shape) {
+
+            } else if (_.isArray(shape)) {
+                shape = new THREE.SplineCurve3(shape);
+            } else {
+                throw '2nd argument is not a Shape, nor an array of vertices';
+            }
 
             options.duration = options.duration || shape.getLength() * 70;
 
-            return new TWEEN.Tween({ distance: options.from })
+            var tween = new TWEEN.Tween({ distance: options.from })
                 .to({ distance: options.to }, options.duration) // use 
                 .easing( options.easing )
                 .onStart(function(){
-                    options.onStart();
+                    options.onStart && options.onStart();
                 })
                 .onComplete(function(){
-                    options.onComplete();
+                    options.onComplete && options.onComplete();
                 })
                 .onUpdate(function(){
                     // get the position data half way along the path
@@ -50,9 +63,11 @@ define('threearena/utils',
 
                     object.updateMatrix();
 
-                    options.onUpdate(this, shape);
-                })
-                .start();
+                    options.onUpdate && options.onUpdate(this, shape);
+                });
+
+            options.start && tween.start();
+            return tween;
         }
     };
 });

@@ -36,35 +36,45 @@ define('threearena/character',
         this.character.update(delta)
     };
 
-    Character.prototype.moveAlong = function(linepoints) {
+    Character.prototype.moveAlong = function(linepoints, options) {
 
         var self = this;
         
         // stop current move
-        if (self.currentTween) {
+        if (self.currentTween && self.currentTween.stop) {
             self.currentTween.stop();
             delete self.currentTween;
         }
 
-        this.currentTween = Utils.moveAlong(self, linepoints, {
+        options = _.merge({
             onStart: function(){
                 self.character.controls.moveForward = true;
+                self.character.setAnimation('run');
             },
             onComplete: function(){
                 self.character.controls.moveForward = false;
+                self.character.setAnimation('stand');
             },
             onUpdate: function(tween, shape) {
+                if (self.character.activeAnimation !== 'run') {
+                    self.character.setAnimation('run');
+                }
+
                 // get the orientation angle quarter way along the path
                 var tangent = shape.getTangent(tween.distance);
                 var angle = Math.atan2(-tangent.z, tangent.x);
 
                 // set angle of the man at that position
-                // object.rotation.y = angle;
-                self.character.meshes.forEach(function(m){
-                    m.rotation.y = angle;
-                });
-            }
-        });
+                //self.rotation.y = angle;
+                if (_.isArray(self.character.meshes)) {
+                    self.character.meshes.forEach(function(m){
+                        m.rotation.y = angle;
+                    });
+                }
+            }            
+        }, options);
+
+        this.currentTween = Utils.moveAlong(self, linepoints, options);
         return this.currentTween;
     };
 

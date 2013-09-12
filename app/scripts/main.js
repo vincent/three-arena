@@ -12,7 +12,7 @@ require.config({
         knockout:       '../bower_components/knockout.js/knockout', // not by KO's mainteners
         microevent:     '../bower_components/microevent/microevent',
         sparks:         '../bower_components/threejs/examples/js/Sparks',
-        tweenjs:        '../bower_components/threejs/examples/js/libs/tween.min',
+        tweenjs:        '../bower_components/tween.js/build/tween.min',
         knockoutmapping:'../bower_components/knockout-mapping/knockout.mapping',
 
         MD2Character:   '../bower_components/threejs/examples/js/MD2Character',

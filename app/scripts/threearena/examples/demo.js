@@ -1,8 +1,8 @@
 
 define('threearena/examples/demo',
-    ['lodash', 'threejs', '../game', '../character/ogro', 'threearena/character/ratamahatta'],
+    ['lodash', 'threejs', '../game', '../utils', '../character/ogro', 'threearena/character/ratamahatta'],
 
-    function(_, THREE, Game, Ogro, Ratamahatta){
+    function(_, THREE, Game, Utils, Ogro, Ratamahatta){
     'use strict';
 
 	var Demo = function() {
@@ -46,14 +46,27 @@ define('threearena/examples/demo',
     Demo.prototype = _.clone(Game.prototype);
 
     Demo.prototype.afterCreate = function() {
-        window.character = new Ogro();
-        this.addCharacter( window.character );
 
-        var ennemy = new Ogro();
-        //this.addCharacter( ennemy );
+        var rata = new Ratamahatta();
+window.rata = rata;
 
-        var ennemy2 = new Ratamahatta();
-        this.addCharacter( ennemy2 , this.settings.positions.maporigin );
+        // Another character
+        var ogro = new Ogro();
+
+        this.addCharacter( ogro );
+        this.addCharacter( rata );
+
+        // Move Ogro along a path
+        var path = [ 
+            new THREE.Vector3(  -64.7, 14.6, 63.8 ),
+            new THREE.Vector3( -101.9, 10.7, 39.6 ),
+            new THREE.Vector3(  -94.6,  6.0, -6.3 ),
+            new THREE.Vector3(  -40.6,  5.9,  2.4 ),
+            new THREE.Vector3(  -35.7,  6.6, 22.4 ),  
+        ];
+
+        var tween = rata.moveAlong( path ); //, { start: false } ).start();
+        tween.repeat( Infinity ).yoyo( true ).start( );
     };
 
     Demo.prototype._initGround = function( done ) {
