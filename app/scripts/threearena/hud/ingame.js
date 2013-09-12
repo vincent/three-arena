@@ -19,14 +19,13 @@ define('threearena/hud/ingame',
 		this.root.classList.remove( 'fadeOutDownBig' );
 		this.root.classList.add( 'fadeInDownBig' );
 		this.root.style.display = 'block';
-		this.root.style.zIndex = 10000;
+		this.root.style.height = '257px';
 	};
 
 	GameHud.prototype.close = function () {
 
 		this.root.classList.remove( 'fadeInDownBig' );
 		this.root.classList.add( 'fadeOutDownBig' );
-		this.root.style.zIndex = -2;
 		this.root.style.height = 0;
 	};
 

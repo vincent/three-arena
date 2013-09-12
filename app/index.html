@@ -73,46 +73,40 @@
 
         <div id="hud-container">
 
-            <div id="view-character">
-                <div class="portrait">
-                    <div class="name" data-bind="text: name"></div>
-                    <div class="level" data-bind="text: level"></div>
-                    <div class="xp">
-                        <span class="bar" data-bind="text: xpprogress"></span>
-                    </div>
-                    <div class="image" data-bind="style:{ backgroundImage: 'url(' + image() + ')' }"></div>
+            <div class="view front"></div>
+
+            <div class="view" id="view-character">
+                <div class="name" data-bind="text: name"></div>
+                <div class="level" data-bind="text: level"></div>
+                <div class="xp">
+                    <span class="bar" data-bind="text: xpprogress"></span>
+                </div>
+                <div class="image" data-bind="style:{ backgroundImage: 'url(' + image() + ')' }"></div>
+
+                <div class="strength" data-bind="text: strength"></div>
+                <div class="agility" data-bind="text: agility"></div>
+                <div class="intelligence" data-bind="text: intelligence"></div>
+
+                <div class="life">
+                    <div class="bar" data-bind="text: life(), style: { width: life() + '%' }"></div>
+                </div>
+                <div class="mana">
+                    <div class="bar" data-bind="text: mana(), style: { width: mana() + '%' }"></div>
                 </div>
 
-                <div class="attributes">
-                    <div class="strength" data-bind="text: strength"></div>
-                    <div class="agility" data-bind="text: agility"></div>
-                    <div class="intelligence" data-bind="text: intelligence"></div>
-                </div>
-
-                <div class="health">
-                    <div class="life">
-                        <div class="bar" data-bind="text: life(), style: { width: life() + '%' }"></div>
-                    </div>
-                    <div class="mana">
-                        <div class="bar" data-bind="text: mana(), style: { width: mana() + '%' }"></div>
-                    </div>
-                </div>
-
-                <div class="abilities">
-                    <ul data-bind="foreach: abilities">
-                        <li>
-                            <div class="image" data-bind="style: { backgroundImage: 'url(' + image() + ')' }">
-                                <span class="cooldown"></span>
-                            </div>
-                            <div class="level" data-bind="style: { backgroundImage: 'url(' + '/gamedata/hud/abilities/level_' + level() + '.png)' }">
-                        </li>
-                    </ul>
-                </div>
+                <ul data-bind="foreach: abilities">
+                    <li>
+                        <div class="image" data-bind="style: { backgroundImage: 'url(' + image() + ')' }">
+                            <span class="cooldown"></span>
+                        </div>
+                        <div class="level" data-bind="style: { backgroundImage: 'url(' + '/gamedata/hud/abilities/level_' + level() + '.png)' }">
+                    </li>
+                </ul>
             </div>
 
-            <div id="view-map">
+            <div class="view" id="view-map">
                 <div class="daylight"></div>
-                <div class="map"></div>
+                <canvas class="map"></canvas>
             </div>
 
         </div>

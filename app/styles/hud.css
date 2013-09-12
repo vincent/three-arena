@@ -1,102 +1,150 @@
 
 #hud-container {
+    background: url(/gamedata/hud/default/blackground.png) no-repeat 0 0;
+    background-size: cover;
     position: absolute;
     bottom: 0;
-    height: 150px;
+    height: 257px;
     width: 100%;
-    background: #222;
-    z-index: -10;
+    z-index: 0;
     display: none;
 }
-#hud-container .portrait {
-    position: relative;
-    left: 15%;
-    top: 5%;
-    -background: #F00;
-    width: 125px;
-    height: 130px;
-}
-#hud-container .portrait .name {
-    position: relative;
-    top: 0;
+#hud-container .view {
+    position: absolute;
     width: 100%;
-    height: 20px;
-    padding: 4px;
-    color: #fff;
-}            
-#hud-container .portrait .image {
+    height: 100%;
+    z-index: 1;
+}
+#hud-container div.front {
+    background: url(/gamedata/hud/default/background.png) no-repeat 0 0;
+    background-size: cover;
+    z-index: 2;
+}
+
+
+
+#hud-container .name {
+    position: absolute;
+    top: 24.5%;
+    width: 9%;
+    height: 8%;
+    padding: 0;
+    color: #FFF;
+    left: 22%;
+    font-size: 89%;
+    text-align: center;
+}
+#hud-container .level {
+    position: absolute;
+    height: 10%;
+    width: 2%;
+    top: 91%;
+    left: 20%;
+    text-align: center;
+}
+#hud-container .image {
     background-size: cover;
     position: relative;
-    top: 20px;
-    width: 100%;
-    left: 0px;
-    height: 90px;
+    top: 34%;
+    width: 10%;
+    left: 22%;
+    height: 55%;
 }
-#hud-container .portrait .level {
+#hud-container .strength {
+    text-align: center;
+    font-size: 63%;
     position: absolute;
-    height: 20px;
-    width: 40px;
-    top: 20px;
-    left: 0;
+    top: 60%;
+    height: 5%;
+    left: 42%;
+    width: 1.6%;
 }
-#hud-container .portrait .xp {
+#hud-container .agility {
+    text-align: center;
+    font-size: 63%;
     position: absolute;
-    left: 40px;
+    width: 1.6%;
+    top: 73.7%;
+    height: 5%;
+    left: 42%;
+}
+#hud-container .intelligence {
+    text-align: center;
+    font-size: 63%;
+    position: absolute;
+    width: 1.6%;
+    height: 5%;
+    left: 42%;
+    top: 87%;
+}
+#hud-container .xp {
+    position: absolute;
     height: 20px;
     width: 85px;
+    left: 40px;
 }
-#hud-container .portrait .xp .bar {
+#hud-container .xp .bar {
     background-image: url(/gamedata/textures/lifebar.png);
     position: absolute;
     width: 0%;
 }
-#hud-container .health .life {
-    width: 100%;
-    height: 10px;
-    position: relative;
-    bottom: 0;
-}
-#hud-container .health .life .bar {
-    background-image: url(/gamedata/textures/lifebar.png);
-    background-color: #0F0;
-    height: 10px;
-    width: 0%;
-    font-size: 10px;
-    line-height: 9px;
-}
-#hud-container .health {
+#hud-container .life {
     position: absolute;
-    left: 40%;
-    height: 50px;
-    top: 0;
-    width: 200px;
+    background: #000;
+    left: 46.3%;
+    width: 30%;
+    height: 6%;
+    top: 46%;
 }
-#hud-container .health .mana {
-    width: 100%;
-    height: 10px;
-    position: relative;
-    bottom: 0;
+#hud-container .life .bar {
+    background: url(/gamedata/hud/default/life_end.png) 0 0;
+    background: linear-gradient(to right, #0D0, #AFA);
+    position: absolute;
+    text-align: center;
+    line-height: 19px;
+    font-size: 93%;
+    height: 110%;
+    color: #FFF;
+    width: 0%;
+    top: -5%;
 }
-#hud-container .health .mana .bar {
-    background-image: url(/gamedata/textures/lifebar.png);
-    background-color: #00D6FF;
+#hud-container .mana {
+    position: absolute;
+    background: #000;
+    width: 30%;
+    height: 5%;
+    left: 46.3%;
+    top: 53%;
+}
+#hud-container .mana .bar {
+    background-image: url(/gamedata/hud/default/mana_end.png) repeat 0 0;
+    background: linear-gradient(to right, #00D, #AAF);
+    line-height: 9px;
+    font-size: 10px;
     height: 10px;
     width: 0%;
-    font-size: 10px;
-    line-height: 9px;
 }
 #hud-container .abilities {
     position: absolute;
-    left: 40%;
+    width: 200px;
     height: 50px;
     top: 50px;
-    width: 200px;
+    left: 40%;
 }
 #hud-container .attributes {
     position: absolute;
-    left: 40%;
-    height: 50px;
-    top: 50px;
     width: 200px;
+    height: 50px;
+    left: 40%;
+    top: 50px;
+}
+
+
+#hud-container .map {
+    position: absolute;
+    width: 18.6%;
+    height: 83%;
+    left: 0.5%;
+    top: 12%;
 }
 
