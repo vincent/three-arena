@@ -48,7 +48,6 @@ define('threearena/examples/demo',
     Demo.prototype.afterCreate = function() {
 
         var rata = new Ratamahatta();
-window.rata = rata;
 
         // Another character
         var ogro = new Ogro();

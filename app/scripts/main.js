@@ -101,18 +101,17 @@ require.config({
     }
 });
 
-require([ 'threejs', 'threearena/examples/demo' ], function ( THREE, Demo ) {
+require([ 'lodash', 'threejs', 'threearena/examples/demo' ], function ( _, THREE, Demo ) {
     'use strict';
 
     // Launch demo
-    var game = new Demo();
+    var game = window.game = new Demo();
 
     var playButton = document.getElementById('game-play');
     playButton.addEventListener('click', function(){
         game.preload(function (argument) {
 
-            game.init();
-            game.start();
+            game.init( _.bind(game.start, game));
         });
     });
 

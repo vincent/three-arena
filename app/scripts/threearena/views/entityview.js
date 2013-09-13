@@ -10,10 +10,9 @@ define('threearena/views/entityview',
             self[k] = ko.observable(v); // .extend({notify: 'always'});
         });
 
-        this.xpprogress = ko.computed(function(){
+        this.xpprogress = ko.computed(function() {
             return 'n/a';
         }, this);
-
 
         ////////////////////////////////     
         this.update = function(values) {

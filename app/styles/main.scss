@@ -9,6 +9,10 @@ $icon-font-path: "/bower_components/sass-bootstrap/fonts/";
     padding: 0.2em 0;
 }
 
+html, body {
+    background: #555;
+}
+
 /* Space out content a bit */
 body {
     padding: 0;
@@ -87,5 +91,6 @@ body {
     /* Remove the bottom border on the jumbotron for visual effect */
     .jumbotron {
         border-bottom: 0;
+        margin-top: 60px;
     }
 }

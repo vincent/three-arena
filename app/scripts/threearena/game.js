@@ -69,13 +69,24 @@ define('threearena/game',
 
     Game.prototype.init = function( ready ) {
 
+        var self = this;
+
         this.settings.container.innerHTML = '';
+
+        this.trigger('before:init');
 
         //////////
 
         this._trees  = [];
         this.towers = [];
         this.ground = null;
+
+        //////////
+
+        var ThreeArenaGlobalEvents = function(){};
+        MicroEvent.mixin(ThreeArenaGlobalEvents);
+
+        window._ta_events = new ThreeArenaGlobalEvents();
 
         //////////
 
@@ -109,7 +120,16 @@ define('threearena/game',
 
         this._initRenderer();
 
-        this._fillMap( ready );
+        this.trigger('before:fillmap');
+
+        this._fillMap(function() {
+
+            self.hud.attachGame(self);
+
+            self.trigger('ready', self);
+
+            ready();
+        });
     };
 
     Game.prototype._initCamera = function() {
@@ -279,7 +299,7 @@ define('threearena/game',
                                 self.newTree(child.geometry.vertices[i]);
                             }
                         }
-                    } );
+                    });
                     self.scene.add(self._treesGroup);
                     callback();
                 });
@@ -306,7 +326,10 @@ define('threearena/game',
                 });
                 loader.load('/gamedata/models/lightning_pole/lightning_pole.obj', '/gamedata/models/lightning_pole/lightning_pole.mtl');
             },
-            _.bind(this.afterCreate, this),
+            function(callback) {
+                self.afterCreate();
+                callback();
+            }
         ], main_callback);
     };
 
@@ -419,14 +442,11 @@ define('threearena/game',
 
     Game.prototype.start = function() {
 
-        var ThreeArenaGlobalEvents = function(){};
-        MicroEvent.mixin(ThreeArenaGlobalEvents);
-
-        window._ta_events = new ThreeArenaGlobalEvents();
-
         this._initListeners();
 
         this.hud.open();
+
+        this.trigger('start');
 
         this.animate();
     };
@@ -441,6 +461,8 @@ define('threearena/game',
         this.delta = this.clock.getDelta();
 
         window._ta_events.trigger('update', this);
+
+        this.trigger('update', this);
 
         this.cameraControls.update(this.delta);
         this.camera.position.y = 60; // crraaaapp //

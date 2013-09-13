@@ -1,6 +1,8 @@
 
 define('threearena/hud/ingame',
-	['lodash', 'jquery', 'threejs', 'knockout', 'threearena/views/entityview', 'threearena/log', 'threearena/utils', 'threearena/entity'], function(_, $, THREE, ko, EntityView, log, Utils, Entity) {
+	['lodash', 'jquery', 'threejs', 'knockout', 'threearena/views/entityview', 'threearena/views/gameview', 'threearena/log', 'threearena/utils', 'threearena/entity', 'threearena/game'],
+
+	function(_, $, THREE, ko, EntityView, GameView, log, Utils, Entity, Game) {
 
 	var GameHud = function (element) {
 		
@@ -19,7 +21,7 @@ define('threearena/hud/ingame',
 		this.root.classList.remove( 'fadeOutDownBig' );
 		this.root.classList.add( 'fadeInDownBig' );
 		this.root.style.display = 'block';
-		this.root.style.height = '257px';
+		this.root.style.height = '270px';
 	};
 
 	GameHud.prototype.close = function () {
@@ -44,9 +46,16 @@ define('threearena/hud/ingame',
 			ko.applyBindings(viewModel, document.getElementById('view-character'));
 
 		} else {
-			throw entity + ' is not an entity';
+			throw entity + ' is not an Entity instance';
 		}
-	}
+	};
+
+	GameHud.prototype.attachGame = function (game) {
+
+		var viewModel = new GameView(game);
+		ko.applyBindings(viewModel, document.getElementById('view-map'));
+	};
+
 
 	return GameHud;
 });

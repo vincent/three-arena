@@ -1,10 +1,10 @@
 
 #hud-container {
-    background: url(/gamedata/hud/default/blackground.png) no-repeat 0 0;
+    background: url(/gamedata/hud/default/blackground.png) no-repeat 0 -11px;
     background-size: cover;
     position: absolute;
     bottom: 0;
-    height: 257px;
+    height: 270px;
     width: 100%;
     z-index: 0;
     display: none;
@@ -16,7 +16,7 @@
     z-index: 1;
 }
 #hud-container div.front {
-    background: url(/gamedata/hud/default/background.png) no-repeat 0 0;
+    background: url(/gamedata/hud/default/background.png) no-repeat 0 -11px;
     background-size: cover;
     z-index: 2;
 }
@@ -107,6 +107,15 @@
     color: #FFF;
     width: 0%;
     top: -5%;
+ 
+    background: #91e842; /* Old browsers */
+    background: -moz-linear-gradient(left, #91e842 80%, #d2ff52 97%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right top, color-stop(80%,#91e842), color-stop(97%,#d2ff52)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(left, #91e842 80%,#d2ff52 97%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(left, #91e842 80%,#d2ff52 97%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(left, #91e842 80%,#d2ff52 97%); /* IE10+ */
+    background: linear-gradient(to right, #91e842 80%,#d2ff52 97%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#91e842', endColorstr='#d2ff52',GradientType=1 ); /* IE6-9 */
 }
 #hud-container .mana {
     position: absolute;
@@ -123,6 +132,15 @@
     font-size: 10px;
     height: 10px;
     width: 0%;
+
+    background: #66b6fc; /* Old browsers */
+    background: -moz-linear-gradient(left, #66b6fc 81%, #b2e1ff 96%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right top, color-stop(81%,#66b6fc), color-stop(96%,#b2e1ff)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(left, #66b6fc 81%,#b2e1ff 96%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(left, #66b6fc 81%,#b2e1ff 96%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(left, #66b6fc 81%,#b2e1ff 96%); /* IE10+ */
+    background: linear-gradient(to right, #66b6fc 81%,#b2e1ff 96%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#66b6fc', endColorstr='#b2e1ff',GradientType=1 ); /* IE6-9 */
 }
 #hud-container .abilities {
     position: absolute;
@@ -139,12 +157,24 @@
     top: 50px;
 }
 
-
 #hud-container .map {
+    background-size: cover;
     position: absolute;
     width: 18.6%;
     height: 83%;
     left: 0.5%;
     top: 12%;
 }
-
+#view-map ul {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+#view-map li.character-position {
+    width: 6px;
+    height: 6px;
+    background: #F00;
+    border-radius: 3px;
+    position: absolute;
+    list-style-type: none;
+}
