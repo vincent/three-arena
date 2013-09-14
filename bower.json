@@ -11,7 +11,8 @@
     "knockout.js": "2.3.0",
     "async": "0.2.5",
     "microevent": "~1.1.1",
-    "tween.js": "git://github.com/sole/tween.js"
+    "tween.js": "git://github.com/sole/tween.js",
+    "microevent.js": "https://github.com/jeromeetienne/microevent.js.git"
   },
   "devDependencies": {}
 }
