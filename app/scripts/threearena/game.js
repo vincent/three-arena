@@ -91,6 +91,7 @@ define('threearena/game',
         //////////
 
         this.pcs = [];
+        this.intersectObjects = [];
 
         this.hud = new HUD.GameHud('hud-container');
 
@@ -143,6 +144,18 @@ define('threearena/game',
         this.scene = new THREE.Scene();
         this.scene.fog = new THREE.FogExp2( 0x0, 0.00055 );
         this.scene.fog = new THREE.Fog( 0x000000, 1, 200 );
+
+
+        this.game_materials = {
+            hover: new THREE.ShaderMaterial( {
+                    uniforms: {  },
+                    vertexShader:   document.getElementById( 'glow_vertexshader'   ).textContent,
+                    fragmentShader: document.getElementById( 'glow_fragmentshader' ).textContent,
+                    side: THREE.BackSide,
+                    blending: THREE.AdditiveBlending,
+                    transparent: true
+                } )
+        };
     };
 
     Game.prototype._initLights = function() {
@@ -209,6 +222,7 @@ define('threearena/game',
         var groundMaterial = new THREE.MeshBasicMaterial({ color:'#ddd' });
 
         this.ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        this.intersectObjects.push(self.ground.children[0].children);
         done();
     };
 
@@ -392,9 +406,22 @@ define('threearena/game',
 
               var raycaster = new THREE.Raycaster(self.camera.position,vector.sub(self.camera.position).normalize());
 
-              var intersects = raycaster.intersectObjects(self.ground.children[0].children);
+              var intersects = raycaster.intersectObjects(this.intersectObjects);
 
               if (intersects.length > 0) {
+
+                // apply a glow effect on selected objects
+                if (intersects[0].object && intersects[0].object.glowable) {
+                    // intersects[0].object.material = self.game_materials.hover;
+
+                    intersects[0].object.material.ambient = new THREE.Color(1, .2, .2);
+                    intersects[0].object.material.vertexShader =   document.getElementById( 'glow_vertexshader'   ).textContent,
+                    intersects[0].object.material.fragmentShader = document.getElementById( 'glow_fragmentshader' ).textContent,
+                    //intersects[0].object.material.side = THREE.BackSide,
+                    intersects[0].object.material.blending = THREE.AdditiveBlending,
+                    intersects[0].object.material.transparent = true
+
+                }
 
                 var i_pos = intersects[0].point;
 

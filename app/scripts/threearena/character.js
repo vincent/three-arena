@@ -36,6 +36,8 @@ define('threearena/character',
         this.character.update(delta)
     };
 
+
+
     Character.prototype.moveAlong = function(linepoints, options) {
 
         var self = this;

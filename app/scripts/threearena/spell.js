@@ -10,7 +10,10 @@ define('threearena/spell',
 				meleeLifeDamage: 0,
 				magicLifeDamage: 0,
 				manaDamage: 0,
-				source: null
+				source: null,
+
+                level: 1,
+                image: 'default.png'
 
 	    	}, options);
 

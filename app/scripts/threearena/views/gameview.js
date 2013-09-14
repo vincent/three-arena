@@ -49,5 +49,13 @@ define('threearena/views/gameview',
         game.bind('update', _.bind( this.update, this ));
     };
 
+    GameViewModel.prototype.onMapClick = function(event) {
+        debugger;
+    };
+
+    GameViewModel.prototype.onCharacterHover = function(event) {
+        debugger;
+    };
+
     return GameViewModel;
 });

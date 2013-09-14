@@ -22,7 +22,7 @@ define('threearena/entity',
             agility: 0,
             intelligence: 0,
 
-            abilities: [],
+            spells: [],
 
             level: 1,
 
@@ -94,7 +94,20 @@ define('threearena/entity',
     };
 
     Entity.prototype.moveAlong = function(linepoints) {
+
         throw "Parent class Entity cannot move";
+    };
+
+    Entity.prototype.learnSpell = function(spell) {
+
+        this.state.spells.push(new spell({ source: this }));
+
+        this.trigger('changed', this);
+    };
+
+    Entity.prototype.cast = function(spell) {
+
+        log(log.COMBAT, '%o begins to cast %o', this, spell);
     };
 
     Entity.prototype.hit = function(spell) {

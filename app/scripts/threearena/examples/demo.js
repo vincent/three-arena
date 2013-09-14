@@ -1,8 +1,9 @@
 
 define('threearena/examples/demo',
-    ['lodash', 'threejs', '../game', '../utils', '../character/ogro', 'threearena/character/ratamahatta'],
+    ['lodash', 'threejs', 'threearena/game', 'threearena/utils', 'threearena/character/ogro', 'threearena/character/ratamahatta',
+      'threearena/spell/fireaura' ],
 
-    function(_, THREE, Game, Utils, Ogro, Ratamahatta){
+    function(_, THREE, Game, Utils, Ogro, Ratamahatta, FireAuraSpell) {
     'use strict';
 
 	var Demo = function() {
@@ -45,12 +46,19 @@ define('threearena/examples/demo',
 
     Demo.prototype = _.clone(Game.prototype);
 
+
+
     Demo.prototype.afterCreate = function() {
 
         var rata = new Ratamahatta();
 
         // Another character
         var ogro = new Ogro();
+
+        ogro.learnSpell( FireAuraSpell );
+        ogro.learnSpell( FireAuraSpell );
+        ogro.learnSpell( FireAuraSpell );
+        ogro.learnSpell( FireAuraSpell );
 
         this.addCharacter( ogro );
         this.addCharacter( rata );
@@ -67,6 +75,8 @@ define('threearena/examples/demo',
         var tween = rata.moveAlong( path ); //, { start: false } ).start();
         tween.repeat( Infinity ).yoyo( true ).start( );
     };
+
+
 
     Demo.prototype._initGround = function( done ) {
 
@@ -114,8 +124,29 @@ define('threearena/examples/demo',
                 }
             } );
 
+            self.intersectObjects = self.intersectObjects.concat(self.ground.children[0].children);
             self.scene.add( self.ground );
-            done();
+
+            var loader = new THREE.OBJLoader( );
+            loader.load( '/gamedata/models/marketplace.obj', function ( object ) {
+
+                object.traverse( function ( child ) {
+                    if ( child instanceof THREE.Mesh ) {
+                        child.material.map = THREE.ImageUtils.loadTexture( "/gamedata/models/TXT0499.jpg" );
+
+                        child.glowable = true;
+                        self.intersectObjects.push(child);
+                    }
+                });
+
+                object.scale = new THREE.Vector3(6, 6, 6);
+                // object.position.set(-80, 20, 90);
+                // object.position.set(-90, 13.5, 89);
+                object.position.set(-99, 12.3, 104);
+                self.scene.add( object );
+                done();
+
+            });
         });
     };
 

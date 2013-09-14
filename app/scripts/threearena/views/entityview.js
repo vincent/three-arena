@@ -15,13 +15,16 @@ define('threearena/views/entityview',
         }, this);
 
         ////////////////////////////////     
-        this.update = function(values) {
+        this.update = function(values) { /// FIXME !!!!
             _.each(entity.state, function(v, k) {
                 if (typeof self[k] !== 'undefined') {
                     self[k](v);
                 }
             });
         };
+
+        // called from hud
+        this.cast = _.bind( entity.cast, entity );
 
         entity.bind('changed', _.bind( this.update, this ));
     };
