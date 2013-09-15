@@ -81,7 +81,7 @@ define('threearena/elements/tower',
                 minDistance = charDistance;
             }
         }
-        nearest !== false && self.fireTo( game.pcs[ nearest ] );
+        nearest !== false && ! this._firing && self.fireTo( game.pcs[ nearest ] );
     };
 
     DefenseTower.prototype.stopFiring = function( target ) {

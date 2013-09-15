@@ -77,6 +77,7 @@ define('threearena/hud/ingame',
 				ko.applyBindings(viewModel, domElement);
 			}
 			object.bind('deselected', function(){
+				domElement._ta_open = false;
 				domElement.style.display = 'none';
 				ko.cleanNode(domElement);
 			});

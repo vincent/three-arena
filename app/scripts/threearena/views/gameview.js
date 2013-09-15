@@ -31,9 +31,9 @@ define('threearena/views/gameview',
         this.update = function(game) {
             _.each(game.pcs, function(c,i){
                 if (self.characters[i] === undefined) {
-                    self.characters[i] = ko.observableArray();
+                    self.characters[i] = ko.observable();
                 }
-                
+
                 // get playing characters
                 self.characters[i]({
                     x: 100 / self.mapWidth() * (game.pcs[i].position.x + self.mapWidth() / 2),

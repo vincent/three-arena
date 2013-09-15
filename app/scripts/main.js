@@ -131,11 +131,30 @@ require([ 'lodash', 'threejs', 'threearena/examples/demo' ], function ( _, THREE
     var game = window.game = new Demo();
 
     var playButton = document.getElementById('game-play');
-    playButton.addEventListener('click', function(){
-        game.preload(function (argument) {
 
-            game.init( _.bind(game.start, game));
+    var preload = function preload() {
+        playButton.innerHTML = 'Downloading ...';
+        playButton.removeEventListener('click', preload);
+
+        setTimeout(function(){
+            game.preload(init);
+        }, 100);
+    }
+
+    var init = function init() {
+        playButton.innerHTML = 'Ready';
+        playButton.removeEventListener('click', init);
+
+        playButton.addEventListener('click', play);
+    }
+
+    var play = function play(callback) {
+        game.init(function () {
+            setTimeout(function(){
+                game.start();
+            }, 2000)
         });
-    });
+    }
 
+    playButton.addEventListener('click', preload);
 });
