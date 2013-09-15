@@ -4,7 +4,8 @@ define('threearena/game',
 
     'threearena/utils',
     'threearena/hud',
-    'threearena/elements/tower', 
+    'threearena/elements/tower',
+    'threearena/elements/interactiveobject', 
     'threearena/particles/cloud', 
     'threearena/controls/dota',
     'threearena/pathfinding/recast.emcc.dota.mountains',
@@ -32,6 +33,7 @@ define('threearena/game',
     Utils,
     HUD,
     DefenseTower,
+    InteractiveObject,
     Particles,
     CameraControls,
     PathFinding
@@ -415,19 +417,6 @@ define('threearena/game',
 
               if (intersects.length > 0) {
 
-                // apply a glow effect on selected objects
-                if (intersects[0].object && intersects[0].object.glowable) {
-                    // intersects[0].object.material = self.game_materials.hover;
-
-                    intersects[0].object.material.ambient = new THREE.Color(1, .2, .2);
-                    intersects[0].object.material.vertexShader =   document.getElementById( 'glow_vertexshader'   ).textContent,
-                    intersects[0].object.material.fragmentShader = document.getElementById( 'glow_fragmentshader' ).textContent,
-                    //intersects[0].object.material.side = THREE.BackSide,
-                    intersects[0].object.material.blending = THREE.AdditiveBlending,
-                    intersects[0].object.material.transparent = true
-
-                }
-
                 var i_pos = intersects[0].point;
 
                 console.log('intersect at %o %o', i_pos.x, i_pos.y, i_pos.z );
@@ -437,8 +426,11 @@ define('threearena/game',
                 // helper.lookAt(intersects[0].face.normal);
                 // helper.position.copy(i_pos);
 
+                var character = self.pcs[0];
+
                 if (event.button == 2) {
-                    var character = self.pcs[0];
+
+                    self.endAllInteractions();
 
                     console.log('find a path between %o and %o', self.pcs[0].position, i_pos);
 
@@ -454,6 +446,17 @@ define('threearena/game',
 
                     // __add_tree(i_pos);
 
+                    // apply a glow effect on selected objects
+                    if (intersects[0].object && intersects[0].object.parent && intersects[0].object.parent.parent
+                        && intersects[0].object.parent.parent instanceof InteractiveObject) {
+
+                        if (intersects[0].object.parent.parent.isNearEnough(character)) {
+                            self.startInteraction(intersects[0].object.parent.parent);
+
+                        } else {
+                            console.log("C'est trop loin !");
+                        }
+                    }
                 }
 
               } else {
@@ -462,7 +465,28 @@ define('threearena/game',
               break; 
 
         }
-    }
+    };
+
+    Game.prototype._selected_objects = [];
+
+    Game.prototype.endAllInteractions = function () {
+
+        var character = this.pcs[0];
+        
+        _.each(this._selected_objects, function (obj) {
+            if (! obj.isNearEnough(character)) {
+                obj.deselect();
+            }
+        });
+    };
+
+    Game.prototype.startInteraction = function (interactiveObject) {
+
+        this.endAllInteractions();
+        this._selected_objects.push(interactiveObject);
+        interactiveObject.select();
+        this.hud.startInteraction(interactiveObject);
+    };
 
     ////////////////////////////////
 

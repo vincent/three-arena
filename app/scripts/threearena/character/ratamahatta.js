@@ -31,7 +31,9 @@ define('threearena/character/ratamahatta',
 					[ "w_shotgun.js", "w_shotgun.png" ],
 					[ "w_sshotgun.js", "w_sshotgun.png" ]
 				],
-            }
+            },
+
+            onLoad: null,
 
         }, options);
 
@@ -55,6 +57,8 @@ define('threearena/character/ratamahatta',
 			//self.setupGUIAnimations( self.character );
 
 			self.add(self.character.root);
+
+			options.onLoad && options.onLoad.apply(self);
 		};
 
 		this.character.loadParts( options.modelOptions );

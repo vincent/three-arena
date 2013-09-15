@@ -3,6 +3,15 @@ define('threearena/utils',
 
     return {
 
+        glowmaterial: {
+            ambient: new THREE.Color(1, 1, 1),
+            vertexShader:   document.getElementById( 'glow_vertexshader'   ).textContent,
+            fragmentShader: document.getElementById( 'glow_fragmentshader' ).textContent,
+            //side: THREE.BackSide,
+            blending: THREE.AdditiveBlending,
+            transparent: true
+        },
+
         gcb: function( wrappedFunction ) {
 
             var now = new Date(),
@@ -14,6 +23,18 @@ define('threearena/utils',
             window[tmpname] = wrappedFunction;
 
             return tmpname;
+        },
+
+        glow: function (object) {
+            _.each(this.glowmaterial, function(v, k){
+                object.material[ '_' + k] = object.material[k];
+                object.material[k] = v;
+            });
+        },
+        unglow: function (object) {
+            _.each(this.glowmaterial, function(v, k){
+                object.material[k] = object.material[ '_' + k];
+            });
         },
 
         moveAlong: function( object, shape, options ) {

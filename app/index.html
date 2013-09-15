@@ -90,6 +90,15 @@
             </div>
         </div>
 
+        <div class="view menu" id="view-contextmenu">
+            <ul class="items" data-bind="foreach: items">
+                <li data-bind="attr: { class: action }, event: { click: $parent.click }">
+                    <span class="name" data-bind="text: name"></span>
+                    <span class="price" data-bind="text: price"></span>
+                </li>
+            </ul>
+        </div>
+
         <div id="hud-container">
 
             <div class="view front"></div>

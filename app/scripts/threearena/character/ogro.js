@@ -43,7 +43,9 @@ define('threearena/character/ogro',
                 },
                 walkSpeed: 300,
                 crouchSpeed: 175
-            }
+            },
+
+            onLoad: null,
 
         }, options);
 
@@ -83,6 +85,8 @@ define('threearena/character/ogro',
             //self.character.root.castShadow = true;
 
             self.add(self.character.root);
+
+            options.onLoad && options.onLoad.apply(self);
         };
 
         baseCharacter.loadParts( options.modelOptions );

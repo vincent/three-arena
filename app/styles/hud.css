@@ -3,7 +3,7 @@
     background: url(/gamedata/hud/default/blackground.png) no-repeat 0 -11px;
     background-size: cover;
     position: absolute;
-    bottom: 0;
+    bottom: -11px;
     height: 270px;
     width: 100%;
     z-index: 0;
@@ -14,6 +14,16 @@
     width: 100%;
     height: 100%;
     z-index: 1;
+}
+.view.menu {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30%;
+    height: 100%;
+    color: #fff;
+    background: #000;
 }
 /*
 #hud-container div.front {

@@ -72,16 +72,16 @@ define('threearena/elements/tower',
 
         if (this._firing) return;
 
-        var charDistance;
-        _.each(game.pcs, function(c) {
-            charDistance = c.position.distanceTo(self.position);
-            if (charDistance >= self.options.minRange && charDistance < self.options.maxRange) {
-
-                // this.fireSpeed += (70 - charDistance);
-                self.fireTo( c );
+        var i = -1, charDistance, minDistance = Number.MAX_VALUE, nearest = false;
+        while (i++ < game.pcs.length - 1 && !this._firing) {
+            charDistance = game.pcs[i].position.distanceTo(self.position);
+            if (charDistance >= self.options.minRange && charDistance < self.options.maxRange 
+                && charDistance < minDistance) {
+                nearest = i;
+                minDistance = charDistance;
             }
-        });
-
+        }
+        nearest !== false && self.fireTo( game.pcs[ nearest ] );
     };
 
     DefenseTower.prototype.stopFiring = function( target ) {

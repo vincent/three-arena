@@ -1,9 +1,9 @@
 
 define('threearena/examples/demo',
     ['lodash', 'threejs', 'threearena/game', 'threearena/utils', 'threearena/character/ogro', 'threearena/character/ratamahatta',
-      'threearena/spell/fireaura' ],
+      'threearena/elements/interactiveobject', 'threearena/spell/fireaura' ],
 
-    function(_, THREE, Game, Utils, Ogro, Ratamahatta, FireAuraSpell) {
+    function(_, THREE, Game, Utils, Ogro, Ratamahatta, InterativeObject, FireAuraSpell) {
     'use strict';
 
 	var Demo = function() {
@@ -52,32 +52,41 @@ define('threearena/examples/demo',
 
         var self = this;
 
-        var rata = new Ratamahatta();
-
         // Another character
-        var ogro = new Ogro();
+        var ogro = new Ogro({
+            onLoad: function(){
+                self.addCharacter( this );
 
-        ogro.learnSpell( FireAuraSpell );
-        ogro.learnSpell( FireAuraSpell );
-        ogro.learnSpell( FireAuraSpell );
-        ogro.learnSpell( FireAuraSpell );
+                // learn some spells
+                ogro.learnSpell( FireAuraSpell );
+                ogro.learnSpell( FireAuraSpell );
+                ogro.learnSpell( FireAuraSpell );
+                ogro.learnSpell( FireAuraSpell );
 
-        setTimeout(function(){
-            self.addCharacter( ogro );
-            self.addCharacter( rata );
-        }, 3000);
 
-        // Move Ogro along a path
-        var path = [ 
-            new THREE.Vector3(  -64.7, 14.6, 63.8 ),
-            new THREE.Vector3( -101.9, 10.7, 39.6 ),
-            new THREE.Vector3(  -94.6,  6.0, -6.3 ),
-            new THREE.Vector3(  -40.6,  5.9,  2.4 ),
-            new THREE.Vector3(  -35.7,  6.6, 22.4 ),  
-        ];
 
-        var tween = rata.moveAlong( path ); //, { start: false } ).start();
-        tween.repeat( Infinity ).yoyo( true ).start( );
+                var rata = new Ratamahatta({
+                    onLoad: function(){
+                        self.addCharacter( this );
+
+                        // Move Ogro along a path
+                        var path = [ 
+                            new THREE.Vector3(  -64.7, 14.6, 63.8 ),
+                            new THREE.Vector3( -101.9, 10.7, 39.6 ),
+                            new THREE.Vector3(  -94.6,  6.0, -6.3 ),
+                            new THREE.Vector3(  -40.6,  5.9,  2.4 ),
+                            new THREE.Vector3(  -35.7,  6.6, 22.4 ),  
+                        ];
+
+                        var tween = rata.moveAlong( path ); //, { start: false } ).start();
+                        tween.repeat( Infinity ).yoyo( true ).start( );
+                    }
+                });
+
+
+
+            }
+        });
     };
 
 
@@ -144,10 +153,16 @@ define('threearena/examples/demo',
                 });
 
                 object.scale = new THREE.Vector3(6, 6, 6);
-                // object.position.set(-80, 20, 90);
-                // object.position.set(-90, 13.5, 89);
-                object.position.set(-99, 12.3, 104);
-                self.scene.add( object );
+                var interact = new InterativeObject();
+                interact.position.set(-99, 12.3, 104);
+                interact.menu = {
+                    items: [
+                        { action:'sell', name:'Potion', price:20 }
+                    ],
+                };
+                interact.add( object );
+
+                self.scene.add( interact );
                 done();
 
             });

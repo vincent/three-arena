@@ -1,8 +1,8 @@
 
 define('threearena/hud/ingame',
-	['lodash', 'jquery', 'threejs', 'knockout', 'threearena/views/entityview', 'threearena/views/gameview', 'threearena/log', 'threearena/utils', 'threearena/entity', 'threearena/game'],
+	['lodash', 'jquery', 'threejs', 'knockout', 'threearena/views/entityview', 'threearena/views/gameview', 'threearena/views/interactiveview', 'threearena/elements/interactiveobject', 'threearena/log', 'threearena/utils', 'threearena/entity', 'threearena/game'],
 
-	function(_, $, THREE, ko, EntityView, GameView, log, Utils, Entity, Game) {
+	function(_, $, THREE, ko, EntityView, GameView, InteractiveView, InteractiveObject, log, Utils, Entity, Game) {
 
 	var GameHud = function (element) {
 		
@@ -56,6 +56,37 @@ define('threearena/hud/ingame',
 		ko.applyBindings(viewModel, document.getElementById('view-map'));
 	};
 
+
+	GameHud.prototype.startInteraction = function(object) {
+
+        // // object.material = self.game_materials.hover;
+
+        // object.material.ambient = new THREE.Color(1, .2, .2);
+        // object.material.vertexShader =   document.getElementById( 'glow_vertexshader'   ).textContent,
+        // object.material.fragmentShader = document.getElementById( 'glow_fragmentshader' ).textContent,
+        // //object.material.side = THREE.BackSide,
+        // object.material.blending = THREE.AdditiveBlending,
+        // object.material.transparent = true
+
+		if (object instanceof InteractiveObject) {
+			var viewModel = new InteractiveView(object);
+			var domElement = document.getElementById('view-contextmenu');
+			if (! domElement._ta_open) {
+				domElement._ta_open = true;
+				domElement.style.display = 'block';
+				ko.applyBindings(viewModel, domElement);
+			}
+			object.bind('deselected', function(){
+				domElement.style.display = 'none';
+				ko.cleanNode(domElement);
+			});
+
+		} else {
+			throw object + ' is not an Entity instance';
+		}
+
+
+	};
 
 	return GameHud;
 });
