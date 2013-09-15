@@ -105,7 +105,7 @@ define('threearena/particles/cloud',
 		this.sparksEmitter = new SPARKS.Emitter( new SPARKS.SteadyCounter( 50 ) );
 
 		this.sparksEmitter.addInitializer( new SPARKS.Position( new SPARKS.PointZone( this.emitterpos ) ) );
-		this.sparksEmitter.addInitializer( new SPARKS.Lifetime( .5, 1 ));
+		this.sparksEmitter.addInitializer( new SPARKS.Lifetime( 5, 2 ));
 		this.sparksEmitter.addInitializer( new SPARKS.Target( null, bind( this, this.setTargetParticle ) ) );
 
 
@@ -124,7 +124,7 @@ define('threearena/particles/cloud',
 	ParticleCloud.prototype.setTargetParticle = function() {
 
 		var target = this.pool.get();
-		this.values_size[ target ] = Math.random() * 200 + 10;
+		this.values_size[ target ] = Math.random() * 100 + 10;
 
 		return target;
 	};
@@ -161,6 +161,7 @@ define('threearena/particles/cloud',
 			// this.values_color[ target ].set( this.colorHSL ); // .setHSL( this.hue, 0.6, 0.1 );
 			// this.values_color[ target ].multiplyScalar( this.colorHSL );
 
+			this.values_size[ target ] += 0.0003 * this.delta;
 			
 			if (this.light) {
 				this.light.color.setHSL( this.hue, 0.8, 0.5 );

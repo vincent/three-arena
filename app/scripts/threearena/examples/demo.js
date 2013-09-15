@@ -50,6 +50,8 @@ define('threearena/examples/demo',
 
     Demo.prototype.afterCreate = function() {
 
+        var self = this;
+
         var rata = new Ratamahatta();
 
         // Another character
@@ -60,8 +62,10 @@ define('threearena/examples/demo',
         ogro.learnSpell( FireAuraSpell );
         ogro.learnSpell( FireAuraSpell );
 
-        this.addCharacter( ogro );
-        this.addCharacter( rata );
+        setTimeout(function(){
+            self.addCharacter( ogro );
+            self.addCharacter( rata );
+        }, 3000);
 
         // Move Ogro along a path
         var path = [ 

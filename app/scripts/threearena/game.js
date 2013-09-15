@@ -358,6 +358,11 @@ define('threearena/game',
             this.hud.attachEntity(character);
         }
 
+        character.character.meshBody.material.ambient = new THREE.Color(1, 1, 1);
+        character.character.meshBody.material.vertexShader =   document.getElementById( 'glow_vertexshader'   ).textContent,
+        character.character.meshBody.material.fragmentShader = document.getElementById( 'glow_fragmentshader' ).textContent,
+        character.character.meshBody.material.blending = THREE.AdditiveBlending,
+
         this.pcs.push(character);
         this.scene.add(character);
     };

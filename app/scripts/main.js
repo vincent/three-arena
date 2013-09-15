@@ -47,60 +47,79 @@ require.config({
         },
         sparks: {
             exports: 'SPARKS',
+            deps: [ 'threejs' ]
         },
         threearena: {
             exports: 'THREEARENA',
+            deps: [ 'threejs' ]
         },
         MD2Character: {
-            exports: 'THREE.MD2Character'
+            exports: 'THREE.MD2Character',
+            deps: [ 'threejs' ]
         },
         MD2CharacterComplex: {
-            exports: 'THREE.MD2CharacterComplex'
+            exports: 'THREE.MD2CharacterComplex',
+            deps: [ 'threejs' ]
         },
         OBJLoader: {
-            exports: 'THREE.OBJLoader'
+            exports: 'THREE.OBJLoader',
+            deps: [ 'threejs' ]
         },
         MTLLoader: {
-            exports: 'THREE.MTLLoader'
+            exports: 'THREE.MTLLoader',
+            deps: [ 'threejs' ]
         },
         OBJMTLLoader: {
-            exports: 'THREE.OBJMTLLoader'
+            exports: 'THREE.OBJMTLLoader',
+            deps: [ 'threejs' ]
         },
         ColladaLoader: {
-            exports: 'THREE.ColladaLoader'
+            exports: 'THREE.ColladaLoader',
+            deps: [ 'threejs' ]
         },
         TrackballControls: {
-            exports: 'THREE.TrackballControls'
+            exports: 'THREE.TrackballControls',
+            deps: [ 'threejs' ]
         },
         EditorControls: {
-            exports: 'THREE.EditorControls'
+            exports: 'THREE.EditorControls',
+            deps: [ 'threejs' ]
         },
         ConvexGeometry: {
-            exports: 'THREE.ConvexGeometry'
+            exports: 'THREE.ConvexGeometry',
+            deps: [ 'threejs' ]
         },
         BleachBypassShader: {
-            exports: 'THREE.BleachBypassShader'
+            exports: 'THREE.BleachBypassShader',
+            deps: [ 'threejs' ]
         },
         ColorCorrectionShader: {
-            exports: 'THREE.ColorCorrectionShader'
+            exports: 'THREE.ColorCorrectionShader',
+            deps: [ 'threejs' ]
         },
         CopyShader: {
-            exports: 'THREE.CopyShader'
+            exports: 'THREE.CopyShader',
+            deps: [ 'threejs' ]
         },
         FXAAShader: {
-            exports: 'THREE.FXAAShader'
+            exports: 'THREE.FXAAShader',
+            deps: [ 'threejs' ]
         },
         EffectComposer: {
-            exports: 'THREE.EffectComposer'
+            exports: 'THREE.EffectComposer',
+            deps: [ 'threejs' ]
         },
         RenderPass: {
-            exports: 'THREE.RenderPass'
+            exports: 'THREE.RenderPass',
+            deps: [ 'threejs' ]
         },
         ShaderPass: {
-            exports: 'THREE.ShaderPass'
+            exports: 'THREE.ShaderPass',
+            deps: [ 'threejs' ]
         },
         MaskPass: {
-            exports: 'THREE.MaskPass'
+            exports: 'THREE.MaskPass',
+            deps: [ 'threejs' ]
         }
     }
 });

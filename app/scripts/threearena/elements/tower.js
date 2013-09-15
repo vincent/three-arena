@@ -93,7 +93,7 @@ define('threearena/elements/tower',
         if (this._firing || ! target instanceof Entity) return;
         this._firing = true;
         
-        var startPosition = this.position.clone().setY(28);
+        var startPosition = this.position.clone().setY(25);
         var vectorPosition = target.position.clone().add(startPosition).divideScalar(2).setY(28 + 0);
 
         var self = this,
@@ -153,7 +153,10 @@ define('threearena/elements/tower',
                 var pathPosition = line.getPoint(this.distance);
 
                 // move to that position
-                cloud.particleCloud.position.set(pathPosition.x, pathPosition.y, pathPosition.z);
+                cloud.particleCloud.position.set(pathPosition.x * .9, pathPosition.y * .9, pathPosition.z * .9);
+                // cloud.emitterpos.set(pathPosition.x * 0.01, pathPosition.y * 0.01, pathPosition.z * 0.01);
+
+                // cloud.emitterpos.set(pathPosition.x, pathPosition.y, pathPosition.z);
 
                 cloud.particleCloud.updateMatrix();
             })

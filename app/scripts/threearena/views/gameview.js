@@ -32,18 +32,13 @@ define('threearena/views/gameview',
         });
 
         this.update = function(game) {
-
-            // get playing characters
-            self.characters[0]({
-                x: 100 / self.mapWidth() * (game.pcs[0].position.x + self.mapWidth() / 2),
-                z: 100 / self.mapHeight() * (game.pcs[0].position.z + self.mapHeight() / 2)
+            _.each(game.pcs, function(c,i){
+                // get playing characters
+                self.characters[1]({
+                    x: 100 / self.mapWidth() * (game.pcs[1].position.x + self.mapWidth() / 2),
+                    z: 100 / self.mapHeight() * (game.pcs[1].position.z + self.mapHeight() / 2)
+                });
             });
-
-            self.characters[1]({
-                x: 100 / self.mapWidth() * (game.pcs[1].position.x + self.mapWidth() / 2),
-                z: 100 / self.mapHeight() * (game.pcs[1].position.z + self.mapHeight() / 2)
-            });
-            //self.characters.valueHasMutated();
         };
 
         game.bind('update', _.bind( this.update, this ));
