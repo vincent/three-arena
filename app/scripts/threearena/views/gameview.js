@@ -9,7 +9,10 @@ define('threearena/views/gameview',
         self.mapWidth = ko.observable(0);
         self.mapHeight = ko.observable(0);
 
-        self.characters = [];
+        self.characters = [
+            ko.observable({ x:-1, z:-1 }),
+            ko.observable({ x:-1, z:-1 })
+        ];
         this.image = ko.observable(null);
 
         ////////////////////////////////     

@@ -133,7 +133,7 @@ require([ 'lodash', 'threejs', 'threearena/examples/demo' ], function ( _, THREE
     var playButton = document.getElementById('game-play');
 
     var preload = function preload() {
-        playButton.innerHTML = 'Downloading ...';
+        playButton.innerHTML = 'Loading world and stuff ...';
         playButton.removeEventListener('click', preload);
 
         setTimeout(function(){

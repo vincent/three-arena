@@ -16,14 +16,15 @@ define('threearena/examples/demo',
                 spawn: new THREE.Vector3( 0, 0, 0 ),
                 origin: new THREE.Vector3( 0, 0, 0 ),
                 maporigin: new THREE.Vector3( -142, 0, 139 ),
-                neartower: new THREE.Vector3(  -51, 14, 62 )
+                neartower: new THREE.Vector3(  -51, 14, 62 ),
+                nearcamp: new THREE.Vector3( -78.2, 15.5, 100 ),
             },
 
 			preload: [
 			    'cacheonly!/gamedata/dota_map_full_compress2_normals.jpg',
 			    'cacheonly!/gamedata/dota_map_full_compress2.jpg',
 			    'cacheonly!/gamedata/dota_map_full_compress2_specular.jpg',
-			    'cacheonly!/gamedata/dota_simple.obj',
+			    'cacheonly!/gamedata/models/marketplace.obj',
 			    'cacheonly!/gamedata/tree_pine.dae',
 			    'cacheonly!/gamedata/tree_oak.dae',
 			    'cacheonly!/gamedata/textures/lensflare1_alpha.png',
@@ -35,11 +36,12 @@ define('threearena/examples/demo',
 			    'cacheonly!/gamedata/Bark_Tile.jpg',
 			    'cacheonly!/gamedata/leaf-mapple-yellow-c.png',
 			    'cacheonly!/gamedata/oak-branch-c.png',
-			    'cacheonly!/gamedata/dota_trees.obj'
+			    'cacheonly!/gamedata/maps/mountains.obj',
+                'cacheonly!/gamedata/maps/mountains_trees.obj'
 			]
 		};
 
-        settings.positions.spawn = settings.positions.neartower;
+        settings.positions.spawn = settings.positions.nearcamp;
 
 		Game.apply(this, [ settings ]);
 	};
@@ -101,8 +103,6 @@ define('threearena/examples/demo',
         var shader = THREE.ShaderLib[ "normalmap" ];
         var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
 
-        uniforms[ "uNormalScale" ].value.set( 0.8, 0.8 );
-
         uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2_normals.jpg" );
         uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2.jpg" );
         uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2_specular.jpg" );
@@ -114,6 +114,8 @@ define('threearena/examples/demo',
         uniforms[ "uDiffuseColor" ].value.setHex( diffuse );
         uniforms[ "uSpecularColor" ].value.setHex( specular );
         uniforms[ "uAmbientColor" ].value.setHex( ambient );
+
+        uniforms[ "uNormalScale" ].value.set( 0.8, 0.8 );
 
         uniforms[ "uShininess" ].value = shininess;
 

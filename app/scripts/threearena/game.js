@@ -251,7 +251,34 @@ define('threearena/game',
             });
         };
 
-        async.series([ _load_tree_pine, _load_tree_oak ], main_callback);
+        var _load_tree_cartoon = function(callback){
+            loader.load( '/gamedata/models/forest_tree.dae', function ( object ) {
+                //object.scene.children[0].material.materials[0].transparent = true;
+                //object.scene.children[0].material.materials[1].transparent = true;
+                var cartoonTree = new THREE.Object3D();
+                object.scene.children[0].scale.set(5, 5, 5);
+                //cartoonTree.add(object.scene.children[0]);
+
+                object.scene.children[0].material.materials[0].transparent = true;
+                object.scene.children[0].material.materials[1].transparent = true;
+                object.scene.children[0].material.materials[2].transparent = true;
+                object.scene.children[0].material.materials[3].transparent = true;
+
+                object.scene.children[0].material.materials[0].ambient.set(1, 1, 1);
+                object.scene.children[0].material.materials[1].ambient.set(1, 1, 1);
+                object.scene.children[0].material.materials[2].ambient.set(1, 1, 1);
+                object.scene.children[0].material.materials[3].ambient.set(1, 1, 1);
+
+                self._trees.push(object.scene.children[0]);
+                callback();
+            });
+        };
+
+        async.series([
+            // _load_tree_pine,
+            // _load_tree_oak,
+            _load_tree_cartoon
+        ], main_callback);
     };
 
     Game.prototype.newTree = function(position, type) {
@@ -308,10 +335,10 @@ define('threearena/game',
             _.bind( this._initTowers, this),
             function (callback) {
                 var loader = new THREE.OBJLoader();
-                loader.load('/gamedata/dota_trees.obj', function (object) {
+                loader.load('/gamedata/maps/mountains_trees.obj', function (object) {
                     object.traverse(function (child) {
                         if (child instanceof THREE.Mesh) {
-                            for (var i = 0; i < child.geometry.vertices.length && i < 50; i++) {
+                            for (var i = 0; i < child.geometry.vertices.length && i < 200; i++) {
                                 self.newTree(child.geometry.vertices[i]);
                             }
                         }
