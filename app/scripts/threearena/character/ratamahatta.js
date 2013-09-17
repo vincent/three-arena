@@ -1,3 +1,6 @@
+/**
+ * @module Character/Ratamahatta
+ */
 define('threearena/character/ratamahatta',
     ['lodash', 'threejs', 'threearena/log', 'threearena/character'], function(_, THREE, log, Character) {
 

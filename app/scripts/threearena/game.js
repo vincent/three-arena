@@ -1,4 +1,6 @@
-
+/**
+ * @module Game
+ */
 define('threearena/game',
     ['lodash', 'async', 'threejs', 'tweenjs',
 
@@ -41,6 +43,12 @@ define('threearena/game',
 ) {
     PathFinding = Module;
 
+    /**
+     * The main game class
+     * 
+     * @param {Object} settings
+     * @triggers 'before:init', 'before:fillmap', 'ready', 'update'
+     */
     var Game = function (settings) {
 
         this.settings = _.defaults(settings, {
@@ -58,6 +66,10 @@ define('threearena/game',
         }, settings);
     };
 
+    /**
+     * Init the pathfinding subsystem, and load its settings.preload urls with RequireJS  
+     * @param  {Function} callback, called when finished
+     */
     Game.prototype.preload = function(done) {
 
         Config = {};
@@ -66,9 +78,12 @@ define('threearena/game',
         PathFinding.initWithFile('/gamedata/maps/mountains.obj');
         PathFinding.build();
         require(this.settings.preload, done);
-
     };
 
+    /**
+     * Init the game, reset characters and map elements
+     * @param  {Function} callback, called when ready to run
+     */
     Game.prototype.init = function( ready ) {
 
         var self = this;
@@ -82,6 +97,7 @@ define('threearena/game',
         this._trees  = [];
         this.towers = [];
         this.ground = null;
+        this._waitForSelection = null;
 
         //////////
 
@@ -135,12 +151,18 @@ define('threearena/game',
         });
     };
 
+    /**
+     * Init the game camera
+     */
     Game.prototype._initCamera = function() {
 
         this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
         this.camera.position.set( this.settings.positions.spawn.x + 20, 50, this.settings.positions.spawn.z + 30 );
     };
 
+    /**
+     * Init scene
+     */
     Game.prototype._initScene = function() {
 
         this.scene = new THREE.Scene();
@@ -160,6 +182,9 @@ define('threearena/game',
         };
     };
 
+    /**
+     * Init global game lights
+     */
     Game.prototype._initLights = function() {
 
         this.ambientLight = new THREE.AmbientLight( 0xffffff );
@@ -174,6 +199,9 @@ define('threearena/game',
         this.scene.add( this.directionalLight );
     };
 
+    /**
+     * Init the renderer
+     */
     Game.prototype._initRenderer = function() {
         this.renderer = new THREE.WebGLRenderer();
         // this.renderer.shadowMapEnabled = true;
@@ -219,6 +247,10 @@ define('threearena/game',
         this.cameraControls.domElement = this.renderer.domElement;
     };
 
+    /**
+     * Init the ground mesh. Supposed to be overidden in actual game classes 
+     * @param  {Function} callback, called when ground mesh is set
+     */
     Game.prototype._initGround = function(done) {
         var groundGeometry = new THREE.PlaneGeometry(500, 500, 1, 1);
         var groundMaterial = new THREE.MeshBasicMaterial({ color:'#ddd' });
@@ -228,6 +260,10 @@ define('threearena/game',
         done();
     };
 
+    /**
+     * Init some trees meshes, to be duplicated later
+     * @param  {Function} main_callback, called when every trees models have been set
+     */
     Game.prototype._initTrees = function(main_callback) {
         var self = this;
 
@@ -256,7 +292,8 @@ define('threearena/game',
                 //object.scene.children[0].material.materials[0].transparent = true;
                 //object.scene.children[0].material.materials[1].transparent = true;
                 var cartoonTree = new THREE.Object3D();
-                object.scene.children[0].scale.set(5, 5, 5);
+                object.scene.children[0].position.setY(2);
+                object.scene.children[0].scale.set(2, 2, 2);
                 //cartoonTree.add(object.scene.children[0]);
 
                 object.scene.children[0].material.materials[0].transparent = true;
@@ -281,6 +318,11 @@ define('threearena/game',
         ], main_callback);
     };
 
+    /**
+     * Instance a new tree, by duplicating a Geometry/Material reference
+     * @param  {THREE.Vector3} position
+     * @param  {Number} index of reference tree (random by default)
+     */
     Game.prototype.newTree = function(position, type) {
 
         var self = this;
@@ -310,6 +352,10 @@ define('threearena/game',
         this._treesGroup.add( tree );
     };
 
+    /**
+     * Init some towers
+     * @param  {Function} callback, called when finished
+     */
     Game.prototype._initTowers = function(done) {
 
         var defenseTower = new DefenseTower(0, 28, 1, {
@@ -325,6 +371,10 @@ define('threearena/game',
         done(null);
     };
 
+    /**
+     * Fill map (ground, trees, towers, ...)
+     * @param  {Function} main_callback, called when every elements has been added to scene
+     */
     Game.prototype._fillMap = function(main_callback) {
 
         var self = this;
@@ -376,6 +426,11 @@ define('threearena/game',
         ], main_callback);
     };
 
+    /**
+     * Add a character. The first one the main one
+     * @param {Entity} character
+     * @param {THREE.Vector3} spawnPosition (map's spawn point by default)
+     */
     Game.prototype.addCharacter = function(character, spawnPosition) {
 
         var spawnPosition = spawnPosition || this.settings.positions.spawn;
@@ -387,33 +442,53 @@ define('threearena/game',
             this.hud.attachEntity(character);
         }
 
-        character.character.meshBody.material.ambient = new THREE.Color(1, 1, 1);
-        character.character.meshBody.material.vertexShader =   document.getElementById( 'glow_vertexshader'   ).textContent,
-        character.character.meshBody.material.fragmentShader = document.getElementById( 'glow_fragmentshader' ).textContent,
-        character.character.meshBody.material.blending = THREE.AdditiveBlending,
-
+        this.intersectObjects.push(character.character.meshBody);
         this.pcs.push(character);
         this.scene.add(character);
     };
 
+    /**
+     * Remove a character from the scene 
+     * @param  {Entity} character
+     */
     Game.prototype.removeCharacter = function(character) {
 
         this.pcs = _.without(this.pcs, character);
         this.scene.remove(character);
     };
 
+    /**
+     * Called after fillmap, before ready.
+     * Useful for adding some details in the scene from subclasses
+     * @param  {Function} callback, called when finished
+     */
     Game.prototype.afterCreate = function() {
 
     };
 
+    /**
+     * Attach a listener for the next selection
+     * @param  {Function} onSelection
+     */
+    Game.prototype.waitForSelection = function(onSelection) {
+
+        this._waitForSelection = onSelection;
+    };
+
     ////////////////////////////////
 
+    /**
+     * Set listeners to play the game in the browser
+     */
     Game.prototype._initListeners = function() {
 
         this.settings.container.addEventListener('mouseup', _.bind( this.onDocumentMouseUp, this), false);
         this.settings.container.addEventListener('resize', _.bind( this.onWindowResize, this), false);
     };
 
+    /**
+     * Resize listener
+     */
     Game.prototype.onWindowResize = function() {
         windowHalfX = window.innerWidth / 2;
         windowHalfY = window.innerHeight / 2;
@@ -422,7 +497,9 @@ define('threearena/game',
         renderer.setSize( window.innerWidth, window.innerHeight );
     }
 
-
+    /**
+     * Mouse clicks listener
+     */
     Game.prototype.onDocumentMouseUp = function(event) {
         var self = this;
         //event.preventDefault();
@@ -469,6 +546,13 @@ define('threearena/game',
                         Utils.gcb( _.bind( character.moveAlong, character) )
                     );
 
+                } else if (this._waitForSelection) {
+
+                    var callback = this._waitForSelection;
+                    this._waitForSelection = null;
+
+                    callback(intersects);
+
                 } else {
 
                     // __add_tree(i_pos);
@@ -494,8 +578,15 @@ define('threearena/game',
         }
     };
 
+    /**
+     * Current selected objects
+     * @type {Array}
+     */
     Game.prototype._selected_objects = [];
 
+    /**
+     * End all not-near-enough interaction
+     */
     Game.prototype.endAllInteractions = function () {
 
         var character = this.pcs[0];
@@ -507,6 +598,10 @@ define('threearena/game',
         });
     };
 
+    /**
+     * Begin a new interaction with an interactive object
+     * @param  {InteractiveObject} interactiveObject
+     */
     Game.prototype.startInteraction = function (interactiveObject) {
 
         this.endAllInteractions();
@@ -517,12 +612,11 @@ define('threearena/game',
 
     ////////////////////////////////
 
-    Game.prototype.animate = function() {
-
-        requestAnimationFrame( _.bind( this.animate, this ) );
-        this.render();
-    };
-
+    /**
+     * Start a new game
+     *
+     * @trigger 'start'
+     */
     Game.prototype.start = function() {
 
         this._initListeners();
@@ -534,6 +628,20 @@ define('threearena/game',
         this.animate();
     };
 
+    /**
+     * The render loop
+     */
+    Game.prototype.animate = function() {
+
+        requestAnimationFrame( _.bind( this.animate, this ) );
+        this.render();
+    };
+
+    /**
+     * Where things are rendered, inside the render loop
+     * 
+     * @trigger 'update'
+     */
     Game.prototype.render = function() {
 
         var self = this;

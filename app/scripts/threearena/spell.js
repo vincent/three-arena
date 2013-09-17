@@ -24,5 +24,9 @@ define('threearena/spell',
     	});
     }
 
+    Spell.prototype.canHit = function(source, target) {
+        return true;
+    };
+
     return Spell;
 });

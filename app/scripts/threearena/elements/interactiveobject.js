@@ -1,4 +1,6 @@
-
+/**
+ * @module Elements/InteractiveObject
+ */
 define('threearena/elements/interactiveobject',
 
     ['lodash', 'microevent', 'threejs', 'threearena/utils'], function(_, MicroEvent, THREE, Utils) {

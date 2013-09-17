@@ -1,4 +1,6 @@
-
+/**
+ * @module Controls/Camera
+ */
 define('threearena/controls/dota',
 	['lodash', 'threejs'], function(_, THREE, HUD) {
 
@@ -21,7 +23,7 @@ define('threearena/controls/dota',
 
 		this.activeZoneTime = 300;
 
-		this.activeZoneFactor = 30;
+		this.activeZoneFactor = 20;
 
 		// disable default target object behavior
 

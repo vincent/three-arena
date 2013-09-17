@@ -1,8 +1,15 @@
+/**
+ * @module Utils
+ */
 define('threearena/utils',
     ['lodash', 'threejs'], function(_, THREE) {
 
     return {
 
+        /**
+         * A basic glowing material, to be used on active objects
+         * @type {Object}
+         */
         glowmaterial: {
             ambient: new THREE.Color(1, 1, 1),
             vertexShader:   document.getElementById( 'glow_vertexshader'   ).textContent,
@@ -12,6 +19,11 @@ define('threearena/utils',
             transparent: true
         },
 
+        /**
+         * get a globaly defined callback
+         * @param  {Function} wrappedFunction
+         * @return {String} the wrapping function name, defined in the global scope
+         */
         gcb: function( wrappedFunction ) {
 
             var now = new Date(),
@@ -25,23 +37,53 @@ define('threearena/utils',
             return tmpname;
         },
 
+        /**
+         * Apply a glowing effect on an object
+         * @param  {THREE.Mesh} object
+         */
         glow: function (object) {
             _.each(this.glowmaterial, function(v, k){
                 object.material[ '_' + k] = object.material[k];
                 object.material[k] = v;
             });
         },
+
+        /**
+         * Remove the glowing effect from an object
+         * @param  {THREE.Mesh} object
+         */
         unglow: function (object) {
             _.each(this.glowmaterial, function(v, k){
                 object.material[k] = object.material[ '_' + k];
             });
         },
 
+
+        // selectOrAbort: function (funcValidate, funcSelect) {
+        //     document.addEventListener('click', function(event){
+
+        //     });
+        // }
+
+        /**
+         * Move an object along a path.
+         *  to move entities or characters, use their own moveAlong method
+         * @param  {Array|THREE.Shape} the shape, or the points the character will walk along
+         * @param  {Object} options, such as
+         *              start
+         *              onStart
+         *              onComplete
+         *              onUpdate
+         * @return {Tween} the Tween.js object
+         */
         moveAlong: function( object, shape, options ) {
             var options = _.merge({
 
                 from: 0,
                 to: 1,
+
+                duration: null,
+                speed: 70,
 
                 start: true,
 
@@ -64,10 +106,11 @@ define('threearena/utils',
                 throw '2nd argument is not a Shape, nor an array of vertices';
             }
 
-            options.duration = options.duration || shape.getLength() * 70;
+            options.duration = options.duration || shape.getLength()
+            options.length = options.duration * options.speed;
 
             var tween = new TWEEN.Tween({ distance: options.from })
-                .to({ distance: options.to }, options.duration) // use 
+                .to({ distance: options.to }, options.length) // use 
                 .easing( options.easing )
                 .onStart(function(){
                     options.onStart && options.onStart();

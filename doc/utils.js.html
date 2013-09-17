@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: utils.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: utils.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/**
+ * @module Utils
+ */
+define('threearena/utils',
+    ['lodash', 'threejs'], function(_, THREE) {
+
+    return {
+
+        /**
+         * A basic glowing material, to be used on active objects
+         * @type {Object}
+         */
+        glowmaterial: {
+            ambient: new THREE.Color(1, 1, 1),
+            vertexShader:   document.getElementById( 'glow_vertexshader'   ).textContent,
+            fragmentShader: document.getElementById( 'glow_fragmentshader' ).textContent,
+            //side: THREE.BackSide,
+            blending: THREE.AdditiveBlending,
+            transparent: true
+        },
+
+        /**
+         * get a globaly defined callback
+         * @param  {Function} wrappedFunction
+         * @return {String} the wrapping function name, defined in the global scope
+         */
+        gcb: function( wrappedFunction ) {
+
+            var now = new Date(),
+                tmpname = '__tmp_' + parseInt(Math.random() + now.getTime()) + '__';
+
+            var done = function(){
+                delete window[tmpname];
+            };
+            window[tmpname] = wrappedFunction;
+
+            return tmpname;
+        },
+
+        /**
+         * Apply a glowing effect on an object
+         * @param  {THREE.Mesh} object
+         */
+        glow: function (object) {
+            _.each(this.glowmaterial, function(v, k){
+                object.material[ '_' + k] = object.material[k];
+                object.material[k] = v;
+            });
+        },
+
+        /**
+         * Remove the glowing effect from an object
+         * @param  {THREE.Mesh} object
+         */
+        unglow: function (object) {
+            _.each(this.glowmaterial, function(v, k){
+                object.material[k] = object.material[ '_' + k];
+            });
+        },
+
+        /**
+         * Move an object along a path.
+         *  to move entities or characters, use their own moveAlong method
+         * @param  {Array|THREE.Shape} the shape, or the points the character will walk along
+         * @param  {Object} options, such as
+         *              start
+         *              onStart
+         *              onComplete
+         *              onUpdate
+         * @return {Tween} the Tween.js object
+         */
+        moveAlong: function( object, shape, options ) {
+            var options = _.merge({
+
+                from: 0,
+                to: 1,
+
+                start: true,
+
+                onStart: null,
+                onComplete: null,
+                onUpdate: null,
+
+                smoothness: 100,
+                easing: TWEEN.Easing.Linear.None,
+
+            }, options);
+
+            // array of vectors to determine shape
+            var shape;
+            if (shape instanceof THREE.Shape) {
+
+            } else if (_.isArray(shape)) {
+                shape = new THREE.SplineCurve3(shape);
+            } else {
+                throw '2nd argument is not a Shape, nor an array of vertices';
+            }
+
+            options.duration = options.duration || shape.getLength() * 70;
+
+            var tween = new TWEEN.Tween({ distance: options.from })
+                .to({ distance: options.to }, options.duration) // use 
+                .easing( options.easing )
+                .onStart(function(){
+                    options.onStart && options.onStart();
+                })
+                .onComplete(function(){
+                    options.onComplete && options.onComplete();
+                })
+                .onUpdate(function(){
+                    // get the position data half way along the path
+                    var pathPosition = shape.getPoint(this.distance);
+
+                    // move the man to that position
+                    object.position.set(pathPosition.x, pathPosition.y, pathPosition.z);
+
+                    object.updateMatrix();
+
+                    options.onUpdate && options.onUpdate(this, shape);
+                });
+
+            options.start && tween.start();
+            return tween;
+        }
+    };
+});</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="module-Character.html">Character</a></li><li><a href="Ogro.html">Character/Ogro</a></li><li><a href="Ratamahatta.html">Character/Ratamahatta</a></li><li><a href="Camera.html">Controls/Camera</a></li><li><a href="InteractiveObject.html">Elements/InteractiveObject</a></li><li><a href="module-Entity.html">Entity</a></li><li><a href="module-Game.html">Game</a></li><li><a href="module-Utils.html">Utils</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Mon Sep 16 2013 19:01:16 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

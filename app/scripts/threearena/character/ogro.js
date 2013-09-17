@@ -1,3 +1,6 @@
+/**
+ * @module Character/Ogro
+ */
 define('threearena/character/ogro',
     ['lodash', 'threejs', 'threearena/log', 'threearena/character'], function(_, THREE, log, Character) {
 

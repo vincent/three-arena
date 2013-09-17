@@ -48,8 +48,11 @@ define('threearena/views/gameview',
         game.bind('update', _.bind( this.update, this ));
     };
 
-    GameViewModel.prototype.onMapClick = function(event) {
-        debugger;
+    GameViewModel.prototype.onMapClick = function(gameview, event) {
+        var mapX = gameview.mapWidth() / 250 * event.offsetX,
+            mapY = gameview.mapHeight() / 250 * event.offsetY;
+
+        game.camera.position.set(mapX, 50, mapY);
     };
 
     GameViewModel.prototype.onCharacterHover = function(event) {

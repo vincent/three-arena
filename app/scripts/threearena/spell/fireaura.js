@@ -20,12 +20,23 @@ define('threearena/spell/fireaura',
 
     ///////////////////
 
-    FireAura.prototype.start = function () {
-        aura.start();
+    FireAura.prototype.start = function (caster, target) {
+        var self = this;
 
-        window._ta_events.bind('update', _.bind(function(game){
-            aura.update(game.delta);
-        }, aura));
+        var updateCloud = _.bind(function(game){
+            self.aura.update(game.delta);
+        }, self);
+
+        caster.add(this.aura.particleCloud);
+        this.aura.start();
+        window._ta_events.bind('update', updateCloud);
+
+        setTimeout(function(){
+            self.aura.stop();
+            caster.remove(self.aura.particleCloud);
+            window._ta_events.unbind('update', updateCloud);
+        }, 5000);
+
     }
 
 

@@ -172,6 +172,14 @@ module.exports = function (grunt) {
                 }]
             }
         },
+        jsdoc : {
+            dist : {
+                src: ['app/scripts/threearena/*.js', 'app/scripts/threearena/**/*.js', '!app/scripts/threearena/pathfinding/*.js'], 
+                options: {
+                    destination: 'doc'
+                }
+            }
+        },
         // not used since Uglify task does concat,
         // but still available if needed
         /*concat: {

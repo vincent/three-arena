@@ -42,8 +42,10 @@ define('threearena/hud/ingame',
 	GameHud.prototype.attachEntity = function (entity) {
 
 		if (entity instanceof Entity) {
-			var viewModel = new EntityView(entity);
-			ko.applyBindings(viewModel, document.getElementById('view-character'));
+			this.currentEntity = entity;
+
+			this.entityview = new EntityView(entity, this.currentGame);
+			ko.applyBindings(this.entityview, document.getElementById('view-character'));
 
 		} else {
 			throw entity + ' is not an Entity instance';
@@ -52,21 +54,39 @@ define('threearena/hud/ingame',
 
 	GameHud.prototype.attachGame = function (game) {
 
-		var viewModel = new GameView(game);
-		ko.applyBindings(viewModel, document.getElementById('view-map'));
+		this.gameview = new GameView(game);
+		this.currentGame = game;
+		ko.applyBindings(this.gameview, document.getElementById('view-map'));
+
+		game.renderer.domElement.addEventListener('keyup', _.bind( this.keyup, this), false);
 	};
 
+	GameHud.prototype.keyup = function(event) {
+
+		var spell;
+
+		switch( event.keyCode ) {
+
+			case 49: // 1
+				spell = this.currentEntity.state.spells[0];
+				break;
+			case 50:
+				spell = this.currentEntity.state.spells[1];
+				break;
+			case 51:
+				spell = this.currentEntity.state.spells[2];
+				break;
+			case 52:
+				spell = this.currentEntity.state.spells[3];
+				break;
+		}
+
+		if (spell) {
+			this.entityview.cast(spell, null);
+		}
+	};
 
 	GameHud.prototype.startInteraction = function(object) {
-
-        // // object.material = self.game_materials.hover;
-
-        // object.material.ambient = new THREE.Color(1, .2, .2);
-        // object.material.vertexShader =   document.getElementById( 'glow_vertexshader'   ).textContent,
-        // object.material.fragmentShader = document.getElementById( 'glow_fragmentshader' ).textContent,
-        // //object.material.side = THREE.BackSide,
-        // object.material.blending = THREE.AdditiveBlending,
-        // object.material.transparent = true
 
 		if (object instanceof InteractiveObject) {
 			var viewModel = new InteractiveView(object);
@@ -85,8 +105,6 @@ define('threearena/hud/ingame',
 		} else {
 			throw object + ' is not an Entity instance';
 		}
-
-
 	};
 
 	return GameHud;

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: entity.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: entity.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/**
+ * @module Entity
+ */
+define('threearena/entity',
+    ['lodash', 'microevent', 'threejs', 'knockout', 'threearena/log', 'threearena/utils', 'threearena/elements/lifebar'],
+
+    function(_, MicroEvent, THREE, ko, log, Utils, LifeBar) {
+
+    /**
+     * A living entity
+     * 
+     * @fires 'changed' when state (attributes, spells, etc) change
+     * @fires 'hit' when being hit
+     * @fires 'death' when being killed
+     *
+     * @constructor
+     * @param {Object} options
+     *          name, image, life, mana, strength, agility, intelligence,
+     *          spells, level, meleeDef, meleeDamage, spellDefense, spellDamage
+     */
+    var Entity = function(options) {
+
+        var self = this;
+
+        THREE.Object3D.apply(this);
+
+        this.state = _.merge({
+
+            name: Math.random(),
+            image: '/gamedata/unknown.png',
+
+            life: 100,
+            mana: 0,
+
+            strength: 0,
+            agility: 0,
+            intelligence: 0,
+
+            spells: [],
+
+            level: 1,
+
+            meleeDefense: 1,
+            meleeDamage: 1,
+
+            spellDefense: 1,
+            spellDamage: 1,
+
+        }, options);
+
+        this._baseLife = this.state.life;
+        this._baseMana = this.state.mana;
+
+        this.attachLifeBar();
+        this.trigger('changed', this.state);
+    };
+
+    Entity.prototype = new THREE.Object3D();
+
+    /**
+     * Attach a life/mana bar above the entity
+     */
+    Entity.prototype.attachLifeBar = function() {
+
+        this.lifebar = new LifeBar();
+        this.updateLifeBar();
+        this.add(this.lifebar);
+    };
+
+    /**
+     * Update the character lifebar
+     */
+    Entity.prototype.updateLifeBar = function() {
+
+        var eventData = {
+            life: this._baseLife === false ? false : this._baseLife > 0 ? 1 / this._baseLife * this.state.life : 0,
+            mana: this._baseMana === false ? false : this._baseMana > 0 ? 1 / this._baseMana * this.state.mana : 0
+        };
+
+        this.trigger('changed', eventData);
+
+        this.lifebar.set(eventData);
+    };
+
+    /**
+     * Add a life amount
+     * @param  {Number} increment
+     * @return {Number} new life amount
+     */
+    Entity.prototype.incrementLife = function(inc) {
+
+        if (!(this.state.life &lt;= 0 && inc &lt; 0)) {
+            this.state.life += inc;
+        }
+        return this.state.life;
+    };
+
+    /**
+     * Add a mana amount
+     * @param  {Number} inc
+     * @return {Number} new mana amount
+     */
+    Entity.prototype.incrementMana = function(inc) {
+
+        if (!(this.state.mana &lt;= 0 && inc &lt; 0)) {
+            this.state.mana += inc;
+        }
+        return this.state.mana;
+    };
+
+    /**
+     * Returns true if entity is dead
+     * @return {Boolean}
+     */
+    Entity.prototype.isDead = function() {
+
+        return this.state.life &lt;= 0;
+    };
+
+    /**
+     * Returns true if entity is alive
+     * @return {Boolean}
+     */
+    Entity.prototype.isAlive = function() {
+
+        return ! this.isDead();
+    };
+
+    /**
+     * Returns true if entity is out of mana
+     * @return {Boolean}
+     */
+    Entity.prototype.isOutOfMana = function() {
+
+        return this.state.mana &lt;= 0;
+    };
+
+    /**
+     * Make the entity move along a path
+     * @param  {Array|THREE.Shape} the shape, or the points the entity will walk along
+     * @param  {Object} options, such as
+     *              start
+     *              onStart
+     *              onComplete
+     *              onUpdate
+     * @return {Tween} the Tween.js object
+     */
+    Entity.prototype.moveAlong = function(linepoints) {
+
+        throw "Parent class Entity cannot move";
+    };
+
+    /**
+     * Learn a spell
+     * @param  {Spell} spell
+     * @trigger 'changed'
+     */
+    Entity.prototype.learnSpell = function(spell) {
+
+        this.state.spells.push(new spell({ source: this }));
+
+        this.trigger('changed', this);
+    };
+
+    /**
+     * Cast a spell
+     * @param  {Spell} spell
+     * @return {Boolean} True if spell has been casted
+     */
+    Entity.prototype.cast = function(spell, target) {
+
+        if (spell.needTarget && ! target) {
+            throw "This spell needs a target";
+        }
+
+        spell.start(this, target);
+
+        log(log.COMBAT, '%o begins to cast %o', this, spell);
+        return 
+    };
+
+    /**
+     * Hit this entity with a spell
+     * @param  {Spell} spell
+     * @triggers 'hit', 'changed', 'death'
+     */
+    Entity.prototype.hit = function(spell) {
+
+        var eventData = {
+            dodged: 0,
+            meleeLifeDamageReceived: 0,
+            magicLifeDamageReceived: 0,
+            manaDamageReceived: 0,
+            spell: spell
+        };
+
+        eventData.meleeLifeDamageReceived = spell.meleeLifeDamage;
+        eventData.magicLifeDamageReceived = spell.magicLifeDamage;
+        eventData.manaDamageReceived = spell.manaDamage;
+
+        eventData.totalLifeDamage = eventData.meleeLifeDamageReceived + eventData.magicLifeDamageReceived;
+
+        // apply hits
+        this.incrementLife(-eventData.totalLifeDamage);
+        this.incrementMana(-eventData.manaDamageReceived);
+        this.updateLifeBar();
+
+        this.trigger('hit', eventData);
+
+        log(log.COMBAT, '%o hit %o with %o : %d + %d + %d (%s) - %s' ,
+            spell.source, this,
+            spell.name, eventData.magicLifeDamageReceived, eventData.meleeLifeDamageReceived, eventData.manaDamageReceived,
+            (spell.isCritical ? 'critical' : 'normal'), eventData.damageAbsorbed
+        );
+
+        // send events
+        if (this.isDead()) {
+            this.trigger('death', eventData);
+        }
+    };
+
+    Entity.prototype.constructor = Entity;
+    MicroEvent.mixin(Entity);
+    return Entity;
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="module-Character.html">Character</a></li><li><a href="Ogro.html">Character/Ogro</a></li><li><a href="Ratamahatta.html">Character/Ratamahatta</a></li><li><a href="Camera.html">Controls/Camera</a></li><li><a href="InteractiveObject.html">Elements/InteractiveObject</a></li><li><a href="module-Entity.html">Entity</a></li><li><a href="module-Game.html">Game</a></li><li><a href="module-Utils.html">Utils</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Mon Sep 16 2013 19:01:16 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

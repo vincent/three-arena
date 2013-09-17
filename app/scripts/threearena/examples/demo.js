@@ -1,9 +1,10 @@
 
 define('threearena/examples/demo',
     ['lodash', 'threejs', 'threearena/game', 'threearena/utils', 'threearena/character/ogro', 'threearena/character/ratamahatta',
-      'threearena/elements/interactiveobject', 'threearena/spell/fireaura' ],
+      'threearena/elements/interactiveobject',
+      'threearena/spell/fireaura', 'threearena/spell/firebullet' ],
 
-    function(_, THREE, Game, Utils, Ogro, Ratamahatta, InterativeObject, FireAuraSpell) {
+    function(_, THREE, Game, Utils, Ogro, Ratamahatta, InterativeObject, FireAuraSpell, FireBulletSpell) {
     'use strict';
 
 	var Demo = function() {
@@ -61,10 +62,7 @@ define('threearena/examples/demo',
 
                 // learn some spells
                 ogro.learnSpell( FireAuraSpell );
-                ogro.learnSpell( FireAuraSpell );
-                ogro.learnSpell( FireAuraSpell );
-                ogro.learnSpell( FireAuraSpell );
-
+                ogro.learnSpell( FireBulletSpell );
 
 
                 var rata = new Ratamahatta({
@@ -81,7 +79,7 @@ define('threearena/examples/demo',
                         ];
 
                         var tween = rata.moveAlong( path ); //, { start: false } ).start();
-                        tween.repeat( Infinity ).yoyo( true ).start( );
+                        //tween.repeat( Infinity ).yoyo( true ).start( );
                     }
                 });
 
