@@ -3,9 +3,10 @@ define('threearena/examples/demo',
     ['lodash', 'threejs', 'threearena/game', 'threearena/utils',
       'threearena/character/ogro', 'threearena/character/ratamahatta', 'threearena/character/monsterdog',
       'threearena/elements/interactiveobject',
+      'threearena/elements/autospawn',
       'threearena/spell/fireaura', 'threearena/spell/firebullet' ],
 
-    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, InterativeObject, FireAuraSpell, FireBulletSpell) {
+    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, InterativeObject, SpawningPool, FireAuraSpell, FireBulletSpell) {
     'use strict';
 
 	var Demo = function() {
@@ -64,31 +65,19 @@ define('threearena/examples/demo',
                 // learn some spells
                 ogro.learnSpell( FireAuraSpell );
                 ogro.learnSpell( FireBulletSpell );
-
-
-                var rata = new Dog({
-                    onLoad: function(){
-                        self.addCharacter( this );
-
-                        // Move Ogro along a path
-                        var path = [ 
-                            new THREE.Vector3( -142, 0, 139 ),
-                            new THREE.Vector3(  -64.7, 14.6, 63.8 ),
-                            new THREE.Vector3( -101.9, 10.7, 39.6 ),
-                            new THREE.Vector3(  -94.6,  6.0, -6.3 ),
-                            new THREE.Vector3(  -40.6,  5.9,  2.4 ),
-                            new THREE.Vector3(  -35.7,  6.6, 22.4 ),  
-                        ];
-
-                        var tween = rata.moveAlong( path , { start: false } );//.start();
-                        //tween.repeat( Infinity ).yoyo( true ).start( );
-                    }
-                });
-
-
-
             }
         });
+
+        // A spawning pool
+        var pool = new SpawningPool({
+            entity: Dog,
+            groupOf: 3,
+            eachGroupInterval: 30 * 1000,
+            towards: new THREE.Vector3(  -51, 18, -162 )
+        });
+        pool.position.set(-179.3, 13.8, 181.2);
+        this.addSpawningPool(pool);
+        pool.start();
     };
 
 

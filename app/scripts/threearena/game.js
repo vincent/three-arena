@@ -530,6 +530,15 @@ define('threearena/game',
         this.scene.remove(character);
     };
 
+
+    Game.prototype.addSpawningPool = function(pool) {
+        var self = this;
+        this.scene.add(pool);
+        pool.bind('spawnedone', function(character){
+            self.addCharacter(character);
+        });
+    };
+
     /**
      * Called after fillmap, before ready.
      * Useful for adding some details in the scene from subclasses
