@@ -75,8 +75,8 @@ define('threearena/game',
     Game.prototype.preload = function(done) {
 
         Config = {};
-        PathFinding.set_cellSize(1.5);
-        PathFinding.set_cellHeight(1.5);
+        PathFinding.set_cellSize(2);
+        PathFinding.set_cellHeight(2);
         PathFinding.initWithFile('/gamedata/maps/mountains.obj');
         PathFinding.build();
         require(this.settings.preload, done);
@@ -225,6 +225,9 @@ define('threearena/game',
         // this.renderer.shadowMapDarkness = 0.5;
         // this.renderer.shadowMapWidth = window.innerWidth;
         // this.renderer.shadowMapHeight = window.innerHeight;
+
+        this.renderer.setClearColor( this.scene.fog.color, 1 );
+
         this.renderer.setSize( window.innerWidth, window.innerHeight );
 
         var renderModel = new THREE.RenderPass( this.scene, this.camera );
@@ -289,7 +292,8 @@ define('threearena/game',
         });
 
         // build the skybox Mesh 
-        var skyboxMesh = new THREE.Mesh( new THREE.CubeGeometry( 500, 500, 500, 1, 1, 1, null, true ), material );
+        var skyboxMesh = new THREE.Mesh( new THREE.CubeGeometry( 600, 600, 600, 1, 1, 1, null, true ), material );
+        //skyboxMesh.renderDepth = 1e20;
         this.scene.add( skyboxMesh );
         done();
     };
@@ -439,7 +443,7 @@ define('threearena/game',
 
         async.series([
             _.bind( this._initGround, this),
-            //_.bind( this._initSky, this),
+            _.bind( this._initSky, this),
             _.bind( this._initTrees,  this),
             _.bind( this._initTowers, this),
             function (callback) {
