@@ -745,7 +745,7 @@ define('threearena/game',
         this.camera.position.y = 80; // crraaaapp //
 
         _.each(this.pcs, function(character){
-            character.update(self.delta);
+            character.update(self);
         });
 
         this.composer.render();

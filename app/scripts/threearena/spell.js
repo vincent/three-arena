@@ -28,5 +28,9 @@ define('threearena/spell',
         return true;
     };
 
+    Spell.prototype.start = function (caster, target) {
+        var self = this;
+    }
+
     return Spell;
 });

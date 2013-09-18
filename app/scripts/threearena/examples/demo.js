@@ -4,9 +4,12 @@ define('threearena/examples/demo',
       'threearena/character/ogro', 'threearena/character/ratamahatta', 'threearena/character/monsterdog',
       'threearena/elements/interactiveobject',
       'threearena/elements/autospawn',
-      'threearena/spell/fireaura', 'threearena/spell/firebullet' ],
+      'threearena/spell/bite',
+      'threearena/spell/fireaura',
+      'threearena/spell/firebullet'
+    ],
 
-    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, InterativeObject, SpawningPool, FireAuraSpell, FireBulletSpell) {
+    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, InterativeObject, SpawningPool, BiteSpell, FireAuraSpell, FireBulletSpell) {
     'use strict';
 
 	var Demo = function() {
@@ -60,6 +63,7 @@ define('threearena/examples/demo',
         // Another character
         var ogro = new Ogro({
             onLoad: function(){
+                this.state.team = 0;
                 self.addCharacter( this );
 
                 // learn some spells
@@ -94,6 +98,12 @@ define('threearena/examples/demo',
                 new THREE.Vector3( -133.4, 16.9,  156.7 ),
                 new THREE.Vector3( -178.5, 13.9,  181.4 )
             ]
+        });
+        pool.bind('spawnedone', function(character){
+            character.state.team = 1;
+            character.learnSpell(BiteSpell);
+            character.state.autoAttacks = true;
+            character.state.autoAttackSpell = 0;
         });
         pool.position.set( 170.9, 17.8, -132.3);
         this.addSpawningPool(pool);
