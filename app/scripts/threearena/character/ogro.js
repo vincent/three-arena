@@ -68,7 +68,7 @@ define('threearena/character/ogro',
 
         baseCharacter.onLoadComplete = function () {
             self.character.shareParts( baseCharacter );
-            //self.character.enableShadows( true );
+            self.character.enableShadows( true );
 
             // disable speed
             self.character.maxSpeed = 

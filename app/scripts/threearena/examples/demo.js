@@ -1,10 +1,11 @@
 
 define('threearena/examples/demo',
-    ['lodash', 'threejs', 'threearena/game', 'threearena/utils', 'threearena/character/ogro', 'threearena/character/ratamahatta',
+    ['lodash', 'threejs', 'threearena/game', 'threearena/utils',
+      'threearena/character/ogro', 'threearena/character/ratamahatta', 'threearena/character/monsterdog',
       'threearena/elements/interactiveobject',
       'threearena/spell/fireaura', 'threearena/spell/firebullet' ],
 
-    function(_, THREE, Game, Utils, Ogro, Ratamahatta, InterativeObject, FireAuraSpell, FireBulletSpell) {
+    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, InterativeObject, FireAuraSpell, FireBulletSpell) {
     'use strict';
 
 	var Demo = function() {
@@ -65,12 +66,13 @@ define('threearena/examples/demo',
                 ogro.learnSpell( FireBulletSpell );
 
 
-                var rata = new Ratamahatta({
+                var rata = new Dog({
                     onLoad: function(){
                         self.addCharacter( this );
 
                         // Move Ogro along a path
                         var path = [ 
+                            new THREE.Vector3( -142, 0, 139 ),
                             new THREE.Vector3(  -64.7, 14.6, 63.8 ),
                             new THREE.Vector3( -101.9, 10.7, 39.6 ),
                             new THREE.Vector3(  -94.6,  6.0, -6.3 ),
@@ -78,7 +80,7 @@ define('threearena/examples/demo',
                             new THREE.Vector3(  -35.7,  6.6, 22.4 ),  
                         ];
 
-                        var tween = rata.moveAlong( path ); //, { start: false } ).start();
+                        var tween = rata.moveAlong( path , { start: false } );//.start();
                         //tween.repeat( Infinity ).yoyo( true ).start( );
                     }
                 });
@@ -127,13 +129,14 @@ define('threearena/examples/demo',
         var loader = new THREE.OBJLoader( );
         loader.load( '/gamedata/maps/mountains.obj', function ( object ) {
             self.ground = object;
-            //self.ground.receiveShadow = true;
-
+            
             self.ground.traverse( function ( child ) {
                 if ( child instanceof THREE.Mesh ) {
                     child.material = material;
                     child.geometry.computeVertexNormals();
                     child.geometry.computeTangents();
+
+                    child.receiveShadow = true;
                 }
             } );
 

@@ -1,0 +1,217 @@
+
+#hud-container {
+    background: #000;
+    background-size: cover;
+    position: absolute;
+    bottom: -11px;
+    height: 200px;
+    width: 100%;
+    z-index: 0;
+    display: none;
+}
+#hud-container .view {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+.view.menu {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30%;
+    height: 100%;
+    color: #fff;
+    background: #000;
+}
+/*
+#hud-container div.front {
+    background: url(/gamedata/hud/default/background.png) no-repeat 0 -11px;
+    background-size: cover;
+    z-index: 2;
+}
+*/
+
+
+
+#hud-container .name {
+    position: absolute;
+    top: 24.5%;
+    width: 9%;
+    height: 8%;
+    padding: 0;
+    color: #FFF;
+    left: 22%;
+    font-size: 89%;
+    text-align: center;
+}
+#hud-container .level {
+    position: absolute;
+    height: 10%;
+    width: 2%;
+    top: 91%;
+    left: 20%;
+    text-align: center;
+}
+#hud-container .image {
+    background-size: cover;
+    position: relative;
+    top: 34%;
+    width: 10%;
+    left: 22%;
+    height: 55%;
+}
+#hud-container .strength {
+    text-align: center;
+    font-size: 63%;
+    position: absolute;
+    top: 60%;
+    height: 5%;
+    left: 42%;
+    width: 1.6%;
+}
+#hud-container .agility {
+    text-align: center;
+    font-size: 63%;
+    position: absolute;
+    width: 1.6%;
+    top: 73.7%;
+    height: 5%;
+    left: 42%;
+}
+#hud-container .intelligence {
+    text-align: center;
+    font-size: 63%;
+    position: absolute;
+    width: 1.6%;
+    height: 5%;
+    left: 42%;
+    top: 87%;
+}
+#hud-container .xp {
+    position: absolute;
+    height: 20px;
+    width: 85px;
+    left: 40px;
+}
+#hud-container .xp .bar {
+    background-image: url(/gamedata/textures/lifebar.png);
+    position: absolute;
+    width: 0%;
+}
+#hud-container .life {
+    position: absolute;
+    background: #000;
+    left: 46.3%;
+    width: 30%;
+    height: 6%;
+    top: 26%;
+}
+#hud-container .life .bar {
+    background: url(/gamedata/hud/default/life_end.png) 0 0;
+    background: linear-gradient(to right, #0D0, #AFA);
+    position: absolute;
+    text-align: center;
+    line-height: 19px;
+    font-size: 93%;
+    height: 110%;
+    color: #FFF;
+    width: 0%;
+    top: -5%;
+ 
+    background: #91e842; /* Old browsers */
+    background: -moz-linear-gradient(left, #91e842 80%, #d2ff52 97%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right top, color-stop(80%,#91e842), color-stop(97%,#d2ff52)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(left, #91e842 80%,#d2ff52 97%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(left, #91e842 80%,#d2ff52 97%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(left, #91e842 80%,#d2ff52 97%); /* IE10+ */
+    background: linear-gradient(to right, #91e842 80%,#d2ff52 97%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#91e842', endColorstr='#d2ff52',GradientType=1 ); /* IE6-9 */
+}
+#hud-container .mana {
+    position: absolute;
+    background: #000;
+    width: 30%;
+    height: 5%;
+    left: 46.3%;
+    top: 33%;
+}
+#hud-container .mana .bar {
+    background-image: url(/gamedata/hud/default/mana_end.png) repeat 0 0;
+    background: linear-gradient(to right, #00D, #AAF);
+    line-height: 9px;
+    font-size: 10px;
+    height: 10px;
+    width: 0%;
+
+    background: #66b6fc; /* Old browsers */
+    background: -moz-linear-gradient(left, #66b6fc 81%, #b2e1ff 96%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right top, color-stop(81%,#66b6fc), color-stop(96%,#b2e1ff)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(left, #66b6fc 81%,#b2e1ff 96%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(left, #66b6fc 81%,#b2e1ff 96%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(left, #66b6fc 81%,#b2e1ff 96%); /* IE10+ */
+    background: linear-gradient(to right, #66b6fc 81%,#b2e1ff 96%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#66b6fc', endColorstr='#b2e1ff',GradientType=1 ); /* IE6-9 */
+}
+#hud-container .spells {
+    position: absolute;
+    width: 30%;
+    height: 40%;
+    left: 46%;
+    top: 37%;
+    margin: 0;
+    padding: 0;
+}
+#hud-container .spells .spell {
+    width: 18%;
+    height: 65%;
+    margin: 3% 3.2%;
+    float: left;
+    position: relative;
+}
+#hud-container .spell .image {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    top: 0;
+    left: 0;
+    position: absolute;
+}
+
+#hud-container .attributes {
+    position: absolute;
+    width: 200px;
+    height: 50px;
+    left: 40%;
+    top: 50px;
+}
+
+#hud-container #view-map {
+    width: 20%;
+}
+
+#hud-container .map {
+    background-size: cover;
+    position: absolute;
+    width: 66%;
+    height: 88%;
+    left: 0.5%;
+    top: 8%;
+}
+#view-map ul {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+#view-map li.character-position {
+    width: 6px;
+    height: 6px;
+    background: #F00;
+    border-radius: 3px;
+    position: absolute;
+    list-style-type: none;
+}
+
+

@@ -7,6 +7,7 @@ define('threearena/game',
     'threearena/utils',
     'threearena/hud',
     'threearena/elements/tower',
+    'threearena/elements/lifebar',
     'threearena/elements/interactiveobject', 
     'threearena/particles/cloud', 
     'threearena/controls/dota',
@@ -35,6 +36,7 @@ define('threearena/game',
     Utils,
     HUD,
     DefenseTower,
+    LifeBar,
     InteractiveObject,
     Particles,
     CameraControls,
@@ -73,8 +75,8 @@ define('threearena/game',
     Game.prototype.preload = function(done) {
 
         Config = {};
-        PathFinding.set_cellSize(1);
-        PathFinding.set_cellHeight(1);
+        PathFinding.set_cellSize(1.5);
+        PathFinding.set_cellHeight(1.5);
         PathFinding.initWithFile('/gamedata/maps/mountains.obj');
         PathFinding.build();
         require(this.settings.preload, done);
@@ -156,7 +158,7 @@ define('threearena/game',
      */
     Game.prototype._initCamera = function() {
 
-        this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
+        this.camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 10000 );
         this.camera.position.set( this.settings.positions.spawn.x + 20, 50, this.settings.positions.spawn.z + 30 );
     };
 
@@ -166,8 +168,8 @@ define('threearena/game',
     Game.prototype._initScene = function() {
 
         this.scene = new THREE.Scene();
-        this.scene.fog = new THREE.FogExp2( 0x0, 0.00055 );
-        this.scene.fog = new THREE.Fog( 0x000000, 1, 200 );
+        //this.scene.fog = new THREE.FogExp2( 0x0, 0.00055 );
+        this.scene.fog = new THREE.Fog( 0x444444, 100, 300 );
 
 
         this.game_materials = {
@@ -195,7 +197,11 @@ define('threearena/game',
         this.scene.add( this.pointLight );
 
         this.directionalLight = new THREE.SpotLight( 0xffffff );
-        this.directionalLight.position.set( 0, 10, 0 );
+        this.directionalLight.position.set( -200, 400, -200 );
+        this.directionalLight.castShadow = true;
+        this.directionalLight.shadowMapWidth = 1024;
+        this.directionalLight.shadowMapHeight = 1024;
+        this.directionalLight.shadowMapDarkness = 0.95;
         this.scene.add( this.directionalLight );
     };
 
@@ -204,11 +210,11 @@ define('threearena/game',
      */
     Game.prototype._initRenderer = function() {
         this.renderer = new THREE.WebGLRenderer();
-        // this.renderer.shadowMapEnabled = true;
-        // this.renderer.shadowMapSoft = true;
-        // this.renderer.shadowCameraNear = 3;
-        // this.renderer.shadowCameraFar = camera.far;
-        // this.renderer.shadowCameraFov = 50;
+        this.renderer.shadowMapEnabled = true;
+        this.renderer.shadowMapSoft = true;
+        this.renderer.shadowCameraNear = 3;
+        this.renderer.shadowCameraFar = this.camera.far;
+        this.renderer.shadowCameraFov = 50;
 
         this.renderer.autoClear = false;
         this.renderer.gammaInput = true;
@@ -227,15 +233,15 @@ define('threearena/game',
         var effectFXAA = new THREE.ShaderPass( THREE.FXAAShader );
 
         effectFXAA.uniforms[ 'resolution' ].value.set( 1 / window.innerWidth, 1 / window.innerHeight );
-        effectBleach.uniforms[ 'opacity' ].value = 0.4;
+        effectBleach.uniforms[ 'opacity' ].value = 0.2;
         effectColor.uniforms[ 'powRGB' ].value.set( 1.4, 1.45, 1.45 );
         effectColor.uniforms[ 'mulRGB' ].value.set( 1.1, 1.1, 1.1 );
         effectFXAA.renderToScreen = true;
 
         this.composer = new THREE.EffectComposer( this.renderer );
         this.composer.addPass( renderModel );
-        this.composer.addPass( effectBleach );
-        this.composer.addPass( effectColor );
+        //this.composer.addPass( effectBleach );
+        //this.composer.addPass( effectColor );
         this.composer.addPass( effectFXAA );
 
         this.settings.container.appendChild( this.renderer.domElement );
@@ -256,7 +262,35 @@ define('threearena/game',
         var groundMaterial = new THREE.MeshBasicMaterial({ color:'#ddd' });
 
         this.ground = new THREE.Mesh(groundGeometry, groundMaterial);
-        this.intersectObjects.push(self.ground.children[0].children);
+        this.ground.receiveShadow = true;
+
+        this.intersectObjects.push(this.ground);
+        done();
+    };
+
+    Game.prototype._initSky = function(done) {
+        var urlPrefix = '/gamedata/skybox/darkred_';
+        var urls = [
+            urlPrefix + 'posx.jpg', urlPrefix + 'negx.jpg',
+            urlPrefix + 'posy.jpg', urlPrefix + 'negy.jpg',
+            urlPrefix + 'posz.jpg', urlPrefix + 'negz.jpg'
+        ];
+        var textureCube = THREE.ImageUtils.loadTextureCube( urls );
+
+        var shader = THREE.ShaderLib['cube'];
+        var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
+        uniforms['tCube'].value = textureCube;
+        var material = new THREE.ShaderMaterial({
+            fragmentShader: shader.fragmentShader,
+            vertexShader: shader.vertexShader,
+            uniforms: uniforms,
+            depthWrite: false,
+            side: THREE.BackSide
+        });
+
+        // build the skybox Mesh 
+        var skyboxMesh = new THREE.Mesh( new THREE.CubeGeometry( 500, 500, 500, 1, 1, 1, null, true ), material );
+        this.scene.add( skyboxMesh );
         done();
     };
 
@@ -291,7 +325,7 @@ define('threearena/game',
             loader.load( '/gamedata/models/forest_tree.dae', function ( object ) {
                 //object.scene.children[0].material.materials[0].transparent = true;
                 //object.scene.children[0].material.materials[1].transparent = true;
-                var cartoonTree = new THREE.Object3D();
+                // var cartoonTree = new THREE.Object3D();
                 object.scene.children[0].position.setY(2);
                 object.scene.children[0].scale.set(2, 2, 2);
                 //cartoonTree.add(object.scene.children[0]);
@@ -311,10 +345,32 @@ define('threearena/game',
             });
         };
 
+        var _load_dracena = function(callback){
+            loader.load( '/gamedata/models/plants/Dracena.dae', function ( object ) {
+
+                // object.scene.children[0].position.setY(2);
+                object.scene.children[0].scale.set(.2, .2, .2);
+                //cartoonTree.add(object.scene.children[0]);
+
+                object.scene.children[0].material.materials[0].transparent = true;
+                object.scene.children[0].material.materials[1].transparent = true;
+                object.scene.children[0].material.materials[2].transparent = true;
+
+                object.scene.children[0].material.materials[0].ambient.set(1, 1, 1);
+                object.scene.children[0].material.materials[1].ambient.set(1, 1, 1);
+                object.scene.children[0].material.materials[2].ambient.set(1, 1, 1);
+
+                self._trees.push(object.scene.children[0]);
+                callback();
+            });
+        };
+
+
         async.series([
             // _load_tree_pine,
             // _load_tree_oak,
-            _load_tree_cartoon
+            //_load_tree_cartoon,
+            _load_dracena
         ], main_callback);
     };
 
@@ -331,7 +387,8 @@ define('threearena/game',
         var refTreeIndex = type || Math.round( Math.random() * (this._trees.length - 1) );
         var refTree = self._trees[ refTreeIndex ];
 
-        var tree = new THREE.Mesh( refTree.geometry, refTree.material );    
+        var tree = new THREE.Mesh( refTree.geometry, refTree.material );
+        tree.castShadow = true;    
         tree.position = position;
         tree.scale = new THREE.Vector3(4, 4, 4);
         tree.rotation.y = Math.random() * 90 * ( Math.PI / 180 );
@@ -363,6 +420,7 @@ define('threearena/game',
             fireIntensity: 50,
             transform: function (loaded) {
                 var loaded = loaded.scene.children[0];
+                loaded.castShadow = true;
                 loaded.scale.set( 8, 8, 8 );
                 loaded.rotation.x = -90 * (Math.PI / 180);
             }
@@ -381,9 +439,12 @@ define('threearena/game',
 
         async.series([
             _.bind( this._initGround, this),
+            //_.bind( this._initSky, this),
             _.bind( this._initTrees,  this),
             _.bind( this._initTowers, this),
             function (callback) {
+                console.log('BYPASS TREES'); callback(); return;
+
                 var loader = new THREE.OBJLoader();
                 loader.load('/gamedata/maps/mountains_trees.obj', function (object) {
                     object.traverse(function (child) {
@@ -433,6 +494,7 @@ define('threearena/game',
      */
     Game.prototype.addCharacter = function(character, spawnPosition) {
 
+        var self = this;
         var spawnPosition = spawnPosition || this.settings.positions.spawn;
 
         character.position.set(spawnPosition.x, spawnPosition.y, spawnPosition.z);
@@ -442,7 +504,18 @@ define('threearena/game',
             this.hud.attachEntity(character);
         }
 
-        this.intersectObjects.push(character.character.meshBody);
+        character.traverse(function (child) {
+            if (child instanceof THREE.Mesh && child.parent && ! child.parent instanceof LifeBar) {
+                // FIXME: Some meshes cannot be used directly for collision (SkinnedMesh)
+                // IDEA: Compute the whole character's bbox in the Character class, skipping weapons, tails, etc..
+                // self.intersectObjects.push(child);
+
+                child.castShadow = true;
+            }
+        });
+        
+        character.character.meshBody && this.intersectObjects.push(character.character.meshBody);
+
         this.pcs.push(character);
         this.scene.add(character);
     };
@@ -656,7 +729,7 @@ define('threearena/game',
         this.trigger('update', this);
 
         this.cameraControls.update(this.delta);
-        this.camera.position.y = 60; // crraaaapp //
+        this.camera.position.y = 80; // crraaaapp //
 
         _.each(this.pcs, function(character){
             character.update(self.delta);
