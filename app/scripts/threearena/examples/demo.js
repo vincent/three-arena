@@ -106,7 +106,7 @@ define('threearena/examples/demo',
 
         var self = this;
 
-        var ambient = 0xaaaaaa, diffuse = 0xbbbbbb, specular = 0x060606, shininess = 30;
+        var ambient = 0x555555, diffuse = 0xbbbbbb, specular = 0x060606, shininess = 30;
 
         var uniforms;
         var shader = THREE.ShaderLib[ "normalmap" ];

@@ -189,7 +189,7 @@ define('threearena/game',
      */
     Game.prototype._initLights = function() {
 
-        this.ambientLight = new THREE.AmbientLight( 0xffffff );
+        this.ambientLight = new THREE.AmbientLight( 0xaaaaaa );
         this.scene.add( this.ambientLight );
 
         this.pointLight = new THREE.PointLight( 0xffffff, 1.25, 1000 );
