@@ -14,6 +14,8 @@ require.config({
         sparks:         '../bower_components/threejs/examples/js/Sparks',
         tweenjs:        '../bower_components/tween.js/build/tween.min',
         knockoutmapping:'../bower_components/knockout-mapping/knockout.mapping',
+        base:           '../bower_components/Base.js',
+        machinejs:      '../bower_components/machinejs',
 
         MD2Character:   '../bower_components/threejs/examples/js/MD2Character',
         MD2CharacterComplex: '../bower_components/threejs/examples/js/MD2CharacterComplex',
