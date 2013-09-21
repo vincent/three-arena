@@ -24,8 +24,8 @@ define('threearena/spell',
     	});
     }
 
-    Spell.prototype.canHit = function(source, target) {
-        return true;
+    Spell.prototype.canHit = function(source, target, toleranceRatio) {
+        return false;
     };
 
     Spell.prototype.start = function (caster, target) {

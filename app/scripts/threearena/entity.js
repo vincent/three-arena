@@ -2,9 +2,10 @@
  * @module Entity
  */
 define('threearena/entity',
-    ['lodash', 'microevent', 'threejs', 'knockout', 'threearena/log', 'threearena/utils', 'threearena/elements/lifebar'],
+    ['lodash', 'microevent', 'threejs', 'knockout', 'threearena/log', 'threearena/utils', 'threearena/elements/lifebar', 'threearena/pathfinding/recast.emcc.dota.mountains',],
 
-    function(_, MicroEvent, THREE, ko, log, Utils, LifeBar) {
+function(_, MicroEvent, THREE, ko, log, Utils, LifeBar, PathFinding) {
+    PathFinding = Module;
 
     /**
      * A living entity
@@ -52,10 +53,125 @@ define('threearena/entity',
         this._baseMana = this.state.mana;
 
         this.attachLifeBar();
+
+        this.states = {
+
+            idle: function() { },
+
+            canFightObjective: function () {
+                return self.objective && self.state.spells[0].canHit(self, self.objective);
+            },
+            fightObjective: function () {
+                self.cast(self.state.spells[0], self.objective);
+            },
+
+            canFightNearbyEnnemy: function () {
+                var spell;
+                if (self.state.autoAttackSpell !== null && self.state.autoAttacks && self.state.spells[ self.state.autoAttackSpell ]) {
+
+                    var i = -1,
+                        charDistance,
+                        minDistance = Number.MAX_VALUE,
+                        spell = self.state.spells[ self.state.autoAttackSpell ];
+
+                    self._nearestEnnemy = false;
+                    while (i++ < game.pcs.length - 1) {
+
+                        charDistance = game.pcs[i].position.distanceTo(self.position);
+
+                        if (charDistance < minDistance && self.state.team != game.pcs[i].state.team && spell.canHit(self, game.pcs[i], 3)) {
+                            minDistance = charDistance;
+                            self._nearestEnnemy = game.pcs[i];
+                        }
+                    }
+                }
+                if (! self._nearestEnnemy) {
+
+                    if (self._isFighting) {
+                        // xas fighting, must replan
+                        self._currentRoute = null;
+                        self._isMoving = false;
+                    }
+
+                    // nnope, no one's there
+                    self._isFighting = false;
+                    return false;
+
+                } else {
+
+                    return true;
+                }
+            },
+            fightNearbyEnnemy: function () {
+                if (self._currentTween) {
+                    self._isMoving = false;
+                    self._currentTween.stop();
+                    self._currentTween.onComplete();
+                }
+                self._isFighting = true;
+                self.cast(self.state.spells[0], self._nearestEnnemy);
+            },
+
+            plotCourseToObjective: function () {
+                self._currentRoute || PathFinding.findPath(
+                    self.position.x, self.position.y, self.position.z,
+                    self.objective.position.x, self.objective.position.y, self.objective.position.z,
+                    100000,
+                    Utils.gcb( _.bind( self._setRoute, self) )
+                );
+            },
+            canPlotCourseToObjective: function () {
+                return self.objective && ! this._isFighting && ! self._currentRoute;
+            },
+
+            followCourseToObjective: function () {
+                if (self._isMoving) return;
+                if (self._currentTween) {
+                    self._currentTween.stop();
+                    self._currentTween.onComplete();
+                }
+                this._isFighting = false;
+                self._currentTween = self.moveAlong(self._currentRoute, {
+                    onStart: function(){
+                        self._isMoving = true;
+                    },
+                    onComplete: function(){
+                        self._isMoving = false;
+                        self._currentRoute = null;
+                    }
+                });
+            },
+
+            canFollowCourseToObjective: function () {
+                return self.objective 
+                        && self._currentRoute 
+                        && ! this._isFighting 
+                        && ! self.states.canFightObjective()
+                        && ! self.states.canFightNearbyEnnemy();
+            },
+
+        };
+
         this.trigger('changed', this.state);
     };
 
     Entity.prototype = new THREE.Object3D();
+
+    //////////////////
+
+    Entity.prototype._setRoute = function (linepoints) {
+
+        if (linepoints && linepoints.length > 0) {
+            log(log.SYS_DEBUG, '%o finds a way from %o to %o', this, linepoints[0], linepoints[linepoints.length - 1]);
+
+            this._currentRoute = linepoints; // new THREE.SplineCurve3(linepoints);
+
+        } else {
+            this._currentRoute = null;
+        }
+    }
+
+    //////////////////
 
     /**
      * Attach a life/mana bar above the entity
@@ -170,6 +286,7 @@ define('threearena/entity',
     Entity.prototype.cast = function(spell, target) {
 
         log(log.COMBAT, '%o begins to cast %o', this, spell);
+
         spell.start(this, target);
     };
 

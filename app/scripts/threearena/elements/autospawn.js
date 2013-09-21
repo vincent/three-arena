@@ -54,20 +54,20 @@ function(_, MicroEvent, THREE, Utils, PathFinding) {
 
     AutoSpawn.prototype.spanwGroup = function() {
 
-        // path has not been defined yet
-        if (! this.options.path) {
-            PathFinding.findPath(
-                this.position.x, this.position.y, this.position.z,
-                this.options.towards.x, this.options.towards.y, this.options.towards.z,
-                10000,
-                Utils.gcb( _.bind(function(pathArray){
-                    this.setPath(pathArray);
-                    this.spanwGroup();
-                }, this) )
-            );
+        // // path has not been defined yet
+        // if (! this.options.path && this.options.towards) {
+        //     PathFinding.findPath(
+        //         this.position.x, this.position.y, this.position.z,
+        //         this.options.towards.x, this.options.towards.y, this.options.towards.z,
+        //         10000,
+        //         Utils.gcb( _.bind(function(pathArray){
+        //             this.setPath(pathArray);
+        //             this.spanwGroup();
+        //         }, this) )
+        //     );
 
-        // ok we have a real path to follow
-        } else {
+        // // ok we have a real path to follow
+        // } else {
 
             for (var i = 0; i < this.options.groupOf; i++) {
                 setTimeout(_.bind(function(){
@@ -79,7 +79,7 @@ function(_, MicroEvent, THREE, Utils, PathFinding) {
             setTimeout(_.bind(function(){
                 this.spanwGroup();
             }, this), this.options.eachGroupInterval);
-        }
+        // }
     };
 
     AutoSpawn.prototype.spanwOne = function() {
@@ -87,7 +87,7 @@ function(_, MicroEvent, THREE, Utils, PathFinding) {
             character = new this.options.entity({
                 onLoad: function(){
                     self.trigger('spawnedone', character);
-                    character.moveAlong(self.options.path, self.tweenOptions);                
+                    // character.moveAlong(self.options.path, self.tweenOptions);                
                 }
             });
     };

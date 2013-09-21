@@ -42,24 +42,6 @@ define('threearena/character',
     Character.prototype.update = function(game) {
 
         this.character.update(game.delta);
-
-        var spell = this.state.spells[ this.state.autoAttackSpell ];
-
-        if (spell && this.state.autoAttacks) {
-
-            var i = -1, charDistance, minDistance = Number.MAX_VALUE, nearest = false;
-            while (i++ < game.pcs.length - 1) {
-
-                charDistance = game.pcs[i].position.distanceTo(this.position);
-
-                if (charDistance < minDistance && this.state.team != game.pcs[i].state.team && spell.canHit(this, game.pcs[i])) {
-                    minDistance = charDistance;
-                    nearest = i;
-                }
-            }
-
-            nearest !== false && this.cast( spell, game.pcs[ nearest ] );
-        }
     };
 
     /**

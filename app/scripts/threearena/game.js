@@ -96,7 +96,12 @@ define('threearena/game',
 
         //////////
 
-        this._trees  = [];
+        this._treesRefs  = [];
+
+        this.objectives = {
+            0: null,  // team 2 objective
+            1: null,  // team 1 objective
+        };
         this.towers = [];
         this.ground = null;
         this._waitForSelection = null;
@@ -243,8 +248,8 @@ define('threearena/game',
 
         this.composer = new THREE.EffectComposer( this.renderer );
         this.composer.addPass( renderModel );
-        //this.composer.addPass( effectBleach );
-        //this.composer.addPass( effectColor );
+        this.composer.addPass( effectBleach );
+        this.composer.addPass( effectColor );
         this.composer.addPass( effectFXAA );
 
         this.settings.container.appendChild( this.renderer.domElement );
@@ -254,6 +259,20 @@ define('threearena/game',
         //this.cameraControls = new THREE.TrackballControls( this.camera, this.renderer.domElement );
         this.cameraControls = new CameraControls( this.camera, this.renderer.domElement );
         this.cameraControls.domElement = this.renderer.domElement;
+    };
+
+    Game.prototype._initObjectives = function(done) {
+        var mesh;
+
+        this.objectives[0] = new THREE.Mesh( new THREE.CubeGeometry(10, 20, 10, 1, 1, 1) , new THREE.MeshBasicMaterial({ color:'#e33' }));
+        this.objectives[0].position.set(-179.6, 13.8, 180.7);
+        this.scene.add(this.objectives[0]);
+
+        this.objectives[1] = new THREE.Mesh( new THREE.CubeGeometry(10, 20, 10, 1, 1, 1) , new THREE.MeshBasicMaterial({ color:'#33e' }));
+        this.objectives[1].position.set(169.5, 17.8, -130.4);
+        this.scene.add(this.objectives[1]);
+
+        done();
     };
 
     /**
@@ -311,7 +330,7 @@ define('threearena/game',
             loader.load( '/gamedata/tree_pine.dae', function ( object ) {
                 object.scene.children[1].material.materials[0].transparent = true;
                 object.scene.children[1].material.materials[1].transparent = true;
-                self._trees.push(object.scene.children[1]);
+                self._treesRefs.push(object.scene.children[1]);
                 callback();
             });
         };
@@ -320,7 +339,7 @@ define('threearena/game',
             loader.load( '/gamedata/tree_oak.dae', function ( object ) {
                 object.scene.children[0].material.materials[0].transparent = true;
                 object.scene.children[0].material.materials[1].transparent = true;
-                self._trees.push(object.scene.children[0]);
+                self._treesRefs.push(object.scene.children[0]);
                 callback();
             });
         };
@@ -344,7 +363,7 @@ define('threearena/game',
                 object.scene.children[0].material.materials[2].ambient.set(1, 1, 1);
                 object.scene.children[0].material.materials[3].ambient.set(1, 1, 1);
 
-                self._trees.push(object.scene.children[0]);
+                self._treesRefs.push(object.scene.children[0]);
                 callback();
             });
         };
@@ -364,7 +383,7 @@ define('threearena/game',
                 object.scene.children[0].material.materials[1].ambient.set(1, 1, 1);
                 object.scene.children[0].material.materials[2].ambient.set(1, 1, 1);
 
-                self._trees.push(object.scene.children[0]);
+                self._treesRefs.push(object.scene.children[0]);
                 callback();
             });
         };
@@ -388,8 +407,8 @@ define('threearena/game',
         var self = this;
 
         // clone a tree
-        var refTreeIndex = type || Math.round( Math.random() * (this._trees.length - 1) );
-        var refTree = self._trees[ refTreeIndex ];
+        var refTreeIndex = type || Math.round( Math.random() * (this._treesRefs.length - 1) );
+        var refTree = self._treesRefs[ refTreeIndex ];
 
         var tree = new THREE.Mesh( refTree.geometry, refTree.material );
         tree.castShadow = true;    
@@ -443,6 +462,7 @@ define('threearena/game',
 
         async.series([
             _.bind( this._initGround, this),
+            _.bind( this._initObjectives, this),
             _.bind( this._initSky, this),
             _.bind( this._initTrees,  this),
             _.bind( this._initTowers, this),
@@ -539,7 +559,7 @@ define('threearena/game',
         var self = this;
         this.scene.add(pool);
         pool.bind('spawnedone', function(character){
-            self.addCharacter(character);
+            self.addCharacter(character, pool.position);
         });
     };
 
@@ -712,6 +732,18 @@ define('threearena/game',
         this.trigger('start');
 
         this.animate();
+
+        this.timer();
+    };
+
+    Game.prototype.timer = function() {
+
+        try {
+            this.trigger('everysec', this);
+        } catch (e) {
+            debugger;
+        }
+        setTimeout(_.bind( this.timer, this ), 500);
     };
 
     /**

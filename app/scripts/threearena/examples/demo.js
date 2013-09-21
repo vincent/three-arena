@@ -6,10 +6,13 @@ define('threearena/examples/demo',
       'threearena/elements/autospawn',
       'threearena/spell/bite',
       'threearena/spell/fireaura',
-      'threearena/spell/firebullet'
+      'threearena/spell/firebullet',
+
+      'machinejs',
+      'threearena/behaviours/minion'
     ],
 
-    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, InterativeObject, SpawningPool, BiteSpell, FireAuraSpell, FireBulletSpell) {
+    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, InterativeObject, SpawningPool, BiteSpell, FireAuraSpell, FireBulletSpell,    Machine, MinionBehaviour) {
     'use strict';
 
 	var Demo = function() {
@@ -60,6 +63,9 @@ define('threearena/examples/demo',
 
         var self = this;
 
+        // A state Machine 
+        var machine = new Machine();        
+
         // Another character
         var ogro = new Ogro({
             onLoad: function(){
@@ -75,35 +81,41 @@ define('threearena/examples/demo',
         // A spawning pool
         var pool = new SpawningPool({
             entity: Dog,
-            groupOf: 3,
+            groupOf: 1,
             eachGroupInterval: 30 * 1000,
             // towards: new THREE.Vector3( -179.3, 13.8, 181.2 ),
-            path: [
-                // bottom-right lane
-                new THREE.Vector3(  190.0, 17.1, -129.1 ),
-                new THREE.Vector3(  200.5, 17.0,  -84.7 ),
-                new THREE.Vector3(  209.3, 14.1,  -65.5 ),
-                new THREE.Vector3(  213.5,  1.0,    6.4 ),
-                new THREE.Vector3(  169.0, 13.7,   88.4 ),
-                new THREE.Vector3(  123.5,  7.1,  133.8 ),
-                new THREE.Vector3(   73.4,  8.6,  173.1 ),
-                new THREE.Vector3(   41.9, 11.4,  163.5 ),
-                new THREE.Vector3(   60.5,  0.0,  212.9 ),
-                new THREE.Vector3(  -11.8, 13.3,  213.4 ),
-                new THREE.Vector3(  -27.4, 14.1,  210.4 ),
-                new THREE.Vector3(  -61.9,  9.5,  210.9 ),
-                new THREE.Vector3(  -81.3,  2.8,  210.4 ),
-                new THREE.Vector3(  -83.6,  9.2,  182.1 ),
-                new THREE.Vector3( -108.2, 15.4,  158.5 ),
-                new THREE.Vector3( -133.4, 16.9,  156.7 ),
-                new THREE.Vector3( -178.5, 13.9,  181.4 )
-            ]
+            // path: [
+            //     // bottom-right lane
+            //     new THREE.Vector3(  190.0, 17.1, -129.1 ),
+            //     new THREE.Vector3(  200.5, 17.0,  -84.7 ),
+            //     new THREE.Vector3(  209.3, 14.1,  -65.5 ),
+            //     new THREE.Vector3(  213.5,  1.0,    6.4 ),
+            //     new THREE.Vector3(  169.0, 13.7,   88.4 ),
+            //     new THREE.Vector3(  123.5,  7.1,  133.8 ),
+            //     new THREE.Vector3(   73.4,  8.6,  173.1 ),
+            //     new THREE.Vector3(   41.9, 11.4,  163.5 ),
+            //     new THREE.Vector3(   60.5,  0.0,  212.9 ),
+            //     new THREE.Vector3(  -11.8, 13.3,  213.4 ),
+            //     new THREE.Vector3(  -27.4, 14.1,  210.4 ),
+            //     new THREE.Vector3(  -61.9,  9.5,  210.9 ),
+            //     new THREE.Vector3(  -81.3,  2.8,  210.4 ),
+            //     new THREE.Vector3(  -83.6,  9.2,  182.1 ),
+            //     new THREE.Vector3( -108.2, 15.4,  158.5 ),
+            //     new THREE.Vector3( -133.4, 16.9,  156.7 ),
+            //     new THREE.Vector3( -178.5, 13.9,  181.4 )
+            // ]
         });
         pool.bind('spawnedone', function(character){
             character.state.team = 1;
             character.learnSpell(BiteSpell);
             character.state.autoAttacks = true;
             character.state.autoAttackSpell = 0;
+
+            character.objective = self.objectives[0];
+            character.behaviour = machine.generateTree(MinionBehaviour, character, character.states);
+            self.bind('everysec', function () {
+                character.behaviour = character.behaviour.tick();
+            });
         });
         pool.position.set( 170.9, 17.8, -132.3);
         this.addSpawningPool(pool);
