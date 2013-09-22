@@ -14,27 +14,28 @@ define('threearena/hud/ingame',
 
 		this._attachedEntity = null;
 		this._attachedEntityListeners = [];
+
+		this.root.addEventListener('click', function(event){ event.preventDefault(); return false; }, true);
 	};
 
 	GameHud.prototype.open = function () {
 
 		this.root.classList.remove( 'fadeOutDownBig' );
-		this.root.classList.add( 'fadeInDownBig' );
+		this.root.classList.add( 'fadeInUpBig' );
 		this.root.style.display = 'block';
 		this.root.style.height = '200px';
 	};
 
 	GameHud.prototype.close = function () {
 
-		this.root.classList.remove( 'fadeInDownBig' );
+		this.root.classList.remove( 'fadeInUpBig' );
 		this.root.classList.add( 'fadeOutDownBig' );
 		this.root.style.height = 0;
 	};
 
 	GameHud.prototype.isOpen = function () {
 
-		return this.root.style.zIndex > 0;
-		return this.root.classList.contains( 'fadeInDownBig' );
+		return this.root.classList.contains( 'fadeInUpBig' );
 	};
 
 	//////////////////////////////

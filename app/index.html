@@ -13,6 +13,7 @@
 
         <!-- build:css(.tmp) styles/main.css -->
         <link rel="stylesheet" href="styles/main.css">
+        <link rel="stylesheet" href="styles/animate.css">
         <link rel="stylesheet" href="styles/hud.mini.css">
         <!-- endbuild -->
 
@@ -72,23 +73,23 @@
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
 
-        <div id="game-container">
-            <div class="container">
+        <div id="splash-container" class="container">
 
-                <div class="jumbotron">
-                    <h1>Three Arena</h1>
-                    <p class="lead">A 3D game in your browser</p>
+            <div class="jumbotron">
+                <h1>Three Arena</h1>
+                <p class="lead">A 3D game in your browser</p>
+                <br>
+                <div class="warning">
+                    This is a 3D game with quite huge materials. If it's your first time here, you will download ~30Mb of data, so be patient.
                     <br>
-                    <div class="warning">
-                        This is a 3D game with quite huge materials. If it's your first time here, you will download ~30Mb of data, so be patient.
-                        <br>
-                        If it doesn't start, or freeze, reloading is your best option.
-                    </div>
-                    <p><a class="btn btn-lg btn-success" id="game-play" href="#"><i class="icon-chevron-right"></i> Play !</a></p>
+                    If it doesn't start, or freeze, reloading is your best option.
                 </div>
-
+                <p><a class="btn btn-lg btn-success" id="game-play" href="#"><i class="icon-chevron-right"></i> Play !</a></p>
             </div>
+
         </div>
+
+        <div id="game-container"></div>
 
         <div class="view menu" id="view-contextmenu">
             <ul class="items" data-bind="foreach: items">

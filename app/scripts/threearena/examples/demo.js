@@ -16,11 +16,12 @@ define('threearena/examples/demo',
     function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, InterativeObject, SpawningPool, BiteSpell, FireAuraSpell, FireBulletSpell, Flies,    Machine, MinionBehaviour) {
     'use strict';
 
-	var Demo = function() {
+	var Demo = function(settings) {
 
-		var settings = {
+		settings = _.merge({
 
-            container: document.getElementById('game-container'),
+            container: null,
+            splashContainer: null,
 
             positions: {
                 spawn: new THREE.Vector3( 0, 0, 0 ),
@@ -49,7 +50,7 @@ define('threearena/examples/demo',
 			    'cacheonly!/gamedata/maps/mountains.obj',
                 'cacheonly!/gamedata/maps/mountains_trees.obj'
 			]
-		};
+		}, settings);
 
         settings.positions.spawn = settings.positions.nearcamp;
 

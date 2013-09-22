@@ -43,7 +43,7 @@ define('threearena/views/entityview',
             }
         };
 
-        entity.bind('changed', _.bind( this.update, this ));
+        entity.bind('everysec', _.bind( this.update, this ));
     };
 
     return EntityViewModel;

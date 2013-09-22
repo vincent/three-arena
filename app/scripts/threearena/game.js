@@ -727,6 +727,10 @@ define('threearena/game',
 
         this.trigger('start');
 
+        this.settings.splashContainer.className += ' animated fadeOutUpBig';
+        this.settings.container.style.className += ' animated fadeInUpBig';
+        this.settings.container.style.display = 'block';
+
         this.animate();
 
         this.timer();
@@ -737,7 +741,7 @@ define('threearena/game',
         try {
             this.trigger('everysec', this);
         } catch (e) {
-            debugger;
+            // debugger;
         }
         setTimeout(_.bind( this.timer, this ), 500);
     };
@@ -772,12 +776,14 @@ define('threearena/game',
         this.cameraControls.update(this.delta);
         this.camera.position.y = 80; // crraaaapp //
 
+        /*
         this.directionalLight.target = this.pcs[0];
         this.directionalLight.position.set(
             this.pcs[0].position.x +  40,
             this.pcs[0].position.y +  80,
             this.pcs[0].position.z + -40
         );
+        */
 
         _.each(this.pcs, function(character){
             character.update(self);

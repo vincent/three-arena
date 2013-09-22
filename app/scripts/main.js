@@ -135,7 +135,10 @@ require([ 'lodash', 'threejs', 'threearena/examples/demo' ], function ( _, THREE
     'use strict';
 
     // Launch demo
-    var game = window.game = new Demo();
+    var game = window.game = new Demo({
+        container: document.getElementById('game-container'),
+        splashContainer: document.getElementById('splash-container')
+    });
 
     var playButton = document.getElementById('game-play');
 
@@ -144,7 +147,9 @@ require([ 'lodash', 'threejs', 'threearena/examples/demo' ], function ( _, THREE
         playButton.removeEventListener('click', preload);
 
         setTimeout(function(){
-            game.preload(init);
+            game.preload(function() {
+                game.init(init);
+            });
         }, 100);
     }
 
@@ -156,11 +161,9 @@ require([ 'lodash', 'threejs', 'threearena/examples/demo' ], function ( _, THREE
     }
 
     var play = function play(callback) {
-        game.init(function () {
-            setTimeout(function(){
-                game.start();
-            }, 2000)
-        });
+        setTimeout(function(){
+            game.start();
+        }, 2000);
     }
 
     playButton.addEventListener('click', preload);

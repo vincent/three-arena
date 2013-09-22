@@ -9,7 +9,7 @@ function(_, THREE, SPARKS) {
         this.deltas = new Array(count);
         for (var i = 0; i < count; i++) this.deltas[i] = Math.random();
 
-		this.path = this.computePath(10, 5);
+		this.path = this.computePath(5, 3);
 
 		this.map1 = THREE.ImageUtils.loadTexture('/gamedata/textures/flies/' + (tex || 'butterfly.' + 1 + '.png'));
 		this.map1.needsUpdate = true;
@@ -50,7 +50,7 @@ function(_, THREE, SPARKS) {
 		   new THREE.Vector3(0.5, height, radius*2),
 
 		   new THREE.Vector3(-radius*3, 0, -radius),
-		   new THREE.Vector3(0.8, height, -radius*3),
+		   new THREE.Vector3(0.8, height, -radius*2),
 
 		   new THREE.Vector3(radius-1, height, -radius),
 		   new THREE.Vector3(-radius, height / 2, radius)
@@ -69,7 +69,7 @@ function(_, THREE, SPARKS) {
 				this.deltas[i] = 1 - this.deltas[i];
 			}
 
-			point = this.path.getPoint(this.deltas[i]);
+			point = this.path.getPoint( (i % 2 ? -1 : 1) * this.deltas[i]);
 
 			this.points.vertices[i].set(point.x, point.y, point.z);
 		}
