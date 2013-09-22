@@ -7,12 +7,13 @@ define('threearena/examples/demo',
       'threearena/spell/bite',
       'threearena/spell/fireaura',
       'threearena/spell/firebullet',
+      'threearena/particles/flies',
 
       'machinejs',
       'threearena/behaviours/minion'
     ],
 
-    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, InterativeObject, SpawningPool, BiteSpell, FireAuraSpell, FireBulletSpell,    Machine, MinionBehaviour) {
+    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, InterativeObject, SpawningPool, BiteSpell, FireAuraSpell, FireBulletSpell, Flies,    Machine, MinionBehaviour) {
     'use strict';
 
 	var Demo = function() {
@@ -65,6 +66,14 @@ define('threearena/examples/demo',
 
         // A state Machine 
         var machine = new Machine();        
+
+
+        // Some flies
+        var flies = new Flies(10);
+        flies.position.set(-78.2, 15.5, 100);
+        this.scene.add(flies);
+        this.bind('update', _.bind(flies.update, flies));
+
 
         // Another character
         var ogro = new Ogro({
@@ -134,9 +143,9 @@ define('threearena/examples/demo',
         var shader = THREE.ShaderLib[ "normalmap" ];
         var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
 
-        uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2_normals.jpg" );
+        uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2_specular.jpg" );
         uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2.jpg" );
-        uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2_specular.jpg" );
+        uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2_normals.jpg" );
 
         uniforms[ "enableAO" ].value = false;
         uniforms[ "enableDiffuse" ].value = true;

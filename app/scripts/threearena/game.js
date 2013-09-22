@@ -175,18 +175,6 @@ define('threearena/game',
         this.scene = new THREE.Scene();
         //this.scene.fog = new THREE.FogExp2( 0x0, 0.00055 );
         this.scene.fog = new THREE.Fog( 0x444444, 100, 300 );
-
-
-        this.game_materials = {
-            hover: new THREE.ShaderMaterial( {
-                    uniforms: {  },
-                    vertexShader:   document.getElementById( 'glow_vertexshader'   ).textContent,
-                    fragmentShader: document.getElementById( 'glow_fragmentshader' ).textContent,
-                    side: THREE.BackSide,
-                    blending: THREE.AdditiveBlending,
-                    transparent: true
-                } )
-        };
     };
 
     /**
