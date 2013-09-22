@@ -83,7 +83,7 @@ define('threearena/utils',
                 to: 1,
 
                 duration: null,
-                speed: 70,
+                speed: 50,
 
                 start: true,
 
@@ -120,7 +120,7 @@ define('threearena/utils',
                 })
                 .onUpdate(function(){
                     // get the position data half way along the path
-                    var pathPosition = shape.getPoint(this.distance);
+                    var pathPosition = shape.getPointAt(this.distance);
 
                     // move the man to that position
                     object.position.set(pathPosition.x, pathPosition.y, pathPosition.z);

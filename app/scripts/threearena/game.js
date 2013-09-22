@@ -75,8 +75,8 @@ define('threearena/game',
     Game.prototype.preload = function(done) {
 
         Config = {};
-        PathFinding.set_cellSize(2);
-        PathFinding.set_cellHeight(2);
+        PathFinding.set_cellSize(1);
+        PathFinding.set_cellHeight(1);
         PathFinding.initWithFile('/gamedata/maps/mountains.obj');
         PathFinding.build();
         require(this.settings.preload, done);
@@ -182,19 +182,25 @@ define('threearena/game',
      */
     Game.prototype._initLights = function() {
 
-        this.ambientLight = new THREE.AmbientLight( 0xaaaaaa );
+        this.ambientLight = new THREE.AmbientLight( 0x888888 );
         this.scene.add( this.ambientLight );
 
         this.pointLight = new THREE.PointLight( 0xffffff, 1.25, 1000 );
+        //this.pointLight.shadowCameraVisible = true;
         this.pointLight.position.set( 0, 0, 600 );
         this.scene.add( this.pointLight );
 
         this.directionalLight = new THREE.SpotLight( 0xffffff );
+        // this.directionalLight.ambient = 0xffffff;
+        // this.directionalLight.diffuse = 0xffffff;
+        // this.directionalLight.specular = 0xffffff;
         this.directionalLight.position.set( -200, 400, -200 );
+        this.directionalLight.intensity = 1;
         this.directionalLight.castShadow = true;
         this.directionalLight.shadowMapWidth = 1024;
         this.directionalLight.shadowMapHeight = 1024;
         this.directionalLight.shadowMapDarkness = 0.95;
+        this.directionalLight.shadowCameraVisible = true;
         this.scene.add( this.directionalLight );
     };
 
@@ -205,6 +211,8 @@ define('threearena/game',
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.shadowMapEnabled = true;
         this.renderer.shadowMapSoft = true;
+        //this.renderer.shadowMapType = THREE.PCFSoftShadowMap;
+
         this.renderer.shadowCameraNear = 3;
         this.renderer.shadowCameraFar = this.camera.far;
         this.renderer.shadowCameraFov = 50;
@@ -763,6 +771,13 @@ define('threearena/game',
 
         this.cameraControls.update(this.delta);
         this.camera.position.y = 80; // crraaaapp //
+
+        this.directionalLight.target = this.pcs[0];
+        this.directionalLight.position.set(
+            this.pcs[0].position.x +  40,
+            this.pcs[0].position.y +  80,
+            this.pcs[0].position.z + -40
+        );
 
         _.each(this.pcs, function(character){
             character.update(self);

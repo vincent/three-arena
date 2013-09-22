@@ -137,7 +137,7 @@ define('threearena/examples/demo',
 
         var self = this;
 
-        var ambient = 0x555555, diffuse = 0xbbbbbb, specular = 0x060606, shininess = 30;
+        var ambient = 0xffffff, diffuse = 0xffffff, specular = 0xffffff, shininess = 10;
 
         var uniforms;
         var shader = THREE.ShaderLib[ "normalmap" ];
@@ -145,21 +145,21 @@ define('threearena/examples/demo',
 
         uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2_specular.jpg" );
         uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2.jpg" );
-        uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2_normals.jpg" );
+        uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2.jpg" );
 
         uniforms[ "enableAO" ].value = false;
         uniforms[ "enableDiffuse" ].value = true;
-        uniforms[ "enableSpecular" ].value = true;
+        uniforms[ "enableSpecular" ].value = false;
 
         uniforms[ "uDiffuseColor" ].value.setHex( diffuse );
         uniforms[ "uSpecularColor" ].value.setHex( specular );
         uniforms[ "uAmbientColor" ].value.setHex( ambient );
 
-        uniforms[ "uNormalScale" ].value.set( 0.8, 0.8 );
+        uniforms[ "uNormalScale" ].value.set( 2, 2 );
 
         uniforms[ "uShininess" ].value = shininess;
 
-        uniforms[ "wrapRGB" ].value.set( 0.575, 0.5, 0.5 );
+        //uniforms[ "wrapRGB" ].value.set( 0.575, 0.5, 0.5 );
 
         var parameters = { fragmentShader: shader.fragmentShader, vertexShader: shader.vertexShader, uniforms: uniforms, lights: true, fog: true };
         var material = new THREE.ShaderMaterial( parameters );
