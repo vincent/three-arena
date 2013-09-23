@@ -6,6 +6,7 @@ define('threearena/game',
 
     'threearena/utils',
     'threearena/hud',
+    'threearena/elements/nexus',
     'threearena/elements/tower',
     'threearena/elements/lifebar',
     'threearena/elements/interactiveobject', 
@@ -35,6 +36,7 @@ define('threearena/game',
  
     Utils,
     HUD,
+    Nexus,
     DefenseTower,
     LifeBar,
     InteractiveObject,
@@ -112,6 +114,11 @@ define('threearena/game',
         MicroEvent.mixin(ThreeArenaGlobalEvents);
 
         window._ta_events = new ThreeArenaGlobalEvents();
+
+        this.stats = new Stats();
+        this.stats.domElement.style.position = 'absolute';
+        this.stats.domElement.style.top = '0px';
+        this.settings.container.appendChild( this.stats.domElement );
 
         //////////
 
@@ -193,9 +200,9 @@ define('threearena/game',
         this.directionalLight = new THREE.SpotLight( 0xffffff );
         // this.directionalLight.ambient = 0xffffff;
         // this.directionalLight.diffuse = 0xffffff;
-        // this.directionalLight.specular = 0xffffff;
+        this.directionalLight.specular = 0xaaaa22;
         this.directionalLight.position.set( -200, 400, -200 );
-        this.directionalLight.intensity = 1;
+        this.directionalLight.intensity = .9;
         this.directionalLight.castShadow = true;
         this.directionalLight.shadowMapWidth = 1024;
         this.directionalLight.shadowMapHeight = 1024;
@@ -257,15 +264,14 @@ define('threearena/game',
         this.cameraControls.domElement = this.renderer.domElement;
     };
 
-    Game.prototype._initObjectives = function(done) {
-        var mesh;
+    Game.prototype._initNexus = function(done) {
 
-        this.objectives[0] = new THREE.Mesh( new THREE.CubeGeometry(10, 20, 10, 1, 1, 1) , new THREE.MeshBasicMaterial({ color:'#e33' }));
-        this.objectives[0].position.set(-179.6, 13.8, 180.7);
+        this.objectives[0] = new Nexus({ color: '#e33' });
+        this.objectives[0].position.set(-71.2, 19, 69);
         this.scene.add(this.objectives[0]);
 
-        this.objectives[1] = new THREE.Mesh( new THREE.CubeGeometry(10, 20, 10, 1, 1, 1) , new THREE.MeshBasicMaterial({ color:'#33e' }));
-        this.objectives[1].position.set(169.5, 17.8, -130.4);
+        this.objectives[1] = new Nexus({ color: '#3e3' });
+        this.objectives[1].position.set(89.2, 21, -62.5);
         this.scene.add(this.objectives[1]);
 
         done();
@@ -372,7 +378,8 @@ define('threearena/game',
                 object.material.materials[1].transparent = true;
 
                 object.material.materials[0].ambient.set(.5, 1, .5);
-                object.material.materials[0].specular.set(.1, .1, .1);
+                object.material.materials[0].diffuse.set(.5, 1, .5);
+                object.material.materials[0].specular.set(.1, 1, .1);
 
                 self._treesRefs.push(object);
                 callback();
@@ -453,30 +460,47 @@ define('threearena/game',
 
         var self = this;
 
+        this._treesGroup = this._treesGroup || new THREE.Object3D();
+        this._treesGroup.castShadow = true;    
+
         // clone a tree
         var refTreeIndex = type || Math.round( Math.random() * (this._treesRefs.length - 1) );
         var refTree = self._treesRefs[ refTreeIndex ];
        
-        var tree = new THREE.Mesh( refTree.geometry, refTree.material /* self._tree_shader */ );
-        tree.castShadow = true;    
-        tree.position = position;
-        tree.scale = new THREE.Vector3(4, 4, 4);
-        tree.rotation.y = Math.random() * 90 * ( Math.PI / 180 );
+        // this._tmp_tree = this._tmp_tree || new THREE.Mesh();
+        // this._tmp_tree.geometry = refTree.geometry;
+        // this._tmp_tree.material = refTree.material;
+
+        this._tmp_tree = new THREE.Mesh( refTree.geometry, refTree.material );
+        //this._tmp_tree.material.materials.push(cartoon);
+        this._tmp_tree.castShadow = true;
+
+        // this._tmp_tree.material.materials[1].ambient.set(0, 0, 0);
+        this._tmp_tree.material.materials[1].specular.set(0xdd5500);
+        // this._tmp_tree.material.materials[1].bumpMap = THREE.ImageUtils.loadTexture( "/gamedata/pine-a.png" );
+        // this._tmp_tree.material.materials[1].bumpScale = 19;
+
+        this._tmp_tree.matrixAutoUpdate = false;
+        this._tmp_tree.position = position;
+        this._tmp_tree.position.y += 4;
+        this._tmp_tree.scale = new THREE.Vector3(4, 3, 4);
+        // this._tmp_tree.rotation.y = Math.random() * 90 * ( Math.PI / 180 );
 
         if (refTreeIndex == 0) {
-            tree.rotation.x = - 90 * ( Math.PI / 180 );
+            this._tmp_tree.rotation.x = - 90 * ( Math.PI / 180 );
         }
         if (refTreeIndex == 1) {
-            //tree.rotation.x = 10 * ( Math.PI / 180 );
-            //tree.rotation.y = 10 * ( Math.PI / 180 );
-            tree.rotation.z = 70 * ( Math.PI / 180 );
+            //this._tmp_tree.rotation.x = 10 * ( Math.PI / 180 );
+            //this._tmp_tree.rotation.y = 10 * ( Math.PI / 180 );
         }
 
-        tree.matrixAutoUpdate = false;
-        tree.updateMatrix();
+        this._tmp_tree.rotation.z = Math.random() * 180 * ( Math.PI / 180 );
 
-        this._treesGroup = this._treesGroup || new THREE.Object3D();
-        this._treesGroup.add( tree );
+
+        this._tmp_tree.updateMatrix();
+
+        // THREE.GeometryUtils.merge(this._treesGroup.geometry, this._tmp_tree);
+        this._treesGroup.add( this._tmp_tree );
     };
 
     /**
@@ -509,7 +533,7 @@ define('threearena/game',
 
         async.series([
             _.bind( this._initGround, this),
-            _.bind( this._initObjectives, this),
+            _.bind( this._initNexus, this),
             _.bind( this._initSky, this),
             _.bind( this._initTrees,  this),
             _.bind( this._initTowers, this),
@@ -525,6 +549,7 @@ define('threearena/game',
                             }
                         }
                     });
+
                     self.scene.add(self._treesGroup);
                     callback();
                 });
@@ -691,7 +716,9 @@ define('threearena/game',
 
                     console.log('find a path between %o and %o', self.pcs[0].position, i_pos);
 
-                    // run the magic
+                    // character.objective = { position: i_pos };
+                    // character.behaviour = character.behaviour.warp('plotCourseToObjective');
+
                     PathFinding.findPath(
                         this.pcs[0].position.x, this.pcs[0].position.y, this.pcs[0].position.z,
                         i_pos.x, i_pos.y, i_pos.z,
@@ -785,14 +812,8 @@ define('threearena/game',
         this._boundAnimate = _.bind( this.animate, this );
         this.animate();
 
-        this._boundTimer = _.bind( this.timer, this );
-        this.timer(this._boundTimer);
-    };
-
-    Game.prototype.timer = function() {
-
-        this.trigger('everysec', this);
-        setTimeout(this._boundTimer, 500);
+        // timers
+        this._behaviours_delta = this.clock.getDelta();
     };
 
     /**
@@ -813,10 +834,12 @@ define('threearena/game',
 
         var self = this;
 
-        // stats.update()
-        TWEEN.update();
-
         this.delta = this.clock.getDelta();
+
+        if (this.clock.oldTime - this._behaviours_delta > 200) {
+            this._behaviours_delta = this.clock.oldTime;
+            this.trigger('update:behaviours', this);
+        }
 
         window._ta_events.trigger('update', this);
 
@@ -837,6 +860,9 @@ define('threearena/game',
         _.each(this.pcs, function(character){
             character.update(self);
         });
+
+        this.stats.update()
+        TWEEN.update();
 
         this.composer.render();
     };

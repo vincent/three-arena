@@ -10,10 +10,11 @@ define('threearena/examples/demo',
       'threearena/particles/flies',
 
       'machinejs',
-      'threearena/behaviours/minion'
+      'threearena/behaviours/minion',
+      'threearena/behaviours/controlled'
     ],
 
-    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, InterativeObject, SpawningPool, BiteSpell, FireAuraSpell, FireBulletSpell, Flies,    Machine, MinionBehaviour) {
+    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, InterativeObject, SpawningPool, BiteSpell, FireAuraSpell, FireBulletSpell, Flies,    Machine, MinionBehaviour, ControlledBehaviour) {
     'use strict';
 
 	var Demo = function(settings) {
@@ -68,23 +69,29 @@ define('threearena/examples/demo',
         // A state Machine 
         var machine = new Machine();        
 
-
         // Some flies
         var flies = new Flies(10);
         flies.position.set(-70, 20, 80);
         this.scene.add(flies);
         this.bind('update', _.bind(flies.update, flies));
 
-
         // Another character
         var ogro = new Ogro({
             onLoad: function(){
-                this.state.team = 0;
-                self.addCharacter( this );
+                var character = this;
+
+                character.state.team = 0;
+
+                // character.behaviour = machine.generateTree(ControlledBehaviour, character, character.states);
+                // self.bind('update:behaviours', function () {
+                //     character.behaviour = character.behaviour.tick();
+                // });
+
+                self.addCharacter( character );
 
                 // learn some spells
-                ogro.learnSpell( FireAuraSpell );
-                ogro.learnSpell( FireBulletSpell );
+                character.learnSpell( FireAuraSpell );
+                character.learnSpell( FireBulletSpell );
             }
         });
 
@@ -102,11 +109,11 @@ define('threearena/examples/demo',
 
             character.objective = self.objectives[0];
             character.behaviour = machine.generateTree(MinionBehaviour, character, character.states);
-            self.bind('everysec', function () {
+            self.bind('update:behaviours', function () {
                 character.behaviour = character.behaviour.tick();
             });
         });
-        pool.position.set( 170.9, 17.8, -132.3);
+        pool.position.set( self.objectives[1].position.x, self.objectives[1].position.y, self.objectives[1].position.z );
         this.addSpawningPool(pool);
         pool.start();
     };
@@ -117,7 +124,7 @@ define('threearena/examples/demo',
 
         var self = this;
 
-        var ambient = 0xffffff, diffuse = 0xffffff, specular = 0xffffff, shininess = 10;
+        var ambient = 0xffffff, diffuse = 0xffffff, specular = 0xdd5500, shininess = 10;
 
         var uniforms;
         var shader = THREE.ShaderLib[ "normalmap" ];

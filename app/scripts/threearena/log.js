@@ -6,7 +6,7 @@ define('threearena/log',
     	var args = Array.prototype.slice.apply(arguments);
     	var type = String(args.shift()).toUpperCase();
 
-    	console.log.apply( console, args );
+    	//console.log.apply( console, args );
     };
 
     Log.SYS_DEBUG = 'SYS_DEBUG';

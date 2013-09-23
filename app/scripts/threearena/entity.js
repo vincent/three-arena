@@ -88,7 +88,7 @@ function(_, MicroEvent, THREE, ko, log, Utils, LifeBar, PathFinding) {
                 if (! self._nearestEnnemy) {
 
                     if (self._isFighting) {
-                        // xas fighting, must replan
+                        // was fighting, must replan
                         self._currentRoute = null;
                         self._isMoving = false;
                     }
@@ -125,7 +125,7 @@ function(_, MicroEvent, THREE, ko, log, Utils, LifeBar, PathFinding) {
             },
 
             followCourseToObjective: function () {
-                if (self._isMoving) return;
+                if (self._isMoving || ! self._currentRoute) return;
                 if (self._currentTween) {
                     self._currentTween.stop();
                     self._currentTween.onComplete();
@@ -137,7 +137,7 @@ function(_, MicroEvent, THREE, ko, log, Utils, LifeBar, PathFinding) {
                     },
                     onComplete: function(){
                         self._isMoving = false;
-                        self._currentRoute = null;
+                        //self._currentRoute = null;
                     }
                 });
             },
@@ -148,6 +148,14 @@ function(_, MicroEvent, THREE, ko, log, Utils, LifeBar, PathFinding) {
                         && ! this._isFighting 
                         && ! self.states.canFightObjective()
                         && ! self.states.canFightNearbyEnnemy();
+            },
+
+            moveAttackToObjective: function () {
+                self.states.followCourseToObjective();
+            },
+
+            canMoveAttackToObjective: function () {
+                return (self.objective && self.objective.position.distanceTo(self.position) > 2);
             },
 
         };

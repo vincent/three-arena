@@ -56,8 +56,10 @@ define('threearena/character/monsterdog',
 				t += delta;
 			};
 
-			self.add(self.character);
-			options.onLoad && options.onLoad.apply(self);
+			setTimeout(function(){
+				self.add(self.character);
+				options.onLoad && options.onLoad.apply(self);
+			}, 100);
 		} );
     };
 
