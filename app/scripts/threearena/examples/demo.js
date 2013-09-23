@@ -34,7 +34,7 @@ define('threearena/examples/demo',
 
 			preload: [
 			    'cacheonly!/gamedata/dota_map_full_compress2_normals.jpg',
-			    'cacheonly!/gamedata/dota_map_full_compress2.jpg',
+			    'cacheonly!/gamedata/dota_map_full_compress3.jpg',
 			    'cacheonly!/gamedata/dota_map_full_compress2_specular.jpg',
 			    'cacheonly!/gamedata/models/marketplace.obj',
 			    'cacheonly!/gamedata/tree_pine.dae',
@@ -132,7 +132,7 @@ define('threearena/examples/demo',
 
         uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2_specular.jpg" );
         uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress3.jpg" );
-        uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2.jpg" );
+        uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress3.jpg" );
 
         uniforms[ "enableAO" ].value = false;
         uniforms[ "enableDiffuse" ].value = true;
