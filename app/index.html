@@ -91,7 +91,7 @@
 
         <div id="game-container"></div>
 
-        <div class="view menu" id="view-contextmenu">
+        <div class="view menu" id="view-contextmenu" oncontextmenu="return false;">
             <ul class="items" data-bind="foreach: items">
                 <li data-bind="attr: { class: action }, event: { click: $parent.click }">
                     <span class="name" data-bind="text: name"></span>

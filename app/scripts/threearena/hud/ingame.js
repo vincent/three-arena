@@ -15,7 +15,11 @@ define('threearena/hud/ingame',
 		this._attachedEntity = null;
 		this._attachedEntityListeners = [];
 
-		this.root.addEventListener('click', function(event){ event.preventDefault(); return false; }, true);
+		this.root.addEventListener('click', function(event){
+			event.preventDefault();
+			event.stopPropagation();
+			return false;
+		}, false);
 	};
 
 	GameHud.prototype.open = function () {

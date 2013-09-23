@@ -75,8 +75,8 @@ define('threearena/game',
     Game.prototype.preload = function(done) {
 
         Config = {};
-        PathFinding.set_cellSize(1);
-        PathFinding.set_cellHeight(1);
+        PathFinding.set_cellSize(.8);
+        PathFinding.set_cellHeight(.4);
         PathFinding.initWithFile('/gamedata/maps/mountains.obj');
         PathFinding.build();
         require(this.settings.preload, done);
@@ -164,7 +164,7 @@ define('threearena/game',
     Game.prototype._initCamera = function() {
 
         this.camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 10000 );
-        this.camera.position.set( this.settings.positions.spawn.x + 20, 50, this.settings.positions.spawn.z + 30 );
+        this.camera.position.set( this.settings.positions.spawn.x + 30, 50, this.settings.positions.spawn.z + 40 );
     };
 
     /**
@@ -244,8 +244,8 @@ define('threearena/game',
 
         this.composer = new THREE.EffectComposer( this.renderer );
         this.composer.addPass( renderModel );
-        this.composer.addPass( effectBleach );
-        this.composer.addPass( effectColor );
+        //this.composer.addPass( effectBleach );
+        //this.composer.addPass( effectColor );
         this.composer.addPass( effectFXAA );
 
         this.settings.container.appendChild( this.renderer.domElement );
@@ -320,76 +320,127 @@ define('threearena/game',
     Game.prototype._initTrees = function(main_callback) {
         var self = this;
 
+        var _load_tree_shader = function(callback){
+            var uniforms;
+            var shader = THREE.ShaderLib[ "normalmap" ];
+            var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
+
+            uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( "/gamedata/pine-n.png" );
+            uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( "/gamedata/pine-a.png" );
+            uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( "/gamedata/pine-c.png" );
+            uniforms[ "enableAO" ].value = false;
+            uniforms[ "enableDiffuse" ].value = true;
+            uniforms[ "enableSpecular" ].value = false;
+            uniforms[ "uDiffuseColor" ].value.setHex( new THREE.Color(0x55ff55) );
+            uniforms[ "uSpecularColor" ].value.setHex( new THREE.Color(0x55ff55) );
+            uniforms[ "uAmbientColor" ].value.setHex( new THREE.Color(0x55ff55) );
+            uniforms[ "uNormalScale" ].value.set( 1, 1 );
+            uniforms[ "uShininess" ].value = 10;
+            var parameters = { fragmentShader: shader.fragmentShader, vertexShader: shader.vertexShader, uniforms: uniforms, lights: true, fog: true };
+            self._tree_shader = new THREE.ShaderMaterial( parameters );     
+
+            // self._tree_shader = new THREE.MeshPhongMaterial({ color:'#5f5' });
+            
+            callback();       
+        };
+
         var loader = new THREE.ColladaLoader();
 
         var _load_tree_pine = function(callback){
-            loader.load( '/gamedata/tree_pine.dae', function ( object ) {
-                object.scene.children[1].material.materials[0].transparent = true;
-                object.scene.children[1].material.materials[1].transparent = true;
-                self._treesRefs.push(object.scene.children[1]);
+            loader.load( '/gamedata/tree_pine_simplified.dae', function ( object ) {
+                object = object.scene.children[3];
+
+                object.scale.set(10, 10, 10);
+
+                /*
+                object.geometry.computeVertexNormals();
+                object.geometry.computeTangents();
+                */
+                object.material.materials[0].transparent = true;
+                object.material.materials[1].transparent = true;
+               
+                self._treesRefs.push(object);
                 callback();
             });
         };
 
         var _load_tree_oak = function(callback){
             loader.load( '/gamedata/tree_oak.dae', function ( object ) {
-                object.scene.children[0].material.materials[0].transparent = true;
-                object.scene.children[0].material.materials[1].transparent = true;
-                self._treesRefs.push(object.scene.children[0]);
+                object = object.scene.children[0];
+
+                object.material.materials[0].transparent = true;
+                object.material.materials[1].transparent = true;
+
+                object.material.materials[0].ambient.set(.5, 1, .5);
+                object.material.materials[0].specular.set(.1, .1, .1);
+
+                self._treesRefs.push(object);
                 callback();
             });
         };
 
         var _load_tree_cartoon = function(callback){
             loader.load( '/gamedata/models/forest_tree.dae', function ( object ) {
-                //object.scene.children[0].material.materials[0].transparent = true;
-                //object.scene.children[0].material.materials[1].transparent = true;
-                // var cartoonTree = new THREE.Object3D();
-                object.scene.children[0].position.setY(2);
-                object.scene.children[0].scale.set(2, 2, 2);
-                //cartoonTree.add(object.scene.children[0]);
+                object = object.scene.children[0];
 
-                object.scene.children[0].material.materials[0].transparent = true;
-                object.scene.children[0].material.materials[1].transparent = true;
-                object.scene.children[0].material.materials[2].transparent = true;
-                object.scene.children[0].material.materials[3].transparent = true;
+                object.position.setY(2);
+                object.scale.set(2, 2, 2);
 
-                object.scene.children[0].material.materials[0].ambient.set(1, 1, 1);
-                object.scene.children[0].material.materials[1].ambient.set(1, 1, 1);
-                object.scene.children[0].material.materials[2].ambient.set(1, 1, 1);
-                object.scene.children[0].material.materials[3].ambient.set(1, 1, 1);
+                object.material.materials[0].transparent = true;
+                object.material.materials[1].transparent = true;
+                object.material.materials[2].transparent = true;
+                object.material.materials[3].transparent = true;
 
-                self._treesRefs.push(object.scene.children[0]);
+                object.material.materials[0].ambient.set(1, 1, 1);
+                object.material.materials[1].ambient.set(1, 1, 1);
+                object.material.materials[2].ambient.set(1, 1, 1);
+                object.material.materials[3].ambient.set(1, 1, 1);
+
+                self._treesRefs.push(object);
                 callback();
             });
         };
 
         var _load_dracena = function(callback){
             loader.load( '/gamedata/models/plants/Dracena.dae', function ( object ) {
+                object = object.scene.children[0];
 
                 // object.scene.children[0].position.setY(2);
-                object.scene.children[0].scale.set(.2, .2, .2);
-                //cartoonTree.add(object.scene.children[0]);
+                object.scale.set(.2, .2, .2);
+                //cartoonTree.add(object);
 
-                object.scene.children[0].material.materials[0].transparent = true;
-                object.scene.children[0].material.materials[1].transparent = true;
-                object.scene.children[0].material.materials[2].transparent = true;
+                object.material.materials[0].transparent = true;
+                object.material.materials[1].transparent = true;
+                object.material.materials[2].transparent = true;
 
-                object.scene.children[0].material.materials[0].ambient.set(1, 1, 1);
-                object.scene.children[0].material.materials[1].ambient.set(1, 1, 1);
-                object.scene.children[0].material.materials[2].ambient.set(1, 1, 1);
+                object.material.materials[0].ambient.set(1, 1, 1);
+                object.material.materials[1].ambient.set(1, 1, 1);
+                object.material.materials[2].ambient.set(1, 1, 1);
 
-                self._treesRefs.push(object.scene.children[0]);
+                self._treesRefs.push(object);
                 callback();
             });
         };
 
+        var _load_eatsheep = function(callback){
+            loader = new THREE.OBJMTLLoader();
+            loader.addEventListener('load', function (event) {
+                var object = event.content.children[0].children[0];
+                object.rotation.x = 90 * Math.PI / 2;
+                self._treesRefs.push(object);
+                callback();
+            });
+            loader.load('/gamedata/models/plants/eatsheep_farm_tree.obj', '/gamedata/models/plants/eatsheep_farm_tree.mtl');
+        };
 
         async.series([
-            // _load_tree_pine,
+            _load_tree_shader,
+
+            _load_tree_pine,
             // _load_tree_oak,
-            //_load_tree_cartoon,
-            _load_dracena
+            // _load_tree_cartoon,
+            // _load_dracena
+            // _load_eatsheep
         ], main_callback);
     };
 
@@ -405,8 +456,8 @@ define('threearena/game',
         // clone a tree
         var refTreeIndex = type || Math.round( Math.random() * (this._treesRefs.length - 1) );
         var refTree = self._treesRefs[ refTreeIndex ];
-
-        var tree = new THREE.Mesh( refTree.geometry, refTree.material );
+       
+        var tree = new THREE.Mesh( refTree.geometry, refTree.material /* self._tree_shader */ );
         tree.castShadow = true;    
         tree.position = position;
         tree.scale = new THREE.Vector3(4, 4, 4);
@@ -463,7 +514,7 @@ define('threearena/game',
             _.bind( this._initTrees,  this),
             _.bind( this._initTowers, this),
             function (callback) {
-                console.log('BYPASS TREES'); callback(); return;
+                // console.log('BYPASS TREES'); callback(); return;
 
                 var loader = new THREE.OBJLoader();
                 loader.load('/gamedata/maps/mountains_trees.obj', function (object) {
@@ -731,19 +782,17 @@ define('threearena/game',
         this.settings.container.style.className += ' animated fadeInUpBig';
         this.settings.container.style.display = 'block';
 
+        this._boundAnimate = _.bind( this.animate, this );
         this.animate();
 
-        this.timer();
+        this._boundTimer = _.bind( this.timer, this );
+        this.timer(this._boundTimer);
     };
 
     Game.prototype.timer = function() {
 
-        try {
-            this.trigger('everysec', this);
-        } catch (e) {
-            // debugger;
-        }
-        setTimeout(_.bind( this.timer, this ), 500);
+        this.trigger('everysec', this);
+        setTimeout(this._boundTimer, 500);
     };
 
     /**
@@ -751,7 +800,7 @@ define('threearena/game',
      */
     Game.prototype.animate = function() {
 
-        requestAnimationFrame( _.bind( this.animate, this ) );
+        requestAnimationFrame( this._boundAnimate );
         this.render();
     };
 

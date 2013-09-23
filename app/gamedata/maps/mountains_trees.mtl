@@ -1,0 +1,12 @@
+# Blender MTL File: 'mountains.blend'
+# Material Count: 1
+
+newmtl Mat_1
+Ns 111.764706
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.249020 0.249020 0.249020
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /Users/vincent/Downloads/Game Level Terrain X3/tex/ColorTex.jpg

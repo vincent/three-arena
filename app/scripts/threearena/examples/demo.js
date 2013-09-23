@@ -71,7 +71,7 @@ define('threearena/examples/demo',
 
         // Some flies
         var flies = new Flies(10);
-        flies.position.set(-78.2, 15.5, 100);
+        flies.position.set(-70, 20, 80);
         this.scene.add(flies);
         this.bind('update', _.bind(flies.update, flies));
 
@@ -92,28 +92,7 @@ define('threearena/examples/demo',
         var pool = new SpawningPool({
             entity: Dog,
             groupOf: 1,
-            eachGroupInterval: 30 * 1000,
-            // towards: new THREE.Vector3( -179.3, 13.8, 181.2 ),
-            // path: [
-            //     // bottom-right lane
-            //     new THREE.Vector3(  190.0, 17.1, -129.1 ),
-            //     new THREE.Vector3(  200.5, 17.0,  -84.7 ),
-            //     new THREE.Vector3(  209.3, 14.1,  -65.5 ),
-            //     new THREE.Vector3(  213.5,  1.0,    6.4 ),
-            //     new THREE.Vector3(  169.0, 13.7,   88.4 ),
-            //     new THREE.Vector3(  123.5,  7.1,  133.8 ),
-            //     new THREE.Vector3(   73.4,  8.6,  173.1 ),
-            //     new THREE.Vector3(   41.9, 11.4,  163.5 ),
-            //     new THREE.Vector3(   60.5,  0.0,  212.9 ),
-            //     new THREE.Vector3(  -11.8, 13.3,  213.4 ),
-            //     new THREE.Vector3(  -27.4, 14.1,  210.4 ),
-            //     new THREE.Vector3(  -61.9,  9.5,  210.9 ),
-            //     new THREE.Vector3(  -81.3,  2.8,  210.4 ),
-            //     new THREE.Vector3(  -83.6,  9.2,  182.1 ),
-            //     new THREE.Vector3( -108.2, 15.4,  158.5 ),
-            //     new THREE.Vector3( -133.4, 16.9,  156.7 ),
-            //     new THREE.Vector3( -178.5, 13.9,  181.4 )
-            // ]
+            eachGroupInterval: 30 * 1000
         });
         pool.bind('spawnedone', function(character){
             character.state.team = 1;
@@ -145,7 +124,7 @@ define('threearena/examples/demo',
         var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
 
         uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2_specular.jpg" );
-        uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2.jpg" );
+        uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress3.jpg" );
         uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2.jpg" );
 
         uniforms[ "enableAO" ].value = false;
@@ -196,9 +175,9 @@ define('threearena/examples/demo',
                     }
                 });
 
-                object.scale = new THREE.Vector3(6, 6, 6);
+                object.scale = new THREE.Vector3(8, 8, 8);
                 var interact = new InterativeObject();
-                interact.position.set(-99, 12.3, 104);
+                interact.position.set(-99, 15, 94);
                 interact.menu = {
                     items: [
                         { action:'sell', name:'Potion', price:20 }

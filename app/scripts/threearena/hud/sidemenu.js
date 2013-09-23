@@ -10,7 +10,7 @@ define('threearena/hud/sidemenu',
 		this.root.classList.add( 'animated' );
 	};
 
-	Sidemenu.prototype.css = '<style type="text/css"> #hud { position: absolute; top: 0; left: 0; bottom: 0; width: 30%; background: #222; z-index: -10; } </style>';
+	Sidemenu.prototype.css = '<style type="text/css"> #hud { position: absolute; top: 0; left: 0; bottom: 0; width: 20%; background: #222; opacity: .8; z-index: -10; } </style>';
 
 	Sidemenu.prototype.open = function () {
 
