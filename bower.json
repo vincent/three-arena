@@ -12,10 +12,9 @@
     "async": "0.2.5",
     "microevent": "~1.1.1",
     "tween.js": "git://github.com/sole/tween.js",
-    "microevent.js": "https://github.com/jeromeetienne/microevent.js.git",
+    "microevent.js": "https://github.com/vincent/microevent.js.git",
     "machinejs": "https://github.com/maryrosecook/machinejs",
-    "Base.js": "http://dean.edwards.name/base/Base.js",
-    "GLGif.js": "https://raw.github.com/JordiRos/GLGif/master/GLGif.js"
+    "Base.js": "http://dean.edwards.name/base/Base.js"
   },
   "devDependencies": {}
 }
