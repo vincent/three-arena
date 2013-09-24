@@ -13,7 +13,7 @@
     "microevent": "~1.1.1",
     "tween.js": "git://github.com/sole/tween.js",
     "microevent.js": "https://github.com/vincent/microevent.js.git",
-    "machinejs": "https://github.com/maryrosecook/machinejs",
+    "machinejs": "https://github.com/maryrosecook/machinejs.git",
     "Base.js": "http://dean.edwards.name/base/Base.js"
   },
   "devDependencies": {}
