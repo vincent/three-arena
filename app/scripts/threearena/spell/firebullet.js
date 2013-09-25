@@ -19,6 +19,11 @@ define('threearena/spell/firebullet',
 
     ///////////////////
 
+    FireBullet.prototype.canHit = function(source, target, toleranceRatio) {
+        toleranceRatio = toleranceRatio || 1;
+        return source.position.distanceTo(target.position) < (40 * toleranceRatio);
+    };
+
     FireBullet.prototype.start = function (caster, target) {
         var self = this;
 
@@ -27,8 +32,8 @@ define('threearena/spell/firebullet',
         }, self);
 
         var endPosition = target.position.clone().sub(caster.position);
-
-        Utils.moveAlong(this.aura.particleCloud, [ new THREE.Vector3(0, 0, 0), endPosition ], {
+                                                    // FIXME: start_position should be just in front of character
+        Utils.moveAlong(this.aura.particleCloud, [ new THREE.Vector3(0, 5, 0), endPosition ], {
             speed: 6,
             onStart: function(){
                 caster.add(self.aura.particleCloud);
@@ -37,6 +42,7 @@ define('threearena/spell/firebullet',
             },
             onComplete: function(){
                 self.aura.stop();
+                self.aura.reset();
                 caster.remove(self.aura.particleCloud);
                 window._ta_events.unbind('update', updateCloud);
 

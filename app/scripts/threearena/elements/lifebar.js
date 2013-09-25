@@ -20,6 +20,8 @@ define('threearena/elements/lifebar',
 
         this.add(this.lifebar);
         this.add(this.manabar);
+
+        this.position.set(1, 0, 5);
     };
     LifeBar.prototype = new THREE.Object3D();
 

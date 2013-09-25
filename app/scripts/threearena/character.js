@@ -11,6 +11,8 @@ define('threearena/character',
      */
     var Character = function(options) {
 
+        var self = this;
+
     /*
 
     Strength is a measure of a Hero's toughness and endurance. Strength determines a Hero's maximum health and health regeneration. Heroes with strength as their primary attribute can be hard to kill, so they will often take initiator and tank roles, initiating fights and taking most of the damage from enemy attacks.
@@ -33,6 +35,28 @@ define('threearena/character',
 
 
         Entity.apply(this, [ options ]);
+
+        var loader = new THREE.ColladaLoader();
+        loader.load( '/gamedata/models/rts_elements.dae', function ( loaded ) {
+
+            self.tomb = loaded.scene.getObjectByName('Cross2');
+
+            self.tomb.castShadow = true;
+            self.tomb.rotation.x = -90 * Math.PI / 180;
+            self.tomb.scale.set(2, 2, 2);
+            self.tomb.position.set(0, 0, 0);
+
+            // when character die, show just a tomb
+            self.bind('death', function(){
+                self.update = function(){};
+
+                for (var i = 0; i < self.children.length; i++) {
+                    self.remove(self.children[i]);
+                }
+
+                self.add(self.tomb);
+            });
+        });
     };
 
     Character.prototype = new Entity();

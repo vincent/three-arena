@@ -28,9 +28,8 @@ define('threearena/elements/tower',
         this.options = _.merge({
                     start: true,
                  minRange: 0,
-                 maxRange: 70,
+                 maxRange: 50,
             fireIntensity: 20000,
-                transform: function( obj3d ){ return obj3d },
                orbTexture: options.texture || THREE.ImageUtils.loadTexture( "/gamedata/textures/lensflare1_alpha.png" ),
               fireTexture: options.texture || THREE.ImageUtils.loadTexture( "/gamedata/textures/lensflare0_alpha.png" ),
         } , options );
@@ -40,13 +39,15 @@ define('threearena/elements/tower',
         var loader = new THREE.ColladaLoader();
         loader.load( '/gamedata/lantern.dae', function ( loaded ) {
 
-            options.transform( loaded );
-
             self.aura = Particles.Aura( 'point', self.options.fireIntensity, self.options.orbTexture, null );
-            self.aura.particleCloud.position.set( x, y, z );
+            self.aura.particleCloud.position.set( x, y+8, z );
             self.add( self.aura.particleCloud );
             
             var lantern = loaded.scene.children[ 0 ];
+            lantern.castShadow = true;
+            lantern.rotation.x = -90 * Math.PI / 180;
+            lantern.scale.set(7, 7, 7);
+            lantern.position.set(0, 10, 0);
             delete loaded;
 
             self.add(lantern);
@@ -74,6 +75,8 @@ define('threearena/elements/tower',
 
         var i = -1, charDistance, minDistance = Number.MAX_VALUE, nearest = false;
         while (i++ < game.pcs.length - 1 && !this._firing) {
+            if (game.pcs[i].isDead()) continue;
+
             charDistance = game.pcs[i].position.distanceTo(self.position);
             if (charDistance >= self.options.minRange && charDistance < self.options.maxRange 
                 && charDistance < minDistance) {

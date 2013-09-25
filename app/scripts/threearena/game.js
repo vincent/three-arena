@@ -6,6 +6,7 @@ define('threearena/game',
 
     'threearena/utils',
     'threearena/hud',
+    'threearena/entity',
     'threearena/elements/nexus',
     'threearena/elements/tower',
     'threearena/elements/lifebar',
@@ -36,6 +37,7 @@ define('threearena/game',
  
     Utils,
     HUD,
+    Entity,
     Nexus,
     DefenseTower,
     LifeBar,
@@ -59,13 +61,17 @@ define('threearena/game',
 
             preload: [],
 
+            fog: {
+                color: 0x000000,
+                near: 20,
+                far: 250
+            },
+
             container: null,
 
             positions: {
                 origin: new THREE.Vector3( 0, 0, 0 )
             },
-
-            debugAxis: false,
 
         }, settings);
     };
@@ -136,7 +142,7 @@ define('threearena/game',
 
         this.pcs = [];
         this.intersectObjects = [];
-        this.helpers = [];
+        this.helpers = new THREE.Object3D();
 
         this.hud = new HUD.GameHud('hud-container');
 
@@ -153,14 +159,14 @@ define('threearena/game',
         // AXIS HELPER
         tmp = new THREE.AxisHelper( 1000 );
         tmp.position.set(0, 0, 0);
-        this.helpers.push(tmp);
+        this.helpers.add(tmp);
 
         // INTERSECTIONS HELPER
         var geometry = new THREE.CylinderGeometry( 0, 1, 1, 3 );
         geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, 0 ) );
         geometry.applyMatrix( new THREE.Matrix4().makeRotationX( Math.PI / 2 ) );
         tmp = new THREE.Mesh( geometry, new THREE.MeshNormalMaterial() );
-        this.helpers.push(tmp);
+        this.helpers.add(tmp);
 
         this._initRenderer();
 
@@ -192,7 +198,7 @@ define('threearena/game',
 
         this.scene = new THREE.Scene();
         //this.scene.fog = new THREE.FogExp2( 0x0, 0.00055 );
-        this.scene.fog = new THREE.Fog( 0x444444, 100, 300 );
+        this.scene.fog = new THREE.Fog( this.settings.fog.color, this.settings.fog.near, this.settings.fog.far );
     };
 
     /**
@@ -522,13 +528,7 @@ define('threearena/game',
 
         var defenseTower = new DefenseTower(0, 28, 1, {
             fireSpeed: 10,
-            fireIntensity: 50,
-            transform: function (loaded) {
-                var loaded = loaded.scene.children[0];
-                loaded.castShadow = true;
-                loaded.scale.set( 8, 8, 8 );
-                loaded.rotation.x = -90 * (Math.PI / 180);
-            }
+            fireIntensity: 50
         });
         this.scene.add(defenseTower);
         done(null);
@@ -542,7 +542,13 @@ define('threearena/game',
         folder.addColor(self.ambientLight, 'color');
         folder.addColor(self.directionalLight, 'color');
 
-        self.gui.add(self.cameraControls, 'mouseEnabled');
+        folder = self.gui.addFolder('Fog');
+        folder.add(self.scene.fog, 'near');
+        folder.add(self.scene.fog, 'far');
+
+        folder = self.gui.addFolder('Controls');
+        folder.add(self.cameraControls, 'mouseEnabled');
+        folder.add(self.helpers, 'visible');
 
         /*
         self.gui.add(self, 'Helpers', false, true).onChange(function(state){
@@ -551,9 +557,6 @@ define('threearena/game',
             }
         });
 
-        self.gui.add(self, 'Fog', 0, 1000).onChange(function(){
-            // this.scene.fog;
-        });
 
         folder = self.gui.addFolder('Towers');
         folder.add(self, 'Speed').onChange(function(value){
@@ -583,7 +586,7 @@ define('threearena/game',
             _.bind( this._initTrees,  this),
             _.bind( this._initTowers, this),
             function (callback) {
-                // console.log('BYPASS TREES'); callback(); return;
+                console.log('BYPASS TREES'); callback(); return;
 
                 var loader = new THREE.OBJLoader();
                 loader.load('/gamedata/maps/mountains_trees.obj', function (object) {
@@ -659,7 +662,8 @@ define('threearena/game',
             }
         });
         
-        character.character.meshBody && this.intersectObjects.push(character.character.meshBody);
+        // character.character.meshBody && this.intersectObjects.push(character.character.meshBody);
+        this.intersectObjects.push(character);
 
         this.pcs.push(character);
         this.scene.add(character);
@@ -744,7 +748,7 @@ define('threearena/game',
 
               var raycaster = new THREE.Raycaster(self.camera.position,vector.sub(self.camera.position).normalize());
 
-              var intersects = raycaster.intersectObjects(this.intersectObjects);
+              var intersects = raycaster.intersectObjects(this.intersectObjects, true); // recursive
 
               if (intersects.length > 0) {
 
@@ -786,15 +790,49 @@ define('threearena/game',
 
                     // __add_tree(i_pos);
 
-                    // apply a glow effect on selected objects
-                    if (intersects[0].object && intersects[0].object.parent && intersects[0].object.parent.parent
-                        && intersects[0].object.parent.parent instanceof InteractiveObject) {
+                    // user clicked something
+                    if (intersects[0].object && intersects[0].object) {
 
-                        if (intersects[0].object.parent.parent.isNearEnough(character)) {
-                            self.startInteraction(intersects[0].object.parent.parent);
+                        // it's an interactive object
+                        if (intersects[0].object.parent && intersects[0].object.parent.parent 
+                            && intersects[0].object.parent.parent instanceof InteractiveObject) {
 
-                        } else {
-                            console.log("C'est trop loin !");
+                            if (intersects[0].object.parent.parent.isNearEnough(character)) {
+                                self.startInteraction(intersects[0].object.parent.parent);
+
+                            } else {
+                                console.log("C'est trop loin !");
+                            }
+                    
+                        // it's an entity
+                        } else if (intersects[0].object && intersects[0].object.parent && intersects[0].object.parent.parent 
+                            && intersects[0].object.parent.parent instanceof Entity) {
+
+                            var target = intersects[0].object.parent.parent;
+
+                            // cast the first possible spell 
+                            for (var i = 0; i < character.state.spells.length; i++) {
+                                if (character.state.spells[i].canHit(character, target)) {
+                                    character.cast(character.state.spells[i], target);
+                                    break;
+                                }
+                            }
+
+                        } else if (0) {
+
+                            // SUPER SIMPLE GLOW EFFECT
+                            // use sprite because it appears the same from all angles
+                            var spriteMaterial = new THREE.SpriteMaterial({ 
+                                map: new THREE.ImageUtils.loadTexture('/gamedata/textures/glow.png'), 
+                                useScreenCoordinates: false,
+                                alignment: THREE.SpriteAlignment.center,
+                                color: 0x0000ff,
+                                transparent: false,
+                                blending: THREE.AdditiveBlending
+                            });
+                            var sprite = new THREE.Sprite( spriteMaterial );
+                            sprite.scale.set(10, 10, 10);
+                            intersects[0].object.parent.parent.add(sprite); // this centers the glow at the mesh                        
                         }
                     }
                 }

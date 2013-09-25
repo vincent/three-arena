@@ -82,15 +82,7 @@ define('threearena/particles/cloud',
 		this.values_size = this.attributes.size.value;
 		this.values_color = this.attributes.pcolor.value;
 
-		for( var v = 0; v < this.particleCloud.geometry.vertices.length; v ++ ) {
-
-			this.values_size[ v ] = 1;
-
-			this.values_color[ v ] = new THREE.Color( 0x000000 );
-
-			this.particles.vertices[ v ].set( Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY );
-
-		}
+		this.reset();
 
 		// EMITTER STUFF
 
@@ -119,6 +111,14 @@ define('threearena/particles/cloud',
 
 		this.sparksEmitter.addCallback( "created", bind( this, this.onParticleCreated ) );
 		this.sparksEmitter.addCallback( "dead", bind( this, this.onParticleDead ) );
+	};
+
+	ParticleCloud.prototype.reset = function() {
+		for ( var v = 0; v < this.particleCloud.geometry.vertices.length; v ++ ) {
+			this.values_size[ v ] = 1;
+			this.values_color[ v ] = new THREE.Color( 0x000000 );
+			this.particles.vertices[ v ].set( Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY );
+		}
 	};
 
 	ParticleCloud.prototype.setTargetParticle = function() {

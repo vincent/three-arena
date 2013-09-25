@@ -76,6 +76,7 @@ function(_, MicroEvent, THREE, ko, log, Utils, LifeBar, PathFinding) {
 
                     self._nearestEnnemy = false;
                     while (i++ < game.pcs.length - 1) {
+                        if (game.pcs[i].isDead()) continue;
 
                         charDistance = game.pcs[i].position.distanceTo(self.position);
 

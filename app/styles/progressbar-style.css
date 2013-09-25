@@ -1,0 +1,14 @@
+.progressbar {
+  width:200px;
+	height:50px;
+	margin:20px auto;
+	border:solid 1px grey;
+}
+.progressbar-inner {
+	width:inherit;
+	height:inherit;
+}
+.progressbar-progress {
+	background-color:grey;
+	height:inherit;
+}
