@@ -30,6 +30,8 @@ define('threearena/character/monsterdog',
 			self.character = collada.scene;
 			self.skin = collada.skins[ 0 ];
 
+			self.skin.geometry.computeFaceNormals();
+
 			self.character.rotation.y = 65 * Math.PI / 2;
 			self.character.scale.x = self.character.scale.y = self.character.scale.z = 0.005;
 			self.character.updateMatrix();

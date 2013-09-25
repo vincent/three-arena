@@ -81,7 +81,14 @@ define('threearena/game',
         PathFinding.set_cellHeight(.4);
         PathFinding.initWithFile('/gamedata/maps/mountains.obj');
         PathFinding.build();
-        require(this.settings.preload, done);
+
+        PackageLoader.instance.load({
+            // These frameworks are required for the preloader to run.
+            preloader: "scripts/libs/PackageLoadingBar.js",
+            jQuery: "jquery",
+            domParent: document.body,
+
+        }, this.settings.preload, done);
     };
 
     /**
@@ -90,7 +97,8 @@ define('threearena/game',
      */
     Game.prototype.init = function( ready ) {
 
-        var self = this;
+        var self = this,
+            tmp = null;
 
         this.settings.container.innerHTML = '';
 
@@ -115,15 +123,20 @@ define('threearena/game',
 
         window._ta_events = new ThreeArenaGlobalEvents();
 
+        //////////
+
         this.stats = new Stats();
         this.stats.domElement.style.position = 'absolute';
         this.stats.domElement.style.top = '0px';
         this.settings.container.appendChild( this.stats.domElement );
 
+        this.gui = new dat.GUI();
+
         //////////
 
         this.pcs = [];
         this.intersectObjects = [];
+        this.helpers = [];
 
         this.hud = new HUD.GameHud('hud-container');
 
@@ -138,18 +151,16 @@ define('threearena/game',
         this.clock = new THREE.Clock();
 
         // AXIS HELPER
-        if (this.settings.debugAxis) {
-            this.axisHelper = new THREE.AxisHelper( 1000 );
-            this.axisHelper.position.set(0, 0, 0);
-            this.scene.add(this.axisHelper);
-        }
+        tmp = new THREE.AxisHelper( 1000 );
+        tmp.position.set(0, 0, 0);
+        this.helpers.push(tmp);
 
         // INTERSECTIONS HELPER
-        // var geometry = new THREE.CylinderGeometry( 0, 1, 1, 3 );
-        // geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, 0 ) );
-        // geometry.applyMatrix( new THREE.Matrix4().makeRotationX( Math.PI / 2 ) );
-        // helper = new THREE.Mesh( geometry, new THREE.MeshNormalMaterial() );
-        // this.scene.add(helper);
+        var geometry = new THREE.CylinderGeometry( 0, 1, 1, 3 );
+        geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, 0 ) );
+        geometry.applyMatrix( new THREE.Matrix4().makeRotationX( Math.PI / 2 ) );
+        tmp = new THREE.Mesh( geometry, new THREE.MeshNormalMaterial() );
+        this.helpers.push(tmp);
 
         this._initRenderer();
 
@@ -189,7 +200,7 @@ define('threearena/game',
      */
     Game.prototype._initLights = function() {
 
-        this.ambientLight = new THREE.AmbientLight( 0x888888 );
+        this.ambientLight = new THREE.AmbientLight( 0xffffff );
         this.scene.add( this.ambientLight );
 
         this.pointLight = new THREE.PointLight( 0xffffff, 1.25, 1000 );
@@ -200,7 +211,7 @@ define('threearena/game',
         this.directionalLight = new THREE.SpotLight( 0xffffff );
         // this.directionalLight.ambient = 0xffffff;
         // this.directionalLight.diffuse = 0xffffff;
-        this.directionalLight.specular = 0xaaaa22;
+        this.directionalLight.specular = new THREE.Color('#050101'); // 0xaaaa22;
         this.directionalLight.position.set( -200, 400, -200 );
         this.directionalLight.intensity = .9;
         this.directionalLight.castShadow = true;
@@ -523,6 +534,40 @@ define('threearena/game',
         done(null);
     };
 
+
+    Game.prototype._setupGui = function(callback) {
+        var self = this;
+
+        folder = self.gui.addFolder('Lights');
+        folder.addColor(self.ambientLight, 'color');
+        folder.addColor(self.directionalLight, 'color');
+
+        self.gui.add(self.cameraControls, 'mouseEnabled');
+
+        /*
+        self.gui.add(self, 'Helpers', false, true).onChange(function(state){
+            for (var i = 0; i < self.helpers.length; i++) {
+                self.scene[state ? 'add' : 'remove'](self.helpers[i]);
+            }
+        });
+
+        self.gui.add(self, 'Fog', 0, 1000).onChange(function(){
+            // this.scene.fog;
+        });
+
+        folder = self.gui.addFolder('Towers');
+        folder.add(self, 'Speed').onChange(function(value){
+            this.scene.traverse(function(child){
+                if (child instanceof DefenseTower) {
+                    child.options.fireSpeed = value;
+                }
+            });
+        });                
+        */
+
+        callback();
+    };
+
     /**
      * Fill map (ground, trees, towers, ...)
      * @param  {Function} main_callback, called when every elements has been added to scene
@@ -576,6 +621,10 @@ define('threearena/game',
                 });
                 loader.load('/gamedata/models/lightning_pole/lightning_pole.obj', '/gamedata/models/lightning_pole/lightning_pole.mtl');
             },
+
+            _.bind( this._setupGui, this),
+
+            // afterCreate helper
             function(callback) {
                 self.afterCreate();
                 callback();

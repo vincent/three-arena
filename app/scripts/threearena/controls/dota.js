@@ -13,6 +13,7 @@ define('threearena/controls/dota',
 
 		// API
 		this.enabled = true;
+		this.mouseEnabled = true;
 		this.noZoom = false;
 
 		this.movementSpeed = 50.0;
@@ -153,7 +154,7 @@ define('threearena/controls/dota',
 			}
 			*/
 
-			if ( this.enabled ) {
+			if ( this.enabled && this.mouseEnabled ) {
 
 				var now = (new Date()).getTime();
 

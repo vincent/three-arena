@@ -32,9 +32,31 @@ define('threearena/examples/demo',
                 nearcamp: new THREE.Vector3( -78.2, 15.5, 100 ),
             },
 
-			preload: [
-
-			]
+			preload: {
+                // The keys act as labels for the listing of currently loading packages.
+                "Import models": [
+                    'cacheonly!/gamedata/maps/mountains.obj',
+                    'cacheonly!/gamedata/maps/mountains_trees.obj',
+                    'cacheonly!/gamedata/models/marketplace.obj',
+                    'cacheonly!/gamedata/tree_pine.dae',
+                    'cacheonly!/gamedata/tree_oak.dae',
+                    'cacheonly!/gamedata/lantern.dae'
+                ],
+                "Import textures": [
+                    'cacheonly!/gamedata/dota_map_full_compress2_normals.jpg',
+                    'cacheonly!/gamedata/dota_map_full_compress2_specular.jpg',
+                    'cacheonly!/gamedata/dota_map_full_compress2.jpg',
+                    'cacheonly!/gamedata/dota_map_full_compress3.jpg',
+                    'cacheonly!/gamedata/textures/lensflare1_alpha.png',
+                    'cacheonly!/gamedata/textures/lensflare0_alpha.png',
+                    'cacheonly!/gamedata/textures/lantern_1024_c.png',
+                    'cacheonly!/gamedata/Bark_Tile.jpg',
+                    'cacheonly!/gamedata/oak-branch-c.png',
+                    'cacheonly!/gamedata/Bark_Tile.jpg',
+                    'cacheonly!/gamedata/leaf-mapple-yellow-c.png',
+                    'cacheonly!/gamedata/oak-branch-c.png'
+                ]
+            }
 		}, settings);
 
         settings.positions.spawn = settings.positions.nearcamp;

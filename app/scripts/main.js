@@ -4,6 +4,7 @@ require.config({
     waitSeconds: 10 * 60 * 1000,
     paths: {
         cacheonly:      'libs/cacheonly',
+        PackageLoader:  'libs/PackageLoader',
 
         jquery:         '../bower_components/jquery/jquery',
         lodash:         '../bower_components/lodash/lodash',
@@ -39,6 +40,10 @@ require.config({
     shim: {
         microevent: {
             exports: 'MicroEvent',
+        },
+
+        PackageLoader: {
+            exports: 'PackageLoader',
         },
 
         machinejs: {
