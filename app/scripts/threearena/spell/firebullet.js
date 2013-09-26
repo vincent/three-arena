@@ -37,12 +37,12 @@ define('threearena/spell/firebullet',
             speed: 6,
             onStart: function(){
                 caster.add(self.aura.particleCloud);
+                self.aura.reset(5);
                 self.aura.start();
                 window._ta_events.bind('update', updateCloud);
             },
             onComplete: function(){
                 self.aura.stop();
-                self.aura.reset();
                 caster.remove(self.aura.particleCloud);
                 window._ta_events.unbind('update', updateCloud);
 

@@ -14,6 +14,8 @@ define('threearena/character/monsterdog',
             life: 100,
             mana: false,
 
+            speed: 100,
+
             name: 'Monsterdog',
             image: '/gamedata/models/monster/portrait.gif',
 

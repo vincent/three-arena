@@ -89,6 +89,7 @@ define('threearena/character',
         }
 
         options = _.merge({
+            speed: this.state.speed,
             onStart: function(){
                 self.character.controls.moveForward = true;
                 self.character.setAnimation('run');

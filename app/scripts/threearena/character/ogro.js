@@ -55,7 +55,7 @@ define('threearena/character/ogro',
         Character.apply( this, [ options ]);
 
         this.character = new THREE.MD2CharacterComplex();
-        this.character.scale = .15;
+        this.character.scale = .25;
         this.character.controls = {
             moveForward: false,
             moveBackward: false,

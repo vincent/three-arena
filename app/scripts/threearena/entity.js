@@ -33,6 +33,8 @@ function(_, MicroEvent, THREE, ko, log, Utils, LifeBar, PathFinding) {
             life: 100,
             mana: 0,
 
+            speed: 50,
+
             strength: 0,
             agility: 0,
             intelligence: 0,

@@ -198,7 +198,7 @@ define('threearena/controls/dota',
 					this.moveState.forward = 0;
 				}
 
-				if (event.pageY > container.size[ 1 ] - activeZoneHeight) {
+				if (event.pageY > container.size[ 1 ] - activeZoneHeight - 200 /* FIXME crappy hack */) {
 
 					this._inActiveZone.backward = this._inActiveZone.backward || now;
 					if (now - this._inActiveZone.backward > this.activeZoneTime) {

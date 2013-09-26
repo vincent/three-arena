@@ -113,9 +113,9 @@ define('threearena/particles/cloud',
 		this.sparksEmitter.addCallback( "dead", bind( this, this.onParticleDead ) );
 	};
 
-	ParticleCloud.prototype.reset = function() {
+	ParticleCloud.prototype.reset = function(size) {
 		for ( var v = 0; v < this.particleCloud.geometry.vertices.length; v ++ ) {
-			this.values_size[ v ] = 1;
+			this.values_size[ v ] = size || 1;
 			this.values_color[ v ] = new THREE.Color( 0x000000 );
 			this.particles.vertices[ v ].set( Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY );
 		}
@@ -124,7 +124,7 @@ define('threearena/particles/cloud',
 	ParticleCloud.prototype.setTargetParticle = function() {
 
 		var target = this.pool.get();
-		this.values_size[ target ] = Math.random() * 100 + 10;
+		this.values_size[ target ] += Math.random() * 100 + 10;
 
 		return target;
 	};
