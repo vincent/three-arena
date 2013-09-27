@@ -86,6 +86,7 @@ define('threearena/character/ogro',
             self.character.meshWeapon.position.y = 2;
 
             //self.character.root.castShadow = true;
+            //self.rotation.y = 4.3;
 
             self.add(self.character.root);
 

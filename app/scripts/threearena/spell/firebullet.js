@@ -5,7 +5,14 @@ define('threearena/spell/firebullet',
     var FireBullet = function(options) {
 
         options = _.merge({}, options, {
+
             name: 'firebullet',
+
+            isMelee: false,
+            magicLifeDamage: 20,
+
+            level: 1,
+
             needsTarget: true
         })
 

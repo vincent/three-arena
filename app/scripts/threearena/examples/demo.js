@@ -2,10 +2,14 @@
 define('threearena/examples/demo',
     ['lodash', 'threejs', 'threearena/game', 'threearena/utils',
       'threearena/character/ogro', 'threearena/character/ratamahatta', 'threearena/character/monsterdog',
+
       'threearena/elements/interactiveobject',
       'threearena/elements/autospawn',
+      'threearena/elements/water',
+
       'threearena/spell/bite',
       'threearena/spell/fireaura',
+      'threearena/spell/flatfireaura',
       'threearena/spell/firebullet',
       'threearena/particles/flies',
 
@@ -14,7 +18,7 @@ define('threearena/examples/demo',
       'threearena/behaviours/controlled'
     ],
 
-    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, InterativeObject, SpawningPool, BiteSpell, FireAuraSpell, FireBulletSpell, Flies,    Machine, MinionBehaviour, ControlledBehaviour) {
+    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, InterativeObject, SpawningPool, Water, BiteSpell, FireAuraSpell, FlatFireAuraSpell, FireBulletSpell, Flies,    Machine, MinionBehaviour, ControlledBehaviour) {
     'use strict';
 
 	var Demo = function(settings) {
@@ -98,6 +102,8 @@ define('threearena/examples/demo',
                 // learn some spells
                 character.learnSpell( FireAuraSpell );
                 character.learnSpell( FireBulletSpell );
+                character.learnSpell( FlatFireAuraSpell );
+
             }
         });
 
@@ -158,7 +164,12 @@ define('threearena/examples/demo',
         var material = new THREE.ShaderMaterial( parameters );
         // material.wrapAround = true;
 
-        // model
+        // Water
+        var water = new Water( 50, 100 );
+        water.position.set( -100, 12, 0 );
+        self.scene.add( water );
+
+        // Terrain
         var loader = new THREE.OBJLoader( );
         loader.load( '/gamedata/maps/mountains.obj', function ( object ) {
             self.ground = object;
@@ -200,7 +211,6 @@ define('threearena/examples/demo',
 
                 self.scene.add( interact );
                 done();
-
             });
         });
     };

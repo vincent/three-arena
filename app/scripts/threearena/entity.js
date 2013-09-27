@@ -55,13 +55,14 @@ function(_, MicroEvent, THREE, ko, log, Utils, LifeBar, PathFinding) {
         this._baseMana = this.state.mana;
 
         this.attachLifeBar();
+        this.attachTombstone();
 
         this.states = {
 
             idle: function() { },
 
             canFightObjective: function () {
-                return self.objective && self.state.spells[0].canHit(self, self.objective);
+                return self.objective && (! self.objective.isDead || ! self.objective.isDead()) && self.state.spells[0].canHit(self, self.objective);
             },
             fightObjective: function () {
                 self.cast(self.state.spells[0], self.objective);
@@ -195,6 +196,35 @@ function(_, MicroEvent, THREE, ko, log, Utils, LifeBar, PathFinding) {
     };
 
     /**
+     * Attach a tomb, to replace the dead entity
+     */
+    Entity.prototype.attachTombstone = function() {
+
+        var self = this;
+        var loader = new THREE.ColladaLoader();
+        loader.load( '/gamedata/models/rts_elements.dae', function ( loaded ) {
+
+            self.tomb = loaded.scene.getObjectByName('Cross2');
+
+            self.tomb.castShadow = true;
+            self.tomb.rotation.x = -90 * Math.PI / 180;
+            self.tomb.scale.set(2, 2, 2);
+            self.tomb.position.set(0, 0, 0);
+
+            // when character die, show just a tomb
+            self.bind('death', function(){
+                self.update = function(){};
+
+                for (var i = 0; i < self.children.length; i++) {
+                    self.remove(self.children[i]);
+                }
+
+                self.add(self.tomb);
+            });
+        });
+    };
+
+    /**
      * Update the character lifebar
      */
     Entity.prototype.updateLifeBar = function() {
@@ -216,9 +246,7 @@ function(_, MicroEvent, THREE, ko, log, Utils, LifeBar, PathFinding) {
      */
     Entity.prototype.incrementLife = function(inc) {
 
-        if (!(this.state.life <= 0 && inc < 0)) {
-            this.state.life += inc;
-        }
+        this.state.life = Math.max( 0, this.state.life + inc );
         return this.state.life;
     };
 
@@ -229,9 +257,7 @@ function(_, MicroEvent, THREE, ko, log, Utils, LifeBar, PathFinding) {
      */
     Entity.prototype.incrementMana = function(inc) {
 
-        if (!(this.state.mana <= 0 && inc < 0)) {
-            this.state.mana += inc;
-        }
+        this.state.mana = Math.max( 0, this.state.mana + inc );
         return this.state.mana;
     };
 

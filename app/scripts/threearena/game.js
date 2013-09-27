@@ -373,6 +373,8 @@ define('threearena/game',
             loader.load( '/gamedata/tree_pine_simplified.dae', function ( object ) {
                 object = object.scene.children[3];
 
+                object.geometry.mergeVertices(); // needed ?
+
                 object.scale.set(10, 10, 10);
 
                 /*
@@ -584,7 +586,7 @@ define('threearena/game',
             _.bind( this._initNexus, this),
             _.bind( this._initSky, this),
             _.bind( this._initTrees,  this),
-            _.bind( this._initTowers, this),
+            // _.bind( this._initTowers, this),
             function (callback) {
                 console.log('BYPASS TREES'); callback(); return;
 
@@ -809,24 +811,11 @@ define('threearena/game',
                             && intersects[0].object.parent.parent instanceof Entity) {
 
                             var target = intersects[0].object.parent.parent;
-
-                            // SUPER SIMPLE GLOW EFFECT
-                            // use sprite because it appears the same from all angles
-                            var spriteMaterial = new THREE.SpriteMaterial({ 
-                                map: new THREE.ImageUtils.loadTexture('/gamedata/textures/glow.png'), 
-                                useScreenCoordinates: false,
-                                alignment: THREE.SpriteAlignment.center,
-                                color: 0x0000ff,
-                                transparent: false,
-                                blending: THREE.AdditiveBlending
-                            });
-                            var sprite = new THREE.Sprite( spriteMaterial );
-                            sprite.scale.set(10, 10, 10);
-                            target.add(sprite); // this centers the glow at the mesh                        
-
+                           
                             // cast the first possible spell 
                             for (var i = 0; i < character.state.spells.length; i++) {
                                 if (character.state.spells[i].canHit(character, target)) {
+                                    // character.lookAt(target.position);
                                     character.cast(character.state.spells[i], target);
                                     break;
                                 }

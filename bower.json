@@ -14,7 +14,8 @@
     "tween.js": "git://github.com/sole/tween.js",
     "microevent.js": "https://github.com/vincent/microevent.js.git",
     "machinejs": "https://github.com/maryrosecook/machinejs.git",
-    "Base.js": "http://dean.edwards.name/base/Base.js"
+    "Base.js": "http://dean.edwards.name/base/Base.js",
+    "Class.js": "https://gist.github.com/shakyShane/5944153/raw/c71a33bef6a4dec9724c6728bdfca448fb55f888/Class.js"
   },
   "devDependencies": {}
 }
