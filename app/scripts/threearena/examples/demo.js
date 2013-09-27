@@ -1,7 +1,7 @@
 
 define('threearena/examples/demo',
     ['lodash', 'threejs', 'threearena/game', 'threearena/utils',
-      'threearena/character/ogro', 'threearena/character/ratamahatta', 'threearena/character/monsterdog',
+      'threearena/character/ogro', 'threearena/character/ratamahatta', 'threearena/character/monsterdog', 'threearena/character/human',
 
       'threearena/elements/interactiveobject',
       'threearena/elements/autospawn',
@@ -18,7 +18,7 @@ define('threearena/examples/demo',
       'threearena/behaviours/controlled'
     ],
 
-    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, InterativeObject, SpawningPool, Water, BiteSpell, FireAuraSpell, FlatFireAuraSpell, FireBulletSpell, Flies,    Machine, MinionBehaviour, ControlledBehaviour) {
+    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, Human, InterativeObject, SpawningPool, Water, BiteSpell, FireAuraSpell, FlatFireAuraSpell, FireBulletSpell, Flies,    Machine, MinionBehaviour, ControlledBehaviour) {
     'use strict';
 
 	var Demo = function(settings) {
