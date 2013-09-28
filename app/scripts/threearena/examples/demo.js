@@ -6,6 +6,7 @@ define('threearena/examples/demo',
       'threearena/elements/interactiveobject',
       'threearena/elements/autospawn',
       'threearena/elements/water',
+      'threearena/elements/shop',
 
       'threearena/spell/bite',
       'threearena/spell/fireaura',
@@ -18,7 +19,7 @@ define('threearena/examples/demo',
       'threearena/behaviours/controlled'
     ],
 
-    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, Human, InterativeObject, SpawningPool, Water, BiteSpell, FireAuraSpell, FlatFireAuraSpell, FireBulletSpell, Flies,    Machine, MinionBehaviour, ControlledBehaviour) {
+    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, Human, InterativeObject, SpawningPool, Water, Shop, BiteSpell, FireAuraSpell, FlatFireAuraSpell, FireBulletSpell, Flies,    Machine, MinionBehaviour, ControlledBehaviour) {
     'use strict';
 
 	var Demo = function(settings) {
@@ -187,31 +188,17 @@ define('threearena/examples/demo',
             self.intersectObjects = self.intersectObjects.concat(self.ground.children[0].children);
             self.scene.add( self.ground );
 
-            var loader = new THREE.OBJLoader( );
-            loader.load( '/gamedata/models/marketplace.obj', function ( object ) {
-
-                object.traverse( function ( child ) {
-                    if ( child instanceof THREE.Mesh ) {
-                        child.material.map = THREE.ImageUtils.loadTexture( "/gamedata/models/TXT0499.jpg" );
-
-                        child.glowable = true;
-                        self.intersectObjects.push(child);
-                    }
-                });
-
-                object.scale = new THREE.Vector3(8, 8, 8);
-                var interact = new InterativeObject();
-                interact.position.set(-99, 15, 94);
-                interact.menu = {
-                    items: [
-                        { action:'sell', name:'Potion', price:20 }
-                    ],
-                };
-                interact.add( object );
-
-                self.scene.add( interact );
-                done();
+            // A shop
+            var shop = new Shop({
+                menu: { items: [
+                    { action: 'sell', name: 'Potion', price: 20 }
+                ] }
             });
+            shop.position.set( -99, 15, 94 );
+            self.intersectObjects.push( shop );
+            self.scene.add( shop );
+
+            done();
         });
     };
 

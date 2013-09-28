@@ -7,6 +7,10 @@ define('threearena/elements/interactiveobject',
 
     var InteractiveObject = function(options) {
 
+        options = options || {};
+
+        this.menu = options.menu || {};
+
         THREE.Object3D.apply(this);
     };
 
