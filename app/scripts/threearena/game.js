@@ -17,6 +17,7 @@ define('threearena/game',
     
     'MD2Character',
     'MD2CharacterComplex',
+    'JSONLoader',
     'OBJLoader',
     'MTLLoader',
     'OBJMTLLoader',
@@ -383,6 +384,12 @@ define('threearena/game',
                 */
                 object.material.materials[0].transparent = true;
                 object.material.materials[1].transparent = true;
+
+                // object.material.materials[1].ambient.set(0, 0, 0);
+                object.material.materials[1].specular.set(0xdd5500);
+                // object.material.materials[1].bumpMap = THREE.ImageUtils.loadTexture( "/gamedata/pine-a.png" );
+                // object.material.materials[1].bumpScale = 19;
+
                
                 self._treesRefs.push(object);
                 callback();
@@ -459,14 +466,41 @@ define('threearena/game',
             loader.load('/gamedata/models/plants/eatsheep_farm_tree.obj', '/gamedata/models/plants/eatsheep_farm_tree.mtl');
         };
 
+        var _load_tree_xuroiux = function(callback){
+            loader.load( '/gamedata/models/plants/TreeXuroiux.dae', function ( object ) {
+                
+
+
+                object = object.scene.children[0];
+
+                // object.geometry.mergeVertices(); // needed ?
+
+                object.scale.set(3, 3, 3);
+
+                object.material.materials[0].transparent = true;
+                object.material.materials[1].specular.set(0xdd5500);
+               
+                self._treesRefs.push(object);
+                callback();
+            });
+        };
+        var _load_tree_xuroiux2 = function(callback){
+            loader = new THREE.JSONLoader();
+            loader.load('/gamedata/models/plants/TreeXuroiux.js', function ( geometry, materials ) {
+                self._treesRefs.push( new THREE.Mesh( geometry, materials[0] ) );
+                callback();
+            }, { normalizeRGB: true } );
+        };
+
         async.series([
             _load_tree_shader,
 
-            _load_tree_pine,
+            // _load_tree_pine,
             // _load_tree_oak,
             // _load_tree_cartoon,
             // _load_dracena
-            // _load_eatsheep
+            // _load_eatsheep,
+            _load_tree_xuroiux2
         ], main_callback);
     };
 
@@ -477,7 +511,8 @@ define('threearena/game',
      */
     Game.prototype.newTree = function(position, type) {
 
-        var self = this;
+        var self = this,
+            _tmp_tree;
 
         this._treesGroup = this._treesGroup || new THREE.Object3D();
         this._treesGroup.castShadow = true;    
@@ -490,36 +525,31 @@ define('threearena/game',
         // this._tmp_tree.geometry = refTree.geometry;
         // this._tmp_tree.material = refTree.material;
 
-        this._tmp_tree = new THREE.Mesh( refTree.geometry, refTree.material );
-        //this._tmp_tree.material.materials.push(cartoon);
-        this._tmp_tree.castShadow = true;
+        _tmp_tree = new THREE.Mesh( refTree.geometry, refTree.material );
+        //_tmp_tree.material.materials.push(cartoon);
+        _tmp_tree.castShadow = true;
 
-        // this._tmp_tree.material.materials[1].ambient.set(0, 0, 0);
-        this._tmp_tree.material.materials[1].specular.set(0xdd5500);
-        // this._tmp_tree.material.materials[1].bumpMap = THREE.ImageUtils.loadTexture( "/gamedata/pine-a.png" );
-        // this._tmp_tree.material.materials[1].bumpScale = 19;
-
-        this._tmp_tree.matrixAutoUpdate = false;
-        this._tmp_tree.position = position;
-        this._tmp_tree.position.y += 4;
-        this._tmp_tree.scale = new THREE.Vector3(4, 3, 4);
-        // this._tmp_tree.rotation.y = Math.random() * 90 * ( Math.PI / 180 );
+        _tmp_tree.matrixAutoUpdate = false;
+        _tmp_tree.position = position;
+        _tmp_tree.position.y += 4;
+        _tmp_tree.scale = new THREE.Vector3(4, 3, 4);
+        // _tmp_tree.rotation.y = Math.random() * 90 * ( Math.PI / 180 );
 
         if (refTreeIndex == 0) {
-            this._tmp_tree.rotation.x = - 90 * ( Math.PI / 180 );
+            _tmp_tree.rotation.x = - 90 * ( Math.PI / 180 );
         }
         if (refTreeIndex == 1) {
-            //this._tmp_tree.rotation.x = 10 * ( Math.PI / 180 );
-            //this._tmp_tree.rotation.y = 10 * ( Math.PI / 180 );
+            //_tmp_tree.rotation.x = 10 * ( Math.PI / 180 );
+            //_tmp_tree.rotation.y = 10 * ( Math.PI / 180 );
         }
 
-        this._tmp_tree.rotation.z = Math.random() * 180 * ( Math.PI / 180 );
+        _tmp_tree.rotation.z = Math.random() * 180 * ( Math.PI / 180 );
 
 
-        this._tmp_tree.updateMatrix();
+        _tmp_tree.updateMatrix();
 
-        // THREE.GeometryUtils.merge(this._treesGroup.geometry, this._tmp_tree);
-        this._treesGroup.add( this._tmp_tree );
+        // THREE.GeometryUtils.merge(this._treesGroup.geometry, _tmp_tree);
+        this._treesGroup.add( _tmp_tree );
     };
 
     /**
@@ -588,7 +618,7 @@ define('threearena/game',
             _.bind( this._initTrees,  this),
             // _.bind( this._initTowers, this),
             function (callback) {
-                console.log('BYPASS TREES'); callback(); return;
+                // console.log('BYPASS TREES'); callback(); return;
 
                 var loader = new THREE.OBJLoader();
                 loader.load('/gamedata/maps/mountains_trees.obj', function (object) {

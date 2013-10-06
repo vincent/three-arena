@@ -21,6 +21,7 @@ require.config({
 
         MD2Character:   '../bower_components/threejs/examples/js/MD2Character',
         MD2CharacterComplex: '../bower_components/threejs/examples/js/MD2CharacterComplex',
+        JSONLoader:     '../bower_components/threejs/src/loaders/JSONLoader',
         OBJLoader:      '../bower_components/threejs/examples/js/loaders/OBJLoader',
         MTLLoader:      '../bower_components/threejs/examples/js/loaders/MTLLoader',
         OBJMTLLoader:   '../bower_components/threejs/examples/js/loaders/OBJMTLLoader',
