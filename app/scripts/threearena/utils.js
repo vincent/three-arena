@@ -132,6 +132,18 @@ define('threearena/utils',
 
             options.start && tween.start();
             return tween;
+        },
+
+        getEntity: function ( object ) {
+
+            var Entity = require('threearena/entity');
+
+            while (object.parent && ! (object instanceof Entity)) {
+                object = object.parent;
+            }
+
+            return object instanceof Entity ? object : null;
         }
+
     };
 });

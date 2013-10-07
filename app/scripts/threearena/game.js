@@ -287,10 +287,12 @@ define('threearena/game',
         this.objectives[0] = new Nexus({ life: 1000000, color: '#e33' });
         this.objectives[0].position.set(-71.2, 19, 69);
         this.scene.add(this.objectives[0]);
+        this.intersectObjects.push(this.objectives[0]);
 
         this.objectives[1] = new Nexus({ life: 1000000, color: '#3e3' });
         this.objectives[1].position.set(89.2, 21, -62.5);
         this.scene.add(this.objectives[1]);
+        this.intersectObjects.push(this.objectives[1]);
 
         done();
     };
@@ -784,7 +786,8 @@ define('threearena/game',
 
               if (intersects.length > 0) {
 
-                var i_pos = intersects[0].point;
+                var i_pos = intersects[0].point,
+                    entity;
 
                 console.log('intersect at %o %o', i_pos.x, i_pos.y, i_pos.z );
 
@@ -825,8 +828,23 @@ define('threearena/game',
                     // user clicked something
                     if (intersects[0].object && intersects[0].object) {
 
+                        // maybe an entity ?
+                        entity = Utils.getEntity(intersects[0].object);
+
+                        // it's an entity
+                        if (entity) {
+
+                            // cast the first possible spell 
+                            for (var i = 0; i < character.state.spells.length; i++) {
+                                if (character.state.spells[i].canHit(character, entity)) {
+                                    // character.lookAt(entity.position);
+                                    character.cast(character.state.spells[i], entity);
+                                    break;
+                                }
+                            }
+
                         // it's an interactive object
-                        if (intersects[0].object.parent && intersects[0].object.parent.parent 
+                        } else if (intersects[0].object.parent && intersects[0].object.parent.parent 
                             && intersects[0].object.parent.parent instanceof InteractiveObject) {
 
                             if (intersects[0].object.parent.parent.isNearEnough(character)) {
@@ -836,20 +854,6 @@ define('threearena/game',
                                 console.log("C'est trop loin !");
                             }
                     
-                        // it's an entity
-                        } else if (intersects[0].object && intersects[0].object.parent && intersects[0].object.parent.parent 
-                            && intersects[0].object.parent.parent instanceof Entity) {
-
-                            var target = intersects[0].object.parent.parent;
-                           
-                            // cast the first possible spell 
-                            for (var i = 0; i < character.state.spells.length; i++) {
-                                if (character.state.spells[i].canHit(character, target)) {
-                                    // character.lookAt(target.position);
-                                    character.cast(character.state.spells[i], target);
-                                    break;
-                                }
-                            }
 
                         } else if (0) {
 
