@@ -96,7 +96,7 @@ define('threearena/character/ogro',
         baseCharacter.loadParts( options.modelOptions );
     };
 
-    Ogro.prototype = new Character();
+    Ogro.prototype = Object.create(Character.prototype);
 
     ////////////////
 

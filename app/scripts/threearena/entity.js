@@ -136,12 +136,14 @@ function(_, MicroEvent, THREE, ko, log, Utils, LifeBar, PathFinding) {
                 }
                 this._isFighting = false;
                 self._currentTween = self.moveAlong(self._currentRoute, {
-                    onStart: function(){
+                    onStart: function(tween){
                         self._isMoving = true;
                     },
-                    onComplete: function(){
+                    onComplete: function(tween){
                         self._isMoving = false;
-                        //self._currentRoute = null;
+                        if (tween.distance >= 1) {
+                            self._currentRoute = null;
+                        }
                     }
                 });
             },
@@ -167,7 +169,7 @@ function(_, MicroEvent, THREE, ko, log, Utils, LifeBar, PathFinding) {
         this.trigger('changed', this.state);
     };
 
-    Entity.prototype = new THREE.Object3D();
+    Entity.prototype = Object.create(THREE.Object3D.prototype);
 
     //////////////////
 
@@ -367,7 +369,6 @@ function(_, MicroEvent, THREE, ko, log, Utils, LifeBar, PathFinding) {
         }
     };
 
-    Entity.prototype.constructor = Entity;
     MicroEvent.mixin(Entity);
     return Entity;
 });

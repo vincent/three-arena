@@ -67,7 +67,7 @@ define('threearena/character/monsterdog',
 		} );
     };
 
-    Monsterdog.prototype = new Character();
+    Monsterdog.prototype = Object.create(Character.prototype);
 
     ////////////////
 

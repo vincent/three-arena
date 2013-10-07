@@ -6,7 +6,7 @@ require.config({
         cacheonly:      'libs/cacheonly',
         PackageLoader:  'libs/PackageLoader',
 
-        Class:        '../bower_components/Class.js/index',
+        Class:          '../bower_components/Class.js/index',
         jquery:         '../bower_components/jquery/jquery',
         lodash:         '../bower_components/lodash/lodash',
         async:          '../bower_components/async/lib/async',

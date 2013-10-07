@@ -25,7 +25,7 @@ define('threearena/elements/nexus',
 	    });
 	};
 
-	Nexus.prototype = new Entity();
+	Nexus.prototype = Object.create(Entity.prototype);
 
 
 	Nexus.prototype.constructor = Nexus;

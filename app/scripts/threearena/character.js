@@ -59,7 +59,7 @@ define('threearena/character',
         });
     };
 
-    Character.prototype = new Entity();
+    Character.prototype = Object.create(Entity.prototype);
 
     ////////////////
 

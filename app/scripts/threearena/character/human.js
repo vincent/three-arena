@@ -38,7 +38,7 @@ define('threearena/character/human',
 
     };
 
-    Human.prototype = new Character();
+    Human.prototype = Object.create(Character.prototype);
 
     ////////////////
 

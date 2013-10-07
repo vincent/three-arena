@@ -113,10 +113,10 @@ define('threearena/utils',
                 .to({ distance: options.to }, options.length) // use 
                 .easing( options.easing )
                 .onStart(function(){
-                    options.onStart && options.onStart();
+                    options.onStart && options.onStart(this);
                 })
                 .onComplete(function(){
-                    options.onComplete && options.onComplete();
+                    options.onComplete && options.onComplete(this);
                 })
                 .onUpdate(function(){
                     // get the position data half way along the path

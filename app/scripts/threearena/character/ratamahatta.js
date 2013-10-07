@@ -106,7 +106,7 @@ define('threearena/character/ratamahatta',
         // baseCharacter.loadParts( options.modelOptions );
     };
 
-    Ratamahatta.prototype = new Character();
+    Ratamahatta.prototype = Object.create(Character.prototype);
 
     ////////////////
 
