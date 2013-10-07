@@ -12,6 +12,9 @@ define('threearena/spell',
 				manaDamage: 0,
 				source: null,
 
+                minRange: 1,
+                maxRange: 2,
+
                 level: 1,
                 image: 'default.png'
 

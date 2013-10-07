@@ -9,8 +9,8 @@ define('threearena/spell/bite',
             isMelee: true,
             meleeLifeDamage: 10,
 
-            level: 1,
-            image: 'default.png'
+            minRange: 1,
+            maxRange: 4,
         })
 
         Spell.apply(this, [ options ]);
@@ -23,7 +23,7 @@ define('threearena/spell/bite',
 
     Bite.prototype.canHit = function(source, target, toleranceRatio) {
         toleranceRatio = toleranceRatio || 1;
-        return source.position.distanceTo(target.position) < (5 * toleranceRatio);
+        return source.position.distanceTo(target.position) - target.state.attackRange < (this.maxRange * toleranceRatio);
     };
 
     Bite.prototype.start = function(source, target) {

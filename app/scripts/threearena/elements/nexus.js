@@ -6,7 +6,9 @@ define('threearena/elements/nexus',
 
     	var self = this;
 
-        Entity.apply(this);
+        options.attackRange = 5;
+
+        Entity.apply(this, [ options ]);
 
         var loader = new THREE.ColladaLoader();
         loader.load( '/gamedata/models/rts_elements.dae', function ( loaded ) {

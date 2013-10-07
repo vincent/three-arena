@@ -2,9 +2,9 @@
  * @module Entity
  */
 define('threearena/entity',
-    ['lodash', 'microevent', 'threejs', 'knockout', 'threearena/log', 'threearena/utils', 'threearena/elements/lifebar', 'threearena/pathfinding/recast.emcc.dota.mountains',],
+    ['lodash', 'microevent', 'threejs', 'knockout', 'threearena/log', 'threearena/utils', 'threearena/controls/attackcircle', 'threearena/elements/lifebar', 'threearena/pathfinding/recast.emcc.dota.mountains',],
 
-function(_, MicroEvent, THREE, ko, log, Utils, LifeBar, PathFinding) {
+function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFinding) {
     PathFinding = Module;
 
     /**
@@ -35,9 +35,9 @@ function(_, MicroEvent, THREE, ko, log, Utils, LifeBar, PathFinding) {
 
             speed: 50,
 
-            strength: 0,
-            agility: 0,
-            intelligence: 0,
+            strength: 1,
+            agility: 1,
+            intelligence: 1,
 
             spells: [],
 
@@ -49,6 +49,8 @@ function(_, MicroEvent, THREE, ko, log, Utils, LifeBar, PathFinding) {
             spellDefense: 1,
             spellDamage: 1,
 
+            attackRange: 0
+
         }, options);
 
         this._baseLife = this.state.life;
@@ -57,14 +59,26 @@ function(_, MicroEvent, THREE, ko, log, Utils, LifeBar, PathFinding) {
         this.attachLifeBar();
         this.attachTombstone();
 
+        this._meleeCircle = new AttackCircle(5);
+        this.add(this._meleeCircle);
+        this._spellCircle = new AttackCircle(20);
+        this.add(this._spellCircle);
+
         this.states = {
 
             idle: function() { },
 
             canFightObjective: function () {
-                return self.objective && (! self.objective.isDead || ! self.objective.isDead()) && self.state.spells[0].canHit(self, self.objective);
+                return self.objective && (! self.objective.isDead || ! self.objective.isDead()) && self.state.spells[0].canHit(self, self.objective, 3);
             },
             fightObjective: function () {
+                if (self._currentTween) {
+                    self._isMoving = false;
+                    self._currentTween.stop();
+                    self._currentTween.onComplete();
+                }
+                self._isFighting = true;
+
                 self.cast(self.state.spells[0], self.objective);
             },
 
@@ -99,6 +113,7 @@ function(_, MicroEvent, THREE, ko, log, Utils, LifeBar, PathFinding) {
 
                     // nnope, no one's there
                     self._isFighting = false;
+                    self._fightingArc = false;
                     return false;
 
                 } else {
@@ -326,7 +341,23 @@ function(_, MicroEvent, THREE, ko, log, Utils, LifeBar, PathFinding) {
 
         log(log.COMBAT, '%o begins to cast %o', this, spell);
 
+        // Place myself on a correct attacking range arc
+        if (! this._fightingArc) {
+
+            var radius  = spell.maxRange + target.state.attackRange,
+                start   = (new THREE.Vector3( -radius, 0, 0 )).add(target.position),
+                middle  = (new THREE.Vector3( 0, 0, -radius )).add(target.position),
+                end     = (new THREE.Vector3(  radius, 0, 0 )).add(target.position);
+
+            this._fightingArc = new THREE.QuadraticBezierCurve3(start, middle, end);
+            var p = this._fightingArc.getPointAt(Math.random());
+
+            this.position.set( p.x, p.y, p.z );
+        }
+
         spell.start(this, target);
+
+        return true;
     };
 
     /**

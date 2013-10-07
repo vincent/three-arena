@@ -284,11 +284,11 @@ define('threearena/game',
 
     Game.prototype._initNexus = function(done) {
 
-        this.objectives[0] = new Nexus({ color: '#e33' });
+        this.objectives[0] = new Nexus({ life: 1000000, color: '#e33' });
         this.objectives[0].position.set(-71.2, 19, 69);
         this.scene.add(this.objectives[0]);
 
-        this.objectives[1] = new Nexus({ color: '#3e3' });
+        this.objectives[1] = new Nexus({ life: 1000000, color: '#3e3' });
         this.objectives[1].position.set(89.2, 21, -62.5);
         this.scene.add(this.objectives[1]);
 
@@ -618,7 +618,7 @@ define('threearena/game',
             _.bind( this._initTrees,  this),
             // _.bind( this._initTowers, this),
             function (callback) {
-                // console.log('BYPASS TREES'); callback(); return;
+                console.log('BYPASS TREES'); callback(); return;
 
                 var loader = new THREE.OBJLoader();
                 loader.load('/gamedata/maps/mountains_trees.obj', function (object) {
