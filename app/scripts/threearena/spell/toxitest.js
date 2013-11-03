@@ -1,6 +1,6 @@
 
 define('threearena/spell/bite',
-    ['lodash', 'threearena/spell'], function(_, Spell) {
+    ['lodash', 'threearena/spell', 'threearena/elements/toxi'], function(_, Spell, Toxi) {
 
     var Bite = function(options) {
 
@@ -13,7 +13,7 @@ define('threearena/spell/bite',
             maxRange: 4,
         })
 
-        [6,4,5,5,0,0,3,6]
+        var mesh = new Toxi([6,4,5,5,0,0,3,6]);
 
         Spell.apply(this, [ options ]);
     };

@@ -18,6 +18,7 @@ require.config({
         knockoutmapping:'../bower_components/knockout-mapping/knockout.mapping',
         base:           '../bower_components/Base.js/index',
         machinejs:      '../bower_components/machinejs/machine',
+        toxi:           '../bower_components/toxiclibsjs/build/toxiclibs.js',
 
         MD2Character:   '../bower_components/threejs/examples/js/MD2Character',
         MD2CharacterComplex: '../bower_components/threejs/examples/js/MD2CharacterComplex',

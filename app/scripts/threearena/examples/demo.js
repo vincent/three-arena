@@ -12,6 +12,8 @@ define('threearena/examples/demo',
       'threearena/spell/fireaura',
       'threearena/spell/flatfireaura',
       'threearena/spell/firebullet',
+      'threearena/spell/lightbolt',
+
       'threearena/particles/flies',
 
       'machinejs',
@@ -19,7 +21,7 @@ define('threearena/examples/demo',
       'threearena/behaviours/controlled'
     ],
 
-    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, Human, InterativeObject, SpawningPool, Water, Shop, BiteSpell, FireAuraSpell, FlatFireAuraSpell, FireBulletSpell, Flies,    Machine, MinionBehaviour, ControlledBehaviour) {
+    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, Human, InterativeObject, SpawningPool, Water, Shop, BiteSpell, FireAuraSpell, FlatFireAuraSpell, FireBulletSpell, LightboltSpell, Flies, Machine, MinionBehaviour, ControlledBehaviour) {
     'use strict';
 
 	var Demo = function(settings) {
@@ -104,6 +106,7 @@ define('threearena/examples/demo',
                 character.learnSpell( FireAuraSpell );
                 character.learnSpell( FireBulletSpell );
                 character.learnSpell( FlatFireAuraSpell );
+                character.learnSpell( LightboltSpell );
 
             }
         });

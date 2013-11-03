@@ -241,6 +241,11 @@ define('threearena/controls/dota',
 				this.object.translateY( this.moveVector.y * moveMult );
 				this.object.translateZ( this.moveVector.z * moveMult );
 
+				if (this.object.position.x <  -90) this.object.position.x =  -90;
+				if (this.object.position.x >   90) this.object.position.x =   90;
+				if (this.object.position.z < -100) this.object.position.z = -100;
+				if (this.object.position.z >  170) this.object.position.z =  170;
+
 				this.tmpQuaternion.set( this.rotationVector.x * rotMult, this.rotationVector.y * rotMult, this.rotationVector.z * rotMult, 1 ).normalize();
 				this.object.quaternion.multiply( this.tmpQuaternion );
 
@@ -303,7 +308,7 @@ define('threearena/controls/dota',
 
 		this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
 
-		this.domElement.addEventListener( 'mousemove', bind( this, this.mousemove ), false );
+		// this.domElement.addEventListener( 'mousemove', bind( this, this.mousemove ), false );
 		// this.domElement.addEventListener( 'mousewheel', bind( this, this.mousewheel ), false );
 		// this.domElement.addEventListener( 'DOMMouseScroll', bind( this, this.mousewheel ), false ); // firefox
 

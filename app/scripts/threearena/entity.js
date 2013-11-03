@@ -342,7 +342,7 @@ function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFindin
         log(log.COMBAT, '%o begins to cast %o', this, spell);
 
         // Place myself on a correct attacking range arc
-        if (! this._fightingArc) {
+        if (spell.isMelee && ! this._fightingArc) {
 
             var radius  = spell.maxRange + target.state.attackRange,
                 start   = (new THREE.Vector3( -radius, 0, 0 )).add(target.position),
