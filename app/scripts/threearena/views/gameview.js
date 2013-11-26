@@ -62,6 +62,23 @@ define('threearena/views/gameview',
             mapX = (gameview.mapWidth() / target.width() * event.offsetX) - halfX,
             mapZ = (gameview.mapHeight() / target.height() * event.offsetY) - halfZ + 40;
 
+/*
+      if (! game.camera._currentTween) { // && game.camera._currentTween.stop();
+        game.camera._currentTween = tween;
+      } else {
+        game.camera._currentTween.chain(tween);
+      }
+      game.camera._currentTween.start();
+
+ */
+
+/*
+        // if (! game.camera._currentTween) && game.camera._currentTween.stop();
+        game.camera._currentTween = new TWEEN.Tween(game.camera.position)
+            .to({ x:mapX, y:game.camera.position.y, z:mapZ }, 20)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+        game.camera._currentTween.start();
+*/
         game.camera.position.set(mapX, 50, mapZ);
     };
 

@@ -99,7 +99,7 @@ define('threearena/elements/tower',
         if (this._firing || ! target instanceof Entity) return;
         this._firing = true;
         
-        var startPosition = this.position.clone().setY(25);
+        var startPosition = this.position.clone().setY(35);
         var vectorPosition = target.position.clone().add(startPosition).divideScalar(2).setY(28 + 0);
 
         var self = this,
@@ -116,7 +116,7 @@ define('threearena/elements/tower',
 
             .to({ distance: 1 }, line.getLength() * self.bulletSpeed) // use 
 
-            .easing(TWEEN.Easing.Linear.None)
+            .easing(TWEEN.Easing.Quadratic.InOut)
 
             .onStart(function(){
                 window._ta_events.bind('update', cloudUpdate);

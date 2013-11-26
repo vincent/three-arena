@@ -651,7 +651,7 @@ define('threearena/game',
             _.bind( this._initNexus, this),
             //_.bind( this._initSky, this),
             //_.bind( this._initTrees,  this),
-            //_.bind( this._initTowers, this),
+            _.bind( this._initTowers, this),
             function (callback) {
                 console.log('BYPASS TREES'); callback(); return;
 
@@ -950,7 +950,10 @@ define('threearena/game',
         }
     };
 
-
+    /**
+     * MouseDown event listener
+     * @param  {Event} event
+     */
     Game.prototype.onDocumentMouseDown = function(event) {
 
       var self = this;
@@ -965,16 +968,18 @@ define('threearena/game',
       // .. but check if the ground if the first intersection
       // TODO: find another way to check ==ground
       if (intersects.length > 0 && event.button === 0 && intersects[0].object.parent.name == "TerrainMes") {
-          // begins a selection
-          this._inGroundSelection = {
-            screen: { x: event.clientX, y: event.clientY },
-            ground: intersects[0].point.clone()
-          };
+        // begins a selection
+        this._inGroundSelection = {
+          screen: { x: event.clientX, y: event.clientY },
+          ground: intersects[0].point.clone()
+        };
       }
-
     };
 
-
+    /**
+     * MouseMove event listener
+     * @param  {Event} event
+     */
     Game.prototype.onDocumentMouseMove = function(event) {
 
       if (this._inGroundSelection) {
