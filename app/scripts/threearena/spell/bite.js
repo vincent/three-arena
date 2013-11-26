@@ -2,6 +2,9 @@
 define('threearena/spell/bite',
     ['lodash', 'threearena/spell'], function(_, Spell) {
 
+    /**
+     * @exports threearena/spell/bite
+     */
     var Bite = function(options) {
 
         options = _.merge({}, options, {

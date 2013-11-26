@@ -2,6 +2,9 @@
 define('threearena/views/gameview',
     ['lodash', 'knockout', 'threearena/game'], function(_, ko, Entity) {
 
+    /**
+     * @exports threearena/views/gameview
+     */
     var GameViewModel = function(game) {
 
         var self = this;
@@ -25,9 +28,10 @@ define('threearena/views/gameview',
                 var geometry = child.geometry;
                 if (!geometry.boundingBox) {
                     geometry.computeBoundingBox();
-                    self.mapWidth(geometry.boundingBox.max.x - geometry.boundingBox.min.x);
-                    self.mapHeight(geometry.boundingBox.max.z - geometry.boundingBox.min.z);
                 }
+
+                self.mapWidth(geometry.boundingBox.max.x - geometry.boundingBox.min.x);
+                self.mapHeight(geometry.boundingBox.max.z - geometry.boundingBox.min.z);
             }
         });
 
@@ -49,10 +53,16 @@ define('threearena/views/gameview',
     };
 
     GameViewModel.prototype.onMapClick = function(gameview, event) {
-        var mapX = gameview.mapWidth() / 250 * event.offsetX,
-            mapY = gameview.mapHeight() / 250 * event.offsetY;
+        // ignore if there's no button clicked
+        if (! event.which) return;
 
-        game.camera.position.set(mapX, 50, mapY);
+        var target = $(event.currentTarget);
+        var halfX = gameview.mapWidth() / 2,
+            halfZ = gameview.mapHeight() / 2,
+            mapX = (gameview.mapWidth() / target.width() * event.offsetX) - halfX,
+            mapZ = (gameview.mapHeight() / target.height() * event.offsetY) - halfZ + 40;
+
+        game.camera.position.set(mapX, 50, mapZ);
     };
 
     GameViewModel.prototype.onCharacterHover = function(event) {

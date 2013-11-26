@@ -25,12 +25,12 @@
     
     <section>
         <article>
-            <pre class="prettyprint source"><code>/**
- * @module Controls/Camera
- */
-define('threearena/controls/dota',
+            <pre class="prettyprint source"><code>define('threearena/controls/dota',
 	['lodash', 'threejs'], function(_, THREE, HUD) {
 
+    /**
+     * @exports threearena/controls/attackcircle
+     */
 	var DotaControls = function ( object, domElement ) {
 
 		this.object = object;
@@ -40,6 +40,7 @@ define('threearena/controls/dota',
 
 		// API
 		this.enabled = true;
+		this.mouseEnabled = true;
 		this.noZoom = false;
 
 		this.movementSpeed = 50.0;
@@ -50,7 +51,14 @@ define('threearena/controls/dota',
 
 		this.activeZoneTime = 300;
 
-		this.activeZoneFactor = 30;
+		this.activeZoneFactor = 20;
+
+		this.clamp = {
+			xmin: -1000,
+			xmax:  1000,
+			zmin: -1000,
+			zmax:  1000,
+		};
 
 		// disable default target object behavior
 
@@ -180,7 +188,7 @@ define('threearena/controls/dota',
 			}
 			*/
 
-			if ( this.enabled ) {
+			if ( this.enabled && this.mouseEnabled ) {
 
 				var now = (new Date()).getTime();
 
@@ -224,7 +232,7 @@ define('threearena/controls/dota',
 					this.moveState.forward = 0;
 				}
 
-				if (event.pageY > container.size[ 1 ] - activeZoneHeight) {
+				if (event.pageY > container.size[ 1 ] - activeZoneHeight - 200 /* FIXME crappy hack */) {
 
 					this._inActiveZone.backward = this._inActiveZone.backward || now;
 					if (now - this._inActiveZone.backward > this.activeZoneTime) {
@@ -266,6 +274,11 @@ define('threearena/controls/dota',
 				this.object.translateX( this.moveVector.x * moveMult );
 				this.object.translateY( this.moveVector.y * moveMult );
 				this.object.translateZ( this.moveVector.z * moveMult );
+
+				if (this.object.position.x &lt; this.clamp.xmin) this.object.position.x = this.clamp.xmin;
+				if (this.object.position.x > this.clamp.xmax) this.object.position.x = this.clamp.xmax;
+				if (this.object.position.z &lt; this.clamp.zmin) this.object.position.z = this.clamp.zmin;
+				if (this.object.position.z > this.clamp.zmax) this.object.position.z = this.clamp.zmax;
 
 				this.tmpQuaternion.set( this.rotationVector.x * rotMult, this.rotationVector.y * rotMult, this.rotationVector.z * rotMult, 1 ).normalize();
 				this.object.quaternion.multiply( this.tmpQuaternion );
@@ -329,7 +342,7 @@ define('threearena/controls/dota',
 
 		this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
 
-		this.domElement.addEventListener( 'mousemove', bind( this, this.mousemove ), false );
+		// this.domElement.addEventListener( 'mousemove', bind( this, this.mousemove ), false );
 		// this.domElement.addEventListener( 'mousewheel', bind( this, this.mousewheel ), false );
 		// this.domElement.addEventListener( 'DOMMouseScroll', bind( this, this.mousewheel ), false ); // firefox
 
@@ -355,13 +368,13 @@ define('threearena/controls/dota',
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="module-Character.html">Character</a></li><li><a href="Ogro.html">Character/Ogro</a></li><li><a href="Ratamahatta.html">Character/Ratamahatta</a></li><li><a href="Camera.html">Controls/Camera</a></li><li><a href="InteractiveObject.html">Elements/InteractiveObject</a></li><li><a href="module-Entity.html">Entity</a></li><li><a href="module-Game.html">Game</a></li><li><a href="module-Utils.html">Utils</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="character.html">threearena/character</a></li><li><a href="human.html">threearena/character/human</a></li><li><a href="monsterdog.html">threearena/character/monsterdog</a></li><li><a href="ogro.html">threearena/character/ogro</a></li><li><a href="ratamahatta.html">threearena/character/ratamahatta</a></li><li><a href="attackcircle.html">threearena/controls/attackcircle</a></li><li><a href="autospawn.html">threearena/elements/autospawn</a></li><li><a href="interactiveobject.html">threearena/elements/interactiveobject</a></li><li><a href="lifebar.html">threearena/elements/lifebar</a></li><li><a href="nexus.html">threearena/elements/nexus</a></li><li><a href="shop.html">threearena/elements/shop</a></li><li><a href="tower.html">threearena/elements/tower</a></li><li><a href="toxi.html">threearena/elements/toxi</a></li><li><a href="water.html">threearena/elements/water</a></li><li><a href="demo.html">threearena/examples/demo</a></li><li><a href="game.html">threearena/game</a></li><li><a href="hud.html">threearena/hud</a></li><li><a href="log.html">threearena/log</a></li><li><a href="cloud.html">threearena/particles/cloud</a></li><li><a href="flies.html">threearena/particles/flies</a></li><li><a href="shadercloud.html">threearena/particles/shadercloud</a></li><li><a href="lightbolt.html">threearena/shaders/lightbolt</a></li><li><a href="bite.html">threearena/spell/bite</a></li><li><a href="fireaura.html">threearena/spell/fireaura</a></li><li><a href="firebullet.html">threearena/spell/firebullet</a></li><li><a href="flatfireaura.html">threearena/spell/flatfireaura</a></li><li><a href="lightbolt_.html">threearena/spell/lightbolt</a></li><li><a href="entityview.html">threearena/views/entityview</a></li><li><a href="gameview.html">threearena/views/gameview</a></li><li><a href="interactiveview.html">threearena/views/interactiveview</a></li><li><a href="module-Utils.html">Utils</a></li></ul><h3>Classes</h3><ul><li><a href="entity.html">threearena/entity</a></li><li><a href="spell.html">threearena/spell</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Mon Sep 16 2013 19:01:16 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Tue Nov 26 2013 18:35:54 GMT+0100 (CET)
 </footer>
 
 <script> prettyPrint(); </script>

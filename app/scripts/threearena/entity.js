@@ -1,6 +1,3 @@
-/**
- * @module Entity
- */
 define('threearena/entity',
     ['lodash', 'microevent', 'threejs', 'knockout', 'threearena/log', 'threearena/utils', 'threearena/controls/attackcircle', 'threearena/elements/lifebar', 'threearena/pathfinding/recast.emcc.dota.mountains',],
 
@@ -9,11 +6,15 @@ function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFindin
 
     /**
      * A living entity
-     * 
-     * @fires 'changed' when state (attributes, spells, etc) change
-     * @fires 'hit' when being hit
-     * @fires 'death' when being killed
      *
+     * @summary azd azdzad azd zadazd azdzadzadazdazdzd
+     * 
+     * 
+     * @triggers 'changed' when state (attributes, spells, etc) change
+     * @triggers 'hit' when being hit
+     * @triggers 'death' when being killed
+     *
+     * @exports threearena/entity
      * @constructor
      * @param {Object} options
      *          name, image, life, mana, strength, agility, intelligence,

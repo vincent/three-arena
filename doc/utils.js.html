@@ -85,6 +85,13 @@ define('threearena/utils',
             });
         },
 
+
+        // selectOrAbort: function (funcValidate, funcSelect) {
+        //     document.addEventListener('click', function(event){
+
+        //     });
+        // }
+
         /**
          * Move an object along a path.
          *  to move entities or characters, use their own moveAlong method
@@ -101,6 +108,9 @@ define('threearena/utils',
 
                 from: 0,
                 to: 1,
+
+                duration: null,
+                speed: 50,
 
                 start: true,
 
@@ -123,20 +133,21 @@ define('threearena/utils',
                 throw '2nd argument is not a Shape, nor an array of vertices';
             }
 
-            options.duration = options.duration || shape.getLength() * 70;
+            options.duration = options.duration || shape.getLength()
+            options.length = options.duration * options.speed;
 
             var tween = new TWEEN.Tween({ distance: options.from })
-                .to({ distance: options.to }, options.duration) // use 
+                .to({ distance: options.to }, options.length) // use 
                 .easing( options.easing )
                 .onStart(function(){
-                    options.onStart && options.onStart();
+                    options.onStart && options.onStart(this);
                 })
                 .onComplete(function(){
-                    options.onComplete && options.onComplete();
+                    options.onComplete && options.onComplete(this);
                 })
                 .onUpdate(function(){
                     // get the position data half way along the path
-                    var pathPosition = shape.getPoint(this.distance);
+                    var pathPosition = shape.getPointAt(this.distance);
 
                     // move the man to that position
                     object.position.set(pathPosition.x, pathPosition.y, pathPosition.z);
@@ -148,7 +159,19 @@ define('threearena/utils',
 
             options.start && tween.start();
             return tween;
+        },
+
+        getEntity: function ( object ) {
+
+            var Entity = require('threearena/entity');
+
+            while (object.parent && ! (object instanceof Entity)) {
+                object = object.parent;
+            }
+
+            return object instanceof Entity ? object : null;
         }
+
     };
 });</code></pre>
         </article>
@@ -160,13 +183,13 @@ define('threearena/utils',
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="module-Character.html">Character</a></li><li><a href="Ogro.html">Character/Ogro</a></li><li><a href="Ratamahatta.html">Character/Ratamahatta</a></li><li><a href="Camera.html">Controls/Camera</a></li><li><a href="InteractiveObject.html">Elements/InteractiveObject</a></li><li><a href="module-Entity.html">Entity</a></li><li><a href="module-Game.html">Game</a></li><li><a href="module-Utils.html">Utils</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="character.html">threearena/character</a></li><li><a href="human.html">threearena/character/human</a></li><li><a href="monsterdog.html">threearena/character/monsterdog</a></li><li><a href="ogro.html">threearena/character/ogro</a></li><li><a href="ratamahatta.html">threearena/character/ratamahatta</a></li><li><a href="attackcircle.html">threearena/controls/attackcircle</a></li><li><a href="autospawn.html">threearena/elements/autospawn</a></li><li><a href="interactiveobject.html">threearena/elements/interactiveobject</a></li><li><a href="lifebar.html">threearena/elements/lifebar</a></li><li><a href="nexus.html">threearena/elements/nexus</a></li><li><a href="shop.html">threearena/elements/shop</a></li><li><a href="tower.html">threearena/elements/tower</a></li><li><a href="toxi.html">threearena/elements/toxi</a></li><li><a href="water.html">threearena/elements/water</a></li><li><a href="demo.html">threearena/examples/demo</a></li><li><a href="game.html">threearena/game</a></li><li><a href="hud.html">threearena/hud</a></li><li><a href="log.html">threearena/log</a></li><li><a href="cloud.html">threearena/particles/cloud</a></li><li><a href="flies.html">threearena/particles/flies</a></li><li><a href="shadercloud.html">threearena/particles/shadercloud</a></li><li><a href="lightbolt.html">threearena/shaders/lightbolt</a></li><li><a href="bite.html">threearena/spell/bite</a></li><li><a href="fireaura.html">threearena/spell/fireaura</a></li><li><a href="firebullet.html">threearena/spell/firebullet</a></li><li><a href="flatfireaura.html">threearena/spell/flatfireaura</a></li><li><a href="lightbolt_.html">threearena/spell/lightbolt</a></li><li><a href="entityview.html">threearena/views/entityview</a></li><li><a href="gameview.html">threearena/views/gameview</a></li><li><a href="interactiveview.html">threearena/views/interactiveview</a></li><li><a href="module-Utils.html">Utils</a></li></ul><h3>Classes</h3><ul><li><a href="entity.html">threearena/entity</a></li><li><a href="spell.html">threearena/spell</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Mon Sep 16 2013 19:01:16 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Tue Nov 26 2013 18:35:54 GMT+0100 (CET)
 </footer>
 
 <script> prettyPrint(); </script>

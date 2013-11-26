@@ -1,9 +1,9 @@
-/**
- * @module Controls/AttackCircle
- */
 define('threearena/controls/attackcircle',
 	['lodash', 'threejs'], function(_, THREE, HUD) {
 
+    /**
+     * @exports threearena/controls/attackcircle
+     */
 	var AttackCircle = function ( radius ) {
 		var self = this;
 

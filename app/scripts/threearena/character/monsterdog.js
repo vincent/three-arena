@@ -1,10 +1,9 @@
-
-/**
- * @module Character/Monsterdog
- */
 define('threearena/character/monsterdog',
     ['lodash', 'threejs', 'threearena/log', 'threearena/character'], function(_, THREE, log, Character) {
 
+    /**
+     * @exports threearena/character/monsterdog
+     */
     var Monsterdog = function( options ) {
 
         var self = this;

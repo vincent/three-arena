@@ -1,12 +1,12 @@
-/**
- * @module Elements/AutoSpawn
- */
 define('threearena/elements/autospawn',
     ['lodash', 'microevent', 'threejs', 'threearena/utils', 'threearena/pathfinding/recast.emcc.dota.mountains'],
 
 function(_, MicroEvent, THREE, Utils, PathFinding) {
     PathFinding = Module;
 
+    /**
+     * @exports threearena/elements/autospawn
+     */
     var AutoSpawn = function(options) {
 
         this.options = _.merge({

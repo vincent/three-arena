@@ -25,21 +25,23 @@
     
     <section>
         <article>
-            <pre class="prettyprint source"><code>/**
- * @module Entity
- */
-define('threearena/entity',
-    ['lodash', 'microevent', 'threejs', 'knockout', 'threearena/log', 'threearena/utils', 'threearena/elements/lifebar'],
+            <pre class="prettyprint source"><code>define('threearena/entity',
+    ['lodash', 'microevent', 'threejs', 'knockout', 'threearena/log', 'threearena/utils', 'threearena/controls/attackcircle', 'threearena/elements/lifebar', 'threearena/pathfinding/recast.emcc.dota.mountains',],
 
-    function(_, MicroEvent, THREE, ko, log, Utils, LifeBar) {
+function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFinding) {
+    PathFinding = Module;
 
     /**
      * A living entity
-     * 
-     * @fires 'changed' when state (attributes, spells, etc) change
-     * @fires 'hit' when being hit
-     * @fires 'death' when being killed
      *
+     * @summary azd azdzad azd zadazd azdzadzadazdazdzd
+     * 
+     * 
+     * @triggers 'changed' when state (attributes, spells, etc) change
+     * @triggers 'hit' when being hit
+     * @triggers 'death' when being killed
+     *
+     * @exports threearena/entity
      * @constructor
      * @param {Object} options
      *          name, image, life, mana, strength, agility, intelligence,
@@ -59,9 +61,11 @@ define('threearena/entity',
             life: 100,
             mana: 0,
 
-            strength: 0,
-            agility: 0,
-            intelligence: 0,
+            speed: 50,
+
+            strength: 1,
+            agility: 1,
+            intelligence: 1,
 
             spells: [],
 
@@ -73,16 +77,158 @@ define('threearena/entity',
             spellDefense: 1,
             spellDamage: 1,
 
+            attackRange: 0
+
         }, options);
 
         this._baseLife = this.state.life;
         this._baseMana = this.state.mana;
 
         this.attachLifeBar();
+        this.attachTombstone();
+
+        this._meleeCircle = new AttackCircle(5);
+        this.add(this._meleeCircle);
+        this._spellCircle = new AttackCircle(20);
+        this.add(this._spellCircle);
+
+        this.states = {
+
+            idle: function() { },
+
+            canFightObjective: function () {
+                return self.objective && (! self.objective.isDead || ! self.objective.isDead()) && self.state.spells[0].canHit(self, self.objective, 3);
+            },
+            fightObjective: function () {
+                if (self._currentTween) {
+                    self._isMoving = false;
+                    self._currentTween.stop();
+                    self._currentTween.onComplete();
+                }
+                self._isFighting = true;
+
+                self.cast(self.state.spells[0], self.objective);
+            },
+
+            canFightNearbyEnnemy: function () {
+                var spell;
+                if (self.state.autoAttackSpell !== null && self.state.autoAttacks && self.state.spells[ self.state.autoAttackSpell ]) {
+
+                    var i = -1,
+                        charDistance,
+                        minDistance = Number.MAX_VALUE,
+                        spell = self.state.spells[ self.state.autoAttackSpell ];
+
+                    self._nearestEnnemy = false;
+                    while (i++ &lt; game.pcs.length - 1) {
+                        if (game.pcs[i].isDead()) continue;
+
+                        charDistance = game.pcs[i].position.distanceTo(self.position);
+
+                        if (charDistance &lt; minDistance && self.state.team != game.pcs[i].state.team && spell.canHit(self, game.pcs[i], 3)) {
+                            minDistance = charDistance;
+                            self._nearestEnnemy = game.pcs[i];
+                        }
+                    }
+                }
+                if (! self._nearestEnnemy) {
+
+                    if (self._isFighting) {
+                        // was fighting, must replan
+                        self._currentRoute = null;
+                        self._isMoving = false;
+                    }
+
+                    // nnope, no one's there
+                    self._isFighting = false;
+                    self._fightingArc = false;
+                    return false;
+
+                } else {
+
+                    return true;
+                }
+            },
+            fightNearbyEnnemy: function () {
+                if (self._currentTween) {
+                    self._isMoving = false;
+                    self._currentTween.stop();
+                    self._currentTween.onComplete();
+                }
+                self._isFighting = true;
+                self.cast(self.state.spells[0], self._nearestEnnemy);
+            },
+
+            plotCourseToObjective: function () {
+                self._currentRoute || PathFinding.findPath(
+                    self.position.x, self.position.y, self.position.z,
+                    self.objective.position.x, self.objective.position.y, self.objective.position.z,
+                    100000,
+                    Utils.gcb( _.bind( self._setRoute, self) )
+                );
+            },
+            canPlotCourseToObjective: function () {
+                return self.objective && ! this._isFighting && ! self._currentRoute;
+            },
+
+            followCourseToObjective: function () {
+                if (self._isMoving || ! self._currentRoute) return;
+                if (self._currentTween) {
+                    self._currentTween.stop();
+                    self._currentTween.onComplete();
+                }
+                this._isFighting = false;
+                self._currentTween = self.moveAlong(self._currentRoute, {
+                    onStart: function(tween){
+                        self._isMoving = true;
+                    },
+                    onComplete: function(tween){
+                        self._isMoving = false;
+                        if (tween.distance >= 1) {
+                            self._currentRoute = null;
+                        }
+                    }
+                });
+            },
+
+            canFollowCourseToObjective: function () {
+                return self.objective 
+                        && self._currentRoute 
+                        && ! this._isFighting 
+                        && ! self.states.canFightObjective()
+                        && ! self.states.canFightNearbyEnnemy();
+            },
+
+            moveAttackToObjective: function () {
+                self.states.followCourseToObjective();
+            },
+
+            canMoveAttackToObjective: function () {
+                return (self.objective && self.objective.position.distanceTo(self.position) > 2);
+            },
+
+        };
+
         this.trigger('changed', this.state);
     };
 
-    Entity.prototype = new THREE.Object3D();
+    Entity.prototype = Object.create(THREE.Object3D.prototype);
+
+    //////////////////
+
+    Entity.prototype._setRoute = function (linepoints) {
+
+        if (linepoints && linepoints.length > 0) {
+            log(log.SYS_DEBUG, '%o finds a way from %o to %o', this, linepoints[0], linepoints[linepoints.length - 1]);
+
+            this._currentRoute = linepoints; // new THREE.SplineCurve3(linepoints);
+
+        } else {
+            this._currentRoute = null;
+        }
+    }
+
+    //////////////////
 
     /**
      * Attach a life/mana bar above the entity
@@ -92,6 +238,35 @@ define('threearena/entity',
         this.lifebar = new LifeBar();
         this.updateLifeBar();
         this.add(this.lifebar);
+    };
+
+    /**
+     * Attach a tomb, to replace the dead entity
+     */
+    Entity.prototype.attachTombstone = function() {
+
+        var self = this;
+        var loader = new THREE.ColladaLoader();
+        loader.load( '/gamedata/models/rts_elements.dae', function ( loaded ) {
+
+            self.tomb = loaded.scene.getObjectByName('Cross2');
+
+            self.tomb.castShadow = true;
+            self.tomb.rotation.x = -90 * Math.PI / 180;
+            self.tomb.scale.set(2, 2, 2);
+            self.tomb.position.set(0, 0, 0);
+
+            // when character die, show just a tomb
+            self.bind('death', function(){
+                self.update = function(){};
+
+                for (var i = 0; i &lt; self.children.length; i++) {
+                    self.remove(self.children[i]);
+                }
+
+                self.add(self.tomb);
+            });
+        });
     };
 
     /**
@@ -116,9 +291,7 @@ define('threearena/entity',
      */
     Entity.prototype.incrementLife = function(inc) {
 
-        if (!(this.state.life &lt;= 0 && inc &lt; 0)) {
-            this.state.life += inc;
-        }
+        this.state.life = Math.max( 0, this.state.life + inc );
         return this.state.life;
     };
 
@@ -129,9 +302,7 @@ define('threearena/entity',
      */
     Entity.prototype.incrementMana = function(inc) {
 
-        if (!(this.state.mana &lt;= 0 && inc &lt; 0)) {
-            this.state.mana += inc;
-        }
+        this.state.mana = Math.max( 0, this.state.mana + inc );
         return this.state.mana;
     };
 
@@ -196,14 +367,25 @@ define('threearena/entity',
      */
     Entity.prototype.cast = function(spell, target) {
 
-        if (spell.needTarget && ! target) {
-            throw "This spell needs a target";
+        log(log.COMBAT, '%o begins to cast %o', this, spell);
+
+        // Place myself on a correct attacking range arc
+        if (spell.isMelee && ! this._fightingArc) {
+
+            var radius  = spell.maxRange + target.state.attackRange,
+                start   = (new THREE.Vector3( -radius, 0, 0 )).add(target.position),
+                middle  = (new THREE.Vector3( 0, 0, -radius )).add(target.position),
+                end     = (new THREE.Vector3(  radius, 0, 0 )).add(target.position);
+
+            this._fightingArc = new THREE.QuadraticBezierCurve3(start, middle, end);
+            var p = this._fightingArc.getPointAt(Math.random());
+
+            this.position.set( p.x, p.y, p.z );
         }
 
         spell.start(this, target);
 
-        log(log.COMBAT, '%o begins to cast %o', this, spell);
-        return 
+        return true;
     };
 
     /**
@@ -246,7 +428,6 @@ define('threearena/entity',
         }
     };
 
-    Entity.prototype.constructor = Entity;
     MicroEvent.mixin(Entity);
     return Entity;
 });
@@ -260,13 +441,13 @@ define('threearena/entity',
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="module-Character.html">Character</a></li><li><a href="Ogro.html">Character/Ogro</a></li><li><a href="Ratamahatta.html">Character/Ratamahatta</a></li><li><a href="Camera.html">Controls/Camera</a></li><li><a href="InteractiveObject.html">Elements/InteractiveObject</a></li><li><a href="module-Entity.html">Entity</a></li><li><a href="module-Game.html">Game</a></li><li><a href="module-Utils.html">Utils</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="character.html">threearena/character</a></li><li><a href="human.html">threearena/character/human</a></li><li><a href="monsterdog.html">threearena/character/monsterdog</a></li><li><a href="ogro.html">threearena/character/ogro</a></li><li><a href="ratamahatta.html">threearena/character/ratamahatta</a></li><li><a href="attackcircle.html">threearena/controls/attackcircle</a></li><li><a href="autospawn.html">threearena/elements/autospawn</a></li><li><a href="interactiveobject.html">threearena/elements/interactiveobject</a></li><li><a href="lifebar.html">threearena/elements/lifebar</a></li><li><a href="nexus.html">threearena/elements/nexus</a></li><li><a href="shop.html">threearena/elements/shop</a></li><li><a href="tower.html">threearena/elements/tower</a></li><li><a href="toxi.html">threearena/elements/toxi</a></li><li><a href="water.html">threearena/elements/water</a></li><li><a href="demo.html">threearena/examples/demo</a></li><li><a href="game.html">threearena/game</a></li><li><a href="hud.html">threearena/hud</a></li><li><a href="log.html">threearena/log</a></li><li><a href="cloud.html">threearena/particles/cloud</a></li><li><a href="flies.html">threearena/particles/flies</a></li><li><a href="shadercloud.html">threearena/particles/shadercloud</a></li><li><a href="lightbolt.html">threearena/shaders/lightbolt</a></li><li><a href="bite.html">threearena/spell/bite</a></li><li><a href="fireaura.html">threearena/spell/fireaura</a></li><li><a href="firebullet.html">threearena/spell/firebullet</a></li><li><a href="flatfireaura.html">threearena/spell/flatfireaura</a></li><li><a href="lightbolt_.html">threearena/spell/lightbolt</a></li><li><a href="entityview.html">threearena/views/entityview</a></li><li><a href="gameview.html">threearena/views/gameview</a></li><li><a href="interactiveview.html">threearena/views/interactiveview</a></li><li><a href="module-Utils.html">Utils</a></li></ul><h3>Classes</h3><ul><li><a href="entity.html">threearena/entity</a></li><li><a href="spell.html">threearena/spell</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Mon Sep 16 2013 19:01:16 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Tue Nov 26 2013 18:35:54 GMT+0100 (CET)
 </footer>
 
 <script> prettyPrint(); </script>

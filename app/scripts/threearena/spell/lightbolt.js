@@ -2,6 +2,9 @@
 define('threearena/spell/lightbolt',
     ['lodash', 'threearena/spell', 'threearena/utils', 'threearena/shaders/lightbolt'], function(_, Spell, Utils, LightboltMaterial) {
 
+    /**
+     * @exports threearena/spell/lightbolt
+     */
     var Lightbolt = function(options) {
 
         options = _.merge({}, options, {

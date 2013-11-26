@@ -1,7 +1,9 @@
-
 define('threearena/elements/shop',
     ['lodash', 'threejs', 'threearena/elements/interactiveobject'], function(_, THREE, InteractiveObject) {
 
+    /**
+     * @exports threearena/elements/shop
+     */
     var Shop = function(options) {
 
         InteractiveObject.apply(this, [ options ]);

@@ -2,6 +2,9 @@
 define('threearena/spell/firebullet',
     ['lodash', 'threearena/particles/cloud', 'threearena/spell', 'threearena/utils'], function(_, Particles, Spell, Utils) {
 
+    /**
+     * @exports threearena/spell/firebullet
+     */
     var FireBullet = function(options) {
 
         options = _.merge({}, options, {

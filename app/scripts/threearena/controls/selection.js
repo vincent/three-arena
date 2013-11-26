@@ -1,9 +1,11 @@
-
 define('threearena/control/selection',
     ['lodash', 'microevent', 'threejs', 'threearena/log', 'threearena/utils'],
 
     function(_, MicroEvent, THREE, ko, log, Utils, LifeBar) {
 
+    /**
+     * @exports threearena/controls/attackcircle
+     */
     var Selection = function (options) {
 
     	var _selected = [];

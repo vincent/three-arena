@@ -1,7 +1,9 @@
-
 define('threearena/elements/lifebar',
     ['lodash', 'threejs'], function(_, THREE) {
 
+    /**
+     * @exports threearena/elements/lifebar
+     */
     var LifeBar = function(options) {
 
         THREE.Object3D.apply(this);

@@ -2,6 +2,9 @@ define('threearena/particles/flies',
 ['lodash', 'threejs', 'sparks'],
 function(_, THREE, SPARKS) {
 
+    /**
+     * @exports threearena/particles/flies
+     */
 	var Flies = function(count, tex) {
 
         THREE.Object3D.apply(this);

@@ -24,6 +24,9 @@ define('threearena/examples/demo',
     function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, Human, InterativeObject, SpawningPool, Water, Shop, BiteSpell, FireAuraSpell, FlatFireAuraSpell, FireBulletSpell, LightboltSpell, Flies, Machine, MinionBehaviour, ControlledBehaviour) {
     'use strict';
 
+    /**
+     * @exports threearena/examples/demo
+     */
 	var Demo = function(settings) {
 
 		settings = _.merge({
@@ -95,10 +98,10 @@ define('threearena/examples/demo',
 
                 character.state.team = 0;
 
-                // character.behaviour = machine.generateTree(ControlledBehaviour, character, character.states);
-                // self.bind('update:behaviours', function () {
-                //     character.behaviour = character.behaviour.tick();
-                // });
+                character.behaviour = machine.generateTree(ControlledBehaviour, character, character.states);
+                self.bind('update:behaviours', function () {
+                    character.behaviour = character.behaviour.tick();
+                });
 
                 self.addCharacter( character );
 
@@ -169,9 +172,9 @@ define('threearena/examples/demo',
         // material.wrapAround = true;
 
         // Water
-        var water = new Water( 50, 100 );
-        water.position.set( -100, 12, 0 );
-        self.scene.add( water );
+        // var water = new Water( 50, 100 );
+        // water.position.set( -100, 12, 0 );
+        // self.scene.add( water );
 
         // Terrain
         var loader = new THREE.OBJLoader( );

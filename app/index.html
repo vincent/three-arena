@@ -172,9 +172,9 @@
 
             <div class="view" id="view-map">
                 <div class="daylight"></div>
-                <div class="map" data-bind="event: { click: onMapClick }, style: { backgroundImage: 'url(' + image() + ')' }">
+                <div class="map" data-bind="event: { click: onMapClick, mousemove: onMapClick }, style: { backgroundImage: 'url(' + image() + ')' }">
                     <ul data-bind="foreach: characters">
-                        <li class="character-position" data-bind="event: { hover: $parent.onCharacterHover }, style: { top: z + '%', left: x + '%' }"></li>
+                        <li class="character-position" data-bind="event: { hover: $root.onCharacterHover }, style: { top: z + '%', left: x + '%' }"></li>
                     </ul>                    
                 </div>
             </div>

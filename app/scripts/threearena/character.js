@@ -1,15 +1,11 @@
-/**
- * @module Character
- * @augments Entity
- */
 define('threearena/character',
     ['lodash', 'threejs', 'threearena/log', 'threearena/utils', 'threearena/entity'], function(_, THREE, log, Utils, Entity) {
 
-    /**
-     * @constructor
-     * @param {Object} options
-     */
-    var Character = function(options) {
+   /** 
+    * A module representing a character.
+    * @exports threearena/character
+    */
+   var Character = function(options) {
 
         var self = this;
 
@@ -70,12 +66,8 @@ define('threearena/character',
 
     /**
      * Make the character move along a path
-     * @param  {Array|THREE.Shape} the shape, or the points the character will walk along
-     * @param  {Object} options, such as
-     *              start
-     *              onStart
-     *              onComplete
-     *              onUpdate
+     * @param  {Array|THREE.Shape} linepoints the shape or the points the character will walk along
+     * @param  {Object} options { start onStart onComplete onUpdate}
      * @return {Tween} the Tween.js object
      */
     Character.prototype.moveAlong = function(linepoints, options) {

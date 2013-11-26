@@ -1,7 +1,10 @@
-
 define('threearena/elements/tower',
     ['lodash', 'threejs', 'threearena/particles/cloud', 'threearena/spell', 'threearena/entity'], function(_, THREE, Particles, Spell) {
 
+    /**
+     * @constructor
+     * @exports threearena/elements/tower
+     */
     var DefenseTower = function( x, y, z, options ) {
 
         THREE.Object3D.apply( this );
@@ -28,7 +31,7 @@ define('threearena/elements/tower',
         this.options = _.merge({
                     start: true,
                  minRange: 0,
-                 maxRange: 50,
+                 maxRange: 70,
             fireIntensity: 20000,
                orbTexture: options.texture || THREE.ImageUtils.loadTexture( "/gamedata/textures/lensflare1_alpha.png" ),
               fireTexture: options.texture || THREE.ImageUtils.loadTexture( "/gamedata/textures/lensflare0_alpha.png" ),
@@ -102,7 +105,7 @@ define('threearena/elements/tower',
         var self = this,
             line = new THREE.SplineCurve3([ startPosition, vectorPosition, target.position ]),
             cloud = new Particles.ParticleCloud( 10000, self.options.fireTexture, null, {
-                colorHSL: .5
+                // colorHSL: .5
             }),
             cloudUpdate = _.bind(function(game){
                 cloud.update(game.delta);

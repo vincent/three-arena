@@ -2,6 +2,9 @@
 define('threearena/spell/flatfireaura',
     ['lodash', 'threearena/particles/cloud', 'threearena/spell'], function(_, Particles, Spell) {
 
+    /**
+     * @exports threearena/spell/flatfireaura
+     */
     var FlatFireAura = function(options) {
 
         options = _.merge({}, options, {

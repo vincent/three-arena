@@ -1,6 +1,3 @@
-/**
- * @module Game
- */
 define('threearena/game',
     ['lodash', 'async', 'threejs', 'tweenjs',
 
@@ -53,6 +50,8 @@ define('threearena/game',
     /**
      * The main game class
      * 
+     * @constructor
+     * @exports threearena/game
      * @param {Object} settings
      * @triggers 'before:init', 'before:fillmap', 'ready', 'update'
      */
@@ -79,13 +78,13 @@ define('threearena/game',
 
     /**
      * Init the pathfinding subsystem, and load its settings.preload urls with RequireJS  
-     * @param  {Function} callback, called when finished
+     * @param  {Function} callback called when finished
      */
     Game.prototype.preload = function(done) {
 
         Config = {};
-        PathFinding.set_cellSize(.8);
-        PathFinding.set_cellHeight(.4);
+        PathFinding.set_cellSize(1);
+        PathFinding.set_cellHeight(1);
         PathFinding.initWithFile('/gamedata/maps/mountains.obj');
         PathFinding.build();
 
@@ -100,7 +99,7 @@ define('threearena/game',
 
     /**
      * Init the game, reset characters and map elements
-     * @param  {Function} callback, called when ready to run
+     * @param  {Function} callback called when ready to run
      */
     Game.prototype.init = function( ready ) {
 
@@ -138,6 +137,7 @@ define('threearena/game',
         this.settings.container.appendChild( this.stats.domElement );
 
         this.gui = new dat.GUI();
+        this.gui.close();
 
         //////////
 
@@ -254,12 +254,12 @@ define('threearena/game',
 
         this.renderer.setClearColor( this.scene.fog.color, 1 );
 
-        this.renderer.setSize( window.innerWidth, window.innerHeight );
+        this.renderer.setSize( window.innerWidth, window.innerHeight);
 
-        var renderModel = new THREE.RenderPass( this.scene, this.camera );
-        var effectBleach = new THREE.ShaderPass( THREE.BleachBypassShader );
-        var effectColor = new THREE.ShaderPass( THREE.ColorCorrectionShader );
-        var effectFXAA = new THREE.ShaderPass( THREE.FXAAShader );
+        var renderModel = new THREE.RenderPass( this.scene, this.camera ); renderModel._name = 'Model';
+        var effectBleach = new THREE.ShaderPass( THREE.BleachBypassShader ); effectBleach._name = 'Bleach';
+        var effectColor = new THREE.ShaderPass( THREE.ColorCorrectionShader ); effectColor._name = 'Color';
+        var effectFXAA = new THREE.ShaderPass( THREE.FXAAShader ); effectFXAA._name = 'FXAA';
 
         effectFXAA.uniforms[ 'resolution' ].value.set( 1 / window.innerWidth, 1 / window.innerHeight );
         effectBleach.uniforms[ 'opacity' ].value = 0.2;
@@ -269,8 +269,8 @@ define('threearena/game',
 
         this.composer = new THREE.EffectComposer( this.renderer );
         this.composer.addPass( renderModel );
-        //this.composer.addPass( effectBleach );
-        //this.composer.addPass( effectColor );
+        this.composer.addPass( effectBleach );
+        this.composer.addPass( effectColor );
         this.composer.addPass( effectFXAA );
 
         this.settings.container.appendChild( this.renderer.domElement );
@@ -299,7 +299,7 @@ define('threearena/game',
 
     /**
      * Init the ground mesh. Supposed to be overidden in actual game classes 
-     * @param  {Function} callback, called when ground mesh is set
+     * @param  {Function} callback called when ground mesh is set
      */
     Game.prototype._initGround = function(done) {
         var groundGeometry = new THREE.PlaneGeometry(500, 500, 1, 1);
@@ -309,6 +309,29 @@ define('threearena/game',
         this.ground.receiveShadow = true;
 
         this.intersectObjects.push(this.ground);
+        done();
+    };
+
+    Game.prototype._clampCameraToGround = function(done) {
+        // this._ground.computeBoundBox();
+        var bbox;
+
+        this.ground.traverse( function ( child ) {
+            if ( child instanceof THREE.Mesh ) {
+                child.receiveShadow = true;
+
+                child.geometry.boundingBox || child.geometry.computeBoundingBox();
+                bbox = child.geometry.boundingBox;
+            }
+        } );
+
+        this.cameraControls.clamp = {
+            xmin: bbox.min.x * .9, //  -90,
+            xmax: bbox.max.x * .9, //   90,
+            zmin: bbox.min.z * .9 + 30, //  -30,
+            zmax: bbox.max.z * .9 + 50, //  170,
+        };
+
         done();
     };
 
@@ -341,7 +364,7 @@ define('threearena/game',
 
     /**
      * Init some trees meshes, to be duplicated later
-     * @param  {Function} main_callback, called when every trees models have been set
+     * @param  {Function} main_callback called when every trees models have been set
      */
     Game.prototype._initTrees = function(main_callback) {
         var self = this;
@@ -508,8 +531,8 @@ define('threearena/game',
 
     /**
      * Instance a new tree, by duplicating a Geometry/Material reference
-     * @param  {THREE.Vector3} position
-     * @param  {Number} index of reference tree (random by default)
+     * @param  {THREE.Vector3} position Where to place the new tree
+     * @param  {Number} type index of the reference tree (random by default)
      */
     Game.prototype.newTree = function(position, type) {
 
@@ -556,21 +579,30 @@ define('threearena/game',
 
     /**
      * Init some towers
-     * @param  {Function} callback, called when finished
+     * @param  {Function} callback called when finished
      */
     Game.prototype._initTowers = function(done) {
 
         var defenseTower = new DefenseTower(0, 28, 1, {
             fireSpeed: 10,
-            fireIntensity: 50
+            fireIntensity: 100
         });
         this.scene.add(defenseTower);
         done(null);
     };
 
-
+    /**
+     * Setup the basic options GUI
+     * @param  {Function} callback called when finished
+     */
     Game.prototype._setupGui = function(callback) {
         var self = this;
+
+        folder = self.gui.addFolder('Renderer');
+        for (var i = 0; i < self.composer.passes.length; i++) {
+            folder.add(self.composer.passes[i], 'enabled');
+            self.gui.__folders.Renderer.__controllers[i].name(self.composer.passes[i]._name);
+        }
 
         folder = self.gui.addFolder('Lights');
         folder.addColor(self.ambientLight, 'color');
@@ -607,7 +639,7 @@ define('threearena/game',
 
     /**
      * Fill map (ground, trees, towers, ...)
-     * @param  {Function} main_callback, called when every elements has been added to scene
+     * @param  {Function} main_callback called when every elements has been added to scene
      */
     Game.prototype._fillMap = function(main_callback) {
 
@@ -615,10 +647,11 @@ define('threearena/game',
 
         async.series([
             _.bind( this._initGround, this),
+            _.bind( this._clampCameraToGround, this ),
             _.bind( this._initNexus, this),
-            _.bind( this._initSky, this),
-            _.bind( this._initTrees,  this),
-            // _.bind( this._initTowers, this),
+            //_.bind( this._initSky, this),
+            //_.bind( this._initTrees,  this),
+            //_.bind( this._initTowers, this),
             function (callback) {
                 console.log('BYPASS TREES'); callback(); return;
 
@@ -644,7 +677,7 @@ define('threearena/game',
                     object.position.set(-70, 17, 60);
                     object.children[0].scale.set(0.05, 0.05, 0.05);
 
-                    var aura = Particles.Aura('point', 10, THREE.ImageUtils.loadTexture('/gamedata/textures/lensflare1_alpha.png'));
+                    var aura = Particles.Aura('point', 100, THREE.ImageUtils.loadTexture('/gamedata/textures/lensflare1_alpha.png'));
                     aura.particleCloud.position.set(1, 12, 5);
                     object.add(aura.particleCloud);
                     aura.start();
@@ -725,7 +758,7 @@ define('threearena/game',
     /**
      * Called after fillmap, before ready.
      * Useful for adding some details in the scene from subclasses
-     * @param  {Function} callback, called when finished
+     * @param  {Function} callback called when finished
      */
     Game.prototype.afterCreate = function() {
 
@@ -972,14 +1005,14 @@ define('threearena/game',
         this.cameraControls.update(this.delta);
         this.camera.position.y = 80; // crraaaapp //
 
-        /*
-        this.directionalLight.target = this.pcs[0];
-        this.directionalLight.position.set(
+        /* * /
+        // this.directionalLight.target = this.pcs[0];
+        this.pointLight.position.set(
             this.pcs[0].position.x +  40,
             this.pcs[0].position.y +  80,
             this.pcs[0].position.z + -40
         );
-        */
+        /* */
 
         _.each(this.pcs, function(character){
             character.update(self);

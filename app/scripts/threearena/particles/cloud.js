@@ -11,7 +11,7 @@ define('threearena/particles/cloud',
 			return this.__pools.pop();
 		}
 
-		//console.log( "pool ran out!" )
+		// console.log( "pool ran out!" )
 		return null;
 	};
 
@@ -21,7 +21,9 @@ define('threearena/particles/cloud',
 	};
 
 
-
+    /**
+     * @exports threearena/particles/cloud
+     */
 	var ParticleCloud = function( length, texture, light, options ) {
 
 		var options = options || {};
@@ -82,7 +84,7 @@ define('threearena/particles/cloud',
 		this.values_size = this.attributes.size.value;
 		this.values_color = this.attributes.pcolor.value;
 
-		this.reset();
+		this.reset(1);
 
 		// EMITTER STUFF
 
@@ -138,7 +140,7 @@ define('threearena/particles/cloud',
 		if ( target ) {
 			p.target.position = position;
 		
-			this.hue += 0.0003 * this.delta;
+			this.hue += 0.001 * this.delta;
 			if ( this.hue > 1 ) this.hue -= 1;
 
 			// we have a shape to follow
@@ -157,11 +159,14 @@ define('threearena/particles/cloud',
 
 			this.particles.vertices[ target ] = p.position;
 
-			// this.values_color[ target ].setHSL( this.hue, 0.6, 0.1 ).multiply( this.colorHSL );
+			this.values_color[ target ].setHSL( this.hue, 0.6, 0.1 ).multiply( this.colorHSL );
 			// this.values_color[ target ].set( this.colorHSL ); // .setHSL( this.hue, 0.6, 0.1 );
+			// this.values_color[ target ].setHSL( this.hue, 0.6, 0.1 );
 			// this.values_color[ target ].multiplyScalar( this.colorHSL );
+			// this.values_color[ target ].set('#ffffff');
+			
 
-			this.values_size[ target ] += 0.0003 * this.delta;
+			this.values_size[ target ] += 0.003 * this.delta;
 			
 			if (this.light) {
 				this.light.color.setHSL( this.hue, 0.8, 0.5 );

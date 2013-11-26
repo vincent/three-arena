@@ -1,9 +1,9 @@
-/**
- * @module Controls/Camera
- */
 define('threearena/controls/dota',
 	['lodash', 'threejs'], function(_, THREE, HUD) {
 
+    /**
+     * @exports threearena/controls/attackcircle
+     */
 	var DotaControls = function ( object, domElement ) {
 
 		this.object = object;
@@ -25,6 +25,13 @@ define('threearena/controls/dota',
 		this.activeZoneTime = 300;
 
 		this.activeZoneFactor = 20;
+
+		this.clamp = {
+			xmin: -1000,
+			xmax:  1000,
+			zmin: -1000,
+			zmax:  1000,
+		};
 
 		// disable default target object behavior
 
@@ -241,10 +248,10 @@ define('threearena/controls/dota',
 				this.object.translateY( this.moveVector.y * moveMult );
 				this.object.translateZ( this.moveVector.z * moveMult );
 
-				if (this.object.position.x <  -90) this.object.position.x =  -90;
-				if (this.object.position.x >   90) this.object.position.x =   90;
-				if (this.object.position.z < -100) this.object.position.z = -100;
-				if (this.object.position.z >  170) this.object.position.z =  170;
+				if (this.object.position.x < this.clamp.xmin) this.object.position.x = this.clamp.xmin;
+				if (this.object.position.x > this.clamp.xmax) this.object.position.x = this.clamp.xmax;
+				if (this.object.position.z < this.clamp.zmin) this.object.position.z = this.clamp.zmin;
+				if (this.object.position.z > this.clamp.zmax) this.object.position.z = this.clamp.zmax;
 
 				this.tmpQuaternion.set( this.rotationVector.x * rotMult, this.rotationVector.y * rotMult, this.rotationVector.z * rotMult, 1 ).normalize();
 				this.object.quaternion.multiply( this.tmpQuaternion );

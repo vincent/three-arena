@@ -1,7 +1,9 @@
-
 define('threearena/elements/water',
     ['lodash', 'threejs'], function(_, THREE) {
 
+    /**
+     * @exports threearena/elements/water
+     */
     var Water = function(width, height) {
 
         THREE.Object3D.apply(this);

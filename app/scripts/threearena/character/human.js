@@ -1,9 +1,9 @@
-/**
- * @module Character/Human
- */
 define('threearena/character/human',
     ['lodash', 'threejs', 'threearena/log', 'threearena/character'], function (_, THREE, log, Character) {
 
+    /**
+     * @exports threearena/character/human
+     */
     var Human = function( options ) {
 
         var self = this;

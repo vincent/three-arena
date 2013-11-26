@@ -2,6 +2,9 @@
 define('threearena/views/interactiveview',
     ['lodash', 'knockout', 'threearena/elements/interactiveobject'], function(_, ko, Entity) {
 
+    /**
+     * @exports threearena/views/interactiveview
+     */
     var EntityViewModel = function(interactive) {
 
         var self = this;

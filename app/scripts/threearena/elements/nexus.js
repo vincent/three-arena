@@ -1,7 +1,9 @@
-
 define('threearena/elements/nexus',
     ['lodash', 'threejs', 'threearena/entity'], function(_, THREE, Entity) {
 
+    /**
+     * @exports threearena/elements/nexus
+     */
     var Nexus = function(options) {
 
     	var self = this;

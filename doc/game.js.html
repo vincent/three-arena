@@ -25,15 +25,15 @@
     
     <section>
         <article>
-            <pre class="prettyprint source"><code>/**
- * @module Game
- */
-define('threearena/game',
+            <pre class="prettyprint source"><code>define('threearena/game',
     ['lodash', 'async', 'threejs', 'tweenjs',
 
     'threearena/utils',
     'threearena/hud',
+    'threearena/entity',
+    'threearena/elements/nexus',
     'threearena/elements/tower',
+    'threearena/elements/lifebar',
     'threearena/elements/interactiveobject', 
     'threearena/particles/cloud', 
     'threearena/controls/dota',
@@ -41,6 +41,7 @@ define('threearena/game',
     
     'MD2Character',
     'MD2CharacterComplex',
+    'JSONLoader',
     'OBJLoader',
     'MTLLoader',
     'OBJMTLLoader',
@@ -61,7 +62,10 @@ define('threearena/game',
  
     Utils,
     HUD,
+    Entity,
+    Nexus,
     DefenseTower,
+    LifeBar,
     InteractiveObject,
     Particles,
     CameraControls,
@@ -73,6 +77,8 @@ define('threearena/game',
     /**
      * The main game class
      * 
+     * @constructor
+     * @exports threearena/game
      * @param {Object} settings
      * @triggers 'before:init', 'before:fillmap', 'ready', 'update'
      */
@@ -82,38 +88,50 @@ define('threearena/game',
 
             preload: [],
 
+            fog: {
+                color: 0x000000,
+                near: 20,
+                far: 250
+            },
+
             container: null,
 
             positions: {
                 origin: new THREE.Vector3( 0, 0, 0 )
             },
 
-            debugAxis: false,
-
         }, settings);
     };
 
     /**
      * Init the pathfinding subsystem, and load its settings.preload urls with RequireJS  
-     * @param  {Function} callback, called when finished
+     * @param  {Function} callback called when finished
      */
     Game.prototype.preload = function(done) {
 
         Config = {};
-        PathFinding.set_cellSize(1);
-        PathFinding.set_cellHeight(1);
+        PathFinding.set_cellSize(.8);
+        PathFinding.set_cellHeight(.4);
         PathFinding.initWithFile('/gamedata/maps/mountains.obj');
         PathFinding.build();
-        require(this.settings.preload, done);
+
+        PackageLoader.instance.load({
+            // These frameworks are required for the preloader to run.
+            preloader: "scripts/libs/PackageLoadingBar.js",
+            jQuery: "jquery",
+            domParent: document.body,
+
+        }, this.settings.preload, done);
     };
 
     /**
      * Init the game, reset characters and map elements
-     * @param  {Function} callback, called when ready to run
+     * @param  {Function} callback called when ready to run
      */
     Game.prototype.init = function( ready ) {
 
-        var self = this;
+        var self = this,
+            tmp = null;
 
         this.settings.container.innerHTML = '';
 
@@ -121,9 +139,15 @@ define('threearena/game',
 
         //////////
 
-        this._trees  = [];
+        this._treesRefs  = [];
+
+        this.objectives = {
+            0: null,  // team 2 objective
+            1: null,  // team 1 objective
+        };
         this.towers = [];
         this.ground = null;
+        this._waitForSelection = null;
 
         //////////
 
@@ -134,8 +158,19 @@ define('threearena/game',
 
         //////////
 
+        this.stats = new Stats();
+        this.stats.domElement.style.position = 'absolute';
+        this.stats.domElement.style.top = '0px';
+        this.settings.container.appendChild( this.stats.domElement );
+
+        this.gui = new dat.GUI();
+        this.gui.close();
+
+        //////////
+
         this.pcs = [];
         this.intersectObjects = [];
+        this.helpers = new THREE.Object3D();
 
         this.hud = new HUD.GameHud('hud-container');
 
@@ -150,18 +185,16 @@ define('threearena/game',
         this.clock = new THREE.Clock();
 
         // AXIS HELPER
-        if (this.settings.debugAxis) {
-            this.axisHelper = new THREE.AxisHelper( 1000 );
-            this.axisHelper.position.set(0, 0, 0);
-            this.scene.add(this.axisHelper);
-        }
+        tmp = new THREE.AxisHelper( 1000 );
+        tmp.position.set(0, 0, 0);
+        this.helpers.add(tmp);
 
         // INTERSECTIONS HELPER
-        // var geometry = new THREE.CylinderGeometry( 0, 1, 1, 3 );
-        // geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, 0 ) );
-        // geometry.applyMatrix( new THREE.Matrix4().makeRotationX( Math.PI / 2 ) );
-        // helper = new THREE.Mesh( geometry, new THREE.MeshNormalMaterial() );
-        // this.scene.add(helper);
+        var geometry = new THREE.CylinderGeometry( 0, 1, 1, 3 );
+        geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0, 0 ) );
+        geometry.applyMatrix( new THREE.Matrix4().makeRotationX( Math.PI / 2 ) );
+        tmp = new THREE.Mesh( geometry, new THREE.MeshNormalMaterial() );
+        this.helpers.add(tmp);
 
         this._initRenderer();
 
@@ -182,8 +215,8 @@ define('threearena/game',
      */
     Game.prototype._initCamera = function() {
 
-        this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
-        this.camera.position.set( this.settings.positions.spawn.x + 20, 50, this.settings.positions.spawn.z + 30 );
+        this.camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 10000 );
+        this.camera.position.set( this.settings.positions.spawn.x + 30, 50, this.settings.positions.spawn.z + 40 );
     };
 
     /**
@@ -192,20 +225,8 @@ define('threearena/game',
     Game.prototype._initScene = function() {
 
         this.scene = new THREE.Scene();
-        this.scene.fog = new THREE.FogExp2( 0x0, 0.00055 );
-        this.scene.fog = new THREE.Fog( 0x000000, 1, 200 );
-
-
-        this.game_materials = {
-            hover: new THREE.ShaderMaterial( {
-                    uniforms: {  },
-                    vertexShader:   document.getElementById( 'glow_vertexshader'   ).textContent,
-                    fragmentShader: document.getElementById( 'glow_fragmentshader' ).textContent,
-                    side: THREE.BackSide,
-                    blending: THREE.AdditiveBlending,
-                    transparent: true
-                } )
-        };
+        //this.scene.fog = new THREE.FogExp2( 0x0, 0.00055 );
+        this.scene.fog = new THREE.Fog( this.settings.fog.color, this.settings.fog.near, this.settings.fog.far );
     };
 
     /**
@@ -217,11 +238,21 @@ define('threearena/game',
         this.scene.add( this.ambientLight );
 
         this.pointLight = new THREE.PointLight( 0xffffff, 1.25, 1000 );
+        //this.pointLight.shadowCameraVisible = true;
         this.pointLight.position.set( 0, 0, 600 );
         this.scene.add( this.pointLight );
 
         this.directionalLight = new THREE.SpotLight( 0xffffff );
-        this.directionalLight.position.set( 0, 10, 0 );
+        // this.directionalLight.ambient = 0xffffff;
+        // this.directionalLight.diffuse = 0xffffff;
+        this.directionalLight.specular = new THREE.Color('#050101'); // 0xaaaa22;
+        this.directionalLight.position.set( -200, 400, -200 );
+        this.directionalLight.intensity = .9;
+        this.directionalLight.castShadow = true;
+        this.directionalLight.shadowMapWidth = 1024;
+        this.directionalLight.shadowMapHeight = 1024;
+        this.directionalLight.shadowMapDarkness = 0.95;
+        this.directionalLight.shadowCameraVisible = true;
         this.scene.add( this.directionalLight );
     };
 
@@ -230,11 +261,13 @@ define('threearena/game',
      */
     Game.prototype._initRenderer = function() {
         this.renderer = new THREE.WebGLRenderer();
-        // this.renderer.shadowMapEnabled = true;
-        // this.renderer.shadowMapSoft = true;
-        // this.renderer.shadowCameraNear = 3;
-        // this.renderer.shadowCameraFar = camera.far;
-        // this.renderer.shadowCameraFov = 50;
+        this.renderer.shadowMapEnabled = true;
+        this.renderer.shadowMapSoft = true;
+        //this.renderer.shadowMapType = THREE.PCFSoftShadowMap;
+
+        this.renderer.shadowCameraNear = 3;
+        this.renderer.shadowCameraFar = this.camera.far;
+        this.renderer.shadowCameraFov = 50;
 
         this.renderer.autoClear = false;
         this.renderer.gammaInput = true;
@@ -245,15 +278,18 @@ define('threearena/game',
         // this.renderer.shadowMapDarkness = 0.5;
         // this.renderer.shadowMapWidth = window.innerWidth;
         // this.renderer.shadowMapHeight = window.innerHeight;
-        this.renderer.setSize( window.innerWidth, window.innerHeight );
 
-        var renderModel = new THREE.RenderPass( this.scene, this.camera );
-        var effectBleach = new THREE.ShaderPass( THREE.BleachBypassShader );
-        var effectColor = new THREE.ShaderPass( THREE.ColorCorrectionShader );
-        var effectFXAA = new THREE.ShaderPass( THREE.FXAAShader );
+        this.renderer.setClearColor( this.scene.fog.color, 1 );
+
+        this.renderer.setSize( window.innerWidth, window.innerHeight);
+
+        var renderModel = new THREE.RenderPass( this.scene, this.camera ); renderModel._name = 'Model';
+        var effectBleach = new THREE.ShaderPass( THREE.BleachBypassShader ); effectBleach._name = 'Bleach';
+        var effectColor = new THREE.ShaderPass( THREE.ColorCorrectionShader ); effectColor._name = 'Color';
+        var effectFXAA = new THREE.ShaderPass( THREE.FXAAShader ); effectFXAA._name = 'FXAA';
 
         effectFXAA.uniforms[ 'resolution' ].value.set( 1 / window.innerWidth, 1 / window.innerHeight );
-        effectBleach.uniforms[ 'opacity' ].value = 0.4;
+        effectBleach.uniforms[ 'opacity' ].value = 0.2;
         effectColor.uniforms[ 'powRGB' ].value.set( 1.4, 1.45, 1.45 );
         effectColor.uniforms[ 'mulRGB' ].value.set( 1.1, 1.1, 1.1 );
         effectFXAA.renderToScreen = true;
@@ -273,6 +309,21 @@ define('threearena/game',
         this.cameraControls.domElement = this.renderer.domElement;
     };
 
+    Game.prototype._initNexus = function(done) {
+
+        this.objectives[0] = new Nexus({ life: 1000000, color: '#e33' });
+        this.objectives[0].position.set(-71.2, 19, 69);
+        this.scene.add(this.objectives[0]);
+        this.intersectObjects.push(this.objectives[0]);
+
+        this.objectives[1] = new Nexus({ life: 1000000, color: '#3e3' });
+        this.objectives[1].position.set(89.2, 21, -62.5);
+        this.scene.add(this.objectives[1]);
+        this.intersectObjects.push(this.objectives[1]);
+
+        done();
+    };
+
     /**
      * Init the ground mesh. Supposed to be overidden in actual game classes 
      * @param  {Function} callback, called when ground mesh is set
@@ -282,64 +333,226 @@ define('threearena/game',
         var groundMaterial = new THREE.MeshBasicMaterial({ color:'#ddd' });
 
         this.ground = new THREE.Mesh(groundGeometry, groundMaterial);
-        this.intersectObjects.push(self.ground.children[0].children);
+        this.ground.receiveShadow = true;
+
+        this.intersectObjects.push(this.ground);
+        done();
+    };
+
+    Game.prototype._clampCameraToGround = function(done) {
+        // this._ground.computeBoundBox();
+        var bbox;
+
+        this.ground.traverse( function ( child ) {
+            if ( child instanceof THREE.Mesh ) {
+                child.receiveShadow = true;
+
+                child.geometry.boundingBox || child.geometry.computeBoundingBox();
+                bbox = child.geometry.boundingBox;
+            }
+        } );
+
+        this.cameraControls.clamp = {
+            xmin: bbox.min.x * .9, //  -90,
+            xmax: bbox.max.x * .9, //   90,
+            zmin: bbox.min.z * .9 + 30, //  -30,
+            zmax: bbox.max.z * .9 + 50, //  170,
+        };
+
+        done();
+    };
+
+    Game.prototype._initSky = function(done) {
+        var urlPrefix = '/gamedata/skybox/darkred_';
+        var urls = [
+            urlPrefix + 'posx.jpg', urlPrefix + 'negx.jpg',
+            urlPrefix + 'posy.jpg', urlPrefix + 'negy.jpg',
+            urlPrefix + 'posz.jpg', urlPrefix + 'negz.jpg'
+        ];
+        var textureCube = THREE.ImageUtils.loadTextureCube( urls );
+
+        var shader = THREE.ShaderLib['cube'];
+        var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
+        uniforms['tCube'].value = textureCube;
+        var material = new THREE.ShaderMaterial({
+            fragmentShader: shader.fragmentShader,
+            vertexShader: shader.vertexShader,
+            uniforms: uniforms,
+            depthWrite: false,
+            side: THREE.BackSide
+        });
+
+        // build the skybox Mesh 
+        var skyboxMesh = new THREE.Mesh( new THREE.CubeGeometry( 600, 600, 600, 1, 1, 1, null, true ), material );
+        //skyboxMesh.renderDepth = 1e20;
+        this.scene.add( skyboxMesh );
         done();
     };
 
     /**
      * Init some trees meshes, to be duplicated later
-     * @param  {Function} main_callback, called when every trees models have been set
+     * @param  {Function} main_callback called when every trees models have been set
      */
     Game.prototype._initTrees = function(main_callback) {
         var self = this;
 
+        var _load_tree_shader = function(callback){
+            var uniforms;
+            var shader = THREE.ShaderLib[ "normalmap" ];
+            var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
+
+            uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( "/gamedata/pine-n.png" );
+            uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( "/gamedata/pine-a.png" );
+            uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( "/gamedata/pine-c.png" );
+            uniforms[ "enableAO" ].value = false;
+            uniforms[ "enableDiffuse" ].value = true;
+            uniforms[ "enableSpecular" ].value = false;
+            uniforms[ "uDiffuseColor" ].value.setHex( new THREE.Color(0x55ff55) );
+            uniforms[ "uSpecularColor" ].value.setHex( new THREE.Color(0x55ff55) );
+            uniforms[ "uAmbientColor" ].value.setHex( new THREE.Color(0x55ff55) );
+            uniforms[ "uNormalScale" ].value.set( 1, 1 );
+            uniforms[ "uShininess" ].value = 10;
+            var parameters = { fragmentShader: shader.fragmentShader, vertexShader: shader.vertexShader, uniforms: uniforms, lights: true, fog: true };
+            self._tree_shader = new THREE.ShaderMaterial( parameters );     
+
+            // self._tree_shader = new THREE.MeshPhongMaterial({ color:'#5f5' });
+            
+            callback();       
+        };
+
         var loader = new THREE.ColladaLoader();
 
         var _load_tree_pine = function(callback){
-            loader.load( '/gamedata/tree_pine.dae', function ( object ) {
-                object.scene.children[1].material.materials[0].transparent = true;
-                object.scene.children[1].material.materials[1].transparent = true;
-                self._trees.push(object.scene.children[1]);
+            loader.load( '/gamedata/tree_pine_simplified.dae', function ( object ) {
+                object = object.scene.children[3];
+
+                object.geometry.mergeVertices(); // needed ?
+
+                object.scale.set(10, 10, 10);
+
+                /*
+                object.geometry.computeVertexNormals();
+                object.geometry.computeTangents();
+                */
+                object.material.materials[0].transparent = true;
+                object.material.materials[1].transparent = true;
+
+                // object.material.materials[1].ambient.set(0, 0, 0);
+                object.material.materials[1].specular.set(0xdd5500);
+                // object.material.materials[1].bumpMap = THREE.ImageUtils.loadTexture( "/gamedata/pine-a.png" );
+                // object.material.materials[1].bumpScale = 19;
+
+               
+                self._treesRefs.push(object);
                 callback();
             });
         };
 
         var _load_tree_oak = function(callback){
             loader.load( '/gamedata/tree_oak.dae', function ( object ) {
-                object.scene.children[0].material.materials[0].transparent = true;
-                object.scene.children[0].material.materials[1].transparent = true;
-                self._trees.push(object.scene.children[0]);
+                object = object.scene.children[0];
+
+                object.material.materials[0].transparent = true;
+                object.material.materials[1].transparent = true;
+
+                object.material.materials[0].ambient.set(.5, 1, .5);
+                object.material.materials[0].diffuse.set(.5, 1, .5);
+                object.material.materials[0].specular.set(.1, 1, .1);
+
+                self._treesRefs.push(object);
                 callback();
             });
         };
 
         var _load_tree_cartoon = function(callback){
             loader.load( '/gamedata/models/forest_tree.dae', function ( object ) {
-                //object.scene.children[0].material.materials[0].transparent = true;
-                //object.scene.children[0].material.materials[1].transparent = true;
-                var cartoonTree = new THREE.Object3D();
-                object.scene.children[0].scale.set(5, 5, 5);
-                //cartoonTree.add(object.scene.children[0]);
+                object = object.scene.children[0];
 
-                object.scene.children[0].material.materials[0].transparent = true;
-                object.scene.children[0].material.materials[1].transparent = true;
-                object.scene.children[0].material.materials[2].transparent = true;
-                object.scene.children[0].material.materials[3].transparent = true;
+                object.position.setY(2);
+                object.scale.set(2, 2, 2);
 
-                object.scene.children[0].material.materials[0].ambient.set(1, 1, 1);
-                object.scene.children[0].material.materials[1].ambient.set(1, 1, 1);
-                object.scene.children[0].material.materials[2].ambient.set(1, 1, 1);
-                object.scene.children[0].material.materials[3].ambient.set(1, 1, 1);
+                object.material.materials[0].transparent = true;
+                object.material.materials[1].transparent = true;
+                object.material.materials[2].transparent = true;
+                object.material.materials[3].transparent = true;
 
-                self._trees.push(object.scene.children[0]);
+                object.material.materials[0].ambient.set(1, 1, 1);
+                object.material.materials[1].ambient.set(1, 1, 1);
+                object.material.materials[2].ambient.set(1, 1, 1);
+                object.material.materials[3].ambient.set(1, 1, 1);
+
+                self._treesRefs.push(object);
                 callback();
             });
         };
 
+        var _load_dracena = function(callback){
+            loader.load( '/gamedata/models/plants/Dracena.dae', function ( object ) {
+                object = object.scene.children[0];
+
+                // object.scene.children[0].position.setY(2);
+                object.scale.set(.2, .2, .2);
+                //cartoonTree.add(object);
+
+                object.material.materials[0].transparent = true;
+                object.material.materials[1].transparent = true;
+                object.material.materials[2].transparent = true;
+
+                object.material.materials[0].ambient.set(1, 1, 1);
+                object.material.materials[1].ambient.set(1, 1, 1);
+                object.material.materials[2].ambient.set(1, 1, 1);
+
+                self._treesRefs.push(object);
+                callback();
+            });
+        };
+
+        var _load_eatsheep = function(callback){
+            loader = new THREE.OBJMTLLoader();
+            loader.addEventListener('load', function (event) {
+                var object = event.content.children[0].children[0];
+                object.rotation.x = 90 * Math.PI / 2;
+                self._treesRefs.push(object);
+                callback();
+            });
+            loader.load('/gamedata/models/plants/eatsheep_farm_tree.obj', '/gamedata/models/plants/eatsheep_farm_tree.mtl');
+        };
+
+        var _load_tree_xuroiux = function(callback){
+            loader.load( '/gamedata/models/plants/TreeXuroiux.dae', function ( object ) {
+                
+
+
+                object = object.scene.children[0];
+
+                // object.geometry.mergeVertices(); // needed ?
+
+                object.scale.set(3, 3, 3);
+
+                object.material.materials[0].transparent = true;
+                object.material.materials[1].specular.set(0xdd5500);
+               
+                self._treesRefs.push(object);
+                callback();
+            });
+        };
+        var _load_tree_xuroiux2 = function(callback){
+            loader = new THREE.JSONLoader();
+            loader.load('/gamedata/models/plants/TreeXuroiux.js', function ( geometry, materials ) {
+                self._treesRefs.push( new THREE.Mesh( geometry, materials[0] ) );
+                callback();
+            }, { normalizeRGB: true } );
+        };
+
         async.series([
+            _load_tree_shader,
+
             // _load_tree_pine,
             // _load_tree_oak,
-            _load_tree_cartoon
+            // _load_tree_cartoon,
+            // _load_dracena
+            // _load_eatsheep,
+            _load_tree_xuroiux2
         ], main_callback);
     };
 
@@ -350,55 +563,107 @@ define('threearena/game',
      */
     Game.prototype.newTree = function(position, type) {
 
-        var self = this;
-
-        // clone a tree
-        var refTreeIndex = type || Math.round( Math.random() * (this._trees.length - 1) );
-        var refTree = self._trees[ refTreeIndex ];
-
-        var tree = new THREE.Mesh( refTree.geometry, refTree.material );    
-        tree.position = position;
-        tree.scale = new THREE.Vector3(4, 4, 4);
-        tree.rotation.y = Math.random() * 90 * ( Math.PI / 180 );
-
-        if (refTreeIndex == 0) {
-            tree.rotation.x = - 90 * ( Math.PI / 180 );
-        }
-        if (refTreeIndex == 1) {
-            //tree.rotation.x = 10 * ( Math.PI / 180 );
-            //tree.rotation.y = 10 * ( Math.PI / 180 );
-            tree.rotation.z = 70 * ( Math.PI / 180 );
-        }
-
-        tree.matrixAutoUpdate = false;
-        tree.updateMatrix();
+        var self = this,
+            _tmp_tree;
 
         this._treesGroup = this._treesGroup || new THREE.Object3D();
-        this._treesGroup.add( tree );
+        this._treesGroup.castShadow = true;    
+
+        // clone a tree
+        var refTreeIndex = type || Math.round( Math.random() * (this._treesRefs.length - 1) );
+        var refTree = self._treesRefs[ refTreeIndex ];
+       
+        // this._tmp_tree = this._tmp_tree || new THREE.Mesh();
+        // this._tmp_tree.geometry = refTree.geometry;
+        // this._tmp_tree.material = refTree.material;
+
+        _tmp_tree = new THREE.Mesh( refTree.geometry, refTree.material );
+        //_tmp_tree.material.materials.push(cartoon);
+        _tmp_tree.castShadow = true;
+
+        _tmp_tree.matrixAutoUpdate = false;
+        _tmp_tree.position = position;
+        _tmp_tree.position.y += 4;
+        _tmp_tree.scale = new THREE.Vector3(4, 3, 4);
+        // _tmp_tree.rotation.y = Math.random() * 90 * ( Math.PI / 180 );
+
+        if (refTreeIndex == 0) {
+            _tmp_tree.rotation.x = - 90 * ( Math.PI / 180 );
+        }
+        if (refTreeIndex == 1) {
+            //_tmp_tree.rotation.x = 10 * ( Math.PI / 180 );
+            //_tmp_tree.rotation.y = 10 * ( Math.PI / 180 );
+        }
+
+        _tmp_tree.rotation.z = Math.random() * 180 * ( Math.PI / 180 );
+
+
+        _tmp_tree.updateMatrix();
+
+        // THREE.GeometryUtils.merge(this._treesGroup.geometry, _tmp_tree);
+        this._treesGroup.add( _tmp_tree );
     };
 
     /**
      * Init some towers
-     * @param  {Function} callback, called when finished
+     * @param  {Function} callback called when finished
      */
     Game.prototype._initTowers = function(done) {
 
         var defenseTower = new DefenseTower(0, 28, 1, {
             fireSpeed: 10,
-            fireIntensity: 50,
-            transform: function (loaded) {
-                var loaded = loaded.scene.children[0];
-                loaded.scale.set( 8, 8, 8 );
-                loaded.rotation.x = -90 * (Math.PI / 180);
-            }
+            fireIntensity: 100
         });
         this.scene.add(defenseTower);
         done(null);
     };
 
+
+    Game.prototype._setupGui = function(callback) {
+        var self = this;
+
+        folder = self.gui.addFolder('Renderer');
+        for (var i = 0; i &lt; self.composer.passes.length; i++) {
+            folder.add(self.composer.passes[i], 'enabled');
+            self.gui.__folders.Renderer.__controllers[i].name(self.composer.passes[i]._name);
+        }
+
+        folder = self.gui.addFolder('Lights');
+        folder.addColor(self.ambientLight, 'color');
+        folder.addColor(self.directionalLight, 'color');
+
+        folder = self.gui.addFolder('Fog');
+        folder.add(self.scene.fog, 'near');
+        folder.add(self.scene.fog, 'far');
+
+        folder = self.gui.addFolder('Controls');
+        folder.add(self.cameraControls, 'mouseEnabled');
+        folder.add(self.helpers, 'visible');
+
+        /*
+        self.gui.add(self, 'Helpers', false, true).onChange(function(state){
+            for (var i = 0; i &lt; self.helpers.length; i++) {
+                self.scene[state ? 'add' : 'remove'](self.helpers[i]);
+            }
+        });
+
+
+        folder = self.gui.addFolder('Towers');
+        folder.add(self, 'Speed').onChange(function(value){
+            this.scene.traverse(function(child){
+                if (child instanceof DefenseTower) {
+                    child.options.fireSpeed = value;
+                }
+            });
+        });                
+        */
+
+        callback();
+    };
+
     /**
      * Fill map (ground, trees, towers, ...)
-     * @param  {Function} main_callback, called when every elements has been added to scene
+     * @param  {Function} main_callback called when every elements has been added to scene
      */
     Game.prototype._fillMap = function(main_callback) {
 
@@ -406,9 +671,14 @@ define('threearena/game',
 
         async.series([
             _.bind( this._initGround, this),
-            _.bind( this._initTrees,  this),
-            _.bind( this._initTowers, this),
+            _.bind( this._clampCameraToGround, this ),
+            _.bind( this._initNexus, this),
+            //_.bind( this._initSky, this),
+            //_.bind( this._initTrees,  this),
+            //_.bind( this._initTowers, this),
             function (callback) {
+                console.log('BYPASS TREES'); callback(); return;
+
                 var loader = new THREE.OBJLoader();
                 loader.load('/gamedata/maps/mountains_trees.obj', function (object) {
                     object.traverse(function (child) {
@@ -418,6 +688,7 @@ define('threearena/game',
                             }
                         }
                     });
+
                     self.scene.add(self._treesGroup);
                     callback();
                 });
@@ -430,7 +701,7 @@ define('threearena/game',
                     object.position.set(-70, 17, 60);
                     object.children[0].scale.set(0.05, 0.05, 0.05);
 
-                    var aura = Particles.Aura('point', 10, THREE.ImageUtils.loadTexture('/gamedata/textures/lensflare1_alpha.png'));
+                    var aura = Particles.Aura('point', 100, THREE.ImageUtils.loadTexture('/gamedata/textures/lensflare1_alpha.png'));
                     aura.particleCloud.position.set(1, 12, 5);
                     object.add(aura.particleCloud);
                     aura.start();
@@ -444,6 +715,10 @@ define('threearena/game',
                 });
                 loader.load('/gamedata/models/lightning_pole/lightning_pole.obj', '/gamedata/models/lightning_pole/lightning_pole.mtl');
             },
+
+            _.bind( this._setupGui, this),
+
+            // afterCreate helper
             function(callback) {
                 self.afterCreate();
                 callback();
@@ -458,6 +733,7 @@ define('threearena/game',
      */
     Game.prototype.addCharacter = function(character, spawnPosition) {
 
+        var self = this;
         var spawnPosition = spawnPosition || this.settings.positions.spawn;
 
         character.position.set(spawnPosition.x, spawnPosition.y, spawnPosition.z);
@@ -466,6 +742,19 @@ define('threearena/game',
         if (this.pcs.length === 0) {
             this.hud.attachEntity(character);
         }
+
+        character.traverse(function (child) {
+            if (child instanceof THREE.Mesh && child.parent && ! child.parent instanceof LifeBar) {
+                // FIXME: Some meshes cannot be used directly for collision (SkinnedMesh)
+                // IDEA: Compute the whole character's bbox in the Character class, skipping weapons, tails, etc..
+                // self.intersectObjects.push(child);
+
+                child.castShadow = true;
+            }
+        });
+        
+        // character.character.meshBody && this.intersectObjects.push(character.character.meshBody);
+        this.intersectObjects.push(character);
 
         this.pcs.push(character);
         this.scene.add(character);
@@ -481,13 +770,31 @@ define('threearena/game',
         this.scene.remove(character);
     };
 
+
+    Game.prototype.addSpawningPool = function(pool) {
+        var self = this;
+        this.scene.add(pool);
+        pool.bind('spawnedone', function(character){
+            self.addCharacter(character, pool.position);
+        });
+    };
+
     /**
      * Called after fillmap, before ready.
      * Useful for adding some details in the scene from subclasses
-     * @param  {Function} callback, called when finished
+     * @param  {Function} callback called when finished
      */
     Game.prototype.afterCreate = function() {
 
+    };
+
+    /**
+     * Attach a listener for the next selection
+     * @param  {Function} onSelection
+     */
+    Game.prototype.waitForSelection = function(onSelection) {
+
+        this._waitForSelection = onSelection;
     };
 
     ////////////////////////////////
@@ -532,11 +839,12 @@ define('threearena/game',
 
               var raycaster = new THREE.Raycaster(self.camera.position,vector.sub(self.camera.position).normalize());
 
-              var intersects = raycaster.intersectObjects(this.intersectObjects);
+              var intersects = raycaster.intersectObjects(this.intersectObjects, true); // recursive
 
               if (intersects.length > 0) {
 
-                var i_pos = intersects[0].point;
+                var i_pos = intersects[0].point,
+                    entity;
 
                 console.log('intersect at %o %o', i_pos.x, i_pos.y, i_pos.z );
 
@@ -553,7 +861,9 @@ define('threearena/game',
 
                     console.log('find a path between %o and %o', self.pcs[0].position, i_pos);
 
-                    // run the magic
+                    // character.objective = { position: i_pos };
+                    // character.behaviour = character.behaviour.warp('plotCourseToObjective');
+
                     PathFinding.findPath(
                         this.pcs[0].position.x, this.pcs[0].position.y, this.pcs[0].position.z,
                         i_pos.x, i_pos.y, i_pos.z,
@@ -561,19 +871,62 @@ define('threearena/game',
                         Utils.gcb( _.bind( character.moveAlong, character) )
                     );
 
+                } else if (this._waitForSelection) {
+
+                    var callback = this._waitForSelection;
+                    this._waitForSelection = null;
+
+                    callback(intersects);
+
                 } else {
 
                     // __add_tree(i_pos);
 
-                    // apply a glow effect on selected objects
-                    if (intersects[0].object && intersects[0].object.parent && intersects[0].object.parent.parent
-                        && intersects[0].object.parent.parent instanceof InteractiveObject) {
+                    // user clicked something
+                    if (intersects[0].object && intersects[0].object) {
 
-                        if (intersects[0].object.parent.parent.isNearEnough(character)) {
-                            self.startInteraction(intersects[0].object.parent.parent);
+                        // maybe an entity ?
+                        entity = Utils.getEntity(intersects[0].object);
 
-                        } else {
-                            console.log("C'est trop loin !");
+                        // it's an entity
+                        if (entity) {
+
+                            // cast the first possible spell 
+                            for (var i = 0; i &lt; character.state.spells.length; i++) {
+                                if (character.state.spells[i].canHit(character, entity)) {
+                                    // character.lookAt(entity.position);
+                                    character.cast(character.state.spells[i], entity);
+                                    break;
+                                }
+                            }
+
+                        // it's an interactive object
+                        } else if (intersects[0].object.parent && intersects[0].object.parent.parent 
+                            && intersects[0].object.parent.parent instanceof InteractiveObject) {
+
+                            if (intersects[0].object.parent.parent.isNearEnough(character)) {
+                                self.startInteraction(intersects[0].object.parent.parent);
+
+                            } else {
+                                console.log("C'est trop loin !");
+                            }
+                    
+
+                        } else if (0) {
+
+                            // SUPER SIMPLE GLOW EFFECT
+                            // use sprite because it appears the same from all angles
+                            var spriteMaterial = new THREE.SpriteMaterial({ 
+                                map: new THREE.ImageUtils.loadTexture('/gamedata/textures/glow.png'), 
+                                useScreenCoordinates: false,
+                                alignment: THREE.SpriteAlignment.center,
+                                color: 0x0000ff,
+                                transparent: false,
+                                blending: THREE.AdditiveBlending
+                            });
+                            var sprite = new THREE.Sprite( spriteMaterial );
+                            sprite.scale.set(10, 10, 10);
+                            intersects[0].object.parent.parent.add(sprite); // this centers the glow at the mesh                        
                         }
                     }
                 }
@@ -633,7 +986,15 @@ define('threearena/game',
 
         this.trigger('start');
 
+        this.settings.splashContainer.className += ' animated fadeOutUpBig';
+        this.settings.container.style.className += ' animated fadeInUpBig';
+        this.settings.container.style.display = 'block';
+
+        this._boundAnimate = _.bind( this.animate, this );
         this.animate();
+
+        // timers
+        this._behaviours_delta = this.clock.getDelta();
     };
 
     /**
@@ -641,7 +1002,7 @@ define('threearena/game',
      */
     Game.prototype.animate = function() {
 
-        requestAnimationFrame( _.bind( this.animate, this ) );
+        requestAnimationFrame( this._boundAnimate );
         this.render();
     };
 
@@ -654,21 +1015,35 @@ define('threearena/game',
 
         var self = this;
 
-        // stats.update()
-        TWEEN.update();
-
         this.delta = this.clock.getDelta();
+
+        if (this.clock.oldTime - this._behaviours_delta > 300) {
+            this._behaviours_delta = this.clock.oldTime;
+            this.trigger('update:behaviours', this);
+        }
 
         window._ta_events.trigger('update', this);
 
         this.trigger('update', this);
 
         this.cameraControls.update(this.delta);
-        this.camera.position.y = 60; // crraaaapp //
+        this.camera.position.y = 80; // crraaaapp //
+
+        /* * /
+        // this.directionalLight.target = this.pcs[0];
+        this.pointLight.position.set(
+            this.pcs[0].position.x +  40,
+            this.pcs[0].position.y +  80,
+            this.pcs[0].position.z + -40
+        );
+        /* */
 
         _.each(this.pcs, function(character){
-            character.update(self.delta);
+            character.update(self);
         });
+
+        this.stats.update()
+        TWEEN.update();
 
         this.composer.render();
     };
@@ -686,13 +1061,13 @@ define('threearena/game',
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="module-Character.html">Character</a></li><li><a href="Ogro.html">Character/Ogro</a></li><li><a href="Ratamahatta.html">Character/Ratamahatta</a></li><li><a href="Camera.html">Controls/Camera</a></li><li><a href="InteractiveObject.html">Elements/InteractiveObject</a></li><li><a href="module-Entity.html">Entity</a></li><li><a href="module-Game.html">Game</a></li><li><a href="module-Utils.html">Utils</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="character.html">threearena/character</a></li><li><a href="human.html">threearena/character/human</a></li><li><a href="monsterdog.html">threearena/character/monsterdog</a></li><li><a href="ogro.html">threearena/character/ogro</a></li><li><a href="ratamahatta.html">threearena/character/ratamahatta</a></li><li><a href="attackcircle.html">threearena/controls/attackcircle</a></li><li><a href="autospawn.html">threearena/elements/autospawn</a></li><li><a href="interactiveobject.html">threearena/elements/interactiveobject</a></li><li><a href="lifebar.html">threearena/elements/lifebar</a></li><li><a href="nexus.html">threearena/elements/nexus</a></li><li><a href="shop.html">threearena/elements/shop</a></li><li><a href="tower.html">threearena/elements/tower</a></li><li><a href="toxi.html">threearena/elements/toxi</a></li><li><a href="water.html">threearena/elements/water</a></li><li><a href="demo.html">threearena/examples/demo</a></li><li><a href="game.html">threearena/game</a></li><li><a href="hud.html">threearena/hud</a></li><li><a href="log.html">threearena/log</a></li><li><a href="cloud.html">threearena/particles/cloud</a></li><li><a href="flies.html">threearena/particles/flies</a></li><li><a href="shadercloud.html">threearena/particles/shadercloud</a></li><li><a href="lightbolt.html">threearena/shaders/lightbolt</a></li><li><a href="bite.html">threearena/spell/bite</a></li><li><a href="fireaura.html">threearena/spell/fireaura</a></li><li><a href="firebullet.html">threearena/spell/firebullet</a></li><li><a href="flatfireaura.html">threearena/spell/flatfireaura</a></li><li><a href="lightbolt_.html">threearena/spell/lightbolt</a></li><li><a href="entityview.html">threearena/views/entityview</a></li><li><a href="gameview.html">threearena/views/gameview</a></li><li><a href="interactiveview.html">threearena/views/interactiveview</a></li><li><a href="module-Utils.html">Utils</a></li></ul><h3>Classes</h3><ul><li><a href="entity.html">threearena/entity</a></li><li><a href="spell.html">threearena/spell</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Mon Sep 16 2013 19:01:16 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Tue Nov 26 2013 18:35:54 GMT+0100 (CET)
 </footer>
 
 <script> prettyPrint(); </script>

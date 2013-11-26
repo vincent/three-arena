@@ -1,3 +1,6 @@
+/**
+ * @module threearena
+ */
 define([
 	'./game',
 	'./controls/dota',

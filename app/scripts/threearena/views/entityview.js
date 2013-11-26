@@ -2,6 +2,9 @@
 define('threearena/views/entityview',
     ['lodash', 'knockout', 'threearena/entity'], function(_, ko, Entity) {
 
+    /**
+     * @exports threearena/views/entityview
+     */
     var EntityViewModel = function(entity, game) {
 
         var self = this;

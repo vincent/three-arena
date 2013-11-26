@@ -1,6 +1,9 @@
-define('threearena/particles/cloud',
+define('threearena/particles/shadercloud',
     ['lodash', 'threejs', 'sparks'], function(_, THREE, SPARKS) {
 
+    /**
+     * @exports threearena/particles/shadercloud
+     */
     var ParticleCloud = function( size, texture, light, options ) {
 
         // Create a particle group to add the emitter to.
@@ -37,6 +40,6 @@ define('threearena/particles/cloud',
 
     return {
         ParticleCloud: ParticleCloud,
-        Aura: Aura
+        Aura: null
     };
 });

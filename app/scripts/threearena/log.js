@@ -2,6 +2,13 @@
 define('threearena/log',
     ['lodash', 'threejs'], function(_, THREE) {
 
+    /**
+     * Logging facility
+     * 
+     * @constructor
+     * @exports threearena/log
+     * 
+     */
     var Log = function ( type, arg1, arg2 /* ... */ ) {
     	var args = Array.prototype.slice.apply(arguments);
     	var type = String(args.shift()).toUpperCase();

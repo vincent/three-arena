@@ -1,14 +1,14 @@
-/**
- * @module Game
- */
 define('threearena/elements/toxi',
     ['lodash', 'threejs', 'toxi'], function(){
 
+    /**
+     * @exports threearena/elements/toxi
+     */
     var ToxiElement = function( m, material, scale, meshResolution ) {
 
         THREE.Object3D.apply( this );
 
-        var material = material || var material = new THREE.MeshNormalMaterial({color: 0xBAE8E6, opacity: 1.0});
+        var material = material || new THREE.MeshNormalMaterial({color: 0xBAE8E6, opacity: 1.0});
         var toxiToThreeSupport = new toxi.THREE.ToxiclibsSupport( new THREE.Scene() ),
             threeMesh = undefined;
 
