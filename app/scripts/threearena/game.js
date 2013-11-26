@@ -106,7 +106,7 @@ define('threearena/game',
         var self = this,
             tmp = null;
 
-        this.settings.container.innerHTML = '';
+        //this.settings.container.innerHTML = '';
 
         this.trigger('before:init');
 
@@ -773,6 +773,39 @@ define('threearena/game',
         this._waitForSelection = onSelection;
     };
 
+    /**
+     * Cast a Raycaster in camera space
+     * 
+     * @param  {Array} objects specify which objects to raycast against, all intersectables object by default
+     * @return {Object} An intersections object
+     */
+    Game.prototype.raycast = function( event, objects ) {
+
+      objects = objects || this.intersectObjects;
+
+      if (! this._raycaster_vector) {
+        this._raycaster_vector = new THREE.Vector3();
+      }
+
+      this._raycaster_vector.set(
+         (event.clientX / window.innerWidth) * 2 - 1,
+        -(event.clientY / window.innerHeight) * 2 + 1,
+        this.camera.near
+      );
+
+      if (! this._projector) {
+        this._projector = new THREE.Projector();
+      }
+
+      this._projector.unprojectVector(this._raycaster_vector, this.camera);
+
+      this._raycaster = new THREE.Raycaster(this.camera.position, this._raycaster_vector.sub(this.camera.position).normalize());
+
+      var intersects = this._raycaster.intersectObjects(objects, true); // recursive
+
+      return intersects;
+    };
+
     ////////////////////////////////
 
     /**
@@ -781,6 +814,8 @@ define('threearena/game',
     Game.prototype._initListeners = function() {
 
         this.settings.container.addEventListener('mouseup', _.bind( this.onDocumentMouseUp, this), false);
+        this.settings.container.addEventListener('mousedown', _.bind( this.onDocumentMouseDown, this), false);
+        this.settings.container.addEventListener('mousemove', _.bind( this.onDocumentMouseMove, this), false);
         this.settings.container.addEventListener('resize', _.bind( this.onWindowResize, this), false);
     };
 
@@ -788,6 +823,7 @@ define('threearena/game',
      * Resize listener
      */
     Game.prototype.onWindowResize = function() {
+
         windowHalfX = window.innerWidth / 2;
         windowHalfY = window.innerHeight / 2;
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -799,127 +835,199 @@ define('threearena/game',
      * Mouse clicks listener
      */
     Game.prototype.onDocumentMouseUp = function(event) {
+
         var self = this;
         //event.preventDefault();
 
-        switch (event.button) {
-            default: 
-              var vector = new THREE.Vector3(
-                 (event.clientX / window.innerWidth) * 2 - 1,
-                -(event.clientY / window.innerHeight) * 2 + 1,
-                self.camera.near
+        var intersects = self.raycast(event, self.intersectObjects);
+
+        if (intersects.length > 0) {
+
+            var i_pos = intersects[0].point,
+                entity;
+
+            console.log('intersect at %o %o', i_pos.x, i_pos.y, i_pos.z );
+
+            // place helper
+            // helper.position.set(0, 0, 0);
+            // helper.lookAt(intersects[0].face.normal);
+            // helper.position.copy(i_pos);
+
+            var character = self.pcs[0];
+
+            if (self._inGroundSelection) {
+
+              // ends a ground selection
+              var selection = {
+                begins: self._inGroundSelection.ground,
+                ends: intersects[0].point
+              };
+
+              self._inGroundSelection = null;
+              $('#selection-rectangle').hide();
+
+              self.selectCharactersInZone(selection.begins, selection.ends);
+
+            } else if (event.button == 2) {
+
+              self.endAllInteractions();
+
+              console.log('find a path between %o and %o', self.pcs[0].position, i_pos);
+
+              // character.objective = { position: i_pos };
+              // character.behaviour = character.behaviour.warp('plotCourseToObjective');
+
+              PathFinding.findPath(
+                self.pcs[0].position.x, self.pcs[0].position.y, self.pcs[0].position.z,
+                i_pos.x, i_pos.y, i_pos.z,
+                10000,
+                Utils.gcb( _.bind( character.moveAlong, character) )
               );
+
+            } else if (self._waitForSelection) {
+
+              var callback = self._waitForSelection;
+              self._waitForSelection = null;
+              self.unselectCharacters();
+
+              callback(intersects);
+
+            } else {
+
+              // __add_tree(i_pos);
+
+              // user clicked something
+              if (intersects[0].object && intersects[0].object) {
+
+                  // maybe an entity ?
+                  entity = Utils.getEntity(intersects[0].object);
+
+                  // it's an entity
+                  if (entity) {
+
+                      // cast the first possible spell 
+                      for (var i = 0; i < character.state.spells.length; i++) {
+                          if (character.state.spells[i].canHit(character, entity)) {
+                              // character.lookAt(entity.position);
+                              character.cast(character.state.spells[i], entity);
+                              break;
+                          }
+                      }
+
+                  // it's an interactive object
+                  } else if (intersects[0].object.parent && intersects[0].object.parent.parent 
+                      && intersects[0].object.parent.parent instanceof InteractiveObject) {
+
+                      if (intersects[0].object.parent.parent.isNearEnough(character)) {
+                          self.startInteraction(intersects[0].object.parent.parent);
+
+                      } else {
+                          console.log("C'est trop loin !");
+                      }
               
-              var projector = new THREE.Projector();
-              projector.unprojectVector(vector, self.camera);
 
-              var raycaster = new THREE.Raycaster(self.camera.position,vector.sub(self.camera.position).normalize());
+                  } else if (0) {
 
-              var intersects = raycaster.intersectObjects(this.intersectObjects, true); // recursive
-
-              if (intersects.length > 0) {
-
-                var i_pos = intersects[0].point,
-                    entity;
-
-                console.log('intersect at %o %o', i_pos.x, i_pos.y, i_pos.z );
-
-                // place helper
-                // helper.position.set(0, 0, 0);
-                // helper.lookAt(intersects[0].face.normal);
-                // helper.position.copy(i_pos);
-
-                var character = self.pcs[0];
-
-                if (event.button == 2) {
-
-                    self.endAllInteractions();
-
-                    console.log('find a path between %o and %o', self.pcs[0].position, i_pos);
-
-                    // character.objective = { position: i_pos };
-                    // character.behaviour = character.behaviour.warp('plotCourseToObjective');
-
-                    PathFinding.findPath(
-                        this.pcs[0].position.x, this.pcs[0].position.y, this.pcs[0].position.z,
-                        i_pos.x, i_pos.y, i_pos.z,
-                        10000,
-                        Utils.gcb( _.bind( character.moveAlong, character) )
-                    );
-
-                } else if (this._waitForSelection) {
-
-                    var callback = this._waitForSelection;
-                    this._waitForSelection = null;
-
-                    callback(intersects);
-
-                } else {
-
-                    // __add_tree(i_pos);
-
-                    // user clicked something
-                    if (intersects[0].object && intersects[0].object) {
-
-                        // maybe an entity ?
-                        entity = Utils.getEntity(intersects[0].object);
-
-                        // it's an entity
-                        if (entity) {
-
-                            // cast the first possible spell 
-                            for (var i = 0; i < character.state.spells.length; i++) {
-                                if (character.state.spells[i].canHit(character, entity)) {
-                                    // character.lookAt(entity.position);
-                                    character.cast(character.state.spells[i], entity);
-                                    break;
-                                }
-                            }
-
-                        // it's an interactive object
-                        } else if (intersects[0].object.parent && intersects[0].object.parent.parent 
-                            && intersects[0].object.parent.parent instanceof InteractiveObject) {
-
-                            if (intersects[0].object.parent.parent.isNearEnough(character)) {
-                                self.startInteraction(intersects[0].object.parent.parent);
-
-                            } else {
-                                console.log("C'est trop loin !");
-                            }
-                    
-
-                        } else if (0) {
-
-                            // SUPER SIMPLE GLOW EFFECT
-                            // use sprite because it appears the same from all angles
-                            var spriteMaterial = new THREE.SpriteMaterial({ 
-                                map: new THREE.ImageUtils.loadTexture('/gamedata/textures/glow.png'), 
-                                useScreenCoordinates: false,
-                                alignment: THREE.SpriteAlignment.center,
-                                color: 0x0000ff,
-                                transparent: false,
-                                blending: THREE.AdditiveBlending
-                            });
-                            var sprite = new THREE.Sprite( spriteMaterial );
-                            sprite.scale.set(10, 10, 10);
-                            intersects[0].object.parent.parent.add(sprite); // this centers the glow at the mesh                        
-                        }
-                    }
-                }
-
-              } else {
-                  console.log('no intersect');
+                      // SUPER SIMPLE GLOW EFFECT
+                      // use sprite because it appears the same from all angles
+                      var spriteMaterial = new THREE.SpriteMaterial({ 
+                          map: new THREE.ImageUtils.loadTexture('/gamedata/textures/glow.png'), 
+                          useScreenCoordinates: false,
+                          alignment: THREE.SpriteAlignment.center,
+                          color: 0x0000ff,
+                          transparent: false,
+                          blending: THREE.AdditiveBlending
+                      });
+                      var sprite = new THREE.Sprite( spriteMaterial );
+                      sprite.scale.set(10, 10, 10);
+                      intersects[0].object.parent.parent.add(sprite); // this centers the glow at the mesh                        
+                  }
               }
-              break; 
+          }
 
+        } else {
+            console.log('no intersect');
         }
+    };
+
+
+    Game.prototype.onDocumentMouseDown = function(event) {
+
+      var self = this;
+      //event.preventDefault();
+
+      // for now, just discard during a click-selection 
+      if (self._waitForSelection) return;
+
+      // intersect everything ... only the ground
+      var intersects = self.raycast(event, self.intersectObjects);
+
+      // .. but check if the ground if the first intersection
+      // TODO: find another way to check ==ground
+      if (intersects.length > 0 && event.button === 0 && intersects[0].object.parent.name == "TerrainMes") {
+          // begins a selection
+          this._inGroundSelection = {
+            screen: { x: event.clientX, y: event.clientY },
+            ground: intersects[0].point.clone()
+          };
+      }
+
+    };
+
+
+    Game.prototype.onDocumentMouseMove = function(event) {
+
+      if (this._inGroundSelection) {
+        // in a selection
+        // draw a rectangle
+        // TODO: handle reverse (x & y) selection
+        var p1 = this._inGroundSelection.screen,
+            p2 = { x: event.clientX, y: event.clientY };
+
+        $('#selection-rectangle').css({
+          left: p1.x > p2.x ? p2.x : p1.x,
+          top: p1.y > p2.y ? p2.y : p1.y,
+          width: Math.abs(p1.x - p2.x),
+          height: Math.abs(p1.y - p2.y)
+        }).show();
+      }
+
     };
 
     /**
      * Current selected objects
      * @type {Array}
      */
-    Game.prototype._selected_objects = [];
+    Game.prototype._selected_objects = [ ];
+
+    Game.prototype.unselectCharacters = function (butCharacters) {
+
+      if (! _.isArray(butCharacters)) butCharacters = [ butCharacters ];
+
+      // for (var i = 0; i < this._selected_objects.length; i++) { }
+      this._selected_objects.length = 0;
+      self._waitForSelection = null;
+      this._inGroundSelection = null;
+      $('#selection-rectangle').hide();
+    };
+
+    Game.prototype.selectCharactersInZone = function (start, end) {
+
+      var self = this;
+
+      var selected = _.filter(this.pcs, function(character) {
+        var itsin = character.position.x > start.x && character.position.z > start.z 
+            && character.position.x < end.x && character.position.z < end.z;
+        if (itsin) {
+          self._selected_objects.push(character);
+        }
+        return itsin;
+      });
+
+      console.log('Need to find characters in %o > %o : %o', start, end, selected);  
+
+      return selected;
+    };
 
     /**
      * End all not-near-enough interaction
@@ -928,9 +1036,9 @@ define('threearena/game',
 
         var character = this.pcs[0];
         
-        _.each(this._selected_objects, function (obj) {
-            if (! obj.isNearEnough(character)) {
-                obj.deselect();
+        _.each(this._selected_objects, function (object) {
+            if (object.isNearEnough && ! object.isNearEnough(character)) {
+                object.deselect();
             }
         });
     };
