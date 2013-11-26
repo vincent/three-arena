@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: particles/flies.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: particles/flies.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>define('threearena/particles/flies',
+['lodash', 'threejs', 'sparks'],
+function(_, THREE, SPARKS) {
+
+    /**
+     * @exports threearena/particles/flies
+     */
+	var Flies = function(count, tex) {
+
+        THREE.Object3D.apply(this);
+
+        this.deltas = new Array(count);
+        for (var i = 0; i &lt; count; i++) this.deltas[i] = Math.random();
+
+		this.path = this.computePath(5, 3);
+
+		this.map1 = THREE.ImageUtils.loadTexture('/gamedata/textures/flies/' + (tex || 'butterfly.' + 1 + '.png'));
+		this.map1.needsUpdate = true;
+
+		this.map2 = THREE.ImageUtils.loadTexture('/gamedata/textures/flies/' + (tex || 'butterfly.' + 2 + '.png'));
+		this.map2.needsUpdate = true;
+
+		this.material = new THREE.ParticleBasicMaterial({
+		    size: count,
+		    map: this.map1,
+		    transparent: true
+		});
+
+		this.points = new THREE.Geometry();
+
+		this.points.vertices.push(new THREE.Vector3(0, 0, 0));
+		this.points.vertices.push(new THREE.Vector3(0, 0, 0));
+		this.points.vertices.push(new THREE.Vector3(0, 0, 0));
+
+		this.flies = new THREE.ParticleSystem(this.points, this.material);
+		this.flies.sortParticles = true;
+
+		this.flies.scale.set(1, 1, 1);
+
+		this.add(this.flies);
+	};
+
+	Flies.prototype = new THREE.Object3D();
+
+	Flies.prototype.computePath = function(radius, height) {
+
+		return new THREE.ClosedSplineCurve3([
+
+		   new THREE.Vector3(0, 0, radius*2),
+		   new THREE.Vector3(radius, height, radius),
+
+		   new THREE.Vector3(-radius*2, height, -radius*2),
+		   new THREE.Vector3(0.5, height, radius*2),
+
+		   new THREE.Vector3(-radius*3, 0, -radius),
+		   new THREE.Vector3(0.8, height, -radius*2),
+
+		   new THREE.Vector3(radius-1, height, -radius),
+		   new THREE.Vector3(-radius, height / 2, radius)
+		]);
+	};
+
+	Flies.prototype.update = function(game) {
+
+		this.material.map = Math.random() > 0.7 ? this.map2 : this.map1;
+
+		var point;
+		for (var i = 0; i &lt; this.points.vertices.length; i++) {
+
+			this.deltas[i] += game.delta * 0.2;
+			if (this.deltas[i] > 1) {
+				this.deltas[i] = 1 - this.deltas[i];
+			}
+
+			point = this.path.getPoint( (i % 2 ? -1 : 1) * this.deltas[i]);
+
+			this.points.vertices[i].set(point.x, point.y, point.z);
+		}
+	};
+
+	Flies.prototype.constructor = THREE.Flies;
+ 
+	return Flies;
+});</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="character.html">threearena/character</a></li><li><a href="human.html">threearena/character/human</a></li><li><a href="monsterdog.html">threearena/character/monsterdog</a></li><li><a href="ogro.html">threearena/character/ogro</a></li><li><a href="ratamahatta.html">threearena/character/ratamahatta</a></li><li><a href="attackcircle.html">threearena/controls/attackcircle</a></li><li><a href="autospawn.html">threearena/elements/autospawn</a></li><li><a href="interactiveobject.html">threearena/elements/interactiveobject</a></li><li><a href="lifebar.html">threearena/elements/lifebar</a></li><li><a href="nexus.html">threearena/elements/nexus</a></li><li><a href="shop.html">threearena/elements/shop</a></li><li><a href="tower.html">threearena/elements/tower</a></li><li><a href="toxi.html">threearena/elements/toxi</a></li><li><a href="water.html">threearena/elements/water</a></li><li><a href="demo.html">threearena/examples/demo</a></li><li><a href="game.html">threearena/game</a></li><li><a href="hud.html">threearena/hud</a></li><li><a href="log.html">threearena/log</a></li><li><a href="cloud.html">threearena/particles/cloud</a></li><li><a href="flies.html">threearena/particles/flies</a></li><li><a href="shadercloud.html">threearena/particles/shadercloud</a></li><li><a href="lightbolt.html">threearena/shaders/lightbolt</a></li><li><a href="bite.html">threearena/spell/bite</a></li><li><a href="fireaura.html">threearena/spell/fireaura</a></li><li><a href="firebullet.html">threearena/spell/firebullet</a></li><li><a href="flatfireaura.html">threearena/spell/flatfireaura</a></li><li><a href="lightbolt_.html">threearena/spell/lightbolt</a></li><li><a href="entityview.html">threearena/views/entityview</a></li><li><a href="gameview.html">threearena/views/gameview</a></li><li><a href="interactiveview.html">threearena/views/interactiveview</a></li><li><a href="module-Utils.html">Utils</a></li></ul><h3>Classes</h3><ul><li><a href="entity.html">threearena/entity</a></li><li><a href="spell.html">threearena/spell</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Tue Nov 26 2013 18:35:54 GMT+0100 (CET)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
