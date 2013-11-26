@@ -315,7 +315,7 @@ define('threearena/controls/dota',
 
 		this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
 
-		// this.domElement.addEventListener( 'mousemove', bind( this, this.mousemove ), false );
+		this.domElement.addEventListener( 'mousemove', bind( this, this.mousemove ), false );
 		// this.domElement.addEventListener( 'mousewheel', bind( this, this.mousewheel ), false );
 		// this.domElement.addEventListener( 'DOMMouseScroll', bind( this, this.mousewheel ), false ); // firefox
 
