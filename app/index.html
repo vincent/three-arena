@@ -165,8 +165,8 @@
                 <ul class="spells" data-bind="foreach: spells">
                     <li class="spell">
                         <div class="image" data-bind="event: { click: $parent.cast }, style: { backgroundImage: 'url(/gamedata/spells/' + name + '.png)' }">
-                            <span class="cooldown"></span>
                         </div>
+                        <div class="cooldown" data-bind="text: ccd, style: { transform: 'skew(' + (90 / cooldown * ccd) + 'deg)' }"></div>
                         <div class="level" data-bind="text: level">
                     </li>
                 </ul>

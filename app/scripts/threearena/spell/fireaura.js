@@ -8,7 +8,8 @@ define('threearena/spell/fireaura',
     var FireAura = function(options) {
 
         options = _.merge({}, options, {
-            name: 'fireaura'
+            name: 'fireaura',
+            cooldown: 20 * 1000
         })
 
         Spell.apply(this, [ options ]);
@@ -31,6 +32,9 @@ define('threearena/spell/fireaura',
         }, self);
 
         caster.character.root.add(this.aura.particleCloud);
+
+        self.startCooldown(caster);
+
         this.aura.start();
         window._ta_events.bind('update', updateCloud);
 

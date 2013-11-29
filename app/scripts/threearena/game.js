@@ -3,10 +3,12 @@ define('threearena/game',
 
     'threearena/utils',
     'threearena/hud',
+    'threearena/hud/spelltexts',
     'threearena/entity',
     'threearena/elements/nexus',
     'threearena/elements/tower',
     'threearena/elements/lifebar',
+    'threearena/elements/aboveheadmark',
     'threearena/elements/interactiveobject', 
     'threearena/particles/cloud', 
     'threearena/controls/dota',
@@ -35,10 +37,12 @@ define('threearena/game',
  
     Utils,
     HUD,
+    SpellTexts,
     Entity,
     Nexus,
     DefenseTower,
     LifeBar,
+    SelectMarker,
     InteractiveObject,
     Particles,
     CameraControls,
@@ -146,6 +150,7 @@ define('threearena/game',
         this.helpers = new THREE.Object3D();
 
         this.hud = new HUD.GameHud('hud-container');
+        this.spelltexts = new SpellTexts(this);
 
         //////////
 
@@ -493,13 +498,8 @@ define('threearena/game',
 
         var _load_tree_xuroiux = function(callback){
             loader.load( '/gamedata/models/plants/TreeXuroiux.dae', function ( object ) {
-                
-
-
                 object = object.scene.children[0];
-
                 // object.geometry.mergeVertices(); // needed ?
-
                 object.scale.set(3, 3, 3);
 
                 object.material.materials[0].transparent = true;
@@ -734,6 +734,7 @@ define('threearena/game',
 
         this.pcs.push(character);
         this.scene.add(character);
+        this.trigger('added-entity', character);
     };
 
     /**
@@ -866,6 +867,7 @@ define('threearena/game',
               self._inGroundSelection = null;
               $('#selection-rectangle').hide();
 
+              self.unselectCharacters();
               self.selectCharactersInZone(selection.begins, selection.ends);
 
             } else if (event.button == 2) {
@@ -1009,7 +1011,12 @@ define('threearena/game',
 
       if (! _.isArray(butCharacters)) butCharacters = [ butCharacters ];
 
-      // for (var i = 0; i < this._selected_objects.length; i++) { }
+      for (var i = 0; i < this._selected_objects.length; i++) {
+        if (this._selected_objects[i]._marker) {
+            this._selected_objects[i].remove(this._selected_objects[i]._marker);
+        }
+      }
+      
       this._selected_objects.length = 0;
       self._waitForSelection = null;
       this._inGroundSelection = null;
@@ -1023,9 +1030,17 @@ define('threearena/game',
       var selected = _.filter(this.pcs, function(character) {
         var itsin = character.position.x > start.x && character.position.z > start.z 
             && character.position.x < end.x && character.position.z < end.z;
+
         if (itsin) {
           self._selected_objects.push(character);
+          var marker = new SelectMarker({
+            onLoad: function(){
+                character._marker = marker;
+                character.add(marker);
+            }
+          });          
         }
+
         return itsin;
       });
 

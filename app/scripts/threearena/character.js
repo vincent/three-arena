@@ -74,13 +74,8 @@ define('threearena/character',
 
         var self = this;
         
-        // stop current move
-        if (self.currentTween && self.currentTween.stop) {
-            self.currentTween.stop();
-            delete self.currentTween;
-        }
-
         options = _.merge({
+            append: false,
             speed: this.state.speed,
             onStart: function(){
                 self.character.controls.moveForward = true;
@@ -109,8 +104,21 @@ define('threearena/character',
             }            
         }, options);
 
-        this.currentTween = Utils.moveAlong(self, linepoints, options);
-        return this.currentTween;
+        // stop current move
+        if (!options.append) {
+            if (self.currentTween && self.currentTween.stop) {
+                self.currentTween.stop();
+                delete self.currentTween;
+            }
+            this.currentTween = Utils.moveAlong(self, linepoints, options);
+            return this.currentTween;
+
+        } else {
+
+            this.currentTween.chain(Utils.moveAlong(self, linepoints, options));
+            return this.currentTween;            
+        }
+
     };
 
     ////////////////

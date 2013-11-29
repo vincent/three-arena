@@ -11,6 +11,9 @@ define('threearena/views/entityview',
 
         _.each(entity.state, function(v, k) {
             self[k] = ko.observable(v); // .extend({notify: 'always'});
+
+            // FIXME: Does not work because entity.spells[i].ccd is not an observable
+
         });
 
         this.xpprogress = ko.computed(function() {

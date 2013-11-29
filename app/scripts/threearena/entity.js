@@ -201,6 +201,20 @@ function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFindin
         }
     }
 
+    Entity.prototype._addRoute = function (linepoints) {
+
+        if (linepoints && linepoints.length > 0) {
+            log(log.SYS_DEBUG, '%o finds a way from %o to %o', this, linepoints[0], linepoints[linepoints.length - 1]);
+
+            if (! this._currentRoute) {
+                this._nextRoutes = [];
+            }
+
+            this._nextRoutes.push(linepoints);
+        }
+
+    }
+
     //////////////////
 
     /**
@@ -363,11 +377,14 @@ function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFindin
 
     /**
      * Hit this entity with a spell
+     * 
      * @param  {Spell} spell
      * @triggers 'hit', 'changed', 'death'
      */
     Entity.prototype.hit = function(spell) {
 
+        spell.target = this;
+        
         var eventData = {
             dodged: 0,
             meleeLifeDamageReceived: 0,
@@ -385,6 +402,7 @@ function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFindin
         // apply hits
         this.incrementLife(-eventData.totalLifeDamage);
         this.incrementMana(-eventData.manaDamageReceived);
+
         this.updateLifeBar();
 
         this.trigger('hit', eventData);
