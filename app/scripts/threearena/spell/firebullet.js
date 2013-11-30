@@ -31,7 +31,7 @@ define('threearena/spell/firebullet',
 
     FireBullet.prototype.canHit = function(source, target, toleranceRatio) {
         toleranceRatio = toleranceRatio || 1;
-        return source.position.distanceTo(target.position) < (40 * toleranceRatio);
+        return source !== target && source.position.distanceTo(target.position) < (40 * toleranceRatio);
     };
 
     FireBullet.prototype.start = function (caster, target) {

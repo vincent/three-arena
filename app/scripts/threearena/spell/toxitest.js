@@ -25,7 +25,7 @@ define('threearena/spell/bite',
 
     Bite.prototype.canHit = function(source, target, toleranceRatio) {
         toleranceRatio = toleranceRatio || 1;
-        return source.position.distanceTo(target.position) - target.state.attackRange < (this.maxRange * toleranceRatio);
+        return source !== target && source.position.distanceTo(target.position) - target.state.attackRange < (this.maxRange * toleranceRatio);
     };
 
     Bite.prototype.start = function(source, target) {

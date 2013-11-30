@@ -12,6 +12,7 @@ define('threearena/game',
     'threearena/elements/interactiveobject', 
     'threearena/particles/cloud', 
     'threearena/controls/dota',
+    'threearena/controls/destinationmarker',
     'threearena/pathfinding/recast.emcc.dota.mountains',
     
     'MD2Character',
@@ -46,6 +47,7 @@ define('threearena/game',
     InteractiveObject,
     Particles,
     CameraControls,
+    DestinationMarker,
     PathFinding
  
 ) {
@@ -87,8 +89,8 @@ define('threearena/game',
     Game.prototype.preload = function(done) {
 
         Config = {};
-        PathFinding.set_cellSize(1);
-        PathFinding.set_cellHeight(1);
+        PathFinding.set_cellSize(.8);
+        PathFinding.set_cellHeight(.5);
         PathFinding.initWithFile('/gamedata/maps/mountains.obj');
         PathFinding.build();
 
@@ -151,6 +153,7 @@ define('threearena/game',
 
         this.hud = new HUD.GameHud('hud-container');
         this.spelltexts = new SpellTexts(this);
+        this.destinationMarker = new DestinationMarker(this);
 
         //////////
 
@@ -698,7 +701,13 @@ define('threearena/game',
             function(callback) {
                 self.afterCreate();
                 callback();
+            },
+
+            function (callback) {
+                self.scene.add(self.destinationMarker);
+                callback();
             }
+
         ], main_callback);
     };
 
@@ -887,6 +896,9 @@ define('threearena/game',
               // character.objective = { position: i_pos };
               // character.behaviour = character.behaviour.warp('plotCourseToObjective');
 
+              self.destinationMarker.position.copy(i_pos);
+              self.destinationMarker.animate();
+
               PathFinding.findPath(
                 self.pcs[0].position.x, self.pcs[0].position.y, self.pcs[0].position.z,
                 i_pos.x, i_pos.y, i_pos.z,
@@ -1036,7 +1048,8 @@ define('threearena/game',
       var self = this;
 
       var selected = _.filter(this.pcs, function(character) {
-        var itsin = character.position.x > start.x && character.position.z > start.z 
+        var itsin = ! character.isDead() 
+            && character.position.x > start.x && character.position.z > start.z 
             && character.position.x < end.x && character.position.z < end.z;
 
         if (itsin) {

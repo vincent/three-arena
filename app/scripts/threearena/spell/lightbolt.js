@@ -59,7 +59,7 @@ define('threearena/spell/lightbolt',
 
     Lightbolt.prototype.canHit = function(source, target, toleranceRatio) {
         toleranceRatio = toleranceRatio || 1;
-        return source.position.distanceTo(target.position) < (50 * toleranceRatio);
+        return source !== target && source.position.distanceTo(target.position) < (50 * toleranceRatio);
     };
 
     Lightbolt.prototype.start = function (caster, target) {
