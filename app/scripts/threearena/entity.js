@@ -60,6 +60,12 @@ function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFindin
         this.attachLifeBar();
         this.attachTombstone();
 
+        this.bind('death', function(){
+            if (this.currentTween) {
+                this.currentTween.stop();
+            }
+        });
+
         this._meleeCircle = new AttackCircle(5);
         this.add(this._meleeCircle);
         this._spellCircle = new AttackCircle(20);
@@ -384,7 +390,7 @@ function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFindin
     Entity.prototype.hit = function(spell) {
 
         spell.target = this;
-        
+
         var eventData = {
             dodged: 0,
             meleeLifeDamageReceived: 0,

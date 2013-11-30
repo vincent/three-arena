@@ -1,6 +1,6 @@
 
 define('threearena/views/entityview',
-    ['lodash', 'knockout', 'threearena/entity'], function(_, ko, Entity) {
+    ['lodash', 'knockout', 'threearena/entity', 'threearena/utils'], function(_, ko, Entity, Utils) {
 
     /**
      * @exports threearena/views/entityview
@@ -33,7 +33,8 @@ define('threearena/views/entityview',
         this.cast = function(spell, event) {
             if (spell.needsTarget) {
                 game.waitForSelection(function(targets){
-                    var target = targets[0].object.parent.parent;
+                    var target = Utils.getEntity(targets[0].object);
+
                     if (target && target instanceof Entity) {
 
                         if (spell.canHit(entity, target)) {

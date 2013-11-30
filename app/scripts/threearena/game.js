@@ -728,9 +728,16 @@ define('threearena/game',
                 child.castShadow = true;
             }
         });
-        
+
+        var invisibleMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.0 });
+        var box = new THREE.Box3();
+        box.setFromObject(character);
+        box = new THREE.Mesh(new THREE.CubeGeometry(box.max.x - box.min.x, box.max.y - box.min.y, box.max.z - box.min.z, 1, 1, 1));
+        box.visible = false;
+        character.add(box);
+
         // character.character.meshBody && this.intersectObjects.push(character.character.meshBody);
-        this.intersectObjects.push(character);
+        this.intersectObjects.push(box);
 
         this.pcs.push(character);
         this.scene.add(character);
@@ -870,7 +877,8 @@ define('threearena/game',
               self.unselectCharacters();
               self.selectCharactersInZone(selection.begins, selection.ends);
 
-            } else if (event.button == 2) {
+            // TODO: find another way to check ==ground
+            } else if (event.button == 2 && intersects[0].object.parent.name == "TerrainMes") {
 
               self.endAllInteractions();
 
