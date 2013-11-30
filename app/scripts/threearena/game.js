@@ -738,6 +738,7 @@ define('threearena/game',
             }
         });
 
+        // Colisions box, mainly because MD2 can't be collided (morphTargets)
         var invisibleMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.0 });
         var box = new THREE.Box3();
         box.setFromObject(character);
@@ -745,12 +746,11 @@ define('threearena/game',
         box.visible = false;
         character.add(box);
 
-        // character.character.meshBody && this.intersectObjects.push(character.character.meshBody);
         this.intersectObjects.push(box);
 
         this.pcs.push(character);
         this.scene.add(character);
-        this.trigger('added-entity', character);
+        this.trigger('added:entity', character);
     };
 
     /**
@@ -887,7 +887,7 @@ define('threearena/game',
               self.selectCharactersInZone(selection.begins, selection.ends);
 
             // TODO: find another way to check ==ground
-            } else if (event.button == 2 && intersects[0].object.parent.name == "TerrainMes") {
+            } else if (event.button == 2 && Utils.childOf(intersects[0].object.parent, 'threearena/elements/terrain')) {
 
               self.endAllInteractions();
 
@@ -922,7 +922,7 @@ define('threearena/game',
               if (intersects[0].object && intersects[0].object) {
 
                   // maybe an entity ?
-                  entity = Utils.getEntity(intersects[0].object);
+                  entity = Utils.childOf(intersects[0].object, 'threearena/entity');
 
                   // it's an entity
                   if (entity) {
@@ -989,7 +989,7 @@ define('threearena/game',
 
       // .. but check if the ground if the first intersection
       // TODO: find another way to check ==ground
-      if (intersects.length > 0 && event.button === 0 && intersects[0].object.parent.name == "TerrainMes") {
+      if (intersects.length > 0 && event.button === 0 && Utils.childOf(intersects[0].object.parent, 'threearena/elements/terrain')) {
         // begins a selection
         this._inGroundSelection = {
           screen: { x: event.clientX, y: event.clientY },
@@ -1086,6 +1086,7 @@ define('threearena/game',
 
     /**
      * Begin a new interaction with an interactive object
+
      * @param  {InteractiveObject} interactiveObject
      */
     Game.prototype.startInteraction = function (interactiveObject) {
@@ -1154,15 +1155,6 @@ define('threearena/game',
         this.cameraControls.update(this.delta);
         this.camera.position.y = 80; // crraaaapp //
 
-        /* * /
-        // this.directionalLight.target = this.pcs[0];
-        this.pointLight.position.set(
-            this.pcs[0].position.x +  40,
-            this.pcs[0].position.y +  80,
-            this.pcs[0].position.z + -40
-        );
-        /* */
-
         _.each(this.pcs, function(character){
             character.update(self);
         });
@@ -1172,6 +1164,45 @@ define('threearena/game',
 
         this.composer.render();
     };
+
+
+    /**
+     * Finds a game object by name and returns it.
+     * 
+     * @param name Name of object
+     */
+    Game.prototype.find = function(name) {
+        return this.scene.getObjectByName(name);
+    };
+
+    /**
+     * Finds all game objects tagged tag.
+     *
+     * @param tag tag name
+     */
+    Game.prototype.findAllWithTag = function(tag) {
+        var found = [];
+
+        this.scene.traverse(function (child) {
+            if (child.tags && child.tags.indexOf(tag) > -1) {
+                found.push(child);
+            }
+        });
+
+        return found;
+    };
+
+    /**
+     * Finds all game objects tagged tag and returns the first one.
+     *
+     * @param tag tag name
+     */
+    Game.prototype.findWithTag = function(tag) {
+        var found = findAllWithTag(tag);
+        return found.length > 0 ? found[0] : null;
+    };
+
+
 
     Entity.prototype.constructor = Entity;
     MicroEvent.mixin(Game);

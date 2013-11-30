@@ -3,6 +3,7 @@ define('threearena/examples/demo',
     ['lodash', 'threejs', 'threearena/game', 'threearena/utils',
       'threearena/character/ogro', 'threearena/character/ratamahatta', 'threearena/character/monsterdog', 'threearena/character/human',
 
+      'threearena/elements/terrain',
       'threearena/elements/interactiveobject',
       'threearena/elements/autospawn',
       'threearena/elements/water',
@@ -21,7 +22,7 @@ define('threearena/examples/demo',
       'threearena/behaviours/controlled'
     ],
 
-    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, Human, InterativeObject, SpawningPool, Water, Shop, BiteSpell, FireAuraSpell, FlatFireAuraSpell, FireBulletSpell, LightboltSpell, Flies, Machine, MinionBehaviour, ControlledBehaviour) {
+    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, Human, Terrain, InterativeObject, SpawningPool, Water, Shop, BiteSpell, FireAuraSpell, FlatFireAuraSpell, FireBulletSpell, LightboltSpell, Flies, Machine, MinionBehaviour, ControlledBehaviour) {
     'use strict';
 
     /**
@@ -140,71 +141,26 @@ define('threearena/examples/demo',
 
 
     Demo.prototype._initGround = function( done ) {
-
         var self = this;
 
-        var ambient = 0xffffff, diffuse = 0xffffff, specular = 0xdd5500, shininess = 10;
+        new Terrain({
+            onLoad: function(terrain) {
+                self.ground = terrain;
+                self.intersectObjects = self.intersectObjects.concat(self.ground.children[0].children);
+                self.scene.add( self.ground );
 
-        var uniforms;
-        var shader = THREE.ShaderLib[ "normalmap" ];
-        var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
+                // A shop
+                var shop = new Shop({
+                    menu: { items: [
+                        { action: 'sell', name: 'Potion', price: 20 }
+                    ] }
+                });
+                shop.position.set( -99, 15, 94 );
+                self.intersectObjects.push( shop );
+                self.scene.add( shop );
 
-        uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2_specular.jpg" );
-        uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress3.jpg" );
-        uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress3.jpg" );
-
-        uniforms[ "enableAO" ].value = false;
-        uniforms[ "enableDiffuse" ].value = true;
-        uniforms[ "enableSpecular" ].value = false;
-
-        uniforms[ "uDiffuseColor" ].value.setHex( diffuse );
-        uniforms[ "uSpecularColor" ].value.setHex( specular );
-        uniforms[ "uAmbientColor" ].value.setHex( ambient );
-
-        uniforms[ "uNormalScale" ].value.set( 2, 2 );
-
-        uniforms[ "uShininess" ].value = shininess;
-
-        //uniforms[ "wrapRGB" ].value.set( 0.575, 0.5, 0.5 );
-
-        var parameters = { fragmentShader: shader.fragmentShader, vertexShader: shader.vertexShader, uniforms: uniforms, lights: true, fog: true };
-        var material = new THREE.ShaderMaterial( parameters );
-        // material.wrapAround = true;
-
-        // Water
-        // var water = new Water( 50, 100 );
-        // water.position.set( -100, 12, 0 );
-        // self.scene.add( water );
-
-        // Terrain
-        var loader = new THREE.OBJLoader( );
-        loader.load( '/gamedata/maps/mountains.obj', function ( object ) {
-            self.ground = object;
-            
-            self.ground.traverse( function ( child ) {
-                if ( child instanceof THREE.Mesh ) {
-                    child.material = material;
-                    child.geometry.computeVertexNormals();
-                    child.geometry.computeTangents();
-
-                    child.receiveShadow = true;
-                }
-            } );
-
-            self.intersectObjects = self.intersectObjects.concat(self.ground.children[0].children);
-            self.scene.add( self.ground );
-
-            // A shop
-            var shop = new Shop({
-                menu: { items: [
-                    { action: 'sell', name: 'Potion', price: 20 }
-                ] }
-            });
-            shop.position.set( -99, 15, 94 );
-            self.intersectObjects.push( shop );
-            self.scene.add( shop );
-
-            done();
+                done();
+            }
         });
     };
 

@@ -134,15 +134,15 @@ define('threearena/utils',
             return tween;
         },
 
-        getEntity: function ( object ) {
+        childOf: function ( object, classname ) {
 
-            var Entity = require('threearena/entity');
+            var Class = require(classname);
 
-            while (object.parent && ! (object instanceof Entity)) {
+            while (object.parent && ! (object instanceof Class)) {
                 object = object.parent;
             }
 
-            return object instanceof Entity ? object : null;
+            return object instanceof Class ? object : null;
         }
 
     };

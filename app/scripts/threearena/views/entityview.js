@@ -33,7 +33,7 @@ define('threearena/views/entityview',
         this.cast = function(spell, event) {
             if (spell.needsTarget) {
                 game.waitForSelection(function(targets){
-                    var target = Utils.getEntity(targets[0].object);
+                    var target = Utils.childOf(targets[0].object, 'threearena/entity');
 
                     if (target && target instanceof Entity) {
 

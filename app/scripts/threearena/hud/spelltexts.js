@@ -13,7 +13,7 @@ define('threearena/hud/spelltexts',
         entity.bind('hit', self._showHit);
       };
 
-      game.bind('added-entity', self._bindEntity);
+      game.bind('added:entity', self._bindEntity);
 
       self._showHit = function (eventData) {
 
