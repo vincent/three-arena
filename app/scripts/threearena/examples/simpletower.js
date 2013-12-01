@@ -1,17 +1,19 @@
 define('threearena/examples/simpletower',
 ['lodash', 'threejs', 'threearena/game', 'threearena/character/ogro', 'threearena/elements/tower', 'threearena/spell/firebullet'],
 
-function(_, THREE, Game, Ogro, DefenseTower, FireBulletSpell) {
+function(_, THREE, Arena, Ogro, DefenseTower, FireBulletSpell) {
 
-  return new Game({
+  return new Arena({
       container: document.getElementById('game-container'),
       splashContainer: document.getElementById('splash-container'),
     })
+
     .setTerrain('/gamedata/maps/simplest.obj', {
       wireframe: true,
       tDiffuse: '/gamedata/textures/plain_blue.jpg',
       tNormal: '/gamedata/textures/plain_blue.jpg'
     })
+
     .addCharacter(function(done){
       new Ogro({
         onLoad: function(){
@@ -21,6 +23,7 @@ function(_, THREE, Game, Ogro, DefenseTower, FireBulletSpell) {
         }
       });
     })
+    
     .addStatic(function(done){
       var defenseTower = new DefenseTower(0, 5, 1, {
           fireSpeed: 10,
