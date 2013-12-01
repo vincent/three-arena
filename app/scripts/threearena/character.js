@@ -82,8 +82,12 @@ define('threearena/character',
                 self.character.setAnimation('run');
             },
             onComplete: function(){
-                self.character.controls.moveForward = false;
-                self.character.setAnimation('stand');
+                self._forwardRoutes = Math.max(self._forwardRoutes - 1, 0);
+                if (self._forwardRoutes <= 0) {
+                    self.character.controls.moveForward = false;
+                    self.character.setAnimation('stand');
+                    delete self._currentTweenDestination;
+                }
             },
             onUpdate: function(tween, shape) {
                 if (self.character.activeAnimation !== 'run') {
@@ -101,24 +105,29 @@ define('threearena/character',
                         m.rotation.y = angle;
                     });
                 }
-            }            
+            }      
         }, options);
 
         // stop current move
-        if (!options.append) {
-            if (self.currentTween && self.currentTween.stop) {
-                self.currentTween.stop();
-                delete self.currentTween;
-            }
-            this.currentTween = Utils.moveAlong(self, linepoints, options);
-            return this.currentTween;
+        if (self._currentTween && options.append) {
+
+            options.start = self._forwardRoutes < 1;
+            self._forwardRoutes += 1;
+
+            var tween = Utils.moveAlong(self, linepoints, options);
+            self._currentTween.chain(tween);
+            self._currentTween = tween;
 
         } else {
 
-            this.currentTween.chain(Utils.moveAlong(self, linepoints, options));
-            return this.currentTween;            
+            if (self._currentTween && self._currentTween.stop) {
+                self._currentTween.stop();
+            }
+            self._forwardRoutes = 1;
+            self._currentTween = Utils.moveAlong(self, linepoints, options);
         }
 
+        return self._currentTween;
     };
 
     ////////////////

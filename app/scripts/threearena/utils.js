@@ -86,6 +86,7 @@ define('threearena/utils',
                 speed: 50,
 
                 start: true,
+                yoyo: false,
 
                 onStart: null,
                 onComplete: null,
@@ -106,6 +107,19 @@ define('threearena/utils',
                 throw '2nd argument is not a Shape, nor an array of vertices';
             }
 
+            var routeMesh;
+            if (game.settings.showRoutes) {
+                var routeGeometry = new THREE.TubeGeometry(shape, shape.points.length, 1, 1);
+                var routeMaterial = new THREE.MeshBasicMaterial({
+                    color: 0xffffff,
+                    opacity: 0.3,
+                    wireframe: true,
+                    transparent: true
+                });
+                routeMesh = new THREE.Mesh(routeGeometry, routeMaterial);
+                game.scene.add(routeMesh);           
+            }
+
             options.duration = options.duration || shape.getLength()
             options.length = options.duration * options.speed;
 
@@ -116,6 +130,7 @@ define('threearena/utils',
                     options.onStart && options.onStart(this);
                 })
                 .onComplete(function(){
+                    routeMesh && routeMesh.parent && routeMesh.parent.remove(routeMesh);
                     options.onComplete && options.onComplete(this);
                 })
                 .onUpdate(function(){
@@ -128,9 +143,15 @@ define('threearena/utils',
                     object.updateMatrix();
 
                     options.onUpdate && options.onUpdate(this, shape);
-                });
+                })
+                .yoyo(options.yoyo);
+
+            if (options.yoyo) {
+                tween.repeat(Infinity);
+            }                
 
             options.start && tween.start();
+
             return tween;
         },
 

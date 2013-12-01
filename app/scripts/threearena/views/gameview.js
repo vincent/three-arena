@@ -20,11 +20,9 @@ define('threearena/views/gameview',
 
         ////////////////////////////////     
 
-        // find the main ground mesh, pass its texture image
+        // find the main ground mesh, 
         game.ground.traverse(function (child) {
             if (child instanceof THREE.Mesh) {
-                self.image(child.material.uniforms.tDiffuse.value.image.src);
-
                 var geometry = child.geometry;
                 if (!geometry.boundingBox) {
                     geometry.computeBoundingBox();
@@ -34,6 +32,9 @@ define('threearena/views/gameview',
                 self.mapHeight(geometry.boundingBox.max.z - geometry.boundingBox.min.z);
             }
         });
+
+        // pass its texture image
+        self.image(game.ground.options.tDiffuse);
 
         this.update = function(game) {
             _.each(game.pcs, function(c,i){

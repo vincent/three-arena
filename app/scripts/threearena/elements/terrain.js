@@ -4,67 +4,93 @@ define('threearena/elements/terrain',
     /**
      * @exports threearena/elements/terrain
      */
-    var Terrain = function(options) {
+    var Terrain = function(file, options) {
 
-    	THREE.Object3D.apply(this);
+      THREE.Object3D.apply(this);
 
-        var self = this;
+      var self = this;
 
-        var ambient = 0xffffff, diffuse = 0xffffff, specular = 0xdd5500, shininess = 10;
+      self.options = options = options || {};
 
-        var uniforms;
-        var shader = THREE.ShaderLib[ "normalmap" ];
-        var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
+      var ambient = 0xffffff, diffuse = 0xffffff, specular = 0xdd5500, shininess = 10;
 
-        uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress2_specular.jpg" );
-        uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress3.jpg" );
-        uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( "/gamedata/dota_map_full_compress3.jpg" );
+      var uniforms;
+      var shader = THREE.ShaderLib[ "normalmap" ];
+      var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
 
-        uniforms[ "enableAO" ].value = false;
-        uniforms[ "enableDiffuse" ].value = true;
-        uniforms[ "enableSpecular" ].value = false;
+      if (options.tNormal) {
+        uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( options.tNormal );
+        uniforms[ "tNormal" ].value.wrapS = uniforms[ "tNormal" ].value.wrapT = THREE.RepeatWrapping;
 
-        uniforms[ "uDiffuseColor" ].value.setHex( diffuse );
-        uniforms[ "uSpecularColor" ].value.setHex( specular );
-        uniforms[ "uAmbientColor" ].value.setHex( ambient );
+      }
+      if (options.tDiffuse) {
+        uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( options.tDiffuse );
+        uniforms[ "tDiffuse" ].value.wrapS = uniforms[ "tDiffuse" ].value.wrapT = THREE.RepeatWrapping;
+      }
+      if (options.tSpecular) uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( options.tSpecular );
 
-        uniforms[ "uNormalScale" ].value.set( 2, 2 );
+      uniforms[ "enableAO" ].value = false;
+      uniforms[ "enableDiffuse" ].value = true;
+      uniforms[ "enableSpecular" ].value = false;
 
-        uniforms[ "uShininess" ].value = shininess;
+      uniforms[ "uDiffuseColor" ].value.setHex( diffuse );
+      uniforms[ "uSpecularColor" ].value.setHex( specular );
+      uniforms[ "uAmbientColor" ].value.setHex( ambient );
 
-        //uniforms[ "wrapRGB" ].value.set( 0.575, 0.5, 0.5 );
+      uniforms[ "uNormalScale" ].value.set( 2, 2 );
 
-        var parameters = { fragmentShader: shader.fragmentShader, vertexShader: shader.vertexShader, uniforms: uniforms, lights: true, fog: true };
-        var material = new THREE.ShaderMaterial( parameters );
-        // material.wrapAround = true;
+      uniforms[ "uShininess" ].value = shininess;
 
-        // Water
-        // var water = new Water( 50, 100 );
-        // water.position.set( -100, 12, 0 );
-        // self.scene.add( water );
+      //uniforms[ "wrapRGB" ].value.set( 0.575, 0.5, 0.5 );
 
-        // Terrain
+      var parameters = _.merge({
+        fragmentShader: shader.fragmentShader,
+        vertexShader: shader.vertexShader,
+        uniforms: uniforms,
+        lights: true,
+        fog: true
+      }, options);
+
+      var material = new THREE.ShaderMaterial( parameters );
+      // material.wrapAround = true;
+
+      // Water
+      // var water = new Water( 50, 100 );
+      // water.position.set( -100, 12, 0 );
+      // self.scene.add( water );
+
+      var onLoad = function (object) {
+          object.traverse( function ( child ) {
+              if ( child instanceof THREE.Mesh ) {
+                  child.material = material;
+
+                  child.geometry.computeVertexNormals();
+                  child.geometry.computeTangents();
+
+                  child.receiveShadow = true;
+              }
+          } );
+
+          self.add(object);
+
+          options.onLoad && options.onLoad(self);
+      };
+
+      if (file instanceof THREE.Mesh) {
+
+        onLoad(file);
+
+      } else {
+
         var loader = new THREE.OBJLoader( );
-        loader.load( '/gamedata/maps/mountains.obj', function ( object ) {
-            
-            object.traverse( function ( child ) {
-                if ( child instanceof THREE.Mesh ) {
-                    child.material = material;
-                    child.geometry.computeVertexNormals();
-                    child.geometry.computeTangents();
-
-                    child.receiveShadow = true;
-                }
-            } );
-
-            self.add(object);
-
-            options.onLoad && options.onLoad(self);
+        loader.load(file, function ( object ) {
+            onLoad(object);
         });
+      }
     };
 
-	Terrain.prototype = Object.create(THREE.Object3D.prototype);
+  Terrain.prototype = Object.create(THREE.Object3D.prototype);
 
-	Terrain.prototype.constructor = Terrain;
-	return Terrain;
+  Terrain.prototype.constructor = Terrain;
+  return Terrain;
 });

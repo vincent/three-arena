@@ -1,5 +1,5 @@
 define('threearena/entity',
-    ['lodash', 'microevent', 'threejs', 'knockout', 'threearena/log', 'threearena/utils', 'threearena/controls/attackcircle', 'threearena/elements/lifebar', 'threearena/pathfinding/recast.emcc.dota.mountains',],
+    ['lodash', 'microevent', 'threejs', 'knockout', 'threearena/log', 'threearena/utils', 'threearena/controls/attackcircle', 'threearena/elements/lifebar', 'threearena/pathfinding/recast.emcc.oem',],
 
 function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFinding) {
     PathFinding = Module;

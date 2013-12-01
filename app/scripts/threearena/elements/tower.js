@@ -43,14 +43,14 @@ define('threearena/elements/tower',
         loader.load( '/gamedata/lantern.dae', function ( loaded ) {
 
             self.aura = Particles.Aura( 'point', self.options.fireIntensity, self.options.orbTexture, null );
-            self.aura.particleCloud.position.set( x, y+8, z );
+            self.aura.particleCloud.position.set( x, y+28, z );
             self.add( self.aura.particleCloud );
             
             var lantern = loaded.scene.children[ 0 ];
             lantern.castShadow = true;
             lantern.rotation.x = -90 * Math.PI / 180;
             lantern.scale.set(7, 7, 7);
-            lantern.position.set(0, 10, 0);
+            lantern.position.set(x, y, z);
             delete loaded;
 
             self.add(lantern);

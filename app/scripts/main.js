@@ -15,6 +15,7 @@ require.config({
         microevent:     '../bower_components/microevent.js/microevent',
         sparks:         '../bower_components/threejs/examples/js/Sparks',
         tweenjs:        '../bower_components/tween.js/build/tween.min',
+        zepto:          '../bower_components/zepto/zepto.min',
         knockoutmapping:'../bower_components/knockout-mapping/knockout.mapping',
         base:           '../bower_components/Base.js/index',
         machinejs:      '../bower_components/machinejs/machine',
@@ -62,6 +63,9 @@ require.config({
         tweenjs: {
             exports: 'TWEEN',
         },
+        zepto: {
+            exports: '$',
+        }, 
         threejs: {
             exports: 'THREE',
         },
@@ -148,14 +152,11 @@ require.config({
     }
 });
 
-require([ 'lodash', 'threejs', 'threearena/examples/demo' ], function ( _, THREE, Demo ) {
+require([ 'lodash', 'threejs', 'threearena/examples/simplest' ], function ( _, THREE, Demo ) {
     'use strict';
 
     // Launch demo
-    var game = window.game = new Demo({
-        container: document.getElementById('game-container'),
-        splashContainer: document.getElementById('splash-container')
-    });
+    var game = window.game = Demo;
 
     var playButton = document.getElementById('game-play');
 

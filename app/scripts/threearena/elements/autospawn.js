@@ -1,5 +1,5 @@
 define('threearena/elements/autospawn',
-    ['lodash', 'microevent', 'threejs', 'threearena/utils', 'threearena/pathfinding/recast.emcc.dota.mountains'],
+    ['lodash', 'microevent', 'threejs', 'threearena/utils', 'threearena/pathfinding/recast.emcc.oem'],
 
 function(_, MicroEvent, THREE, Utils, PathFinding) {
     PathFinding = Module;
