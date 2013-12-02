@@ -1,41 +1,306 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>JSDoc: Class: threearena/entity</title>
-    
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+	<meta charset="utf-8">
+	<title>Three Arena Class: threearena/entity</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	
+	<link type="text/css" rel="stylesheet" href="styles/site.flatly.css">
+	
 </head>
 
 <body>
+<div class="container-fluid">
+	<div class="navbar navbar-fixed-top navbar-inverse">
+		<div class="navbar-inner">
+			<a class="brand" href="index.html">Three Arena</a>
+			<ul class="nav">
+				
+				<li class="dropdown">
+					<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b
+						class="caret"></b></a>
 
-<div id="main">
-    
-    <h1 class="page-title">Class: threearena/entity</h1>
-    
-    
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="bufficon.html">threearena/elements/bufficon</a>
+						</li>
+						
+						<li>
+							<a href="lifebar.html">threearena/elements/lifebar</a>
+						</li>
+						
+						<li>
+							<a href="nexus.html">threearena/elements/nexus</a>
+						</li>
+						
+						<li>
+							<a href="shop.html">threearena/elements/shop</a>
+						</li>
+						
+						<li>
+							<a href="terrain.html">threearena/elements/terrain</a>
+						</li>
+						
+						<li>
+							<a href="tower.html">threearena/elements/tower</a>
+						</li>
+						
+						<li>
+							<a href="toxi.html">threearena/elements/toxi</a>
+						</li>
+						
+						<li>
+							<a href="water.html">threearena/elements/water</a>
+						</li>
+						
+						<li>
+							<a href="demo.html">threearena/examples/demo</a>
+						</li>
+						
+						<li>
+							<a href="game.html">threearena/game</a>
+						</li>
+						
+						<li>
+							<a href="hud.html">threearena/hud</a>
+						</li>
+						
+						<li>
+							<a href="log.html">threearena/log</a>
+						</li>
+						
+						<li>
+							<a href="cloud.html">threearena/particles/cloud</a>
+						</li>
+						
+						<li>
+							<a href="flies.html">threearena/particles/flies</a>
+						</li>
+						
+						<li>
+							<a href="shadercloud.html">threearena/particles/shadercloud</a>
+						</li>
+						
+						<li>
+							<a href="snow.html">threearena/particles/snow</a>
+						</li>
+						
+						<li>
+							<a href="circles.html">threearena/shaders/circles</a>
+						</li>
+						
+						<li>
+							<a href="lightbolt.html">threearena/shaders/lightbolt</a>
+						</li>
+						
+						<li>
+							<a href="bite.html">threearena/spell/bite</a>
+						</li>
+						
+						<li>
+							<a href="fireaura.html">threearena/spell/fireaura</a>
+						</li>
+						
+						<li>
+							<a href="firebullet.html">threearena/spell/firebullet</a>
+						</li>
+						
+						<li>
+							<a href="flatfireaura.html">threearena/spell/flatfireaura</a>
+						</li>
+						
+						<li>
+							<a href="lightbolt_.html">threearena/spell/lightbolt</a>
+						</li>
+						
+						<li>
+							<a href="entityview.html">threearena/views/entityview</a>
+						</li>
+						
+						<li>
+							<a href="gameview.html">threearena/views/gameview</a>
+						</li>
+						
+						<li>
+							<a href="interactiveview.html">threearena/views/interactiveview</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="character.html">threearena/character</a>
+						</li>
+						
+						<li>
+							<a href="human.html">threearena/character/human</a>
+						</li>
+						
+						<li>
+							<a href="monsterdog.html">threearena/character/monsterdog</a>
+						</li>
+						
+						<li>
+							<a href="ogro.html">threearena/character/ogro</a>
+						</li>
+						
+						<li>
+							<a href="ratamahatta.html">threearena/character/ratamahatta</a>
+						</li>
+						
+						<li>
+							<a href="attackcircle.html">threearena/controls/attackcircle</a>
+						</li>
+						
+						<li>
+							<a href="dota.html">threearena/controls/dota</a>
+						</li>
+						
+						<li>
+							<a href="selection.html">threearena/controls/selection</a>
+						</li>
+						
+						<li>
+							<a href="abovemark.html">threearena/elements/abovemark</a>
+						</li>
+						
+						<li>
+							<a href="autospawn.html">threearena/elements/autospawn</a>
+						</li>
+						
+						<li>
+							<a href="interactiveobject.html">threearena/elements/interactiveobject</a>
+						</li>
+						
+						<li>
+							<a href="entity.html">threearena/entity</a>
+						</li>
+						
+						<li>
+							<a href="game_.html">threearena/game</a>
+						</li>
+						
+						<li>
+							<a href="spell.html">threearena/spell</a>
+						</li>
+						
+						<li>
+							<a href="destinationmarker.html">threearena/spell/destinationmarker</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="events.list.html" class="dropdown-toggle" data-toggle="dropdown">Events<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="game.html#event:added:entity">added:entity</a>
+						</li>
+						
+						<li>
+							<a href="game.html#event:added:spawningpool">added:spawningpool</a>
+						</li>
+						
+						<li>
+							<a href="game.html#event:added:static">added:static</a>
+						</li>
+						
+						<li>
+							<a href="game.html#event:ready">ready</a>
+						</li>
+						
+						<li>
+							<a href="game.html#event:start">start</a>
+						</li>
+						
+						<li>
+							<a href="game.html#event:update">update</a>
+						</li>
+						
+						<li>
+							<a href="game.html#event:update:behaviours">update:behaviours</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="global.html#gcb">gcb</a>
+						</li>
+						
+						<li>
+							<a href="global.html#glow">glow</a>
+						</li>
+						
+						<li>
+							<a href="global.html#glowmaterial">glowmaterial</a>
+						</li>
+						
+						<li>
+							<a href="global.html#moveAlong">moveAlong</a>
+						</li>
+						
+						<li>
+							<a href="global.html#unglow">unglow</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+			</ul>
+		</div>
+	</div>
+
+	<div class="row-fluid">
+
+		
+		<div class="span8">
+			
+				<div id="main">
+					
 
 
-
+	<h1 class="page-title">Class: threearena/entity</h1>
 <section>
-    
+
 <header>
     <h2>
     threearena/entity
     </h2>
     
-</header>  
+</header>
 
 <article>
     <div class="container-overview">
     
-    
+
     
         
 <dt>
@@ -49,7 +314,7 @@
     
     
     <div class="description">
-        A living entity
+        <p>A living entity</p>
     </div>
     
 
@@ -61,31 +326,31 @@
         <h5>Parameters:</h5>
         
 
-<table class="params">
+<table class="params table table-striped">
     <thead>
 	<tr>
 		
 		<th>Name</th>
 		
-		
+
 		<th>Type</th>
+
 		
+
 		
-		
-		
-		
+
 		<th class="last">Description</th>
 	</tr>
 	</thead>
-	
+
 	<tbody>
 	
-	
+
         <tr>
             
                 <td class="name"><code>options</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -94,51 +359,52 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
-            <td class="description last">name, image, life, mana, strength, agility, intelligence,
-         spells, level, meleeDef, meleeDamage, spellDefense, spellDamage</td>
+
+            <td class="description last"><p>name, image, life, mana, strength, agility, intelligence,
+         spells, level, meleeDef, meleeDamage, spellDefense, spellDamage</p></td>
         </tr>
-	
+
 	
 	</tbody>
 </table>
+
     
     
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line23">line 23</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#sunlight-1-line-23">line 23</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
@@ -158,22 +424,22 @@
 
     
     </div>
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
-    
-    
+
     
         <h3 class="subsection-title">Methods</h3>
-        
+
         <dl>
             
 <dt>
@@ -185,7 +451,7 @@
     
     
     <div class="description">
-        Attach a life/mana bar above the entity
+        <p>Attach a life/mana bar above the entity</p>
     </div>
     
 
@@ -198,34 +464,34 @@
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line209">line 209</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#sunlight-1-line-229">line 229</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
@@ -254,7 +520,7 @@
     
     
     <div class="description">
-        Attach a tomb, to replace the dead entity
+        <p>Attach a tomb, to replace the dead entity</p>
     </div>
     
 
@@ -267,34 +533,34 @@
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line219">line 219</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#sunlight-1-line-239">line 239</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
@@ -323,7 +589,7 @@
     
     
     <div class="description">
-        Cast a spell
+        <p>Cast a spell</p>
     </div>
     
 
@@ -335,31 +601,31 @@
         <h5>Parameters:</h5>
         
 
-<table class="params">
+<table class="params table table-striped">
     <thead>
 	<tr>
 		
 		<th>Name</th>
 		
-		
+
 		<th>Type</th>
+
 		
+
 		
-		
-		
-		
+
 		<th class="last">Description</th>
 	</tr>
 	</thead>
-	
+
 	<tbody>
 	
-	
+
         <tr>
             
                 <td class="name"><code>spell</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -368,50 +634,51 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
+
 	
 	</tbody>
 </table>
+
     
     
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line341">line 341</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#sunlight-1-line-361">line 361</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
@@ -429,7 +696,7 @@
     
             
 <div class="param-desc">
-    True if spell has been casted
+    <p>True if spell has been casted</p>
 </div>
 
 
@@ -445,6 +712,7 @@
 
 	</dd>
 </dl>
+
 
         
     
@@ -462,7 +730,7 @@
     
     
     <div class="description">
-        Hit this entity with a spell
+        <p>Hit this entity with a spell</p>
     </div>
     
 
@@ -474,31 +742,31 @@
         <h5>Parameters:</h5>
         
 
-<table class="params">
+<table class="params table table-striped">
     <thead>
 	<tr>
 		
 		<th>Name</th>
 		
-		
+
 		<th>Type</th>
+
 		
+
 		
-		
-		
-		
+
 		<th class="last">Description</th>
 	</tr>
 	</thead>
-	
+
 	<tbody>
 	
-	
+
         <tr>
             
                 <td class="name"><code>spell</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -507,50 +775,51 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
+
 	
 	</tbody>
 </table>
+
     
     
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line369">line 369</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#sunlight-1-line-390">line 390</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
@@ -579,7 +848,7 @@
     
     
     <div class="description">
-        Add a life amount
+        <p>Add a life amount</p>
     </div>
     
 
@@ -591,31 +860,31 @@
         <h5>Parameters:</h5>
         
 
-<table class="params">
+<table class="params table table-striped">
     <thead>
 	<tr>
 		
 		<th>Name</th>
 		
-		
+
 		<th>Type</th>
+
 		
+
 		
-		
-		
-		
+
 		<th class="last">Description</th>
 	</tr>
 	</thead>
-	
+
 	<tbody>
 	
-	
+
         <tr>
             
                 <td class="name"><code>increment</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -624,50 +893,51 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
+
 	
 	</tbody>
 </table>
+
     
     
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line265">line 265</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#sunlight-1-line-285">line 285</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
@@ -685,7 +955,7 @@
     
             
 <div class="param-desc">
-    new life amount
+    <p>new life amount</p>
 </div>
 
 
@@ -701,6 +971,7 @@
 
 	</dd>
 </dl>
+
 
         
     
@@ -718,7 +989,7 @@
     
     
     <div class="description">
-        Add a mana amount
+        <p>Add a mana amount</p>
     </div>
     
 
@@ -730,31 +1001,31 @@
         <h5>Parameters:</h5>
         
 
-<table class="params">
+<table class="params table table-striped">
     <thead>
 	<tr>
 		
 		<th>Name</th>
 		
-		
+
 		<th>Type</th>
+
 		
+
 		
-		
-		
-		
+
 		<th class="last">Description</th>
 	</tr>
 	</thead>
-	
+
 	<tbody>
 	
-	
+
         <tr>
             
                 <td class="name"><code>inc</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -763,50 +1034,51 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
+
 	
 	</tbody>
 </table>
+
     
     
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line276">line 276</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#sunlight-1-line-296">line 296</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
@@ -824,7 +1096,7 @@
     
             
 <div class="param-desc">
-    new mana amount
+    <p>new mana amount</p>
 </div>
 
 
@@ -840,6 +1112,7 @@
 
 	</dd>
 </dl>
+
 
         
     
@@ -857,7 +1130,7 @@
     
     
     <div class="description">
-        Returns true if entity is alive
+        <p>Returns true if entity is alive</p>
     </div>
     
 
@@ -870,34 +1143,34 @@
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line295">line 295</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#sunlight-1-line-315">line 315</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
@@ -927,6 +1200,7 @@
 
 	</dd>
 </dl>
+
 
         
     
@@ -944,7 +1218,7 @@
     
     
     <div class="description">
-        Returns true if entity is dead
+        <p>Returns true if entity is dead</p>
     </div>
     
 
@@ -957,34 +1231,34 @@
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line286">line 286</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#sunlight-1-line-306">line 306</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
@@ -1014,6 +1288,7 @@
 
 	</dd>
 </dl>
+
 
         
     
@@ -1031,7 +1306,7 @@
     
     
     <div class="description">
-        Returns true if entity is out of mana
+        <p>Returns true if entity is out of mana</p>
     </div>
     
 
@@ -1044,34 +1319,34 @@
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line304">line 304</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#sunlight-1-line-324">line 324</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
@@ -1102,6 +1377,7 @@
 	</dd>
 </dl>
 
+
         
     
     
@@ -1118,7 +1394,7 @@
     
     
     <div class="description">
-        Learn a spell
+        <p>Learn a spell</p>
     </div>
     
 
@@ -1130,31 +1406,31 @@
         <h5>Parameters:</h5>
         
 
-<table class="params">
+<table class="params table table-striped">
     <thead>
 	<tr>
 		
 		<th>Name</th>
 		
-		
+
 		<th>Type</th>
+
 		
+
 		
-		
-		
-		
+
 		<th class="last">Description</th>
 	</tr>
 	</thead>
-	
+
 	<tbody>
 	
-	
+
         <tr>
             
                 <td class="name"><code>spell</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1163,50 +1439,51 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
+
             <td class="description last"></td>
         </tr>
-	
+
 	
 	</tbody>
 </table>
+
     
     
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line329">line 329</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#sunlight-1-line-349">line 349</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
@@ -1235,7 +1512,7 @@
     
     
     <div class="description">
-        Make the entity move along a path
+        <p>Make the entity move along a path</p>
     </div>
     
 
@@ -1247,31 +1524,31 @@
         <h5>Parameters:</h5>
         
 
-<table class="params">
+<table class="params table table-striped">
     <thead>
 	<tr>
 		
 		<th>Name</th>
 		
-		
+
 		<th>Type</th>
+
 		
+
 		
-		
-		
-		
+
 		<th class="last">Description</th>
 	</tr>
 	</thead>
-	
+
 	<tbody>
 	
-	
+
         <tr>
             
                 <td class="name"><code>the</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1283,21 +1560,21 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
-            <td class="description last">shape, or the points the entity will walk along</td>
+
+            <td class="description last"><p>shape, or the points the entity will walk along</p></td>
         </tr>
+
 	
-	
-	
+
         <tr>
             
                 <td class="name"><code>options,</code></td>
             
-            
+
             <td class="type">
             
                 
@@ -1306,54 +1583,55 @@
 
             
             </td>
+
             
+
             
-            
-            
-            
-            <td class="description last">such as
+
+            <td class="description last"><p>such as
              start
              onStart
              onComplete
-             onUpdate</td>
+             onUpdate</p></td>
         </tr>
-	
+
 	
 	</tbody>
 </table>
+
     
     
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line319">line 319</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#sunlight-1-line-339">line 339</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
@@ -1371,7 +1649,7 @@
     
             
 <div class="param-desc">
-    the Tween.js object
+    <p>the Tween.js object</p>
 </div>
 
 
@@ -1387,6 +1665,7 @@
 
 	</dd>
 </dl>
+
 
         
     
@@ -1404,7 +1683,7 @@
     
     
     <div class="description">
-        Update the character lifebar
+        <p>Update the character lifebar</p>
     </div>
     
 
@@ -1417,34 +1696,34 @@
     
 <dl class="details">
     
-        
-    
-    
+
     
 
     
+
     
+
     
+
     
+
     
+
     
+
     
-    
-    
-    
-    
-    
+
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#line248">line 248</a>
+        <a href="entity.js.html">entity.js</a>, <a href="entity.js.html#sunlight-1-line-268">line 268</a>
     </li></ul></dd>
     
+
     
+
     
-    
-    
-    
+
     
 </dl>
 
@@ -1464,30 +1743,67 @@
 
         </dl>
     
+
     
-    
-    
+
     
 </article>
 
-</section>  
+</section>
 
 
 
 
-</div>
+				</div>
 
-<nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="character.html">threearena/character</a></li><li><a href="human.html">threearena/character/human</a></li><li><a href="monsterdog.html">threearena/character/monsterdog</a></li><li><a href="ogro.html">threearena/character/ogro</a></li><li><a href="ratamahatta.html">threearena/character/ratamahatta</a></li><li><a href="attackcircle.html">threearena/controls/attackcircle</a></li><li><a href="autospawn.html">threearena/elements/autospawn</a></li><li><a href="interactiveobject.html">threearena/elements/interactiveobject</a></li><li><a href="lifebar.html">threearena/elements/lifebar</a></li><li><a href="nexus.html">threearena/elements/nexus</a></li><li><a href="shop.html">threearena/elements/shop</a></li><li><a href="tower.html">threearena/elements/tower</a></li><li><a href="toxi.html">threearena/elements/toxi</a></li><li><a href="water.html">threearena/elements/water</a></li><li><a href="demo.html">threearena/examples/demo</a></li><li><a href="game.html">threearena/game</a></li><li><a href="hud.html">threearena/hud</a></li><li><a href="log.html">threearena/log</a></li><li><a href="cloud.html">threearena/particles/cloud</a></li><li><a href="flies.html">threearena/particles/flies</a></li><li><a href="shadercloud.html">threearena/particles/shadercloud</a></li><li><a href="lightbolt.html">threearena/shaders/lightbolt</a></li><li><a href="bite.html">threearena/spell/bite</a></li><li><a href="fireaura.html">threearena/spell/fireaura</a></li><li><a href="firebullet.html">threearena/spell/firebullet</a></li><li><a href="flatfireaura.html">threearena/spell/flatfireaura</a></li><li><a href="lightbolt_.html">threearena/spell/lightbolt</a></li><li><a href="entityview.html">threearena/views/entityview</a></li><li><a href="gameview.html">threearena/views/gameview</a></li><li><a href="interactiveview.html">threearena/views/interactiveview</a></li><li><a href="module-Utils.html">Utils</a></li></ul><h3>Classes</h3><ul><li><a href="entity.html">threearena/entity</a></li><li><a href="spell.html">threearena/spell</a></li></ul>
-</nav>
+				<div class="clearfix"></div>
+				<footer>
+					
+					
+		<span class="jsdoc-message">
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a>
+		on Mon Dec 02 2013 19:23:15 GMT+0100 (CET) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		</span>
+				</footer>
+			</div>
 
-<br clear="both">
+			
+			<div class="span3">
+				<div id="toc"></div>
+			</div>
+			
+			<br clear="both">
+		</div>
 
-<footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Tue Nov 26 2013 18:35:55 GMT+0100 (CET)
-</footer>
+	</div>
+	<script src="scripts/sunlight.js"></script>
+	<script src="scripts/sunlight.javascript.js"></script>
+	<script src="scripts/sunlight-plugin.doclinks.js"></script>
+	<script src="scripts/sunlight-plugin.linenumbers.js"></script>
+	<script src="scripts/sunlight-plugin.menu.js"></script>
+	<script src="scripts/jquery.min.js"></script>
+	<script src="scripts/jquery.scrollTo.js"></script>
+	<script src="scripts/jquery.localScroll.js"></script>
+	<script src="scripts/bootstrap-dropdown.js"></script>
+	<script src="scripts/toc.js"></script>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+
+	<script>  Sunlight.highlightAll({lineNumbers:true,  showMenu: true, enableDoclinks :true}); </script>
+
+	<script>
+		$( function () {
+			$( "#toc" ).toc( {
+				selectors   : "h1,h2,h3,h4",
+				showAndHide : false,
+				scrollTo    : 60
+			} );
+			$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
+			$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+
+		} );
+	</script>
+
+	
+
 </body>
 </html>

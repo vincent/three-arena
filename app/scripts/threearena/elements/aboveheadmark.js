@@ -3,6 +3,8 @@ define('threearena/elements/aboveheadmark',
 
   /**
    * @exports threearena/elements/abovemark
+   * 
+   * @constructor
    */
   var AboveMark = function(options) {
 

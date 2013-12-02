@@ -3,6 +3,8 @@ define('threearena/controls/attackcircle',
 
     /**
      * @exports threearena/controls/attackcircle
+     * 
+     * @constructor
      */
 	var AttackCircle = function ( radius ) {
 		var self = this;

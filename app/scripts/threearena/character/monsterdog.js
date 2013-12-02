@@ -3,6 +3,8 @@ define('threearena/character/monsterdog',
 
     /**
      * @exports threearena/character/monsterdog
+     * 
+     * @constructor
      */
     var Monsterdog = function( options ) {
 

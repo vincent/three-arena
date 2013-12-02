@@ -6,6 +6,8 @@ function(_, MicroEvent, THREE, Utils, PathFinding) {
 
     /**
      * @exports threearena/elements/autospawn
+     * 
+     * @constructor
      */
     var AutoSpawn = function(options) {
 

@@ -3,6 +3,8 @@ define('threearena/character/human',
 
     /**
      * @exports threearena/character/human
+     * 
+     * @constructor
      */
     var Human = function( options ) {
 

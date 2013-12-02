@@ -3,9 +3,10 @@ define('threearena/spell',
     ['lodash', 'threejs'], function(_, THREE) {
 
     /**
-     * A spell
+     * A castable spell
      * 
      * @exports threearena/spell
+     * 
      * @constructor
      * @param {Object} options
      */
@@ -38,7 +39,8 @@ define('threearena/spell',
     }
 
     /**
-     * Return `true` if this spell can hit the specified target
+     * Return `true` if this spell cast by source can hit target
+     * 
      * @param  {Entity} source         The caster entity
      * @param  {Entity} target         The target entity
      * @param  {Number} toleranceRatio acceptable distance ratio
@@ -50,6 +52,7 @@ define('threearena/spell',
 
     /**
      * Start the spell against the specified target
+     * 
      * @param  {Entity} source         The caster entity
      * @param  {Entity} target         The target entity
      */

@@ -1,8 +1,6 @@
 Three Arena
 ===
 
-> A Dota-like game experiment
-
 Demo
 ===
 http://ec2-54-228-33-93.eu-west-1.compute.amazonaws.com:9000
@@ -10,6 +8,9 @@ http://ec2-54-228-33-93.eu-west-1.compute.amazonaws.com:9000
 Current status
 ===
 ![Current status](https://raw.github.com/vincent/three-arena/master/app/images/screenshots/2013-09-09.png)
+
+Features
+===
 
 
 Show me the code

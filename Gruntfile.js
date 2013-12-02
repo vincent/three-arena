@@ -88,6 +88,7 @@ module.exports = function (grunt) {
                     dot: true,
                     src: [
                         '.tmp',
+                        'doc',
                         '<%= yeoman.dist %>/*',
                         '!<%= yeoman.dist %>/.git*'
                     ]
@@ -176,7 +177,9 @@ module.exports = function (grunt) {
             dist : {
                 src: ['app/scripts/threearena/*.js', 'app/scripts/threearena/**/*.js', '!app/scripts/threearena/pathfinding/*.js'], 
                 options: {
-                    destination: 'doc'
+                    destination: 'doc',
+                    template: 'node_modules/grunt-jsdoc/node_modules/ink-docstrap/template',
+                    configure: "node_modules/grunt-jsdoc/node_modules/ink-docstrap/template/jsdoc.conf.json"
                 }
             }
         },

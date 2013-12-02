@@ -3,6 +3,8 @@ define('threearena/character/ratamahatta',
 
     /**
      * @exports threearena/character/ratamahatta
+     * 
+     * @constructor
      */
     var Ratamahatta = function( options ) {
 

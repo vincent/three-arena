@@ -9,12 +9,12 @@ function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFindin
      *
      * @summary azd azdzad azd zadazd azdzadzadazdazdzd
      * 
+     * @exports threearena/entity
      * 
      * @triggers 'changed' when state (attributes, spells, etc) change
      * @triggers 'hit' when being hit
      * @triggers 'death' when being killed
      *
-     * @exports threearena/entity
      * @constructor
      * @param {Object} options
      *          name, image, life, mana, strength, agility, intelligence,

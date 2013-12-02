@@ -3,7 +3,10 @@ define('threearena/character',
 
    /** 
     * A module representing a character.
+    * 
     * @exports threearena/character
+    * 
+    * @constructor
     */
    var Character = function(options) {
 

@@ -5,9 +5,7 @@ define('threearena/log',
     /**
      * Logging facility
      * 
-     * @constructor
      * @exports threearena/log
-     * 
      */
     var Log = function ( type, arg1, arg2 /* ... */ ) {
     	var args = Array.prototype.slice.apply(arguments);

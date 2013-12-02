@@ -2,7 +2,9 @@ define('threearena/controls/dota',
 	['lodash', 'threejs'], function(_, THREE, HUD) {
 
     /**
-     * @exports threearena/controls/attackcircle
+     * @exports threearena/controls/dota
+     * 
+     * @constructor
      */
 	var DotaControls = function ( object, domElement ) {
 

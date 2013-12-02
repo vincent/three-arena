@@ -1,43 +1,315 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>JSDoc: Source: game.js</title>
-    
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+	<meta charset="utf-8">
+	<title>Three Arena Source: game.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.css">
+
+	
+	<link type="text/css" rel="stylesheet" href="styles/site.flatly.css">
+	
 </head>
 
 <body>
+<div class="container-fluid">
+	<div class="navbar navbar-fixed-top navbar-inverse">
+		<div class="navbar-inner">
+			<a class="brand" href="index.html">Three Arena</a>
+			<ul class="nav">
+				
+				<li class="dropdown">
+					<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b
+						class="caret"></b></a>
 
-<div id="main">
-    
-    <h1 class="page-title">Source: game.js</h1>
-    
-    
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="bufficon.html">threearena/elements/bufficon</a>
+						</li>
+						
+						<li>
+							<a href="lifebar.html">threearena/elements/lifebar</a>
+						</li>
+						
+						<li>
+							<a href="nexus.html">threearena/elements/nexus</a>
+						</li>
+						
+						<li>
+							<a href="shop.html">threearena/elements/shop</a>
+						</li>
+						
+						<li>
+							<a href="terrain.html">threearena/elements/terrain</a>
+						</li>
+						
+						<li>
+							<a href="tower.html">threearena/elements/tower</a>
+						</li>
+						
+						<li>
+							<a href="toxi.html">threearena/elements/toxi</a>
+						</li>
+						
+						<li>
+							<a href="water.html">threearena/elements/water</a>
+						</li>
+						
+						<li>
+							<a href="demo.html">threearena/examples/demo</a>
+						</li>
+						
+						<li>
+							<a href="game.html">threearena/game</a>
+						</li>
+						
+						<li>
+							<a href="hud.html">threearena/hud</a>
+						</li>
+						
+						<li>
+							<a href="log.html">threearena/log</a>
+						</li>
+						
+						<li>
+							<a href="cloud.html">threearena/particles/cloud</a>
+						</li>
+						
+						<li>
+							<a href="flies.html">threearena/particles/flies</a>
+						</li>
+						
+						<li>
+							<a href="shadercloud.html">threearena/particles/shadercloud</a>
+						</li>
+						
+						<li>
+							<a href="snow.html">threearena/particles/snow</a>
+						</li>
+						
+						<li>
+							<a href="circles.html">threearena/shaders/circles</a>
+						</li>
+						
+						<li>
+							<a href="lightbolt.html">threearena/shaders/lightbolt</a>
+						</li>
+						
+						<li>
+							<a href="bite.html">threearena/spell/bite</a>
+						</li>
+						
+						<li>
+							<a href="fireaura.html">threearena/spell/fireaura</a>
+						</li>
+						
+						<li>
+							<a href="firebullet.html">threearena/spell/firebullet</a>
+						</li>
+						
+						<li>
+							<a href="flatfireaura.html">threearena/spell/flatfireaura</a>
+						</li>
+						
+						<li>
+							<a href="lightbolt_.html">threearena/spell/lightbolt</a>
+						</li>
+						
+						<li>
+							<a href="entityview.html">threearena/views/entityview</a>
+						</li>
+						
+						<li>
+							<a href="gameview.html">threearena/views/gameview</a>
+						</li>
+						
+						<li>
+							<a href="interactiveview.html">threearena/views/interactiveview</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="character.html">threearena/character</a>
+						</li>
+						
+						<li>
+							<a href="human.html">threearena/character/human</a>
+						</li>
+						
+						<li>
+							<a href="monsterdog.html">threearena/character/monsterdog</a>
+						</li>
+						
+						<li>
+							<a href="ogro.html">threearena/character/ogro</a>
+						</li>
+						
+						<li>
+							<a href="ratamahatta.html">threearena/character/ratamahatta</a>
+						</li>
+						
+						<li>
+							<a href="attackcircle.html">threearena/controls/attackcircle</a>
+						</li>
+						
+						<li>
+							<a href="dota.html">threearena/controls/dota</a>
+						</li>
+						
+						<li>
+							<a href="selection.html">threearena/controls/selection</a>
+						</li>
+						
+						<li>
+							<a href="abovemark.html">threearena/elements/abovemark</a>
+						</li>
+						
+						<li>
+							<a href="autospawn.html">threearena/elements/autospawn</a>
+						</li>
+						
+						<li>
+							<a href="interactiveobject.html">threearena/elements/interactiveobject</a>
+						</li>
+						
+						<li>
+							<a href="entity.html">threearena/entity</a>
+						</li>
+						
+						<li>
+							<a href="game_.html">threearena/game</a>
+						</li>
+						
+						<li>
+							<a href="spell.html">threearena/spell</a>
+						</li>
+						
+						<li>
+							<a href="destinationmarker.html">threearena/spell/destinationmarker</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="events.list.html" class="dropdown-toggle" data-toggle="dropdown">Events<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="game.html#event:added:entity">added:entity</a>
+						</li>
+						
+						<li>
+							<a href="game.html#event:added:spawningpool">added:spawningpool</a>
+						</li>
+						
+						<li>
+							<a href="game.html#event:added:static">added:static</a>
+						</li>
+						
+						<li>
+							<a href="game.html#event:ready">ready</a>
+						</li>
+						
+						<li>
+							<a href="game.html#event:start">start</a>
+						</li>
+						
+						<li>
+							<a href="game.html#event:update">update</a>
+						</li>
+						
+						<li>
+							<a href="game.html#event:update:behaviours">update:behaviours</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+				<li class="dropdown">
+					<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b
+						class="caret"></b></a>
+
+					<ul class="dropdown-menu ">
+						
+						<li>
+							<a href="global.html#gcb">gcb</a>
+						</li>
+						
+						<li>
+							<a href="global.html#glow">glow</a>
+						</li>
+						
+						<li>
+							<a href="global.html#glowmaterial">glowmaterial</a>
+						</li>
+						
+						<li>
+							<a href="global.html#moveAlong">moveAlong</a>
+						</li>
+						
+						<li>
+							<a href="global.html#unglow">unglow</a>
+						</li>
+						
+
+					</ul>
+				</li>
+				
+			</ul>
+		</div>
+	</div>
+
+	<div class="row-fluid">
+
+		
+			<div class="span12">
+				
+				<div id="main">
+					
 
 
+		<h1 class="page-title">Source: game.js</h1>
     
     <section>
         <article>
-            <pre class="prettyprint source"><code>define('threearena/game',
-    ['lodash', 'async', 'threejs', 'tweenjs',
+            <pre class="sunlight-highlight-javascript linenums">/**
+ * @module threearena/game
+ */
+define('threearena/game',
+    ['lodash', 'async', 'threejs', 'tweenjs', 'zepto',
 
     'threearena/utils',
     'threearena/hud',
+    'threearena/hud/spelltexts',
     'threearena/entity',
+    'threearena/elements/terrain',
     'threearena/elements/nexus',
-    'threearena/elements/tower',
     'threearena/elements/lifebar',
+    'threearena/elements/aboveheadmark',
     'threearena/elements/interactiveobject', 
     'threearena/particles/cloud', 
     'threearena/controls/dota',
-    'threearena/pathfinding/recast.emcc.dota.mountains',
+    'threearena/controls/destinationmarker',
+    'threearena/pathfinding/recast.emcc.oem',
     
     'MD2Character',
     'MD2CharacterComplex',
@@ -58,17 +330,20 @@
     'ShaderPass',
     'MaskPass'
 
-], function (_, async, THREE, TWEEN,
+], function (_, async, THREE, TWEEN, $, 
  
     Utils,
     HUD,
+    SpellTexts,
     Entity,
+    Terrain,
     Nexus,
-    DefenseTower,
     LifeBar,
+    SelectMarker,
     InteractiveObject,
     Particles,
     CameraControls,
+    DestinationMarker,
     PathFinding
  
 ) {
@@ -77,12 +352,22 @@
     /**
      * The main game class
      * 
-     * @constructor
      * @exports threearena/game
-     * @param {Object} settings
-     * @triggers 'before:init', 'before:fillmap', 'ready', 'update'
+     * 
+     * @constructor
+     * 
+     * @param {object} settings
+     * @param {string} settings.container Game container #id
+     * @param {string} settings.splashContainer Game splashscreen, to be hidden when the game will start
+     * @param {object=} settings.fog Fog settings
+     * @param {colorstring=} settings.fog.color Fog color
+     * @param {number=} settings.fog.near Fog near
+     * @param {number=} settings.fog.far Fog far
+     * 
      */
     var Game = function (settings) {
+
+        var self = this;
 
         this.settings = _.defaults(settings, {
 
@@ -95,49 +380,17 @@
             },
 
             container: null,
+            splashContainer: null,
 
             positions: {
                 origin: new THREE.Vector3( 0, 0, 0 )
             },
 
         }, settings);
-    };
-
-    /**
-     * Init the pathfinding subsystem, and load its settings.preload urls with RequireJS  
-     * @param  {Function} callback called when finished
-     */
-    Game.prototype.preload = function(done) {
-
-        Config = {};
-        PathFinding.set_cellSize(.8);
-        PathFinding.set_cellHeight(.4);
-        PathFinding.initWithFile('/gamedata/maps/mountains.obj');
-        PathFinding.build();
-
-        PackageLoader.instance.load({
-            // These frameworks are required for the preloader to run.
-            preloader: "scripts/libs/PackageLoadingBar.js",
-            jQuery: "jquery",
-            domParent: document.body,
-
-        }, this.settings.preload, done);
-    };
-
-    /**
-     * Init the game, reset characters and map elements
-     * @param  {Function} callback called when ready to run
-     */
-    Game.prototype.init = function( ready ) {
-
-        var self = this,
-            tmp = null;
-
-        this.settings.container.innerHTML = '';
-
-        this.trigger('before:init');
 
         //////////
+
+        MicroEvent.mixin(this);
 
         this._treesRefs  = [];
 
@@ -173,6 +426,26 @@
         this.helpers = new THREE.Object3D();
 
         this.hud = new HUD.GameHud('hud-container');
+        this.bind('set:terrain', function(){
+            self.hud.attachGame(self);
+
+            _.each(self.pcs, function(obj, index){
+                self.groundObject(obj);
+
+                if (index === 0) {
+                    self.camera.position.set( obj.position.x + 30, 50, obj.position.z + 40 );
+                }
+            });
+
+            // depends on character position
+            self._clampCameraToGround();
+        });
+
+        this.spelltexts = new SpellTexts(this);
+
+        this.destinationMarker = new DestinationMarker(this);
+
+        this.trigger('before:init');
 
         //////////
 
@@ -197,12 +470,40 @@
         this.helpers.add(tmp);
 
         this._initRenderer();
+    };
+
+    /**
+     * Init the pathfinding subsystem, and load its settings.preload urls with RequireJS  
+     * @param  {Function} callback called when finished
+     */
+    Game.prototype.preload = function(done) {
+
+        PackageLoader.instance.load({
+            // These frameworks are required for the preloader to run.
+            preloader: "scripts/libs/PackageLoadingBar.js",
+            jQuery: "jquery",
+            domParent: document.body,
+
+        }, this.settings.preload, done);
+    };
+
+    /**
+     * Init the game, reset characters and map elements
+     * 
+     * @param  {Function} callback called when ready to run
+     * 
+     * @fires module:threearena/game#ready
+     */
+    Game.prototype.init = function( ready ) {
+
+        var self = this,
+            tmp = null;
+
+        //this.settings.container.innerHTML = '';
 
         this.trigger('before:fillmap');
 
         this._fillMap(function() {
-
-            self.hud.attachGame(self);
 
             self.trigger('ready', self);
 
@@ -212,25 +513,32 @@
 
     /**
      * Init the game camera
+     * 
+     * @private
      */
     Game.prototype._initCamera = function() {
 
         this.camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 10000 );
-        this.camera.position.set( this.settings.positions.spawn.x + 30, 50, this.settings.positions.spawn.z + 40 );
     };
 
     /**
      * Init scene
+     * 
+     * @private
      */
     Game.prototype._initScene = function() {
 
         this.scene = new THREE.Scene();
         //this.scene.fog = new THREE.FogExp2( 0x0, 0.00055 );
         this.scene.fog = new THREE.Fog( this.settings.fog.color, this.settings.fog.near, this.settings.fog.far );
+
+        this.scene.add(this.destinationMarker);
     };
 
     /**
      * Init global game lights
+     * 
+     * @private
      */
     Game.prototype._initLights = function() {
 
@@ -258,6 +566,8 @@
 
     /**
      * Init the renderer
+     * 
+     * @private
      */
     Game.prototype._initRenderer = function() {
         this.renderer = new THREE.WebGLRenderer();
@@ -309,38 +619,12 @@
         this.cameraControls.domElement = this.renderer.domElement;
     };
 
-    Game.prototype._initNexus = function(done) {
-
-        this.objectives[0] = new Nexus({ life: 1000000, color: '#e33' });
-        this.objectives[0].position.set(-71.2, 19, 69);
-        this.scene.add(this.objectives[0]);
-        this.intersectObjects.push(this.objectives[0]);
-
-        this.objectives[1] = new Nexus({ life: 1000000, color: '#3e3' });
-        this.objectives[1].position.set(89.2, 21, -62.5);
-        this.scene.add(this.objectives[1]);
-        this.intersectObjects.push(this.objectives[1]);
-
-        done();
-    };
-
     /**
-     * Init the ground mesh. Supposed to be overidden in actual game classes 
-     * @param  {Function} callback, called when ground mesh is set
+     * Clamp the camera movement to the ground boundings
+     * 
+     * @private
      */
-    Game.prototype._initGround = function(done) {
-        var groundGeometry = new THREE.PlaneGeometry(500, 500, 1, 1);
-        var groundMaterial = new THREE.MeshBasicMaterial({ color:'#ddd' });
-
-        this.ground = new THREE.Mesh(groundGeometry, groundMaterial);
-        this.ground.receiveShadow = true;
-
-        this.intersectObjects.push(this.ground);
-        done();
-    };
-
-    Game.prototype._clampCameraToGround = function(done) {
-        // this._ground.computeBoundBox();
+    Game.prototype._clampCameraToGround = function() {
         var bbox;
 
         this.ground.traverse( function ( child ) {
@@ -358,10 +642,14 @@
             zmin: bbox.min.z * .9 + 30, //  -30,
             zmax: bbox.max.z * .9 + 50, //  170,
         };
-
-        done();
     };
 
+    /**
+     * Init the skybox
+     * 
+     * @private
+     * @param  {Function} done called when finished
+     */
     Game.prototype._initSky = function(done) {
         var urlPrefix = '/gamedata/skybox/darkred_';
         var urls = [
@@ -384,241 +672,17 @@
 
         // build the skybox Mesh 
         var skyboxMesh = new THREE.Mesh( new THREE.CubeGeometry( 600, 600, 600, 1, 1, 1, null, true ), material );
-        //skyboxMesh.renderDepth = 1e20;
+        skyboxMesh.renderDepth = 1e20;
         this.scene.add( skyboxMesh );
         done();
     };
 
     /**
-     * Init some trees meshes, to be duplicated later
-     * @param  {Function} main_callback called when every trees models have been set
-     */
-    Game.prototype._initTrees = function(main_callback) {
-        var self = this;
-
-        var _load_tree_shader = function(callback){
-            var uniforms;
-            var shader = THREE.ShaderLib[ "normalmap" ];
-            var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
-
-            uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( "/gamedata/pine-n.png" );
-            uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( "/gamedata/pine-a.png" );
-            uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( "/gamedata/pine-c.png" );
-            uniforms[ "enableAO" ].value = false;
-            uniforms[ "enableDiffuse" ].value = true;
-            uniforms[ "enableSpecular" ].value = false;
-            uniforms[ "uDiffuseColor" ].value.setHex( new THREE.Color(0x55ff55) );
-            uniforms[ "uSpecularColor" ].value.setHex( new THREE.Color(0x55ff55) );
-            uniforms[ "uAmbientColor" ].value.setHex( new THREE.Color(0x55ff55) );
-            uniforms[ "uNormalScale" ].value.set( 1, 1 );
-            uniforms[ "uShininess" ].value = 10;
-            var parameters = { fragmentShader: shader.fragmentShader, vertexShader: shader.vertexShader, uniforms: uniforms, lights: true, fog: true };
-            self._tree_shader = new THREE.ShaderMaterial( parameters );     
-
-            // self._tree_shader = new THREE.MeshPhongMaterial({ color:'#5f5' });
-            
-            callback();       
-        };
-
-        var loader = new THREE.ColladaLoader();
-
-        var _load_tree_pine = function(callback){
-            loader.load( '/gamedata/tree_pine_simplified.dae', function ( object ) {
-                object = object.scene.children[3];
-
-                object.geometry.mergeVertices(); // needed ?
-
-                object.scale.set(10, 10, 10);
-
-                /*
-                object.geometry.computeVertexNormals();
-                object.geometry.computeTangents();
-                */
-                object.material.materials[0].transparent = true;
-                object.material.materials[1].transparent = true;
-
-                // object.material.materials[1].ambient.set(0, 0, 0);
-                object.material.materials[1].specular.set(0xdd5500);
-                // object.material.materials[1].bumpMap = THREE.ImageUtils.loadTexture( "/gamedata/pine-a.png" );
-                // object.material.materials[1].bumpScale = 19;
-
-               
-                self._treesRefs.push(object);
-                callback();
-            });
-        };
-
-        var _load_tree_oak = function(callback){
-            loader.load( '/gamedata/tree_oak.dae', function ( object ) {
-                object = object.scene.children[0];
-
-                object.material.materials[0].transparent = true;
-                object.material.materials[1].transparent = true;
-
-                object.material.materials[0].ambient.set(.5, 1, .5);
-                object.material.materials[0].diffuse.set(.5, 1, .5);
-                object.material.materials[0].specular.set(.1, 1, .1);
-
-                self._treesRefs.push(object);
-                callback();
-            });
-        };
-
-        var _load_tree_cartoon = function(callback){
-            loader.load( '/gamedata/models/forest_tree.dae', function ( object ) {
-                object = object.scene.children[0];
-
-                object.position.setY(2);
-                object.scale.set(2, 2, 2);
-
-                object.material.materials[0].transparent = true;
-                object.material.materials[1].transparent = true;
-                object.material.materials[2].transparent = true;
-                object.material.materials[3].transparent = true;
-
-                object.material.materials[0].ambient.set(1, 1, 1);
-                object.material.materials[1].ambient.set(1, 1, 1);
-                object.material.materials[2].ambient.set(1, 1, 1);
-                object.material.materials[3].ambient.set(1, 1, 1);
-
-                self._treesRefs.push(object);
-                callback();
-            });
-        };
-
-        var _load_dracena = function(callback){
-            loader.load( '/gamedata/models/plants/Dracena.dae', function ( object ) {
-                object = object.scene.children[0];
-
-                // object.scene.children[0].position.setY(2);
-                object.scale.set(.2, .2, .2);
-                //cartoonTree.add(object);
-
-                object.material.materials[0].transparent = true;
-                object.material.materials[1].transparent = true;
-                object.material.materials[2].transparent = true;
-
-                object.material.materials[0].ambient.set(1, 1, 1);
-                object.material.materials[1].ambient.set(1, 1, 1);
-                object.material.materials[2].ambient.set(1, 1, 1);
-
-                self._treesRefs.push(object);
-                callback();
-            });
-        };
-
-        var _load_eatsheep = function(callback){
-            loader = new THREE.OBJMTLLoader();
-            loader.addEventListener('load', function (event) {
-                var object = event.content.children[0].children[0];
-                object.rotation.x = 90 * Math.PI / 2;
-                self._treesRefs.push(object);
-                callback();
-            });
-            loader.load('/gamedata/models/plants/eatsheep_farm_tree.obj', '/gamedata/models/plants/eatsheep_farm_tree.mtl');
-        };
-
-        var _load_tree_xuroiux = function(callback){
-            loader.load( '/gamedata/models/plants/TreeXuroiux.dae', function ( object ) {
-                
-
-
-                object = object.scene.children[0];
-
-                // object.geometry.mergeVertices(); // needed ?
-
-                object.scale.set(3, 3, 3);
-
-                object.material.materials[0].transparent = true;
-                object.material.materials[1].specular.set(0xdd5500);
-               
-                self._treesRefs.push(object);
-                callback();
-            });
-        };
-        var _load_tree_xuroiux2 = function(callback){
-            loader = new THREE.JSONLoader();
-            loader.load('/gamedata/models/plants/TreeXuroiux.js', function ( geometry, materials ) {
-                self._treesRefs.push( new THREE.Mesh( geometry, materials[0] ) );
-                callback();
-            }, { normalizeRGB: true } );
-        };
-
-        async.series([
-            _load_tree_shader,
-
-            // _load_tree_pine,
-            // _load_tree_oak,
-            // _load_tree_cartoon,
-            // _load_dracena
-            // _load_eatsheep,
-            _load_tree_xuroiux2
-        ], main_callback);
-    };
-
-    /**
-     * Instance a new tree, by duplicating a Geometry/Material reference
-     * @param  {THREE.Vector3} position
-     * @param  {Number} index of reference tree (random by default)
-     */
-    Game.prototype.newTree = function(position, type) {
-
-        var self = this,
-            _tmp_tree;
-
-        this._treesGroup = this._treesGroup || new THREE.Object3D();
-        this._treesGroup.castShadow = true;    
-
-        // clone a tree
-        var refTreeIndex = type || Math.round( Math.random() * (this._treesRefs.length - 1) );
-        var refTree = self._treesRefs[ refTreeIndex ];
-       
-        // this._tmp_tree = this._tmp_tree || new THREE.Mesh();
-        // this._tmp_tree.geometry = refTree.geometry;
-        // this._tmp_tree.material = refTree.material;
-
-        _tmp_tree = new THREE.Mesh( refTree.geometry, refTree.material );
-        //_tmp_tree.material.materials.push(cartoon);
-        _tmp_tree.castShadow = true;
-
-        _tmp_tree.matrixAutoUpdate = false;
-        _tmp_tree.position = position;
-        _tmp_tree.position.y += 4;
-        _tmp_tree.scale = new THREE.Vector3(4, 3, 4);
-        // _tmp_tree.rotation.y = Math.random() * 90 * ( Math.PI / 180 );
-
-        if (refTreeIndex == 0) {
-            _tmp_tree.rotation.x = - 90 * ( Math.PI / 180 );
-        }
-        if (refTreeIndex == 1) {
-            //_tmp_tree.rotation.x = 10 * ( Math.PI / 180 );
-            //_tmp_tree.rotation.y = 10 * ( Math.PI / 180 );
-        }
-
-        _tmp_tree.rotation.z = Math.random() * 180 * ( Math.PI / 180 );
-
-
-        _tmp_tree.updateMatrix();
-
-        // THREE.GeometryUtils.merge(this._treesGroup.geometry, _tmp_tree);
-        this._treesGroup.add( _tmp_tree );
-    };
-
-    /**
-     * Init some towers
+     * Setup the basic options GUI
+     * 
+     * @private
      * @param  {Function} callback called when finished
      */
-    Game.prototype._initTowers = function(done) {
-
-        var defenseTower = new DefenseTower(0, 28, 1, {
-            fireSpeed: 10,
-            fireIntensity: 100
-        });
-        this.scene.add(defenseTower);
-        done(null);
-    };
-
-
     Game.prototype._setupGui = function(callback) {
         var self = this;
 
@@ -663,6 +727,8 @@
 
     /**
      * Fill map (ground, trees, towers, ...)
+     * 
+     * @private
      * @param  {Function} main_callback called when every elements has been added to scene
      */
     Game.prototype._fillMap = function(main_callback) {
@@ -670,12 +736,7 @@
         var self = this;
 
         async.series([
-            _.bind( this._initGround, this),
-            _.bind( this._clampCameraToGround, this ),
-            _.bind( this._initNexus, this),
-            //_.bind( this._initSky, this),
-            //_.bind( this._initTrees,  this),
-            //_.bind( this._initTowers, this),
+            _.bind( this._initSky, this),
             function (callback) {
                 console.log('BYPASS TREES'); callback(); return;
 
@@ -693,54 +754,462 @@
                     callback();
                 });
             },
-            function (callback) {
-                var loader = new THREE.OBJMTLLoader();
-                loader.addEventListener('load', function (event) {
-                    var object = event.content;
-                    //object.position.set(-151, 0, 122);
-                    object.position.set(-70, 17, 60);
-                    object.children[0].scale.set(0.05, 0.05, 0.05);
-
-                    var aura = Particles.Aura('point', 100, THREE.ImageUtils.loadTexture('/gamedata/textures/lensflare1_alpha.png'));
-                    aura.particleCloud.position.set(1, 12, 5);
-                    object.add(aura.particleCloud);
-                    aura.start();
-
-                    window._ta_events.bind('update', function(game){
-                        aura.update(game.delta);
-                    });
-
-                    self.scene.add(object);
-                    callback();
-                });
-                loader.load('/gamedata/models/lightning_pole/lightning_pole.obj', '/gamedata/models/lightning_pole/lightning_pole.mtl');
-            },
-
             _.bind( this._setupGui, this),
 
-            // afterCreate helper
-            function(callback) {
-                self.afterCreate();
-                callback();
-            }
         ], main_callback);
     };
 
     /**
-     * Add a character. The first one the main one
-     * @param {Entity} character
-     * @param {THREE.Vector3} spawnPosition (map's spawn point by default)
+     * Attach a listener for the next selection. There can be only one listener.
+     * 
+     * @param  {Function} onSelection
      */
-    Game.prototype.addCharacter = function(character, spawnPosition) {
+    Game.prototype.waitForSelection = function(onSelection) {
+
+        this._waitForSelection = onSelection;
+    };
+
+    /**
+     * Cast a Raycaster in camera space
+     * 
+     * @param  {Array} objects specify which objects to raycast against, all intersectables object by default
+     * @return {object} An intersections object
+     *
+     * @example
+     * window.onClick = function ( event ) {
+     *   var inter = game.raycast( event, candidates );
+     *   console.log( "ray intersects %d objects, first one in sight is %o (face %o) at %o",
+     *       inter.length, inter[0].object, inter[0].face, inter[0].point );
+     * }
+     */
+    Game.prototype.raycast = function( event, objects ) {
+
+      objects = objects || this.intersectObjects;
+
+      if (! this._raycaster_vector) {
+        this._raycaster_vector = new THREE.Vector3();
+      }
+
+      this._raycaster_vector.set(
+         (event.clientX / window.innerWidth) * 2 - 1,
+        -(event.clientY / window.innerHeight) * 2 + 1,
+        this.camera.near
+      );
+
+      if (! this._projector) {
+        this._projector = new THREE.Projector();
+      }
+
+      this._projector.unprojectVector(this._raycaster_vector, this.camera);
+
+      this._raycaster = new THREE.Raycaster(this.camera.position, this._raycaster_vector.sub(this.camera.position).normalize());
+
+      var intersects = this._raycaster.intersectObjects(objects, true); // recursive
+
+      return intersects;
+    };
+
+    ////////////////////////////////
+
+    /**
+     * Set listeners to play the game in the browser
+     * 
+     * @private
+     */
+    Game.prototype._initListeners = function() {
+
+        this.settings.container.addEventListener('mouseup', _.bind( this._onDocumentMouseUp, this), false);
+        this.settings.container.addEventListener('mousedown', _.bind( this._onDocumentMouseDown, this), false);
+        this.settings.container.addEventListener('mousemove', _.bind( this._onDocumentMouseMove, this), false);
+        this.settings.container.addEventListener('resize', _.bind( this._onWindowResize, this), false);
+    };
+
+    /**
+     * Resize listener
+     * 
+     * @private
+     */
+    Game.prototype._onWindowResize = function() {
+
+        windowHalfX = window.innerWidth / 2;
+        windowHalfY = window.innerHeight / 2;
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+    }
+
+    /**
+     * Mouse clicks listener
+     * 
+     * @private
+     */
+    Game.prototype._onDocumentMouseUp = function(event) {
 
         var self = this;
-        var spawnPosition = spawnPosition || this.settings.positions.spawn;
+        //event.preventDefault();
 
-        character.position.set(spawnPosition.x, spawnPosition.y, spawnPosition.z);
+        var intersects = self.raycast(event, self.intersectObjects);
+
+        if (intersects.length > 0) {
+
+            var i_pos = intersects[0].point,
+                entity;
+
+            // console.log('intersect at %o %o', i_pos.x, i_pos.y, i_pos.z );
+
+            // place helper
+            // helper.position.set(0, 0, 0);
+            // helper.lookAt(intersects[0].face.normal);
+            // helper.position.copy(i_pos);
+
+            var character = self.pcs[0];
+
+            if (self._inGroundSelection) {
+
+              // ends a ground selection
+              var selection = {
+                begins: self._inGroundSelection.ground,
+                ends: intersects[0].point
+              };
+
+              self._inGroundSelection = null;
+              $('#selection-rectangle').hide();
+
+              self.unselectCharacters();
+              self.selectCharactersInZone(selection.begins, selection.ends);
+
+            // TODO: find another way to check ==ground
+            } else if (event.button == 2 && Utils.childOf(intersects[0].object.parent, 'threearena/elements/terrain')) {
+
+              self.endAllInteractions();
+
+              self.destinationMarker.position.copy(i_pos);
+              self.destinationMarker.animate();
+
+              if (character) {
+                console.log('find a path between %o and %o', character.position, i_pos);
+
+                // character.objective = { position: i_pos };
+                // character.behaviour = character.behaviour.warp('plotCourseToObjective');
+
+                var startPosition = character.position.clone();
+
+                /*
+                if (character._currentTween && character._currentTweenDestination && true) {
+                    startPosition.copy(character._currentTweenDestination);
+                }
+                character._currentTweenDestination = i_pos.clone();
+                */
+
+                PathFinding.findPath(
+                    startPosition.x, startPosition.y, startPosition.z,
+                    i_pos.x, i_pos.y, i_pos.z,
+                    10000,
+                    Utils.gcb(function(path) {
+                        character.moveAlong(path, {
+                            append: event.shiftKey,
+                            yoyo: event.ctrlKey
+                        });
+                    })
+                );
+              }
+
+            } else if (self._waitForSelection) {
+
+              var callback = self._waitForSelection;
+              self._waitForSelection = null;
+              self.unselectCharacters();
+
+              callback(intersects);
+
+            } else {
+
+              // __add_tree(i_pos);
+
+              // user clicked something
+              if (intersects[0].object && intersects[0].object) {
+
+                  // maybe an entity ?
+                  entity = Utils.childOf(intersects[0].object, 'threearena/entity');
+
+                  // it's an entity
+                  if (entity) {
+
+                      // cast the first possible spell 
+                      for (var i = 0; i &lt; character.state.spells.length; i++) {
+                          if (character.state.spells[i].canHit(character, entity)) {
+                              // character.lookAt(entity.position);
+                              character.cast(character.state.spells[i], entity);
+                              break;
+                          }
+                      }
+
+                  // it's an interactive object
+                  } else if (intersects[0].object.parent && intersects[0].object.parent.parent 
+                      && intersects[0].object.parent.parent instanceof InteractiveObject) {
+
+                      if (intersects[0].object.parent.parent.isNearEnough(character)) {
+                          self.startInteraction(intersects[0].object.parent.parent);
+
+                      } else {
+                          console.log("C'est trop loin !");
+                      }
+              
+
+                  } else if (0) {
+
+                      // SUPER SIMPLE GLOW EFFECT
+                      // use sprite because it appears the same from all angles
+                      var spriteMaterial = new THREE.SpriteMaterial({ 
+                          map: new THREE.ImageUtils.loadTexture('/gamedata/textures/glow.png'), 
+                          useScreenCoordinates: false,
+                          alignment: THREE.SpriteAlignment.center,
+                          color: 0x0000ff,
+                          transparent: false,
+                          blending: THREE.AdditiveBlending
+                      });
+                      var sprite = new THREE.Sprite( spriteMaterial );
+                      sprite.scale.set(10, 10, 10);
+                      intersects[0].object.parent.parent.add(sprite); // this centers the glow at the mesh                        
+                  }
+              }
+          }
+
+        } else {
+            console.log('no intersect');
+        }
+    };
+
+    /**
+     * MouseDown event listener
+     * 
+     * @private
+     * @param  {Event} event
+     */
+    Game.prototype._onDocumentMouseDown = function(event) {
+
+      var self = this;
+      //event.preventDefault();
+
+      // for now, just discard during a click-selection 
+      if (self._waitForSelection) return;
+
+      // intersect everything ... only the ground
+      var intersects = self.raycast(event, self.intersectObjects);
+
+      // .. but check if the ground if the first intersection
+      // TODO: find another way to check ==ground
+      if (intersects.length > 0 && event.button === 0 && Utils.childOf(intersects[0].object.parent, 'threearena/elements/terrain')) {
+        // begins a selection
+        this._inGroundSelection = {
+          screen: { x: event.clientX, y: event.clientY },
+          ground: intersects[0].point.clone()
+        };
+      }
+    };
+
+    /**
+     * MouseMove event listener
+     * 
+     * @private
+     * @param  {Event} event
+     */
+    Game.prototype._onDocumentMouseMove = function(event) {
+
+      if (this._inGroundSelection) {
+        // in a selection
+        var p1 = this._inGroundSelection.screen,
+            p2 = { x: event.clientX, y: event.clientY };
+
+        $('#selection-rectangle').css({
+          left: p1.x > p2.x ? p2.x : p1.x,
+          top: p1.y > p2.y ? p2.y : p1.y,
+          width: Math.abs(p1.x - p2.x),
+          height: Math.abs(p1.y - p2.y)
+        }).show();
+      }
+
+    };
+
+    /////////////////////////////////////////
+    // TERRAIN
+
+    /**
+     * Set the walkable terrain
+     * 
+     * @param {string} file Path to the OBJ file
+     * @param {object} options Options
+     * @param {object} options.wireframe Set the terrain material as wireframe
+     * 
+     * @example
+     // Set this .OBJ file as the walkable terrain
+     game.setTerrain('/path/to/walkable.obj', {
+        wireframe: true,
+        tDiffuse: '/path/to/color_texture.jpg',
+        tNormal: '/path/to/normal_map.jpg'
+     });
+     */
+    Game.prototype.setTerrain = function(file, options) {
+        var self = this;
+
+        options = options || {};
+
+        new Terrain(file, _.merge(options, {
+            onLoad: function(terrain) {
+                self.ground = terrain;
+                self.intersectObjects = self.intersectObjects.concat(self.ground.children[0].children);
+                self.scene.add(self.ground);
+
+                // load the navigation mesh
+                $.ajax({
+                  url: file,
+                  success: function(data) {
+                    Config = {};
+                    PathFinding.set_cellSize(.8);
+                    PathFinding.set_cellHeight(.5);
+                    PathFinding.initWithFileContent(data);
+                    PathFinding.build();
+                    self.trigger('set:terrain', self.ground);
+                  }
+                });
+            }
+        }));
+
+        return this;
+    };
+
+    Game.prototype.groundObject = function(object) {
+
+        var self = this;
+
+        if (self.ground) {
+            // double-check the elevation, objects cannot be under ground
+            var inifiniteElevation = object.position.clone().setY(10000000);
+            var raycaster = new THREE.Raycaster(inifiniteElevation, new THREE.Vector3(0, -1, 0));
+            var intersects = raycaster.intersectObject(self.ground, true);
+
+            if (intersects.length) {
+                object.position.y = Math.max(object.position.y, intersects[intersects.length - 1].point.y);
+            } else {
+                throw 'object cannot be placed here';
+            }
+        } else {
+            throw 'ground has not been set yet';
+        }
+    };
+
+    /**
+     * Add a static object
+     * 
+     * @param {Function(object)} builder Function to be called with the fully initialized object.
+     * 
+     * @fires module:threearena/game#added:static
+     * 
+     * @@return {this} The game object
+     * 
+     * @example
+     * game.addStatic(function (done) {
+     *   var petShop = new Shop({
+     *     onload: function () { done(this); }
+     *   });
+     * })
+     */
+    Game.prototype.addStatic = function(builder) {
+
+        var self = this;
+
+        builder(function(object){
+            self.scene.add(object);
+            self.trigger('added:static', self.ground);
+        });
+
+        return this;
+    };
+
+    /////////////////////////////////////////
+    // INTERACTIVES
+
+    /**
+     * Add an interactive object
+     * 
+     * @param {InteractiveObject} object Interactive Object
+     * @param {object} options Options
+     * 
+     * @fires module:threearena/game#added:interactive
+     * 
+     * @@return {this} The game object
+     */
+    Game.prototype.addInteractive = function(object, options) {
+        this.intersectObjects.push(object);
+        this.scene.add(object);
+
+        return this;
+    };
+
+    /**
+     * End all not-near-enough interaction
+     * 
+     * @@return {this} The game object
+     */
+    Game.prototype.endAllInteractions = function () {
+
+        var character = this.pcs[0];
+        
+        _.each(this._selected_objects, function (object) {
+            if (object.isNearEnough && ! object.isNearEnough(character)) {
+                object.deselect();
+            }
+        });
+
+        return this;
+    };
+
+    /**
+     * Begin a new interaction with an interactive object
+     *
+     * @param  {InteractiveObject} interactiveObject
+     * 
+     * @@return {this} The game object
+     */
+    Game.prototype.startInteraction = function (interactiveObject) {
+
+        this.endAllInteractions();
+        this._selected_objects.push(interactiveObject);
+        interactiveObject.select();
+        this.hud.startInteraction(interactiveObject);
+
+        return this;
+    };
+    
+
+    /////////////////////////////////////////
+    // CHARACTERS
+
+    /**
+     * Add a character. The first one is the main one
+     *
+     * @private
+     * 
+     * @param {module:threearena/entity} character
+     * 
+     * @fires module:threearena/game#added:entity
+     * 
+     * @@return {this} The game object
+     */
+    Game.prototype._addCharacter = function(character) {
+        var self = this;
+
+        // var spawnPosition = spawnPosition || this.settings.positions.spawn || new THREE.Vector3();
+        // character.position.set(spawnPosition.x, spawnPosition.y, spawnPosition.z);
+
+        if (self.ground) {
+            self.groundObject(character);
+        }
 
         // the first one, the main one
-        if (this.pcs.length === 0) {
-            this.hud.attachEntity(character);
+        if (self.pcs.length === 0) {
+            self.hud.attachEntity(character);
+            self.camera.position.set( character.position.x + 30, 50, character.position.z + 40 );
         }
 
         character.traverse(function (child) {
@@ -752,231 +1221,181 @@
                 child.castShadow = true;
             }
         });
-        
-        // character.character.meshBody && this.intersectObjects.push(character.character.meshBody);
-        this.intersectObjects.push(character);
 
-        this.pcs.push(character);
-        this.scene.add(character);
+        // Colisions box, mainly because MD2 can't be collided (morphTargets)
+        var invisibleMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.0 });
+        var box = new THREE.Box3();
+        box.setFromObject(character);
+        box = new THREE.Mesh(new THREE.CubeGeometry(box.max.x - box.min.x, box.max.y - box.min.y, box.max.z - box.min.z, 1, 1, 1));
+        box.visible = false;
+        character.add(box);
+
+        self.intersectObjects.push(box);
+
+        self.pcs.push(character);
+        self.scene.add(character);
+        self.trigger('added:entity', character);
     };
 
     /**
-     * Remove a character from the scene 
+     * Add a character. The first one is the main one
+     * 
+     * @param {Function(object)} builder Function to be called with the fully initialized object.
+     *
+     * @@return {this} The game object
+     * 
+     * @example
+     * game.addCharacter(function (done) {
+     *   var character = new Ogro({
+     *     onload: function () { done(this); }
+     *   });
+     * })
+     * 
+     * @fires module:threearena/game#added:entity
+     */
+    Game.prototype.addCharacter = function(builder) {
+
+        var self = this;
+
+        builder(function(character){
+            self._addCharacter(character);
+        });
+
+        return this;
+    };
+
+    /**
+     * Remove a character from the scene
+     * 
      * @param  {Entity} character
+     * 
+     * @@return {this} The game object
+     * 
+     * @fires module:threearena/game#removed:entity
      */
     Game.prototype.removeCharacter = function(character) {
 
         this.pcs = _.without(this.pcs, character);
         this.scene.remove(character);
-    };
 
-
-    Game.prototype.addSpawningPool = function(pool) {
-        var self = this;
-        this.scene.add(pool);
-        pool.bind('spawnedone', function(character){
-            self.addCharacter(character, pool.position);
-        });
-    };
-
-    /**
-     * Called after fillmap, before ready.
-     * Useful for adding some details in the scene from subclasses
-     * @param  {Function} callback called when finished
-     */
-    Game.prototype.afterCreate = function() {
-
-    };
-
-    /**
-     * Attach a listener for the next selection
-     * @param  {Function} onSelection
-     */
-    Game.prototype.waitForSelection = function(onSelection) {
-
-        this._waitForSelection = onSelection;
-    };
-
-    ////////////////////////////////
-
-    /**
-     * Set listeners to play the game in the browser
-     */
-    Game.prototype._initListeners = function() {
-
-        this.settings.container.addEventListener('mouseup', _.bind( this.onDocumentMouseUp, this), false);
-        this.settings.container.addEventListener('resize', _.bind( this.onWindowResize, this), false);
-    };
-
-    /**
-     * Resize listener
-     */
-    Game.prototype.onWindowResize = function() {
-        windowHalfX = window.innerWidth / 2;
-        windowHalfY = window.innerHeight / 2;
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize( window.innerWidth, window.innerHeight );
-    }
-
-    /**
-     * Mouse clicks listener
-     */
-    Game.prototype.onDocumentMouseUp = function(event) {
-        var self = this;
-        //event.preventDefault();
-
-        switch (event.button) {
-            default: 
-              var vector = new THREE.Vector3(
-                 (event.clientX / window.innerWidth) * 2 - 1,
-                -(event.clientY / window.innerHeight) * 2 + 1,
-                self.camera.near
-              );
-              
-              var projector = new THREE.Projector();
-              projector.unprojectVector(vector, self.camera);
-
-              var raycaster = new THREE.Raycaster(self.camera.position,vector.sub(self.camera.position).normalize());
-
-              var intersects = raycaster.intersectObjects(this.intersectObjects, true); // recursive
-
-              if (intersects.length > 0) {
-
-                var i_pos = intersects[0].point,
-                    entity;
-
-                console.log('intersect at %o %o', i_pos.x, i_pos.y, i_pos.z );
-
-                // place helper
-                // helper.position.set(0, 0, 0);
-                // helper.lookAt(intersects[0].face.normal);
-                // helper.position.copy(i_pos);
-
-                var character = self.pcs[0];
-
-                if (event.button == 2) {
-
-                    self.endAllInteractions();
-
-                    console.log('find a path between %o and %o', self.pcs[0].position, i_pos);
-
-                    // character.objective = { position: i_pos };
-                    // character.behaviour = character.behaviour.warp('plotCourseToObjective');
-
-                    PathFinding.findPath(
-                        this.pcs[0].position.x, this.pcs[0].position.y, this.pcs[0].position.z,
-                        i_pos.x, i_pos.y, i_pos.z,
-                        10000,
-                        Utils.gcb( _.bind( character.moveAlong, character) )
-                    );
-
-                } else if (this._waitForSelection) {
-
-                    var callback = this._waitForSelection;
-                    this._waitForSelection = null;
-
-                    callback(intersects);
-
-                } else {
-
-                    // __add_tree(i_pos);
-
-                    // user clicked something
-                    if (intersects[0].object && intersects[0].object) {
-
-                        // maybe an entity ?
-                        entity = Utils.getEntity(intersects[0].object);
-
-                        // it's an entity
-                        if (entity) {
-
-                            // cast the first possible spell 
-                            for (var i = 0; i &lt; character.state.spells.length; i++) {
-                                if (character.state.spells[i].canHit(character, entity)) {
-                                    // character.lookAt(entity.position);
-                                    character.cast(character.state.spells[i], entity);
-                                    break;
-                                }
-                            }
-
-                        // it's an interactive object
-                        } else if (intersects[0].object.parent && intersects[0].object.parent.parent 
-                            && intersects[0].object.parent.parent instanceof InteractiveObject) {
-
-                            if (intersects[0].object.parent.parent.isNearEnough(character)) {
-                                self.startInteraction(intersects[0].object.parent.parent);
-
-                            } else {
-                                console.log("C'est trop loin !");
-                            }
-                    
-
-                        } else if (0) {
-
-                            // SUPER SIMPLE GLOW EFFECT
-                            // use sprite because it appears the same from all angles
-                            var spriteMaterial = new THREE.SpriteMaterial({ 
-                                map: new THREE.ImageUtils.loadTexture('/gamedata/textures/glow.png'), 
-                                useScreenCoordinates: false,
-                                alignment: THREE.SpriteAlignment.center,
-                                color: 0x0000ff,
-                                transparent: false,
-                                blending: THREE.AdditiveBlending
-                            });
-                            var sprite = new THREE.Sprite( spriteMaterial );
-                            sprite.scale.set(10, 10, 10);
-                            intersects[0].object.parent.parent.add(sprite); // this centers the glow at the mesh                        
-                        }
-                    }
-                }
-
-              } else {
-                  console.log('no intersect');
-              }
-              break; 
-
-        }
+        return this;
     };
 
     /**
      * Current selected objects
+     *
+     * @private
      * @type {Array}
      */
-    Game.prototype._selected_objects = [];
+    Game.prototype._selected_objects = [ ];
 
     /**
-     * End all not-near-enough interaction
+     * Deselect all selected characters
+     * 
+     * @param  {Array} butCharacters These characters should not be deselected
+     * 
+     * @@return {this} The game object
+     *
+     * @fires module:threearena/game#unselect:all
      */
-    Game.prototype.endAllInteractions = function () {
+    Game.prototype.unselectCharacters = function (butCharacters) {
 
-        var character = this.pcs[0];
-        
-        _.each(this._selected_objects, function (obj) {
-            if (! obj.isNearEnough(character)) {
-                obj.deselect();
+      if (! _.isArray(butCharacters)) butCharacters = [ butCharacters ];
+
+      var unselected = [];
+
+      for (var i = 0; i &lt; this._selected_objects.length; i++) {
+        if (this._selected_objects[i]._marker) {
+            this._selected_objects[i].remove(this._selected_objects[i]._marker);
+        }
+      }
+      
+      this._selected_objects.length = 0;
+      self._waitForSelection = null;
+      this._inGroundSelection = null;
+      $('#selection-rectangle').hide();
+
+      self.trigger('unselect:all', unselected);
+
+      return this;
+    };
+
+    /**
+     * Select all characters in a zone and return them.
+     * 
+     * @param  {Vector3} start Top left point of the select area
+     * @param  {Vector3} end Bottom right point of the select area
+     * 
+     * @return {Array} Array of selected characters
+     * 
+     * @fires module:threearena/game#select:entities
+     */
+    Game.prototype.selectCharactersInZone = function (start, end) {
+
+      var self = this;
+
+      var selected = _.filter(this.pcs, function(character) {
+        var itsin = ! character.isDead() 
+            && character.position.x > start.x && character.position.z > start.z 
+            && character.position.x &lt; end.x && character.position.z &lt; end.z;
+
+        if (itsin) {
+          self._selected_objects.push(character);
+          var marker = new SelectMarker({
+            onLoad: function(){
+                character._marker = marker;
+                character.add(marker);
             }
-        });
+          });          
+        }
+
+        return itsin;
+      });
+
+      console.log('Need to find characters in %o > %o : %o', start, end, selected);  
+
+      self.trigger('select:entities', selected);
+
+      return selected;
     };
+
+
+    /////////////////////////////////////////
+    // SPAWNING POOLS
 
     /**
-     * Begin a new interaction with an interactive object
-     * @param  {InteractiveObject} interactiveObject
+     * Add a spawning pool
+     * 
+     * @param {SpawningPool} pool spawning pool
+     * 
+     * @@return {this} The game object
+     * 
+     * @fires module:threearena/game#added:spawningpool
      */
-    Game.prototype.startInteraction = function (interactiveObject) {
+    Game.prototype.addSpawningPool = function(pool) {
+        var self = this;
 
-        this.endAllInteractions();
-        this._selected_objects.push(interactiveObject);
-        interactiveObject.select();
-        this.hud.startInteraction(interactiveObject);
+        this.scene.add(pool);
+        pool.bind('spawnedone', function(character){
+            character.position.copy(pool.position);
+            self._addCharacter(character);
+        });
+
+        self.trigger('added:spawningpool', pool);
+
+        return this;
     };
 
-    ////////////////////////////////
+
+    /////////////////////////////////////////
+    // GAME FLOW
 
     /**
      * Start a new game
      *
-     * @trigger 'start'
+     * @@return {this} The game object
+     * 
+     * @fires module:threearena/game#start
      */
     Game.prototype.start = function() {
 
@@ -986,7 +1405,9 @@
 
         this.trigger('start');
 
-        this.settings.splashContainer.className += ' animated fadeOutUpBig';
+        if (this.settings.splashContainer) {
+            this.settings.splashContainer.className += ' animated fadeOutUpBig';
+        }
         this.settings.container.style.className += ' animated fadeInUpBig';
         this.settings.container.style.display = 'block';
 
@@ -995,6 +1416,8 @@
 
         // timers
         this._behaviours_delta = this.clock.getDelta();
+
+        return this;
     };
 
     /**
@@ -1009,7 +1432,8 @@
     /**
      * Where things are rendered, inside the render loop
      * 
-     * @trigger 'update'
+     * @fires module:threearena/game#update
+     * @fires module:threearena/game#update:behaviours
      */
     Game.prototype.render = function() {
 
@@ -1029,15 +1453,6 @@
         this.cameraControls.update(this.delta);
         this.camera.position.y = 80; // crraaaapp //
 
-        /* * /
-        // this.directionalLight.target = this.pcs[0];
-        this.pointLight.position.set(
-            this.pcs[0].position.x +  40,
-            this.pcs[0].position.y +  80,
-            this.pcs[0].position.z + -40
-        );
-        /* */
-
         _.each(this.pcs, function(character){
             character.update(self);
         });
@@ -1048,29 +1463,157 @@
         this.composer.render();
     };
 
+
+    /////////////////////////////////////////
+    // UNITY - LIKE
+
+    /**
+     * Finds a game object by name and returns it.
+     * 
+     * @param name Name of object
+     */
+    Game.prototype.find = function(name) {
+        return this.scene.getObjectByName(name);
+    };
+
+    /**
+     * Finds all game objects tagged tag.
+     *
+     * @param tag tag name
+     */
+    Game.prototype.findAllWithTag = function(tag) {
+        var found = [];
+
+        this.scene.traverse(function (child) {
+            if (child.tags && child.tags.indexOf(tag) > -1) {
+                found.push(child);
+            }
+        });
+
+        return found;
+    };
+
+    /**
+     * Finds all game objects tagged tag and returns the first one.
+     *
+     * @param tag tag name
+     */
+    Game.prototype.findWithTag = function(tag) {
+        var found = findAllWithTag(tag);
+        return found.length > 0 ? found[0] : null;
+    };
+
+    /////////////////////////////////////////
+
+    /**
+     * Fired when the game is ready to be started
+     *
+     * @event module:threearena/game#ready
+     * @type {object}
+     */
+
+    /**
+     * Fired when the game start
+     *
+     * @event module:threearena/game#start
+     * @type {object}
+     */
+
+    /**
+     * Fired on every frame
+     *
+     * @event module:threearena/game#update
+     * @type {Game}
+     * @property {float} delta Delta time
+     */
+
+    /**
+     * Fired every some frames
+     *
+     * @event module:threearena/game#update:behaviours
+     * @type {Game}
+     * @property {float} delta Delta time
+     */
+
+    /**
+     * Fired when an entity has been added
+     *
+     * @event module:threearena/game#added:entity
+     * @type {Entity}
+     */
+
+    /**
+     * Fired when a static object has been added
+     *
+     * @event module:threearena/game#added:static
+     * @type {Object}
+     */
+
+    /**
+     * Fired when a spawning pool has been added
+     *
+     * @event module:threearena/game#added:spawningpool
+     * @type {SpawningPool}
+     */
+
+    /////////////////////////////////////////
+
     Entity.prototype.constructor = Entity;
-    MicroEvent.mixin(Game);
     return Game;
-});</code></pre>
+});</pre>
         </article>
     </section>
 
 
 
 
-</div>
 
-<nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="character.html">threearena/character</a></li><li><a href="human.html">threearena/character/human</a></li><li><a href="monsterdog.html">threearena/character/monsterdog</a></li><li><a href="ogro.html">threearena/character/ogro</a></li><li><a href="ratamahatta.html">threearena/character/ratamahatta</a></li><li><a href="attackcircle.html">threearena/controls/attackcircle</a></li><li><a href="autospawn.html">threearena/elements/autospawn</a></li><li><a href="interactiveobject.html">threearena/elements/interactiveobject</a></li><li><a href="lifebar.html">threearena/elements/lifebar</a></li><li><a href="nexus.html">threearena/elements/nexus</a></li><li><a href="shop.html">threearena/elements/shop</a></li><li><a href="tower.html">threearena/elements/tower</a></li><li><a href="toxi.html">threearena/elements/toxi</a></li><li><a href="water.html">threearena/elements/water</a></li><li><a href="demo.html">threearena/examples/demo</a></li><li><a href="game.html">threearena/game</a></li><li><a href="hud.html">threearena/hud</a></li><li><a href="log.html">threearena/log</a></li><li><a href="cloud.html">threearena/particles/cloud</a></li><li><a href="flies.html">threearena/particles/flies</a></li><li><a href="shadercloud.html">threearena/particles/shadercloud</a></li><li><a href="lightbolt.html">threearena/shaders/lightbolt</a></li><li><a href="bite.html">threearena/spell/bite</a></li><li><a href="fireaura.html">threearena/spell/fireaura</a></li><li><a href="firebullet.html">threearena/spell/firebullet</a></li><li><a href="flatfireaura.html">threearena/spell/flatfireaura</a></li><li><a href="lightbolt_.html">threearena/spell/lightbolt</a></li><li><a href="entityview.html">threearena/views/entityview</a></li><li><a href="gameview.html">threearena/views/gameview</a></li><li><a href="interactiveview.html">threearena/views/interactiveview</a></li><li><a href="module-Utils.html">Utils</a></li></ul><h3>Classes</h3><ul><li><a href="entity.html">threearena/entity</a></li><li><a href="spell.html">threearena/spell</a></li></ul>
-</nav>
+				</div>
 
-<br clear="both">
+				<div class="clearfix"></div>
+				<footer>
+					
+					
+		<span class="jsdoc-message">
+		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a>
+		on Mon Dec 02 2013 19:23:14 GMT+0100 (CET) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		</span>
+				</footer>
+			</div>
 
-<footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a> on Tue Nov 26 2013 18:35:54 GMT+0100 (CET)
-</footer>
+			
+			<br clear="both">
+		</div>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+	</div>
+	<script src="scripts/sunlight.js"></script>
+	<script src="scripts/sunlight.javascript.js"></script>
+	<script src="scripts/sunlight-plugin.doclinks.js"></script>
+	<script src="scripts/sunlight-plugin.linenumbers.js"></script>
+	<script src="scripts/sunlight-plugin.menu.js"></script>
+	<script src="scripts/jquery.min.js"></script>
+	<script src="scripts/jquery.scrollTo.js"></script>
+	<script src="scripts/jquery.localScroll.js"></script>
+	<script src="scripts/bootstrap-dropdown.js"></script>
+	<script src="scripts/toc.js"></script>
+
+
+	<script>  Sunlight.highlightAll({lineNumbers:true,  showMenu: true, enableDoclinks :true}); </script>
+
+	<script>
+		$( function () {
+			$( "#toc" ).toc( {
+				selectors   : "h1,h2,h3,h4",
+				showAndHide : false,
+				scrollTo    : 60
+			} );
+			$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
+			$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+
+		} );
+	</script>
+
+	
+
 </body>
 </html>

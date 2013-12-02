@@ -4,6 +4,8 @@ define('threearena/elements/interactiveobject',
 
     /**
      * @exports threearena/elements/interactiveobject
+     * 
+     * @constructor
      */
     var InteractiveObject = function(options) {
 

@@ -3,6 +3,16 @@ define('threearena/character/ogro',
 
     /**
      * @exports threearena/character/ogro
+     * 
+     * @constructor
+     * 
+     * @param {Object} options options
+     * @param {object=} options.name Character name
+     * @param {object=} options.image Path to character portrait
+     * @param {object=} options.life Character Base life
+     * @param {object=} options.mana Character Base mana
+     * 
+     * @extends {module:threearena/entity}
      */
     var Ogro = function( options ) {
 

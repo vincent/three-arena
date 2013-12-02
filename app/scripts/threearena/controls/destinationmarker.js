@@ -3,6 +3,8 @@ define('threearena/controls/destinationmarker',
 
   /**
    * @exports threearena/spell/destinationmarker
+   * 
+   * @constructor
    */
   var DestinationMarker = function(options) {
 

@@ -1,9 +1,9 @@
-/**
- * @module Utils
- */
 define('threearena/utils',
     ['lodash', 'threejs'], function(_, THREE) {
 
+    /**
+     * @exports threearena/utils
+     */
     return {
 
         /**

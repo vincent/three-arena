@@ -4,7 +4,9 @@ define('threearena/control/selection',
     function(_, MicroEvent, THREE, ko, log, Utils, LifeBar) {
 
     /**
-     * @exports threearena/controls/attackcircle
+     * @exports threearena/controls/selection
+     * 
+     * @constructor
      */
     var Selection = function (options) {
 

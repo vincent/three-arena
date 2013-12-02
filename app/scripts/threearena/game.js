@@ -1,3 +1,6 @@
+/**
+ * @module threearena/game
+ */
 define('threearena/game',
     ['lodash', 'async', 'threejs', 'tweenjs', 'zepto',
 
@@ -56,10 +59,18 @@ define('threearena/game',
     /**
      * The main game class
      * 
-     * @constructor
      * @exports threearena/game
-     * @param {Object} settings
-     * @triggers 'before:init', 'before:fillmap', 'ready', 'update'
+     * 
+     * @constructor
+     * 
+     * @param {object} settings
+     * @param {string} settings.container Game container #id
+     * @param {string} settings.splashContainer Game splashscreen, to be hidden when the game will start
+     * @param {object=} settings.fog Fog settings
+     * @param {colorstring=} settings.fog.color Fog color
+     * @param {number=} settings.fog.near Fog near
+     * @param {number=} settings.fog.far Fog far
+     * 
      */
     var Game = function (settings) {
 
@@ -75,7 +86,10 @@ define('threearena/game',
                 far: 250
             },
 
+            speed: 1,
+
             container: null,
+            splashContainer: null,
 
             positions: {
                 origin: new THREE.Vector3( 0, 0, 0 )
@@ -184,7 +198,10 @@ define('threearena/game',
 
     /**
      * Init the game, reset characters and map elements
+     * 
      * @param  {Function} callback called when ready to run
+     * 
+     * @fires module:threearena/game#ready
      */
     Game.prototype.init = function( ready ) {
 
@@ -205,6 +222,8 @@ define('threearena/game',
 
     /**
      * Init the game camera
+     * 
+     * @private
      */
     Game.prototype._initCamera = function() {
 
@@ -213,6 +232,8 @@ define('threearena/game',
 
     /**
      * Init scene
+     * 
+     * @private
      */
     Game.prototype._initScene = function() {
 
@@ -225,6 +246,8 @@ define('threearena/game',
 
     /**
      * Init global game lights
+     * 
+     * @private
      */
     Game.prototype._initLights = function() {
 
@@ -252,6 +275,8 @@ define('threearena/game',
 
     /**
      * Init the renderer
+     * 
+     * @private
      */
     Game.prototype._initRenderer = function() {
         this.renderer = new THREE.WebGLRenderer();
@@ -303,7 +328,11 @@ define('threearena/game',
         this.cameraControls.domElement = this.renderer.domElement;
     };
 
-
+    /**
+     * Clamp the camera movement to the ground boundings
+     * 
+     * @private
+     */
     Game.prototype._clampCameraToGround = function() {
         var bbox;
 
@@ -324,7 +353,12 @@ define('threearena/game',
         };
     };
 
-
+    /**
+     * Init the skybox
+     * 
+     * @private
+     * @param  {Function} done called when finished
+     */
     Game.prototype._initSky = function(done) {
         var urlPrefix = '/gamedata/skybox/darkred_';
         var urls = [
@@ -354,6 +388,8 @@ define('threearena/game',
 
     /**
      * Setup the basic options GUI
+     * 
+     * @private
      * @param  {Function} callback called when finished
      */
     Game.prototype._setupGui = function(callback) {
@@ -400,6 +436,8 @@ define('threearena/game',
 
     /**
      * Fill map (ground, trees, towers, ...)
+     * 
+     * @private
      * @param  {Function} main_callback called when every elements has been added to scene
      */
     Game.prototype._fillMap = function(main_callback) {
@@ -431,7 +469,7 @@ define('threearena/game',
     };
 
     /**
-     * Attach a listener for the next selection
+     * Attach a listener for the next selection. There can be only one listener.
      * 
      * @param  {Function} onSelection
      */
@@ -444,7 +482,14 @@ define('threearena/game',
      * Cast a Raycaster in camera space
      * 
      * @param  {Array} objects specify which objects to raycast against, all intersectables object by default
-     * @return {Object} An intersections object
+     * @return {object} An intersections object
+     *
+     * @example
+     * window.onClick = function ( event ) {
+     *   var inter = game.raycast( event, candidates );
+     *   console.log( "ray intersects %d objects, first one in sight is %o (face %o) at %o",
+     *       inter.length, inter[0].object, inter[0].face, inter[0].point );
+     * }
      */
     Game.prototype.raycast = function( event, objects ) {
 
@@ -477,19 +522,23 @@ define('threearena/game',
 
     /**
      * Set listeners to play the game in the browser
+     * 
+     * @private
      */
     Game.prototype._initListeners = function() {
 
-        this.settings.container.addEventListener('mouseup', _.bind( this.onDocumentMouseUp, this), false);
-        this.settings.container.addEventListener('mousedown', _.bind( this.onDocumentMouseDown, this), false);
-        this.settings.container.addEventListener('mousemove', _.bind( this.onDocumentMouseMove, this), false);
-        this.settings.container.addEventListener('resize', _.bind( this.onWindowResize, this), false);
+        this.settings.container.addEventListener('mouseup', _.bind( this._onDocumentMouseUp, this), false);
+        this.settings.container.addEventListener('mousedown', _.bind( this._onDocumentMouseDown, this), false);
+        this.settings.container.addEventListener('mousemove', _.bind( this._onDocumentMouseMove, this), false);
+        this.settings.container.addEventListener('resize', _.bind( this._onWindowResize, this), false);
     };
 
     /**
      * Resize listener
+     * 
+     * @private
      */
-    Game.prototype.onWindowResize = function() {
+    Game.prototype._onWindowResize = function() {
 
         windowHalfX = window.innerWidth / 2;
         windowHalfY = window.innerHeight / 2;
@@ -500,8 +549,10 @@ define('threearena/game',
 
     /**
      * Mouse clicks listener
+     * 
+     * @private
      */
-    Game.prototype.onDocumentMouseUp = function(event) {
+    Game.prototype._onDocumentMouseUp = function(event) {
 
         var self = this;
         //event.preventDefault();
@@ -641,9 +692,10 @@ define('threearena/game',
     /**
      * MouseDown event listener
      * 
+     * @private
      * @param  {Event} event
      */
-    Game.prototype.onDocumentMouseDown = function(event) {
+    Game.prototype._onDocumentMouseDown = function(event) {
 
       var self = this;
       //event.preventDefault();
@@ -668,14 +720,13 @@ define('threearena/game',
     /**
      * MouseMove event listener
      * 
+     * @private
      * @param  {Event} event
      */
-    Game.prototype.onDocumentMouseMove = function(event) {
+    Game.prototype._onDocumentMouseMove = function(event) {
 
       if (this._inGroundSelection) {
         // in a selection
-        // draw a rectangle
-        // TODO: handle reverse (x & y) selection
         var p1 = this._inGroundSelection.screen,
             p2 = { x: event.clientX, y: event.clientY };
 
@@ -695,8 +746,17 @@ define('threearena/game',
     /**
      * Set the walkable terrain
      * 
-     * @param {String} terrain Path to the OBJ file
-     * @param {Object} options Options
+     * @param {string} file Path to the OBJ file
+     * @param {object} options Options
+     * @param {object} options.wireframe Set the terrain material as wireframe
+     * 
+     * @example
+     // Set this .OBJ file as the walkable terrain
+     game.setTerrain('/path/to/walkable.obj', {
+        wireframe: true,
+        tDiffuse: '/path/to/color_texture.jpg',
+        tNormal: '/path/to/normal_map.jpg'
+     });
      */
     Game.prototype.setTerrain = function(file, options) {
         var self = this;
@@ -750,8 +810,18 @@ define('threearena/game',
     /**
      * Add a static object
      * 
-     * @param {String} terrain Path to the OBJ file
-     * @param {Object} options Options
+     * @param {Function(object)} builder Function to be called with the fully initialized object.
+     * 
+     * @fires module:threearena/game#added:static
+     * 
+     * @@return {this} The game object
+     * 
+     * @example
+     * game.addStatic(function (done) {
+     *   var petShop = new Shop({
+     *     onload: function () { done(this); }
+     *   });
+     * })
      */
     Game.prototype.addStatic = function(builder) {
 
@@ -772,7 +842,11 @@ define('threearena/game',
      * Add an interactive object
      * 
      * @param {InteractiveObject} object Interactive Object
-     * @param {Object} options Options
+     * @param {object} options Options
+     * 
+     * @fires module:threearena/game#added:interactive
+     * 
+     * @@return {this} The game object
      */
     Game.prototype.addInteractive = function(object, options) {
         this.intersectObjects.push(object);
@@ -784,6 +858,7 @@ define('threearena/game',
     /**
      * End all not-near-enough interaction
      * 
+     * @@return {this} The game object
      */
     Game.prototype.endAllInteractions = function () {
 
@@ -802,6 +877,8 @@ define('threearena/game',
      * Begin a new interaction with an interactive object
      *
      * @param  {InteractiveObject} interactiveObject
+     * 
+     * @@return {this} The game object
      */
     Game.prototype.startInteraction = function (interactiveObject) {
 
@@ -819,11 +896,17 @@ define('threearena/game',
 
     /**
      * Add a character. The first one is the main one
+     *
+     * @private
      * 
-     * @param {Entity} character
-     * @param {THREE.Vector3} spawnPosition (map's spawn point by default)
+     * @param {module:threearena/entity} character
+     * 
+     * @fires module:threearena/game#added:entity
+     * 
+     * @@return {this} The game object
      */
     Game.prototype._addCharacter = function(character) {
+        
         var self = this;
 
         // var spawnPosition = spawnPosition || this.settings.positions.spawn || new THREE.Vector3();
@@ -867,8 +950,18 @@ define('threearena/game',
     /**
      * Add a character. The first one is the main one
      * 
-     * @param {Entity} character
-     * @param {THREE.Vector3} spawnPosition (map's spawn point by default)
+     * @param {Function(object)} builder Function to be called with the fully initialized object.
+     *
+     * @@return {this} The game object
+     * 
+     * @example
+     * game.addCharacter(function (done) {
+     *   var character = new Ogro({
+     *     onload: function () { done(this); }
+     *   });
+     * })
+     * 
+     * @fires module:threearena/game#added:entity
      */
     Game.prototype.addCharacter = function(builder) {
 
@@ -885,6 +978,10 @@ define('threearena/game',
      * Remove a character from the scene
      * 
      * @param  {Entity} character
+     * 
+     * @@return {this} The game object
+     * 
+     * @fires module:threearena/game#removed:entity
      */
     Game.prototype.removeCharacter = function(character) {
 
@@ -896,7 +993,8 @@ define('threearena/game',
 
     /**
      * Current selected objects
-     * 
+     *
+     * @private
      * @type {Array}
      */
     Game.prototype._selected_objects = [ ];
@@ -905,10 +1003,17 @@ define('threearena/game',
      * Deselect all selected characters
      * 
      * @param  {Array} butCharacters These characters should not be deselected
+     * 
+     * @@return {this} The game object
+     *
+     * @fires module:threearena/game#unselect:all
      */
     Game.prototype.unselectCharacters = function (butCharacters) {
 
       if (! _.isArray(butCharacters)) butCharacters = [ butCharacters ];
+
+      var self = this,
+          unselected = [];
 
       for (var i = 0; i < this._selected_objects.length; i++) {
         if (this._selected_objects[i]._marker) {
@@ -921,6 +1026,8 @@ define('threearena/game',
       this._inGroundSelection = null;
       $('#selection-rectangle').hide();
 
+      self.trigger('unselect:all', unselected);
+
       return this;
     };
 
@@ -929,7 +1036,10 @@ define('threearena/game',
      * 
      * @param  {Vector3} start Top left point of the select area
      * @param  {Vector3} end Bottom right point of the select area
+     * 
      * @return {Array} Array of selected characters
+     * 
+     * @fires module:threearena/game#select:entities
      */
     Game.prototype.selectCharactersInZone = function (start, end) {
 
@@ -955,6 +1065,8 @@ define('threearena/game',
 
       console.log('Need to find characters in %o > %o : %o', start, end, selected);  
 
+      self.trigger('select:entities', selected);
+
       return selected;
     };
 
@@ -966,6 +1078,10 @@ define('threearena/game',
      * Add a spawning pool
      * 
      * @param {SpawningPool} pool spawning pool
+     * 
+     * @@return {this} The game object
+     * 
+     * @fires module:threearena/game#added:spawningpool
      */
     Game.prototype.addSpawningPool = function(pool) {
         var self = this;
@@ -975,6 +1091,8 @@ define('threearena/game',
             character.position.copy(pool.position);
             self._addCharacter(character);
         });
+
+        self.trigger('added:spawningpool', pool);
 
         return this;
     };
@@ -986,7 +1104,9 @@ define('threearena/game',
     /**
      * Start a new game
      *
-     * @trigger 'start'
+     * @@return {this} The game object
+     * 
+     * @fires module:threearena/game#start
      */
     Game.prototype.start = function() {
 
@@ -1023,13 +1143,14 @@ define('threearena/game',
     /**
      * Where things are rendered, inside the render loop
      * 
-     * @trigger 'update'
+     * @fires module:threearena/game#update
+     * @fires module:threearena/game#update:behaviours
      */
     Game.prototype.render = function() {
 
         var self = this;
 
-        this.delta = this.clock.getDelta();
+        this.delta = this.clock.getDelta() * this.settings.speed;
 
         if (this.clock.oldTime - this._behaviours_delta > 300) {
             this._behaviours_delta = this.clock.oldTime;
@@ -1047,10 +1168,11 @@ define('threearena/game',
             character.update(self);
         });
 
-        this.stats.update()
+        // FIXME: Use this.speed
         TWEEN.update();
 
         this.composer.render();
+        this.stats.update();
     };
 
 
@@ -1093,6 +1215,58 @@ define('threearena/game',
         return found.length > 0 ? found[0] : null;
     };
 
+    /////////////////////////////////////////
+
+    /**
+     * Fired when the game is ready to be started
+     *
+     * @event module:threearena/game#ready
+     * @type {object}
+     */
+
+    /**
+     * Fired when the game start
+     *
+     * @event module:threearena/game#start
+     * @type {object}
+     */
+
+    /**
+     * Fired on every frame
+     *
+     * @event module:threearena/game#update
+     * @type {Game}
+     * @property {float} delta Delta time
+     */
+
+    /**
+     * Fired every some frames
+     *
+     * @event module:threearena/game#update:behaviours
+     * @type {Game}
+     * @property {float} delta Delta time
+     */
+
+    /**
+     * Fired when an entity has been added
+     *
+     * @event module:threearena/game#added:entity
+     * @type {Entity}
+     */
+
+    /**
+     * Fired when a static object has been added
+     *
+     * @event module:threearena/game#added:static
+     * @type {Object}
+     */
+
+    /**
+     * Fired when a spawning pool has been added
+     *
+     * @event module:threearena/game#added:spawningpool
+     * @type {SpawningPool}
+     */
 
     /////////////////////////////////////////
 
