@@ -6,17 +6,23 @@ define('threearena/elements/lifebar',
      */
     var LifeBar = function(options) {
 
+        var self = this;
+
+        options = _.merge({
+
+        }, options);
+
         THREE.Object3D.apply(this);
 
         var texture = THREE.ImageUtils.loadTexture("/gamedata/textures/lifebar.png");
 
         // life bar
-        this.lifebarMaterial = new THREE.MeshBasicMaterial({ color:'#18ee13', map:texture })
+        this.lifebarMaterial = new THREE.MeshBasicMaterial({ color:'#18ee13', map:texture, side:THREE.DoubleSide })
         this.lifebar = new THREE.Mesh(new THREE.PlaneGeometry(10, 1, 50, 1), this.lifebarMaterial)
         this.lifebar.position.setY(16);
 
         // mana bar
-        this.manabarMaterial = new THREE.MeshBasicMaterial({ color:'#12dae6', map:texture })
+        this.manabarMaterial = new THREE.MeshBasicMaterial({ color:'#12dae6', map:texture, side:THREE.DoubleSide })
         this.manabar = new THREE.Mesh(new THREE.PlaneGeometry(10, 1, 50, 1), this.manabarMaterial)
         this.manabar.position.setY(14.8);
 

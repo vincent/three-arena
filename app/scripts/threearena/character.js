@@ -34,28 +34,6 @@ define('threearena/character',
 
 
         Entity.apply(this, [ options ]);
-
-        var loader = new THREE.ColladaLoader();
-        loader.load( '/gamedata/models/rts_elements.dae', function ( loaded ) {
-
-            self.tomb = loaded.scene.getObjectByName('Cross2');
-
-            self.tomb.castShadow = true;
-            self.tomb.rotation.x = -90 * Math.PI / 180;
-            self.tomb.scale.set(2, 2, 2);
-            self.tomb.position.set(0, 0, 0);
-
-            // when character die, show just a tomb
-            self.bind('death', function(){
-                self.update = function(){};
-
-                for (var i = 0; i < self.children.length; i++) {
-                    self.remove(self.children[i]);
-                }
-
-                self.add(self.tomb);
-            });
-        });
     };
 
     Character.prototype = Object.create(Entity.prototype);
@@ -93,6 +71,13 @@ define('threearena/character',
                 }
             },
             onUpdate: function(tween, shape) {
+
+                if (self.isDead()) {
+                    self.character.setAnimation('stand');
+                    self._currentTween.stop();
+                    return;
+                }
+
                 if (self.character.activeAnimation !== 'run') {
                     self.character.setAnimation('run');
                 }
@@ -101,13 +86,8 @@ define('threearena/character',
                 var tangent = shape.getTangent(tween.distance);
                 var angle = Math.atan2(-tangent.z, tangent.x);
 
-                // set angle of the man at that position
-                //self.rotation.y = angle;
-                if (_.isArray(self.character.meshes)) {
-                    self.character.meshes.forEach(function(m){
-                        m.rotation.y = angle;
-                    });
-                }
+                // set angle of the character at that position
+                self.rotation.y = angle;
             }      
         }, options);
 

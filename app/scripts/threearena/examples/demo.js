@@ -1,7 +1,7 @@
 
 define('threearena/examples/demo',
     ['lodash', 'threejs', 'threearena/game', 'threearena/utils',
-      'threearena/character/ogro', 'threearena/character/ratamahatta', 'threearena/character/monsterdog', 'threearena/character/human',
+      'threearena/character/ogro', 'threearena/character/007', 'threearena/character/monsterdog', 'threearena/character/human',
 
       'threearena/elements/terrain',
       'threearena/elements/interactiveobject',
@@ -24,7 +24,7 @@ define('threearena/examples/demo',
       'threearena/behaviours/controlled'
     ],
 
-    function(_, THREE, Game, Utils, Ogro, Ratamahatta, Dog, Human, Terrain, InterativeObject, SpawningPool, Water, Shop, Nexus, BiteSpell, FireAuraSpell, FlatFireAuraSpell, FireBulletSpell, LightboltSpell, Particles, Flies, Machine, MinionBehaviour, ControlledBehaviour) {
+    function(_, THREE, Game, Utils, Ogro, OO7, Dog, Human, Terrain, InterativeObject, SpawningPool, Water, Shop, Nexus, BiteSpell, FireAuraSpell, FlatFireAuraSpell, FireBulletSpell, LightboltSpell, Particles, Flies, Machine, MinionBehaviour, ControlledBehaviour) {
     'use strict';
 
     /**
@@ -72,20 +72,20 @@ define('threearena/examples/demo',
 
 
     Demo.setTerrain('/gamedata/maps/mountains.obj', {
-        tNormal: '/gamedata/dota_map_full_compress2_specular.jpg',
         tDiffuse: '/gamedata/dota_map_full_compress3.jpg',
-        tSpecular: '/gamedata/dota_map_full_compress3.jpg'        
+        tNormal: '/gamedata/textures/plain_blue.png',
+        // tSpecular: '/gamedata/dota_map_full_compress3.jpg'        
     });
 
 
     var objective1, objective2;
     Demo.addStatic(function(done){
-        objective1 = new Nexus({ life: 1000000, color: '#e33' });
+        objective1 = new Nexus({ life: 1000000, color: '#F33' });
         objective1.position.set(-71.2, 19, 69);
         // Demo.intersectObjects.push(objective1);
         done(objective1);
 
-        objective2 = new Nexus({ life: 1000000, color: '#3e3' });
+        objective2 = new Nexus({ life: 1000000, color: '#3F3' });
         objective2.position.set(89.2, 21, -62.5);
         // Demo.intersectObjects.push(objective2);
         done(objective2);
@@ -129,11 +129,13 @@ define('threearena/examples/demo',
 
 
     // Some flies
-    Demo.addStatic(function (done) {
-        var flies = new Flies(10);
-        flies.position.set(-70, 20, 80);
-        Demo.bind('update', _.bind(flies.update, flies));
-        done(flies);
+    Demo.bind('set:terrain', function(){
+        Demo.addStatic(function (done) {
+            var flies = new Flies(10);
+            flies.position = Demo.randomPositionOnterrain();
+            Demo.bind('update', _.bind(flies.update, flies));
+            done(flies);
+        });
     });
 
 
@@ -143,7 +145,7 @@ define('threearena/examples/demo',
 
     // Another character
     Demo.addCharacter(function(done){
-        var ogro = new Ogro({
+        var ogro = new OO7({
             onLoad: function(){
                 var character = this;
 
@@ -151,7 +153,7 @@ define('threearena/examples/demo',
 
                 character.behaviour = machine.generateTree(ControlledBehaviour, character, character.states);
                 Demo.bind('update:behaviours', function () {
-                    character.behaviour = character.behaviour.tick();
+                    // character.behaviour = character.behaviour.tick();
                 });
 
                 // learn some spells
@@ -161,6 +163,8 @@ define('threearena/examples/demo',
                 character.learnSpell( LightboltSpell );
 
                 character.position.copy(Demo.settings.positions.nearcamp);
+
+                Demo.asPlayer(character);
 
                 done(character);
             }

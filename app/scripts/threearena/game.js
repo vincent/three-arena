@@ -88,6 +88,8 @@ define('threearena/game',
 
             speed: 1,
 
+            cameraHeight: 80,
+
             container: null,
             splashContainer: null,
 
@@ -102,6 +104,8 @@ define('threearena/game',
         MicroEvent.mixin(this);
 
         this._treesRefs  = [];
+
+        this._started = false;
 
         this.objectives = {
             0: null,  // team 2 objective
@@ -146,7 +150,7 @@ define('threearena/game',
                 }
             });
 
-            // depends on character position
+            // depends on terrain size
             self._clampCameraToGround();
         });
 
@@ -227,7 +231,9 @@ define('threearena/game',
      */
     Game.prototype._initCamera = function() {
 
-        this.camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 10000 );
+        var dims = this.getContainerDimensions();
+
+        this.camera = new THREE.PerspectiveCamera( 50, dims.width / dims.height, 1, 10000 );
     };
 
     /**
@@ -242,6 +248,7 @@ define('threearena/game',
         this.scene.fog = new THREE.Fog( this.settings.fog.color, this.settings.fog.near, this.settings.fog.far );
 
         this.scene.add(this.destinationMarker);
+        this.scene.add(this.helpers);
     };
 
     /**
@@ -251,20 +258,41 @@ define('threearena/game',
      */
     Game.prototype._initLights = function() {
 
-        this.ambientLight = new THREE.AmbientLight( 0xffffff );
+        this.ambientLight = new THREE.AmbientLight( 0x010101 );
         this.scene.add( this.ambientLight );
 
-        this.pointLight = new THREE.PointLight( 0xffffff, 1.25, 1000 );
-        //this.pointLight.shadowCameraVisible = true;
-        this.pointLight.position.set( 0, 0, 600 );
-        this.scene.add( this.pointLight );
+        // SpotLight( hex, intensity, distance, angle, exponent )
+        // PointLight( hex, intensity, distance )
 
-        this.directionalLight = new THREE.SpotLight( 0xffffff );
-        // this.directionalLight.ambient = 0xffffff;
-        // this.directionalLight.diffuse = 0xffffff;
-        this.directionalLight.specular = new THREE.Color('#050101'); // 0xaaaa22;
+        /*
+        this.pointLight = new THREE.PointLight( 0xffffff, 1, 100 ); //, Math.PI );
+        this.pointLight.shadowCameraVisible = true;
+        this.pointLight.position.set( -20, 0, 20 );
+        */
+
+        this.pointLight = new THREE.SpotLight( 0xffffff, 1, 100, Math.PI );
+        this.pointLight.shadowCameraVisible = true;
+        this.pointLight.shadowCameraNear = 10;
+        this.pointLight.shadowCameraFar = 100;
+        this.pointLight.position.set( 0, 180, 0 );
+        this.pointLight.intensity = 6;
+        this.pointLight.distance = 250;
+        this.pointLight.angle = .5;
+        this.pointLight.exponent = 17;
+        this.pointLight.ambient = 0xffffff;
+        this.pointLight.diffuse = 0xffffff;
+        this.pointLight.specular = 0xffffff; // new THREE.Color('#050101'); // 0xaaaa22;
+        this.scene.add(this.pointLight);
+
+
+
+        this.directionalLight = new THREE.SpotLight( 0xffffff, 1, 10000 );
+        this.directionalLight.ambient = 0xffffff;
+        this.directionalLight.diffuse = 0xffffff;
+        this.directionalLight.specular = 0xffffff; // new THREE.Color('#050101'); // 0xaaaa22;
+
         this.directionalLight.position.set( -200, 400, -200 );
-        this.directionalLight.intensity = .9;
+        this.directionalLight.intensity = 2;
         this.directionalLight.castShadow = true;
         this.directionalLight.shadowMapWidth = 1024;
         this.directionalLight.shadowMapHeight = 1024;
@@ -279,6 +307,9 @@ define('threearena/game',
      * @private
      */
     Game.prototype._initRenderer = function() {
+
+        var dims = this.getContainerDimensions();
+
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.shadowMapEnabled = true;
         this.renderer.shadowMapSoft = true;
@@ -295,29 +326,36 @@ define('threearena/game',
 
         // this.renderer.shadowMapBias = 0.0039;
         // this.renderer.shadowMapDarkness = 0.5;
-        // this.renderer.shadowMapWidth = window.innerWidth;
-        // this.renderer.shadowMapHeight = window.innerHeight;
+        // this.renderer.shadowMapWidth = dims.width;
+        // this.renderer.shadowMapHeight = dims.height;
 
         this.renderer.setClearColor( this.scene.fog.color, 1 );
 
-        this.renderer.setSize( window.innerWidth, window.innerHeight);
+        this.renderer.setSize( dims.width, dims.height);
 
-        var renderModel = new THREE.RenderPass( this.scene, this.camera ); renderModel._name = 'Model';
-        var effectBleach = new THREE.ShaderPass( THREE.BleachBypassShader ); effectBleach._name = 'Bleach';
-        var effectColor = new THREE.ShaderPass( THREE.ColorCorrectionShader ); effectColor._name = 'Color';
-        var effectFXAA = new THREE.ShaderPass( THREE.FXAAShader ); effectFXAA._name = 'FXAA';
+        this._effectsPass = {
+            renderModel  : new THREE.RenderPass( this.scene, this.camera ),
+            effectBleach : new THREE.ShaderPass( THREE.BleachBypassShader ),
+            effectColor  : new THREE.ShaderPass( THREE.ColorCorrectionShader ),
+            effectFXAA   : new THREE.ShaderPass( THREE.FXAAShader )
+        };
 
-        effectFXAA.uniforms[ 'resolution' ].value.set( 1 / window.innerWidth, 1 / window.innerHeight );
-        effectBleach.uniforms[ 'opacity' ].value = 0.2;
-        effectColor.uniforms[ 'powRGB' ].value.set( 1.4, 1.45, 1.45 );
-        effectColor.uniforms[ 'mulRGB' ].value.set( 1.1, 1.1, 1.1 );
-        effectFXAA.renderToScreen = true;
+        this._effectsPass.renderModel.name = 'renderModel';
+        this._effectsPass.effectBleach.name = 'effectBleach';
+        this._effectsPass.effectColor.name = 'effectColor';
+        this._effectsPass.effectFXAA.name = 'effectFXAA'; 
+
+        this._effectsPass.effectFXAA.uniforms[ 'resolution' ].value.set( 1 / dims.width, 1 / dims.height );
+        this._effectsPass.effectBleach.uniforms[ 'opacity' ].value = 0.2;
+        this._effectsPass.effectColor.uniforms[ 'powRGB' ].value.set( 1.4, 1.45, 1.45 );
+        this._effectsPass.effectColor.uniforms[ 'mulRGB' ].value.set( 1.1, 1.1, 1.1 );
+        this._effectsPass.effectFXAA.renderToScreen = true;
 
         this.composer = new THREE.EffectComposer( this.renderer );
-        this.composer.addPass( renderModel );
-        this.composer.addPass( effectBleach );
-        this.composer.addPass( effectColor );
-        this.composer.addPass( effectFXAA );
+        this.composer.addPass( this._effectsPass.renderModel );
+        this.composer.addPass( this._effectsPass.effectBleach );
+        this.composer.addPass( this._effectsPass.effectColor );
+        this.composer.addPass( this._effectsPass.effectFXAA );
 
         this.settings.container.appendChild( this.renderer.domElement );
 
@@ -334,22 +372,12 @@ define('threearena/game',
      * @private
      */
     Game.prototype._clampCameraToGround = function() {
-        var bbox;
-
-        this.ground.traverse( function ( child ) {
-            if ( child instanceof THREE.Mesh ) {
-                child.receiveShadow = true;
-
-                child.geometry.boundingBox || child.geometry.computeBoundingBox();
-                bbox = child.geometry.boundingBox;
-            }
-        } );
 
         this.cameraControls.clamp = {
-            xmin: bbox.min.x * .9, //  -90,
-            xmax: bbox.max.x * .9, //   90,
-            zmin: bbox.min.z * .9 + 30, //  -30,
-            zmax: bbox.max.z * .9 + 50, //  170,
+            xmin: this.groundBbox.min.x * .9, //  -90,
+            xmax: this.groundBbox.max.x * .9, //   90,
+            zmin: this.groundBbox.min.z * .9 + 30, //  -30,
+            zmax: this.groundBbox.max.z * .9 + 50, //  170,
         };
     };
 
@@ -375,14 +403,21 @@ define('threearena/game',
             fragmentShader: shader.fragmentShader,
             vertexShader: shader.vertexShader,
             uniforms: uniforms,
-            depthWrite: false,
-            side: THREE.BackSide
+            depthWrite: false
         });
 
-        // build the skybox Mesh 
-        var skyboxMesh = new THREE.Mesh( new THREE.CubeGeometry( 600, 600, 600, 1, 1, 1, null, true ), material );
-        skyboxMesh.renderDepth = 1e20;
-        this.scene.add( skyboxMesh );
+        this.bind('set:terrain', function(terrain){
+
+            terrain.geometry.boundingBox || terrain.geometry.computeBoundingBox();
+            var bbox = terrain.geometry.boundingBox;
+
+            // build the skybox Mesh 
+            var skyboxMesh = new THREE.Mesh( new THREE.CubeGeometry( 1000, 1000, 1000 ), material );
+            skyboxMesh.flipSided = true;
+            // tskyboxMesh.renderDepth = 1e20;
+            this.scene.add( skyboxMesh );
+        });
+
         done();
     };
 
@@ -403,7 +438,16 @@ define('threearena/game',
 
         folder = self.gui.addFolder('Lights');
         folder.addColor(self.ambientLight, 'color');
+        folder.addColor(self.pointLight, 'color');
+        folder.add(self.pointLight, 'intensity', 0.001, 10);
+        folder.add(self.pointLight, 'distance', 0.001, 1000);
+        folder.add(self.pointLight, 'angle', 0, Math.PI * 2);
+        folder.add(self.pointLight, 'exponent', 0.001, 100);
         folder.addColor(self.directionalLight, 'color');
+        folder.add(self.directionalLight, 'intensity', 0.001, 10);
+        folder.add(self.directionalLight, 'distance', 0.001, 1000);
+        folder.add(self.directionalLight, 'angle', 0, Math.PI * 2);
+        folder.add(self.directionalLight, 'exponent', 0.001, 100);
 
         folder = self.gui.addFolder('Fog');
         folder.add(self.scene.fog, 'near');
@@ -411,7 +455,15 @@ define('threearena/game',
 
         folder = self.gui.addFolder('Controls');
         folder.add(self.cameraControls, 'mouseEnabled');
-        folder.add(self.helpers, 'visible');
+
+        self.gui.add(self.helpers, 'visible');
+        /*
+        folder = self.gui.addFolder('Helpers');
+        for (var i = 0; i < self.helpers.length; i++) {
+            folder.add(self.helpers[], 'visible');
+            self.gui.__folders.Helpers.__controllers[i].name(self.helpers[i].constructor.name);
+        }
+        */
 
         /*
         self.gui.add(self, 'Helpers', false, true).onChange(function(state){
@@ -499,9 +551,11 @@ define('threearena/game',
         this._raycaster_vector = new THREE.Vector3();
       }
 
+      var dims = this.getContainerDimensions();
+
       this._raycaster_vector.set(
-         (event.clientX / window.innerWidth) * 2 - 1,
-        -(event.clientY / window.innerHeight) * 2 + 1,
+         (event.clientX / dims.width) * 2 - 1,
+        -(event.clientY / dims.height) * 2 + 1,
         this.camera.near
       );
 
@@ -520,6 +574,16 @@ define('threearena/game',
 
     ////////////////////////////////
 
+    Game.prototype.getContainerDimensions = function() {
+
+        var $container = this._started ? $(this.settings.container) : $(window);
+
+        return {
+            width: $container.outerWidth(),
+            height: $container.outerHeight()
+        };
+    };
+
     /**
      * Set listeners to play the game in the browser
      * 
@@ -530,7 +594,12 @@ define('threearena/game',
         this.settings.container.addEventListener('mouseup', _.bind( this._onDocumentMouseUp, this), false);
         this.settings.container.addEventListener('mousedown', _.bind( this._onDocumentMouseDown, this), false);
         this.settings.container.addEventListener('mousemove', _.bind( this._onDocumentMouseMove, this), false);
-        this.settings.container.addEventListener('resize', _.bind( this._onWindowResize, this), false);
+        this.settings.container.addEventListener('mousewheel', _.bind( this._onMouseScroll, this ), false );
+        this.settings.container.addEventListener('DOMMouseScroll', _.bind( this._onMouseScroll, this ), false ); // firefox
+
+        if (typeof window !== 'undefined') {
+            window.addEventListener('resize', _.bind( this._onWindowResize, this), false);
+        }
     };
 
     /**
@@ -540,12 +609,20 @@ define('threearena/game',
      */
     Game.prototype._onWindowResize = function() {
 
-        windowHalfX = window.innerWidth / 2;
-        windowHalfY = window.innerHeight / 2;
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize( window.innerWidth, window.innerHeight );
+        var dims = this.getContainerDimensions();
+
+        windowHalfX = dims.width / 2;
+        windowHalfY = dims.height / 2;
+        this.camera.aspect = windowHalfX / windowHalfY;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize( dims.width, dims.height );
+        this._effectsPass.effectFXAA.uniforms[ 'resolution' ].value.set( 1 / dims.width, 1 / dims.height );
     }
+
+    Game.prototype._onMouseScroll = function(event) {
+
+        this.settings.cameraHeight = Math.max(50, this.settings.cameraHeight - event.wheelDeltaY * .01);
+    };
 
     /**
      * Mouse clicks listener
@@ -565,11 +642,6 @@ define('threearena/game',
                 entity;
 
             // console.log('intersect at %o %o', i_pos.x, i_pos.y, i_pos.z );
-
-            // place helper
-            // helper.position.set(0, 0, 0);
-            // helper.lookAt(intersects[0].face.normal);
-            // helper.position.copy(i_pos);
 
             var character = self.pcs[0];
 
@@ -663,23 +735,6 @@ define('threearena/game',
                       } else {
                           console.log("C'est trop loin !");
                       }
-              
-
-                  } else if (0) {
-
-                      // SUPER SIMPLE GLOW EFFECT
-                      // use sprite because it appears the same from all angles
-                      var spriteMaterial = new THREE.SpriteMaterial({ 
-                          map: new THREE.ImageUtils.loadTexture('/gamedata/textures/glow.png'), 
-                          useScreenCoordinates: false,
-                          alignment: THREE.SpriteAlignment.center,
-                          color: 0x0000ff,
-                          transparent: false,
-                          blending: THREE.AdditiveBlending
-                      });
-                      var sprite = new THREE.Sprite( spriteMaterial );
-                      sprite.scale.set(10, 10, 10);
-                      intersects[0].object.parent.parent.add(sprite); // this centers the glow at the mesh                        
                   }
               }
           }
@@ -769,6 +824,16 @@ define('threearena/game',
                 self.intersectObjects = self.intersectObjects.concat(self.ground.children[0].children);
                 self.scene.add(self.ground);
 
+                self.ground.traverse( function ( child ) {
+                    if ( child instanceof THREE.Mesh ) {
+                        child.receiveShadow = true;
+
+                        child.geometry.boundingBox || child.geometry.computeBoundingBox();
+                        self.groundBbox = child.geometry.boundingBox;
+                    }
+                } );
+
+
                 // load the navigation mesh
                 $.ajax({
                   url: file,
@@ -793,7 +858,7 @@ define('threearena/game',
 
         if (self.ground) {
             // double-check the elevation, objects cannot be under ground
-            var inifiniteElevation = object.position.clone().setY(10000000);
+            var inifiniteElevation = new THREE.Vector3( object.position.x, 10000000, object.position.z );
             var raycaster = new THREE.Raycaster(inifiniteElevation, new THREE.Vector3(0, -1, 0));
             var intersects = raycaster.intersectObject(self.ground, true);
 
@@ -805,6 +870,67 @@ define('threearena/game',
         } else {
             throw 'ground has not been set yet';
         }
+    };
+
+    Game.prototype.randomPositionOnterrain = function() {
+
+        var self = this;
+
+        var max_x = Math.abs(self.groundBbox.max.x),
+            min_x = Math.abs(self.groundBbox.min.x),
+            max_y = Math.abs(self.groundBbox.max.y),
+            min_y = Math.abs(self.groundBbox.min.y),
+            len_x = max_x - min_x,
+            len_y = max_y - min_y;
+
+        // random X,Z
+        var randomPosition = { position: {
+            x: Math.random() * len_x - min_x,
+            y: -1000000,
+            z: Math.random() * len_y - min_y,
+        } };
+
+        // adjust the Y
+        this.groundObject(randomPosition);
+
+        return randomPosition.position;
+    };
+
+
+    Game.prototype._prepareEntity = function(entity) {
+
+        var self = this;
+
+        // entities should have a lifebar
+        entity.attachLifeBar();
+
+        // every entity casts shadows
+        entity.traverse(function (child) {
+            if (child instanceof THREE.Mesh && child.parent && ! child.parent instanceof LifeBar) {
+                child.castShadow = true;
+            }
+        });
+
+        // colisions box
+        var invisibleMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.0 });
+        var box = new THREE.Box3();
+        box.setFromObject(entity);
+        box = new THREE.Mesh(new THREE.CubeGeometry(box.max.x - box.min.x, box.max.y - box.min.y, box.max.z - box.min.z, 1, 1, 1));
+        box.visible = false;
+        entity.add(box);
+
+        // intersectable
+        self.intersectObjects.push(box);
+
+        // add its lifebar as a scene child ..
+        self.scene.add(entity.lifebar);
+        // .. that always face camera
+        self.bind('update', function(game){
+            entity.lifebar.position.copy(entity.position).setY(20);
+            entity.lifebar.lookAt( self.camera.position );
+        });
+
+        self.trigger('added:entity', entity);
     };
 
     /**
@@ -827,9 +953,16 @@ define('threearena/game',
 
         var self = this;
 
-        builder(function(object){
+        builder(function(object) {
+
+            // Attach a life/mana bar above the entity
+            if (object instanceof Entity) {
+                self._prepareEntity(object);
+            }
+
             self.scene.add(object);
-            self.trigger('added:static', self.ground);
+
+            self.trigger('added:static', object);
         });
 
         return this;
@@ -896,59 +1029,6 @@ define('threearena/game',
 
     /**
      * Add a character. The first one is the main one
-     *
-     * @private
-     * 
-     * @param {module:threearena/entity} character
-     * 
-     * @fires module:threearena/game#added:entity
-     * 
-     * @@return {this} The game object
-     */
-    Game.prototype._addCharacter = function(character) {
-        
-        var self = this;
-
-        // var spawnPosition = spawnPosition || this.settings.positions.spawn || new THREE.Vector3();
-        // character.position.set(spawnPosition.x, spawnPosition.y, spawnPosition.z);
-
-        if (self.ground) {
-            self.groundObject(character);
-        }
-
-        // the first one, the main one
-        if (self.pcs.length === 0) {
-            self.hud.attachEntity(character);
-            self.camera.position.set( character.position.x + 30, 50, character.position.z + 40 );
-        }
-
-        character.traverse(function (child) {
-            if (child instanceof THREE.Mesh && child.parent && ! child.parent instanceof LifeBar) {
-                // FIXME: Some meshes cannot be used directly for collision (SkinnedMesh)
-                // IDEA: Compute the whole character's bbox in the Character class, skipping weapons, tails, etc..
-                // self.intersectObjects.push(child);
-
-                child.castShadow = true;
-            }
-        });
-
-        // Colisions box, mainly because MD2 can't be collided (morphTargets)
-        var invisibleMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.0 });
-        var box = new THREE.Box3();
-        box.setFromObject(character);
-        box = new THREE.Mesh(new THREE.CubeGeometry(box.max.x - box.min.x, box.max.y - box.min.y, box.max.z - box.min.z, 1, 1, 1));
-        box.visible = false;
-        character.add(box);
-
-        self.intersectObjects.push(box);
-
-        self.pcs.push(character);
-        self.scene.add(character);
-        self.trigger('added:entity', character);
-    };
-
-    /**
-     * Add a character. The first one is the main one
      * 
      * @param {Function(object)} builder Function to be called with the fully initialized object.
      *
@@ -967,9 +1047,25 @@ define('threearena/game',
 
         var self = this;
 
-        builder(function(character){
-            self._addCharacter(character);
-        });
+        var add = function(character){
+
+            // characters are always grounded
+            if (self.ground) {
+                self.groundObject(character);
+            }
+
+            // Attach a life/mana bar above the entity
+            self._prepareEntity(character);
+
+            self.pcs.push(character);
+            self.scene.add(character);
+        }
+
+        if (_.isFunction(builder)) {
+            builder(add);
+        } else {
+            add(builder);
+        }
 
         return this;
     };
@@ -989,6 +1085,13 @@ define('threearena/game',
         this.scene.remove(character);
 
         return this;
+    };
+
+    Game.prototype.asPlayer = function(entity) {
+
+        this.hud.attachEntity(entity);
+        // entity.add(this.pointLight);
+        this.camera.position.set( entity.position.x + 30, 50, entity.position.z + 40 );
     };
 
     /**
@@ -1089,7 +1192,7 @@ define('threearena/game',
         this.scene.add(pool);
         pool.bind('spawnedone', function(character){
             character.position.copy(pool.position);
-            self._addCharacter(character);
+            self.addCharacter(character);
         });
 
         self.trigger('added:spawningpool', pool);
@@ -1122,6 +1225,8 @@ define('threearena/game',
         this.settings.container.style.className += ' animated fadeInUpBig';
         this.settings.container.style.display = 'block';
 
+        this._started = true;
+
         this._boundAnimate = _.bind( this.animate, this );
         this.animate();
 
@@ -1152,7 +1257,7 @@ define('threearena/game',
 
         this.delta = this.clock.getDelta() * this.settings.speed;
 
-        if (this.clock.oldTime - this._behaviours_delta > 300) {
+        if (this.clock.oldTime - this._behaviours_delta > 100) {
             this._behaviours_delta = this.clock.oldTime;
             this.trigger('update:behaviours', this);
         }
@@ -1162,7 +1267,13 @@ define('threearena/game',
         this.trigger('update', this);
 
         this.cameraControls.update(this.delta);
-        this.camera.position.y = 80; // crraaaapp //
+
+        if (this.pcs.length > 0) {
+            this.pointLight.position.copy(this.pcs[0].position).setY(180);
+            this.pointLight.target = this.pcs[0];
+        }
+
+        this.camera.position.y = this.settings.cameraHeight; // crraaaapp //
 
         _.each(this.pcs, function(character){
             character.update(self);

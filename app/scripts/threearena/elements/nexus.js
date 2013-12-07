@@ -22,6 +22,7 @@ define('threearena/elements/nexus',
             mesh.rotation.x = -90 * Math.PI / 180;
             mesh.scale.set(4, 4, 4);
             mesh.position.set(0, 0, 0);
+            mesh._shouldGetTerrainMaterial = true;
 
 	        self.add(mesh);
 

@@ -35,7 +35,9 @@ define('threearena/character/monsterdog',
 
 			self.skin.geometry.computeFaceNormals();
 
-			self.character.rotation.y = 65 * Math.PI / 2;
+			self.character.children[0].rotation.y = 100 * Math.PI / 2;
+			self.character.children[1].rotation.y = 100 * Math.PI / 2;
+
 			self.character.scale.x = self.character.scale.y = self.character.scale.z = 0.005;
 			self.character.updateMatrix();
 

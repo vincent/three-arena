@@ -141,6 +141,7 @@ define('threearena/controls/dota',
 		};
 
 		this.mousewheel = function( event ) {
+			this.moveVector.y += .01;
 		}
 
 		this.mousemove = function( event ) {

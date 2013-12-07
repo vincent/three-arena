@@ -5,8 +5,9 @@ define('threearena/behaviours/minion',
     function(_, THREE, log, Utils, Entity) {
 
         return {
-            identifier: "idle", strategy: "prioritised",
+            identifier: "nothing", strategy: "prioritised",
             children: [
+                { identifier: "beDead" },
                 { identifier: "fightObjective" },
                 { identifier: "fightNearbyEnnemy" },
                 { identifier: "followCourseToObjective" },

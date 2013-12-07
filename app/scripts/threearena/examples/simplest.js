@@ -11,7 +11,7 @@ function(_, THREE, Arena, Ogro, FireBulletSpell) {
     })
 
     .setTerrain('/gamedata/maps/simplest.obj', {
-      wireframe: true,
+      //wireframe: true,
       tDiffuse: '/gamedata/textures/plain_blue.png',
       tNormal: '/gamedata/textures/plain_blue.png'
     })

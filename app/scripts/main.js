@@ -152,7 +152,7 @@ require.config({
     }
 });
 
-require([ 'lodash', 'threejs', 'threearena/examples/simplest' ], function ( _, THREE, Demo ) {
+require([ 'lodash', 'threejs', 'threearena/examples/demo' ], function ( _, THREE, Demo ) {
     'use strict';
 
     // Launch demo

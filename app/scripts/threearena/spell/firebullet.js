@@ -1,11 +1,13 @@
 
 define('threearena/spell/firebullet',
-    ['lodash', 'threearena/particles/cloud', 'threearena/spell', 'threearena/utils'], function(_, Particles, Spell, Utils) {
+    ['lodash', 'threearena/particles/cloud', 'threearena/spell', 'threearena/elements/sound', 'threearena/utils'], function(_, Particles, Spell, Sound, Utils) {
 
     /**
      * @exports threearena/spell/firebullet
      */
     var FireBullet = function(options) {
+
+        var self = this;
 
         options = _.merge({}, options, {
 
@@ -20,6 +22,9 @@ define('threearena/spell/firebullet',
         })
 
         Spell.apply(this, [ options ]);
+
+        this.sound = new Sound(['/gamedata/sounds/' + options.name + '.mp3'], 5.0, 50);
+        // window._ta_events.bind('update', function(game){ self.sound.update(game.camera); });
 
         this.aura = Particles.Aura('point', 500, THREE.ImageUtils.loadTexture( "/gamedata/textures/lensflare0_alpha.png" ), null);
     };
@@ -36,6 +41,8 @@ define('threearena/spell/firebullet',
 
     FireBullet.prototype.start = function (caster, target) {
         var self = this;
+
+        this.sound.play();
 
         var updateCloud = _.bind(function(game){
             self.aura.update(game.delta);

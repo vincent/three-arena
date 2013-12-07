@@ -54,7 +54,7 @@ define('threearena/spell',
      * Start the spell against the specified target
      * 
      * @param  {Entity} source         The caster entity
-     * @param  {Entity} target         The target entity
+     * @param  {Entity=} target         The target entity
      */
     Spell.prototype.start = function (source, target) {
         var self = this;
@@ -63,18 +63,22 @@ define('threearena/spell',
     Spell.prototype.startCooldown = function (source) {
         var self = this,
             start = Date.now();
+
         self.ccd = self.cooldown;
+        
         var updateCD = function(){
             var now = Date.now();
+
             // cooldown id finished
             if (now >= start + self.cooldown) {
                 self.ccd = 0;
+
             } else {
 
                 // FIXME: Does not work because entity.spells[i].ccd is not an observable
 
                 self.ccd = start + self.cooldown - now;
-                console.log(self.name, 'cooldown is now ', self.ccd);
+                // console.log(self.name, 'cooldown is now ', self.ccd);
                 source.trigger('changed', source);
                 setTimeout(updateCD, 50);
             }

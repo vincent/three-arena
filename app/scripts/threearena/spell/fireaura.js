@@ -33,8 +33,6 @@ define('threearena/spell/fireaura',
 
         caster.character.root.add(this.aura.particleCloud);
 
-        self.startCooldown(caster);
-
         this.aura.start();
         window._ta_events.bind('update', updateCloud);
 

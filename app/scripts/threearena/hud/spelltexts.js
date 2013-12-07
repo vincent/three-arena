@@ -17,7 +17,7 @@ define('threearena/hud/spelltexts',
 
       self._showHit = function (eventData) {
 
-        var textGeom = new THREE.TextGeometry(eventData.totalLifeDamage, {
+        var textGeom = new THREE.TextGeometry( ''+eventData.totalLifeDamage, {
           size: Math.sqrt(eventData.totalLifeDamage), height: 1, curveSegments: 3,
           font: "helvetiker", weight: "normal", style: "normal",
           bevelThickness: 0, bevelSize: 0, bevelEnabled: false,

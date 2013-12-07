@@ -31,6 +31,8 @@ function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFindin
             name: Math.random(),
             image: '/gamedata/unknown.png',
 
+            tomb: '/gamedata/models/rts_elements.dae',
+
             life: 100,
             mana: 0,
 
@@ -57,12 +59,15 @@ function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFindin
         this._baseLife = this.state.life;
         this._baseMana = this.state.mana;
 
-        this.attachLifeBar();
+        // this.attachLifeBar(); // now done in game.add()
         this.attachTombstone();
 
         this.bind('death', function(){
             if (this.currentTween) {
                 this.currentTween.stop();
+            }
+            if (this.behaviour) {
+                this.behaviour.identifier = 'beDead';
             }
         });
 
@@ -75,8 +80,11 @@ function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFindin
 
             idle: function() { },
 
+            canBeDead: function() { return self.isDead(); },
+            beDead: function() { },
+
             canFightObjective: function () {
-                return self.objective && (! self.objective.isDead || ! self.objective.isDead()) && self.state.spells[0].canHit(self, self.objective, 3);
+                return ! self.isDead() && self.objective && (! self.objective.isDead || ! self.objective.isDead()) && self.state.spells[0].canHit(self, self.objective, 3);
             },
             fightObjective: function () {
                 if (self._currentTween) {
@@ -90,6 +98,11 @@ function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFindin
             },
 
             canFightNearbyEnnemy: function () {
+
+                if (self.isDead()) {
+                    return false;
+                }
+
                 var spell;
                 if (self.state.autoAttackSpell !== null && self.state.autoAttacks && self.state.spells[ self.state.autoAttackSpell ]) {
 
@@ -147,7 +160,7 @@ function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFindin
                 );
             },
             canPlotCourseToObjective: function () {
-                return self.objective && ! this._isFighting && ! self._currentRoute;
+                return ! self.isDead() && self.objective && ! this._isFighting && ! self._currentRoute;
             },
 
             followCourseToObjective: function () {
@@ -171,7 +184,8 @@ function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFindin
             },
 
             canFollowCourseToObjective: function () {
-                return self.objective 
+                return ! self.isDead()
+                        && self.objective 
                         && self._currentRoute 
                         && ! this._isFighting 
                         && ! self.states.canFightObjective()
@@ -183,7 +197,7 @@ function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFindin
             },
 
             canMoveAttackToObjective: function () {
-                return (self.objective && self.objective.position.distanceTo(self.position) > 2);
+                return ! self.isDead() && (self.objective && self.objective.position.distanceTo(self.position) > 2);
             },
 
         };
@@ -229,37 +243,6 @@ function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFindin
     Entity.prototype.attachLifeBar = function() {
 
         this.lifebar = new LifeBar();
-        this.updateLifeBar();
-        this.add(this.lifebar);
-    };
-
-    /**
-     * Attach a tomb, to replace the dead entity
-     */
-    Entity.prototype.attachTombstone = function() {
-
-        var self = this;
-        var loader = new THREE.ColladaLoader();
-        loader.load( '/gamedata/models/rts_elements.dae', function ( loaded ) {
-
-            self.tomb = loaded.scene.getObjectByName('Cross2');
-
-            self.tomb.castShadow = true;
-            self.tomb.rotation.x = -90 * Math.PI / 180;
-            self.tomb.scale.set(2, 2, 2);
-            self.tomb.position.set(0, 0, 0);
-
-            // when character die, show just a tomb
-            self.bind('death', function(){
-                self.update = function(){};
-
-                for (var i = 0; i < self.children.length; i++) {
-                    self.remove(self.children[i]);
-                }
-
-                self.add(self.tomb);
-            });
-        });
     };
 
     /**
@@ -272,10 +255,55 @@ function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFindin
             mana: this._baseMana === false ? false : this._baseMana > 0 ? 1 / this._baseMana * this.state.mana : 0
         };
 
-        this.trigger('changed', eventData);
-
+        // this.lifebar.position.copy(this.position.x).setY(20);
         this.lifebar.set(eventData);
+
+        this.trigger('changed', eventData);
     };
+
+    /**
+     * Attach a tomb, to replace the dead entity
+     */
+    Entity.prototype.attachTombstone = function() {
+
+        var self = this;
+        var loader = new THREE.ColladaLoader();
+        loader.load( self.state.tomb, function ( loaded ) {
+
+            self.tomb = loaded.scene.getObjectByName('Cross2');
+
+            self.tomb.castShadow = true;
+            self.tomb.rotation.x = -90 * Math.PI / 180;
+            self.tomb.scale.set(2, 2, 2);
+            self.tomb.position.set(0, 0, 0);
+
+            // when character die, show just a tomb
+            self.bind('death', function() {
+                self.update = function(){};
+
+                var children = _.clone(self.children);
+                _.each(children, function(child){ self.remove(child); });
+
+                children = _.clone(self.character.children);
+                _.each(children, function(child){ self.character.remove(child); });
+
+                /*
+                for (var i = 0; i < self.children.length; i++) {
+                    self.remove(self.children[i]);
+                }
+
+                if (self.character) {
+                    for (var i = 0; i < self.character.children.length; i++) {
+                        self.character.remove(self.character.children[i]);
+                    }
+                }
+                */
+
+                self.add(self.tomb);
+            });
+        });
+    };
+
 
     /**
      * Add a life amount
@@ -362,7 +390,17 @@ function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFindin
 
         log(log.COMBAT, '%o begins to cast %o', this, spell);
 
-        // Place myself on a correct attacking range arc
+        // handle cooldown
+        if (spell.ccd > 0) {
+
+            // console.log('this spell is not ready yet (%dms)', spell.ccd);
+            return;
+
+        } else {
+            spell.startCooldown(this);
+        }
+
+        // place myself on a correct attacking range arc
         if (spell.isMelee && ! this._fightingArc) {
 
             var radius  = spell.maxRange + target.state.attackRange,
@@ -419,9 +457,15 @@ function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFindin
             (spell.isCritical ? 'critical' : 'normal'), eventData.damageAbsorbed
         );
 
-        // send events
+        // send events & animations
         if (this.isDead()) {
+
             this.trigger('death', eventData);
+            this.character && this.character.setAnimation('death');
+
+        } else {
+
+            this.character && this.character.setAnimation('pain');
         }
     };
 

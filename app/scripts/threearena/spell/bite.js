@@ -1,22 +1,31 @@
 
 define('threearena/spell/bite',
-    ['lodash', 'threearena/spell'], function(_, Spell) {
+    ['lodash', 'threearena/spell', 'threearena/elements/sound'], function(_, Spell, Sound) {
 
     /**
      * @exports threearena/spell/bite
      */
     var Bite = function(options) {
 
+        var self = this;
+
         options = _.merge({}, options, {
             name: 'bite',
             isMelee: true,
             meleeLifeDamage: 10,
 
-            minRange: 1,
+            cooldown: 1 * 1000,
+
+            minRange: 0,
             maxRange: 4,
         })
 
-        [6,4,5,5,0,0,3,6]
+        this.sound = new Sound(['/gamedata/sounds/' + options.name + '.mp3'], 200.0, 1);
+        window._ta_events.bind('update', function(game){
+            if (self.source) {
+                self.sound.update.call(self.source, game.camera); // called with character as "this"
+            }
+        });
 
         Spell.apply(this, [ options ]);
     };
@@ -33,6 +42,7 @@ define('threearena/spell/bite',
 
     Bite.prototype.start = function(source, target) {
         this.source = source;
+        this.sound.play();
         target.hit(this);
     };
 
