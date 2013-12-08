@@ -251,11 +251,13 @@ define('threearena/game',
     Game.prototype._initScene = function() {
 
         this.scene = new THREE.Scene();
-        //this.scene.fog = new THREE.FogExp2( 0x0, 0.00055 );
         this.scene.fog = new THREE.Fog( this.settings.fog.color, this.settings.fog.near, this.settings.fog.far );
 
         this.scene.add(this.destinationMarker);
         this.scene.add(this.helpers);
+
+        this.scene2 = new THREE.Scene();
+        this.scene.fog = new THREE.Fog( this.settings.fog.color, this.settings.fog.near, this.settings.fog.far );
     };
 
     /**
@@ -264,6 +266,9 @@ define('threearena/game',
      * @private
      */
     Game.prototype._initLights = function() {
+
+        this.frontAmbientLight = new THREE.AmbientLight( 0xffffff );
+        this.scene2.add( this.frontAmbientLight );
 
         this.ambientLight = new THREE.AmbientLight( 0x010101 );
         this.scene.add( this.ambientLight );
@@ -962,11 +967,12 @@ define('threearena/game',
         self.intersectObjects.push(box);
 
         // add its lifebar as a scene child ..
-        self.scene.add(entity.lifebar);
+        self.scene2.add(entity.lifebar);
         // .. that always face camera
         self.bind('update', function(game){
             entity.lifebar.position.copy(entity.position).setY(20);
-            entity.lifebar.lookAt( self.camera.position );
+            // entity.lifebar.lookAt( self.camera.position );
+            entity.lifebar.rotation.y = self.camera.rotation.y;
         });
         // .. and disappear whenever the character die
         entity.bind('death', function(){
@@ -1329,7 +1335,14 @@ define('threearena/game',
         // FIXME: Use this.speed
         TWEEN.update();
 
+        // render scene
+        this.renderer.clear();
         this.composer.render();
+
+        // clear depth buffer & render front scene
+        this.renderer.clear( false, true, false );
+        this.renderer.render( this.scene2, this.camera );
+
         this.stats.update();
     };
 

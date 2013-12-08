@@ -31,5 +31,9 @@
   },
   "engines": {
     "node": ">=0.8.0"
+  },
+  "subdomain": "three-arena",
+  "scripts": {
+    "start": "node app"
   }
 }

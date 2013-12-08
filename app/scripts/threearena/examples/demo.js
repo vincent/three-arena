@@ -54,16 +54,11 @@ define('threearena/examples/demo',
                 'cacheonly!/gamedata/lantern.dae'
             ],
             "Import textures": [
-                'cacheonly!/gamedata/dota_map_full_compress2_normals.jpg',
-                'cacheonly!/gamedata/dota_map_full_compress2_specular.jpg',
-                'cacheonly!/gamedata/dota_map_full_compress2.jpg',
                 'cacheonly!/gamedata/dota_map_full_compress3.jpg',
                 'cacheonly!/gamedata/textures/lensflare1_alpha.png',
                 'cacheonly!/gamedata/textures/lensflare0_alpha.png',
                 'cacheonly!/gamedata/textures/lantern_1024_c.png',
-                'cacheonly!/gamedata/Bark_Tile.jpg',
                 'cacheonly!/gamedata/oak-branch-c.png',
-                'cacheonly!/gamedata/Bark_Tile.jpg',
                 'cacheonly!/gamedata/leaf-mapple-yellow-c.png',
                 'cacheonly!/gamedata/oak-branch-c.png'
             ]
