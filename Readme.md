@@ -62,19 +62,25 @@ Features
 
 * click-to-move
 * single unit control
+* spatial sound effects
 * mouse & arrow keys camera behaviour
 * customizable HTML for HUD and scene objects (like shops) interactive menus
-* quite generic character system, works well with coverted MD2 (Quake) files
+* generic character model system, works well with converted MD2 (Quake) files
 * easy pathfinding system: use the terrain file, or load a custom navigation mesh
-* spacial sound effects
 * spells with 3d fx, min-max distance, cooldown
 * built-in common 3D game objects: Flies, Water
 * built-in common RPG components: Defense Tower, Shop
+* game interaction with events
+ - `game.bind('start', function)`
+ - `game.bind('added:character', function)`
+ - `character.bind('hit', function)`
+ - `character.bind('death', function)`
+ - and many others..
 
 
 Show me the code
 ===
 
 * The main game codebase is in the [threearena directory](app/scripts/threearena)
-* Game scene [threearena directory](app/scripts/threearena/game.js)
-* Spell example [threearena directory](app/scripts/threearena/spell/bite.js)
+* [Game scene](app/scripts/threearena/game.js)
+* [Spell example](app/scripts/threearena/spell/bite.js)
