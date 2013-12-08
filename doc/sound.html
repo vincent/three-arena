@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Three Arena Source: elements/lifebar.js</title>
+	<title>Three Arena Module: threearena/elements/sound</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -289,88 +289,88 @@
 	<div class="row-fluid">
 
 		
-			<div class="span12">
-				
+		<div class="span8">
+			
 				<div id="main">
 					
 
 
-		<h1 class="page-title">Source: elements/lifebar.js</h1>
+	<h1 class="page-title">Module: threearena/elements/sound</h1>
+<section>
+
+<header>
+    <h2>
+    threearena/elements/sound
+    </h2>
     
-    <section>
-        <article>
-            <pre class="sunlight-highlight-javascript linenums">define('threearena/elements/lifebar',
-    ['lodash', 'threejs'], function(_, THREE) {
+</header>
 
-    /**
-     * @exports threearena/elements/lifebar
-     */
-    var LifeBar = function(options) {
+<article>
+    <div class="container-overview">
+    
 
-        var self = this;
+    
+        
 
-        options = _.merge({
+        
+<dl class="details">
+    
 
-        }, options);
+    
 
-        THREE.Object3D.apply(this);
+    
 
-        var texture = THREE.ImageUtils.loadTexture("/gamedata/textures/lifebar.png");
+    
 
-        // life bar
-        this.lifebarMaterial = new THREE.MeshBasicMaterial({ color:'#18ee13', map:texture, side:THREE.DoubleSide })
-        this.lifebar = new THREE.Mesh(new THREE.PlaneGeometry(10, 1, 50, 1), this.lifebarMaterial)
-        this.lifebar.position.setY(16);
+    
 
-        // mana bar
-        this.manabarMaterial = new THREE.MeshBasicMaterial({ color:'#12dae6', map:texture, side:THREE.DoubleSide })
-        this.manabar = new THREE.Mesh(new THREE.PlaneGeometry(10, 1, 50, 1), this.manabarMaterial)
-        this.manabar.position.setY(14.8);
+    
 
-        this.add(this.lifebar);
-        this.add(this.manabar);
+    
 
-        this.position.set(1, 0, 5);
-    };
-    LifeBar.prototype = new THREE.Object3D();
+    
 
-    LifeBar.prototype.set = function(data) {
-        data.life && this.setLife(data.life);
-        data.mana && this.setMana(data.mana);
-    };
+    
 
-    LifeBar.prototype.setLife = function(life) {
-        if (life === false) {
-            this.remove(this.lifebar);
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="sound.js.html">elements/sound.js</a>, <a href="sound.js.html#sunlight-1-line-7">line 7</a>
+    </li></ul></dd>
+    
 
-        } else if (life > 0) {
-            this.lifebar.scale.setX(life);
+    
 
-        } else {
-            this.lifebar.visible = false;
-        }
-    };
+    
 
-    LifeBar.prototype.setMana = function(mana) {
-        if (mana === false) {
-            this.remove(this.manabar);
+    
+</dl>
 
-        } else if (mana > 0) {
-            this.manabar.visible = true;
-            this.manabar.scale.setX(mana);
-        } else {
-            this.manabar.visible = false;
-        }
-    };
 
-    LifeBar.prototype.constructor = THREE.LifeBar;
+        
+    
+    </div>
 
-    return LifeBar;
-});
-</pre>
-        </article>
-    </section>
+    
 
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 
@@ -388,6 +388,10 @@
 				</footer>
 			</div>
 
+			
+			<div class="span3">
+				<div id="toc"></div>
+			</div>
 			
 			<br clear="both">
 		</div>

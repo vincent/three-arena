@@ -88,7 +88,14 @@ define('threearena/game',
 
             speed: 1,
 
+            keys: {
+                MOVE_BUTTON: 2,
+                BEGIN_SELECTION: 0
+            },
+
             cameraHeight: 80,
+
+            visibleCharactersBBox: true,
 
             container: null,
             splashContainer: null,
@@ -602,6 +609,21 @@ define('threearena/game',
         }
     };
 
+    Game.prototype._testKey = function(value, key) {
+
+        var test = this.settings.keys[key];
+
+        if (_.isArray(test)) {
+            return this.settings.keys[key].indexOf(event.button);
+
+        } else if (_.isFunction(test)) {
+            return this.settings.keys[key](event.button);
+
+        } else {
+            return this.settings.keys[key] == event.button;
+        }
+    };
+
     /**
      * Resize listener
      * 
@@ -645,9 +667,9 @@ define('threearena/game',
 
             var character = self.pcs[0];
 
+            // ends a ground selection
             if (self._inGroundSelection) {
 
-              // ends a ground selection
               var selection = {
                 begins: self._inGroundSelection.ground,
                 ends: intersects[0].point
@@ -660,7 +682,7 @@ define('threearena/game',
               self.selectCharactersInZone(selection.begins, selection.ends);
 
             // TODO: find another way to check ==ground
-            } else if (event.button == 2 && Utils.childOf(intersects[0].object.parent, 'threearena/elements/terrain')) {
+            } else if (self._testKey(event.button, 'MOVE_BUTTON') && intersects[0].object.parent && Utils.childOf(intersects[0].object.parent, 'threearena/elements/terrain')) {
 
               self.endAllInteractions();
 
@@ -716,14 +738,15 @@ define('threearena/game',
                   // it's an entity
                   if (entity) {
 
-                      // cast the first possible spell 
-                      for (var i = 0; i < character.state.spells.length; i++) {
-                          if (character.state.spells[i].canHit(character, entity)) {
-                              // character.lookAt(entity.position);
-                              character.cast(character.state.spells[i], entity);
-                              break;
-                          }
+                    // cast the first possible spell 
+                    for (var i = 0; i < character.state.spells.length; i++) {
+                      if (character.state.spells[i].canHit(character, entity)) {
+
+                          // character.lookAt(entity.position);
+                          character.cast(character.state.spells[i], entity);
+                          break;
                       }
+                    }
 
                   // it's an interactive object
                   } else if (intersects[0].object.parent && intersects[0].object.parent.parent 
@@ -763,7 +786,7 @@ define('threearena/game',
 
       // .. but check if the ground if the first intersection
       // TODO: find another way to check ==ground
-      if (intersects.length > 0 && event.button === 0 && Utils.childOf(intersects[0].object.parent, 'threearena/elements/terrain')) {
+      if (intersects.length > 0 && self._testKey(event.button, 'BEGIN_SELECTION') && Utils.childOf(intersects[0].object.parent, 'threearena/elements/terrain')) {
         // begins a selection
         this._inGroundSelection = {
           screen: { x: event.clientX, y: event.clientY },
@@ -783,14 +806,20 @@ define('threearena/game',
       if (this._inGroundSelection) {
         // in a selection
         var p1 = this._inGroundSelection.screen,
-            p2 = { x: event.clientX, y: event.clientY };
+            p2 = { x: event.clientX, y: event.clientY },
+            pos_left = p1.x > p2.x ? p2.x : p1.x,
+            pos_top = p1.y > p2.y ? p2.y : p1.y,
+            sel_width = Math.abs(p1.x - p2.x),
+            sel_height = Math.abs(p1.y - p2.y);
 
-        $('#selection-rectangle').css({
-          left: p1.x > p2.x ? p2.x : p1.x,
-          top: p1.y > p2.y ? p2.y : p1.y,
-          width: Math.abs(p1.x - p2.x),
-          height: Math.abs(p1.y - p2.y)
-        }).show();
+        if (sel_height > 2 && sel_width > 2) {
+            $('#selection-rectangle').css({
+              height: sel_height,
+              width: sel_width,
+              left: pos_left,
+              top: pos_top
+            }).show();
+        }
       }
 
     };
@@ -897,6 +926,11 @@ define('threearena/game',
     };
 
 
+    /**
+     * Setup an entity before it get added in the scene
+     * 
+     * @param  {Entity} entity The entity to be setup
+     */
     Game.prototype._prepareEntity = function(entity) {
 
         var self = this;
@@ -904,22 +938,27 @@ define('threearena/game',
         // entities should have a lifebar
         entity.attachLifeBar();
 
-        // every entity casts shadows
+        // casts shadows
         entity.traverse(function (child) {
             if (child instanceof THREE.Mesh && child.parent && ! child.parent instanceof LifeBar) {
                 child.castShadow = true;
             }
         });
 
-        // colisions box
-        var invisibleMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.0 });
+        // has a collision box
+        var invisibleMaterial = new THREE.MeshBasicMaterial({ wireframe: true, color: 0xffffff, transparent: true, opacity: 0.5 });
         var box = new THREE.Box3();
         box.setFromObject(entity);
-        box = new THREE.Mesh(new THREE.CubeGeometry(box.max.x - box.min.x, box.max.y - box.min.y, box.max.z - box.min.z, 1, 1, 1));
-        box.visible = false;
+        box = new THREE.Mesh(new THREE.CubeGeometry(
+            box.max.x - box.min.x,
+            box.max.y - box.min.y + ((box.max.y - box.min.y) * .20), // a bit higher to include head
+            box.max.z - box.min.z
+            , 1, 1, 1
+        ), invisibleMaterial);
+        box.visible = self.settings.visibleCharactersBBox;
         entity.add(box);
 
-        // intersectable
+        // is intersectable
         self.intersectObjects.push(box);
 
         // add its lifebar as a scene child ..
@@ -928,6 +967,10 @@ define('threearena/game',
         self.bind('update', function(game){
             entity.lifebar.position.copy(entity.position).setY(20);
             entity.lifebar.lookAt( self.camera.position );
+        });
+        // .. and disappear whenever the character die
+        entity.bind('death', function(){
+            entity.lifebar.parent.remove(entity.lifebar);
         });
 
         self.trigger('added:entity', entity);
@@ -1269,7 +1312,11 @@ define('threearena/game',
         this.cameraControls.update(this.delta);
 
         if (this.pcs.length > 0) {
-            this.pointLight.position.copy(this.pcs[0].position).setY(180);
+            this.pointLight.position.set(
+                this.pcs[0].position.x - 50,
+                180,
+                this.pcs[0].position.z + 100
+            );
             this.pointLight.target = this.pcs[0];
         }
 

@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Three Arena Source: elements/lifebar.js</title>
+	<title>Three Arena Source: elements/sound.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -295,79 +295,57 @@
 					
 
 
-		<h1 class="page-title">Source: elements/lifebar.js</h1>
+		<h1 class="page-title">Source: elements/sound.js</h1>
     
     <section>
         <article>
-            <pre class="sunlight-highlight-javascript linenums">define('threearena/elements/lifebar',
+            <pre class="sunlight-highlight-javascript linenums">define('threearena/elements/sound',
     ['lodash', 'threejs'], function(_, THREE) {
 
     /**
-     * @exports threearena/elements/lifebar
+     * @exports threearena/elements/sound
      */
-    var LifeBar = function(options) {
+    var Sound = function( sources, radius, volume ) {
 
-        var self = this;
+		var audio = document.createElement( 'audio' );
 
-        options = _.merge({
+		for ( var i = 0; i &lt; sources.length; i ++ ) {
 
-        }, options);
+			var source = document.createElement( 'source' );
+			source.src = sources[ i ];
 
-        THREE.Object3D.apply(this);
+			audio.appendChild( source );
 
-        var texture = THREE.ImageUtils.loadTexture("/gamedata/textures/lifebar.png");
+		}
 
-        // life bar
-        this.lifebarMaterial = new THREE.MeshBasicMaterial({ color:'#18ee13', map:texture, side:THREE.DoubleSide })
-        this.lifebar = new THREE.Mesh(new THREE.PlaneGeometry(10, 1, 50, 1), this.lifebarMaterial)
-        this.lifebar.position.setY(16);
+		this.position = new THREE.Vector3();
 
-        // mana bar
-        this.manabarMaterial = new THREE.MeshBasicMaterial({ color:'#12dae6', map:texture, side:THREE.DoubleSide })
-        this.manabar = new THREE.Mesh(new THREE.PlaneGeometry(10, 1, 50, 1), this.manabarMaterial)
-        this.manabar.position.setY(14.8);
+		this.play = function () {
 
-        this.add(this.lifebar);
-        this.add(this.manabar);
+			audio.play();
 
-        this.position.set(1, 0, 5);
-    };
-    LifeBar.prototype = new THREE.Object3D();
+		}
 
-    LifeBar.prototype.set = function(data) {
-        data.life && this.setLife(data.life);
-        data.mana && this.setMana(data.mana);
-    };
+		this.update = function ( camera ) {
 
-    LifeBar.prototype.setLife = function(life) {
-        if (life === false) {
-            this.remove(this.lifebar);
+			var distance = this.position.distanceTo( camera.position );
 
-        } else if (life > 0) {
-            this.lifebar.scale.setX(life);
+			if ( distance &lt;= radius ) {
 
-        } else {
-            this.lifebar.visible = false;
-        }
-    };
+				audio.volume = volume * ( 1 - distance / radius );
 
-    LifeBar.prototype.setMana = function(mana) {
-        if (mana === false) {
-            this.remove(this.manabar);
+			} else {
 
-        } else if (mana > 0) {
-            this.manabar.visible = true;
-            this.manabar.scale.setX(mana);
-        } else {
-            this.manabar.visible = false;
-        }
-    };
+				audio.volume = 0;
 
-    LifeBar.prototype.constructor = THREE.LifeBar;
+			}
 
-    return LifeBar;
-});
-</pre>
+		}
+
+	};
+	
+    return Sound;
+});</pre>
         </article>
     </section>
 

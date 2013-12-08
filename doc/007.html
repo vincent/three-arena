@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Three Arena Source: elements/lifebar.js</title>
+	<title>Three Arena Class: threearena/character/007</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -289,88 +289,329 @@
 	<div class="row-fluid">
 
 		
-			<div class="span12">
-				
+		<div class="span8">
+			
 				<div id="main">
 					
 
 
-		<h1 class="page-title">Source: elements/lifebar.js</h1>
+	<h1 class="page-title">Class: threearena/character/007</h1>
+<section>
+
+<header>
+    <h2>
+    threearena/character/007
+    </h2>
     
-    <section>
-        <article>
-            <pre class="sunlight-highlight-javascript linenums">define('threearena/elements/lifebar',
-    ['lodash', 'threejs'], function(_, THREE) {
+</header>
 
-    /**
-     * @exports threearena/elements/lifebar
-     */
-    var LifeBar = function(options) {
+<article>
+    <div class="container-overview">
+    
 
-        var self = this;
+    
+        
+<dt>
+    <h4 class="name" id="threearena/character/007"><span class="type-signature"></span>new threearena/character/007<span class="signature">(options)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
 
-        options = _.merge({
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
 
-        }, options);
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
 
-        THREE.Object3D.apply(this);
+		<th>Type</th>
 
-        var texture = THREE.ImageUtils.loadTexture("/gamedata/textures/lifebar.png");
+		
 
-        // life bar
-        this.lifebarMaterial = new THREE.MeshBasicMaterial({ color:'#18ee13', map:texture, side:THREE.DoubleSide })
-        this.lifebar = new THREE.Mesh(new THREE.PlaneGeometry(10, 1, 50, 1), this.lifebarMaterial)
-        this.lifebar.position.setY(16);
+		
 
-        // mana bar
-        this.manabarMaterial = new THREE.MeshBasicMaterial({ color:'#12dae6', map:texture, side:THREE.DoubleSide })
-        this.manabar = new THREE.Mesh(new THREE.PlaneGeometry(10, 1, 50, 1), this.manabarMaterial)
-        this.manabar.position.setY(14.8);
+		<th class="last">Description</th>
+	</tr>
+	</thead>
 
-        this.add(this.lifebar);
-        this.add(this.manabar);
+	<tbody>
+	
 
-        this.position.set(1, 0, 5);
-    };
-    LifeBar.prototype = new THREE.Object3D();
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
 
-    LifeBar.prototype.set = function(data) {
-        data.life && this.setLife(data.life);
-        data.mana && this.setMana(data.mana);
-    };
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
 
-    LifeBar.prototype.setLife = function(life) {
-        if (life === false) {
-            this.remove(this.lifebar);
 
-        } else if (life > 0) {
-            this.lifebar.scale.setX(life);
+            
+            </td>
 
-        } else {
-            this.lifebar.visible = false;
-        }
-    };
+            
 
-    LifeBar.prototype.setMana = function(mana) {
-        if (mana === false) {
-            this.remove(this.manabar);
+            
 
-        } else if (mana > 0) {
-            this.manabar.visible = true;
-            this.manabar.scale.setX(mana);
-        } else {
-            this.manabar.visible = false;
-        }
-    };
+            <td class="description last"><p>options</p>
+                <h6>Properties</h6>
+                
 
-    LifeBar.prototype.constructor = THREE.LifeBar;
+<table class="params table table-striped">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
 
-    return LifeBar;
-});
-</pre>
-        </article>
-    </section>
+		<th>Type</th>
 
+		
+		<th>Argument</th>
+		
+
+		
+
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Character name</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>image</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Path to character portrait</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>life</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Character Base life</p></td>
+        </tr>
+
+	
+
+        <tr>
+            
+                <td class="name"><code>mana</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Character Base mana</p></td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+            </td>
+        </tr>
+
+	
+	</tbody>
+</table>
+
+    
+    
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="007.js.html">character/007.js</a>, <a href="007.js.html#sunlight-1-line-17">line 17</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+    
+    </div>
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        <ul>
+            <li>module:threearena/entity</li>
+        </ul>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 
@@ -383,11 +624,15 @@
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a>
-		on Sat Dec 07 2013 18:26:49 GMT+0100 (CET) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Sat Dec 07 2013 18:26:50 GMT+0100 (CET) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>
 
+			
+			<div class="span3">
+				<div id="toc"></div>
+			</div>
 			
 			<br clear="both">
 		</div>

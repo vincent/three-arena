@@ -45,6 +45,10 @@
 						</li>
 						
 						<li>
+							<a href="sound.html">threearena/elements/sound</a>
+						</li>
+						
+						<li>
 							<a href="terrain.html">threearena/elements/terrain</a>
 						</li>
 						
@@ -144,6 +148,10 @@
 						
 						<li>
 							<a href="character.html">threearena/character</a>
+						</li>
+						
+						<li>
+							<a href="007.html">threearena/character/007</a>
 						</li>
 						
 						<li>
@@ -299,88 +307,132 @@
      */
     var Terrain = function(file, options) {
 
-      THREE.Object3D.apply(this);
+    THREE.Object3D.apply(this);
 
-      var self = this;
+    var self = this;
 
-      self.options = options = options || {};
+    self.options = options = options || {};
 
-      var ambient = 0xffffff, diffuse = 0xffffff, specular = 0xdd5500, shininess = 10;
+    var ambient = 0x555555, diffuse = 0x555555, specular = 0x555555, shininess = 5;
 
-      var uniforms;
-      var shader = THREE.ShaderLib[ "normalmap" ];
-      var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
+    var uniforms;
+    var shader = THREE.ShaderLib[ "normalmap" ];
+    var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
 
-      if (options.tNormal) {
-        uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( options.tNormal );
-        uniforms[ "tNormal" ].value.wrapS = uniforms[ "tNormal" ].value.wrapT = THREE.RepeatWrapping;
+    if (options.tNormal) {
+      uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( options.tNormal );
+      uniforms[ "tNormal" ].value.wrapS = uniforms[ "tNormal" ].value.wrapT = THREE.RepeatWrapping;
+    }
 
-      }
-      if (options.tDiffuse) {
-        uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( options.tDiffuse );
-        uniforms[ "tDiffuse" ].value.wrapS = uniforms[ "tDiffuse" ].value.wrapT = THREE.RepeatWrapping;
-      }
-      if (options.tSpecular) uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( options.tSpecular );
+    uniforms[ "enableDiffuse" ].value = true;
+    uniforms[ "enableSpecular" ].value = true;
 
-      uniforms[ "enableAO" ].value = false;
-      uniforms[ "enableDiffuse" ].value = true;
-      uniforms[ "enableSpecular" ].value = false;
+    if (options.tDiffuse) {
+      uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( options.tDiffuse );
+      //uniforms[ "tDiffuse" ].value.wrapS = uniforms[ "tDiffuse" ].value.wrapT = THREE.RepeatWrapping;
+    }
 
-      uniforms[ "uDiffuseColor" ].value.setHex( diffuse );
-      uniforms[ "uSpecularColor" ].value.setHex( specular );
-      uniforms[ "uAmbientColor" ].value.setHex( ambient );
+    if (options.tSpecular) {
+      uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( options.tSpecular );
+      //uniforms[ "tSpecular" ].value.wrapS = uniforms[ "tDiffuse" ].value.wrapT = THREE.RepeatWrapping;
+    }
 
-      uniforms[ "uNormalScale" ].value.set( 2, 2 );
+    uniforms[ "enableAO" ].value = false;
 
-      uniforms[ "uShininess" ].value = shininess;
+    uniforms[ "uDiffuseColor" ].value.setHex( 0x202336 );
+    uniforms[ "uSpecularColor" ].value.setHex( 0xd2cfb9 );
+    uniforms[ "uAmbientColor" ].value.setHex( 0x1a1d21 );
 
-      //uniforms[ "wrapRGB" ].value.set( 0.575, 0.5, 0.5 );
 
-      var parameters = _.merge({
-        fragmentShader: shader.fragmentShader,
-        vertexShader: shader.vertexShader,
-        uniforms: uniforms,
-        lights: true,
-        fog: true
-      }, options);
+    // uniforms[ "uNormalScale" ].value.set( 2, 2 );
 
-      var material = new THREE.ShaderMaterial( parameters );
-      // material.wrapAround = true;
+    uniforms[ "uShininess" ].value = shininess;
 
-      // Water
-      // var water = new Water( 50, 100 );
-      // water.position.set( -100, 12, 0 );
-      // self.scene.add( water );
+    //uniforms[ "wrapRGB" ].value.set( 0.575, 0.5, 0.5 );
 
-      var onLoad = function (object) {
-          object.traverse( function ( child ) {
-              if ( child instanceof THREE.Mesh ) {
-                  child.material = material;
+    // uniforms[ "enableAO" ].value = true;
+    // uniforms[ "tAO" ].value = THREE.ImageUtils.loadTexture( '/gamedata/dota_map_full_compress3.jpg' );
 
-                  child.geometry.computeVertexNormals();
-                  child.geometry.computeTangents();
+    /*
+    uniforms[ "enableDiffuse" ].value = false;
+    uniforms[ "enableSpecular" ].value = false;
+    uniforms[ "enableReflection" ].value = true;
 
-                  child.receiveShadow = true;
-              }
-          } );
+    uniforms[ "tNormal" ].texture = THREE.ImageUtils.loadTexture( "normal.jpg" );
+    uniforms[ "tAO" ].texture = THREE.ImageUtils.loadTexture( "ao.jpg" );
 
-          self.add(object);
+    uniforms[ "tDisplacement" ].texture = THREE.ImageUtils.loadTexture( "displacement.jpg" );
+    uniforms[ "uDisplacementBias" ].value = - 0.428408 * scale;
+    uniforms[ "uDisplacementScale" ].value = 2.436143 * scale;
 
-          options.onLoad && options.onLoad(self);
-      };
+    uniforms[ "uDiffuseColor" ].value.setHex( diffuse );
+    uniforms[ "uSpecularColor" ].value.setHex( specular );
+    uniforms[ "uAmbientColor" ].value.setHex( ambient );
 
-      if (file instanceof THREE.Mesh) {
+    uniforms[ "uShininess" ].value = shininess;
 
-        onLoad(file);
+    uniforms[ "tCube" ].texture = reflectionCube;
+    uniforms[ "uReflectivity" ].value = 0.1;
 
-      } else {
+    uniforms[ "uDiffuseColor" ].value.convertGammaToLinear();
+    uniforms[ "uSpecularColor" ].value.convertGammaToLinear();
+    uniforms[ "uAmbientColor" ].value.convertGammaToLinear();
+    */
 
-        var loader = new THREE.OBJLoader( );
-        loader.load(file, function ( object ) {
-            onLoad(object);
-        });
-      }
+    /* * /
+    console.log('shader.fragmentShader');
+    console.log(shader.fragmentShader);
+
+    console.log('shader.vertexShader');
+    console.log(shader.vertexShader);
+    /* */
+
+    var parameters = _.merge({
+      fragmentShader: shader.fragmentShader,
+      vertexShader: shader.vertexShader,
+      uniforms: uniforms,
+      lights: true,
+      fog: true
+    }, options);
+
+    self.material = new THREE.ShaderMaterial( parameters );
+    // var material = new THREE.MeshLambertMaterial({ color: 0x555555 });
+    // material.wrapAround = true;
+
+    // Water
+    // var water = new Water( 50, 100 );
+    // water.position.set( -100, 12, 0 );
+    // self.scene.add( water );
+
+    var onLoad = function (object) {
+        object.traverse( function ( child ) {
+            if ( child instanceof THREE.Mesh ) {
+                child.material = self.material;
+
+                child.geometry.computeVertexNormals();
+                child.geometry.computeTangents();
+
+                child.receiveShadow = true;
+            }
+        } );
+
+        self.add(object);
+
+        options.onLoad && options.onLoad(self);
     };
+
+    if (file instanceof THREE.Mesh) {
+
+      onLoad(file);
+
+    } else {
+
+      var loader = new THREE.OBJLoader( );
+      loader.load(file, function ( object ) {
+          onLoad(object);
+      });
+    }
+  };
 
   Terrain.prototype = Object.create(THREE.Object3D.prototype);
 
@@ -402,7 +454,7 @@
 					
 		<span class="jsdoc-message">
 		Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0</a>
-		on Mon Dec 02 2013 19:23:14 GMT+0100 (CET) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
+		on Sat Dec 07 2013 18:26:49 GMT+0100 (CET) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>.
 		</span>
 				</footer>
 			</div>
