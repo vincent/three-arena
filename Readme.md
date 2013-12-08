@@ -19,7 +19,14 @@ new Arena({
 
   container: 'game-container', // the container DOM ID
 
-  showRoutes: true // show characters route paths
+  cameraHeight: 80,
+
+  fog: { near: 20, far: 250 }, // configure fog
+
+  // debugging
+  showRoutes: true, // show characters route paths
+  visibleCharactersBBox: true // visible characters bounding box
+  
 })
 
 .setTerrain('/gamedata/maps/simplest.obj', { // use this .OBJ as terrain
@@ -50,14 +57,24 @@ new Arena({
 });
 ```
 
+Features
+===
+
+* click-to-move
+* single unit control
+* mouse & arrow keys camera behaviour
+* customizable HTML for HUD and scene objects (like shops) interactive menus
+* quite generic character system, works well with coverted MD2 (Quake) files
+* easy pathfinding system: use the terrain file, or load a custom navigation mesh
+* spacial sound effects
+* spells with 3d fx, min-max distance, cooldown
+* built-in common 3D game objects: Flies, Water
+* built-in common RPG components: Defense Tower, Shop
+
+
 Show me the code
 ===
 
 * The main game codebase is in the [threearena directory](app/scripts/threearena)
-* Libraries used
- - RequireJS
- - Lo-Dash
- - Async
- - ThreeJS (r60), TweenJS, Sparks
- - Knockout
- - jQuery (only when really useful)
+* Game scene [threearena directory](app/scripts/threearena/game.js)
+* Spell example [threearena directory](app/scripts/threearena/spell/bite.js)
