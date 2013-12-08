@@ -14,38 +14,41 @@ Current status
 Examples
 ===
 {{{
-	new Arena({
-	
-      container: 'game-container', // the container DOM ID
 
-      showRoutes: true // show characters route paths
-    })
+new Arena({
 
-    .setTerrain('/gamedata/maps/simplest.obj', { // use this .OBJ as terrain
+  container: 'game-container', // the container DOM ID
 
-      tDiffuse: '/gamedata/textures/plain_blue.png' // the terrain texture
-    })
+  showRoutes: true // show characters route paths
+})
 
-    .addCharacter(function(done){ // add a character
+.setTerrain('/gamedata/maps/simplest.obj', { // use this .OBJ as terrain
 
-      new Ogro({
+  tDiffuse: '/gamedata/textures/plain_blue.png' // the terrain texture
+})
 
-        name: 'Shrek', // the character name
+.addCharacter(function(done){ // add a character
 
-        image: '/gamedata/unknown.png', // its portrait
+  new Ogro({
 
-        tomb: '/gamedata/models/rts_elements.dae', // use this model when it dies
+    name: 'Shrek', // the character name
 
-        life: 100, // start with 100 life points
+    image: '/gamedata/unknown.png', // its portrait
 
-        onLoad: function(){
+    tomb: '/gamedata/models/rts_elements.dae', // use this model when it dies
 
-          this.learnSpell(FireBulletSpell); // learn a spell
+    life: 100, // start with 100 life points
 
-          done(this); // on scene !
-        }
-      });
-    });	
+    onLoad: function(){
+
+      this.learnSpell(FireBulletSpell); // learn a spell
+
+      done(this); // on scene !
+    }
+  });
+  
+});
+    
 }}}
 
 
