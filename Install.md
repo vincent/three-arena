@@ -13,6 +13,7 @@ Install dependancies
 cd three-arena
 npm install
 bower install
+```
 
 Run the server
 
