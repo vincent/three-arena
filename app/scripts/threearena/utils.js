@@ -65,6 +65,21 @@ define('threearena/utils',
         //     });
         // }
 
+        meshFromVertices: function (vertices, mat_options) {
+            
+            var object = new THREE.Object3D();
+            var materials = [ new THREE.MeshBasicMaterial(mat_options) ];
+
+            for (var i = 0; i < vertices.length; i++) {
+                if (!vertices[i+2]) break;
+                var child = THREE.SceneUtils.createMultiMaterialObject(
+                    new THREE.ConvexGeometry([ vertices[i], vertices[i+1], vertices[i+2] ]),
+                    materials);
+                object.add(child);
+            }
+            return object;
+        },
+
         /**
          * Move an object along a path.
          *  to move entities or characters, use their own moveAlong method
@@ -111,8 +126,8 @@ define('threearena/utils',
             if (game.settings.showRoutes) {
                 var routeGeometry = new THREE.TubeGeometry(shape, shape.points.length, 1, 1);
                 var routeMaterial = new THREE.MeshBasicMaterial({
-                    color: 0xffffff,
-                    opacity: 0.3,
+                    color: 0xff0000,
+                    opacity: 0.5,
                     wireframe: true,
                     transparent: true
                 });

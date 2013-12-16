@@ -35,6 +35,8 @@ define('threearena/examples/demo',
         container: document.getElementById('game-container'),
         splashContainer: document.getElementById('splash-container'),
 
+        cameraFollowsPlayer: true,
+
         positions: {
             spawn: new THREE.Vector3( 0, 0, 0 ),
             origin: new THREE.Vector3( 0, 0, 0 ),
@@ -127,9 +129,11 @@ define('threearena/examples/demo',
     Demo.bind('set:terrain', function(){
         Demo.addStatic(function (done) {
             var flies = new Flies(10);
-            flies.position = Demo.randomPositionOnterrain();
-            Demo.bind('update', _.bind(flies.update, flies));
-            done(flies);
+            Demo.randomPositionOnterrain(function(point){
+                flies.position.copy(point);
+                Demo.bind('update', _.bind(flies.update, flies));
+                done(flies);
+            });
         });
     });
 

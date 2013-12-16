@@ -12,7 +12,7 @@ define('threearena/elements/terrain',
 
     self.options = options = options || {};
 
-    var ambient = 0x555555, diffuse = 0x555555, specular = 0x555555, shininess = 5;
+    var ambient = 0xffffff, diffuse = 0xffffff, specular = 0xffffff, shininess = 20;
 
     var uniforms;
     var shader = THREE.ShaderLib[ "normalmap" ];
@@ -21,6 +21,7 @@ define('threearena/elements/terrain',
     if (options.tNormal) {
       uniforms[ "tNormal" ].value = THREE.ImageUtils.loadTexture( options.tNormal );
       uniforms[ "tNormal" ].value.wrapS = uniforms[ "tNormal" ].value.wrapT = THREE.RepeatWrapping;
+      uniforms[ "tNormal" ].value.repeat.set( 2, 2);
     }
 
     uniforms[ "enableDiffuse" ].value = true;
@@ -28,19 +29,21 @@ define('threearena/elements/terrain',
 
     if (options.tDiffuse) {
       uniforms[ "tDiffuse" ].value = THREE.ImageUtils.loadTexture( options.tDiffuse );
-      //uniforms[ "tDiffuse" ].value.wrapS = uniforms[ "tDiffuse" ].value.wrapT = THREE.RepeatWrapping;
+      uniforms[ "tDiffuse" ].value.wrapS = uniforms[ "tDiffuse" ].value.wrapT = THREE.RepeatWrapping;
+      uniforms[ "tDiffuse" ].value.repeat.set( 20000, 20000);
     }
 
     if (options.tSpecular) {
       uniforms[ "tSpecular" ].value = THREE.ImageUtils.loadTexture( options.tSpecular );
-      //uniforms[ "tSpecular" ].value.wrapS = uniforms[ "tDiffuse" ].value.wrapT = THREE.RepeatWrapping;
+      uniforms[ "tSpecular" ].value.wrapS = uniforms[ "tSpecular" ].value.wrapT = THREE.RepeatWrapping;
+      uniforms[ "tSpecular" ].value.repeat.set( 2, 2);
     }
 
     uniforms[ "enableAO" ].value = false;
 
-    uniforms[ "uDiffuseColor" ].value.setHex( 0x202336 );
-    uniforms[ "uSpecularColor" ].value.setHex( 0xd2cfb9 );
-    uniforms[ "uAmbientColor" ].value.setHex( 0x1a1d21 );
+    uniforms[ "uDiffuseColor" ].value.setHex( 0xffffff );
+    uniforms[ "uSpecularColor" ].value.setHex( 0xffffff );
+    uniforms[ "uAmbientColor" ].value.setHex( 0xffffff );
 
 
     // uniforms[ "uNormalScale" ].value.set( 2, 2 );

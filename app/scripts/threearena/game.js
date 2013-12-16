@@ -10,13 +10,15 @@ define('threearena/game',
     'threearena/entity',
     'threearena/elements/terrain',
     'threearena/elements/nexus',
-    'threearena/elements/lifebar',
+    'threearena/elements/slifebar',
     'threearena/elements/aboveheadmark',
     'threearena/elements/interactiveobject', 
     'threearena/particles/cloud', 
     'threearena/controls/dota',
     'threearena/controls/destinationmarker',
-    'threearena/pathfinding/recast.emcc.oem',
+
+    //'threearena/pathfinding/recast.emcc.oem',
+    '/recastnavigation/emscripten/build/recast.js', // testing 
     
     'MD2Character',
     'MD2CharacterComplex',
@@ -55,6 +57,7 @@ define('threearena/game',
  
 ) {
     PathFinding = Module;
+    window.__ta_utils = Utils;
 
     /**
      * The main game class
@@ -93,6 +96,11 @@ define('threearena/game',
                 BEGIN_SELECTION: 0
             },
 
+            hud: {
+                mouseBorderDetection: 20, // border percentage after which the camera moves
+            },
+
+            cameraFollowsPlayer: true, // if true camera will follow the main character as it moves
             cameraHeight: 80,
 
             visibleCharactersBBox: true,
@@ -270,7 +278,7 @@ define('threearena/game',
         this.frontAmbientLight = new THREE.AmbientLight( 0xffffff );
         this.scene2.add( this.frontAmbientLight );
 
-        this.ambientLight = new THREE.AmbientLight( 0x010101 );
+        this.ambientLight = new THREE.AmbientLight( 0xffffff );
         this.scene.add( this.ambientLight );
 
         // SpotLight( hex, intensity, distance, angle, exponent )
@@ -287,7 +295,7 @@ define('threearena/game',
         this.pointLight.shadowCameraNear = 10;
         this.pointLight.shadowCameraFar = 100;
         this.pointLight.position.set( 0, 180, 0 );
-        this.pointLight.intensity = 6;
+        this.pointLight.intensity = 10;
         this.pointLight.distance = 250;
         this.pointLight.angle = .5;
         this.pointLight.exponent = 17;
@@ -374,7 +382,7 @@ define('threearena/game',
         // CONTROLS
 
         //this.cameraControls = new THREE.TrackballControls( this.camera, this.renderer.domElement );
-        this.cameraControls = new CameraControls( this.camera, this.renderer.domElement );
+        this.cameraControls = new CameraControls( this.camera, this.renderer.domElement, this.settings.hud );
         this.cameraControls.domElement = this.renderer.domElement;
     };
 
@@ -510,6 +518,7 @@ define('threearena/game',
 
         async.series([
             _.bind( this._initSky, this),
+            
             function (callback) {
                 console.log('BYPASS TREES'); callback(); return;
 
@@ -527,6 +536,7 @@ define('threearena/game',
                     callback();
                 });
             },
+            
             _.bind( this._setupGui, this),
 
         ], main_callback);
@@ -686,7 +696,15 @@ define('threearena/game',
               self.unselectCharacters();
               self.selectCharactersInZone(selection.begins, selection.ends);
 
-            // TODO: find another way to check ==ground
+            // Mark some polys as not walkable
+            } else if (event.button === 0 && event.shiftKey && intersects[0].object.parent && Utils.childOf(intersects[0].object.parent, 'threearena/elements/terrain')) {
+
+              PathFinding.setPolyUnwalkable(
+                i_pos.x, i_pos.y, i_pos.z,
+                5, 5, 5,
+                0
+              );
+
             } else if (self._testKey(event.button, 'MOVE_BUTTON') && intersects[0].object.parent && Utils.childOf(intersects[0].object.parent, 'threearena/elements/terrain')) {
 
               self.endAllInteractions();
@@ -850,9 +868,16 @@ define('threearena/game',
     Game.prototype.setTerrain = function(file, options) {
         var self = this;
 
-        options = options || {};
+        options = _.merge({
 
-        new Terrain(file, _.merge(options, {
+            cellSize: 2,            // nav mesh cell size (.8 > 2)
+            cellHeight: 1.5,        // nav mesh cell height (.5 > 1)
+            agentHeight: 2.0,       // character height (1.2 => 2)
+            agentRadius: 0.5,       // character radius (.5 > 2)
+            agentMaxClimb: 4.0,     // max units character can jump (1 > 5)
+            agentMaxSlope: 30.0     // max degre character can climb (20 > 40)
+
+        }, options, {
             onLoad: function(terrain) {
                 self.ground = terrain;
                 self.intersectObjects = self.intersectObjects.concat(self.ground.children[0].children);
@@ -873,17 +898,52 @@ define('threearena/game',
                   url: file,
                   success: function(data) {
                     Config = {};
-                    PathFinding.set_cellSize(.8);
-                    PathFinding.set_cellHeight(.5);
+
+                    PathFinding.set_cellSize(options.cellSize);
+                    PathFinding.set_cellHeight(options.cellHeight);
+
+                    PathFinding.set_agentHeight(options.agentHeight);
+                    PathFinding.set_agentRadius(options.agentRadius);
+
+                    PathFinding.set_agentMaxClimb(options.agentMaxClimb);
+                    PathFinding.set_agentMaxSlope(options.agentMaxSlope);
+
                     PathFinding.initWithFileContent(data);
                     PathFinding.build();
+
                     self.trigger('set:terrain', self.ground);
                   }
-                });
+                })
             }
-        }));
+        });
+
+        new Terrain(file, options);
 
         return this;
+    };
+
+    Game.prototype.computeNavigationMesh = function(callback) {
+
+        var self = this;
+
+        if (! self.navigationMesh) {
+            // get the navmesh vertices
+            PathFinding.getNavMeshVertices(
+                Utils.gcb(function(vertices) {
+                    // build the mesh
+                    self.navigationMesh = Utils.meshFromVertices(vertices, {
+                        color: 0xffffff,
+                        wireframe: true,
+                        transparent: true,
+                        opacity: .8
+                    });
+                    self.scene.add(self.navigationMesh);
+                    callback && callback(null, self.navigationMesh);
+                })
+            );
+        } else {
+            callback && callback(null, self.navigationMesh);
+        }
     };
 
     Game.prototype.groundObject = function(object) {
@@ -906,28 +966,21 @@ define('threearena/game',
         }
     };
 
-    Game.prototype.randomPositionOnterrain = function() {
+    Game.prototype.randomPositionOnterrain = function(callback) {
 
-        var self = this;
+        PathFinding.getRandomPoint(Utils.gcb(callback));
+    };
 
-        var max_x = Math.abs(self.groundBbox.max.x),
-            min_x = Math.abs(self.groundBbox.min.x),
-            max_y = Math.abs(self.groundBbox.max.y),
-            min_y = Math.abs(self.groundBbox.min.y),
-            len_x = max_x - min_x,
-            len_y = max_y - min_y;
+    Game.prototype.addObstacle = function(position, radius, flag) {
+        
+        if (this.settings.showObstacles) {
+            var obsctacle = new THREE.Mesh( new THREE.PlaneGeometry(radius, radius, radius, 1, 1, 1), new THREE.MeshBasicMaterial({ color: 0xff0000 }) );
+            obsctacle.position.copy(position);
+            obsctacle.rotation.x = 90 * Math.PI / 180;
+            this.scene.add(obsctacle);
+        }
 
-        // random X,Z
-        var randomPosition = { position: {
-            x: Math.random() * len_x - min_x,
-            y: -1000000,
-            z: Math.random() * len_y - min_y,
-        } };
-
-        // adjust the Y
-        this.groundObject(randomPosition);
-
-        return randomPosition.position;
+        PathFinding.setPolyUnwalkable(position.x, position.y, position.z, radius, radius, radius, 0);
     };
 
 
@@ -970,7 +1023,9 @@ define('threearena/game',
         self.scene2.add(entity.lifebar);
         // .. that always face camera
         self.bind('update', function(game){
-            entity.lifebar.position.copy(entity.position).setY(20);
+            entity.lifebar.update(game.delta);
+            entity.lifebar.position.copy(entity.position);
+            entity.lifebar.position.y += 10;
             // entity.lifebar.lookAt( self.camera.position );
             entity.lifebar.rotation.y = self.camera.rotation.y;
         });
@@ -1007,6 +1062,10 @@ define('threearena/game',
             // Attach a life/mana bar above the entity
             if (object instanceof Entity) {
                 self._prepareEntity(object);
+            }
+
+            if (object.isBlocking) {
+                self.addObstacle(object.position, 4);
             }
 
             self.scene.add(object);
@@ -1317,16 +1376,23 @@ define('threearena/game',
 
         this.cameraControls.update(this.delta);
 
+        // camera height ~ crraaaapp
+        this.camera.position.y = this.settings.cameraHeight;
+
         if (this.pcs.length > 0) {
+
+            // place a light near the main player
             this.pointLight.position.set(
                 this.pcs[0].position.x - 50,
                 180,
                 this.pcs[0].position.z + 100
             );
             this.pointLight.target = this.pcs[0];
-        }
+        
+            // camera height ~ crraaaapp
+            this.camera.position.y = this.pcs[0].position.y + this.settings.cameraHeight;
+        } 
 
-        this.camera.position.y = this.settings.cameraHeight; // crraaaapp //
 
         _.each(this.pcs, function(character){
             character.update(self);

@@ -1,0 +1,6 @@
+/Users/vincent/Workspace/recast.js/src_cpp/DebugUtils/CMakeFiles/DebugUtils.dir
+/Users/vincent/Workspace/recast.js/src_cpp/Detour/CMakeFiles/Detour.dir
+/Users/vincent/Workspace/recast.js/src_cpp/DetourCrowd/CMakeFiles/DetourCrowd.dir
+/Users/vincent/Workspace/recast.js/src_cpp/DetourTileCache/CMakeFiles/DetourTileCache.dir
+/Users/vincent/Workspace/recast.js/src_cpp/Recast/CMakeFiles/Recast.dir
+/Users/vincent/Workspace/recast.js/src_cpp/RecastDemo/CMakeFiles/RecastDemo.dir

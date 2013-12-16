@@ -1,0 +1,14 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/vincent/Workspace/recast.js/src_cpp/RecastDemo/Contrib/fastlz/fastlz.c
+fastlz.c
+/Users/vincent/Workspace/recast.js/src_cpp/RecastDemo/Contrib/fastlz/fastlz.c
+fastlz.c
+/Users/vincent/Workspace/recast.js/src_cpp/RecastDemo/Contrib/fastlz/fastlz.c
+

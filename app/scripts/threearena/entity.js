@@ -1,5 +1,5 @@
 define('threearena/entity',
-    ['lodash', 'microevent', 'threejs', 'knockout', 'threearena/log', 'threearena/utils', 'threearena/controls/attackcircle', 'threearena/elements/lifebar', 'threearena/pathfinding/recast.emcc.oem',],
+    ['lodash', 'microevent', 'threejs', 'knockout', 'threearena/log', 'threearena/utils', 'threearena/controls/attackcircle', 'threearena/elements/slifebar', '/recastnavigation/emscripten/build/recast.js' ],
 
 function(_, MicroEvent, THREE, ko, log, Utils, AttackCircle, LifeBar, PathFinding) {
     PathFinding = Module;

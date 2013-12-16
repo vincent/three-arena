@@ -6,9 +6,16 @@ define('threearena/controls/dota',
      * 
      * @constructor
      */
-	var DotaControls = function ( object, domElement ) {
+	var DotaControls = function ( object, domElement, options ) {
 
 		this.object = object;
+
+		this.options = _.merge({
+
+			activeBorderZoneFactor: 20, // % of screen size
+			activeBorderZoneTime: 300, // ms in the active border zone
+
+		}, options);
 
 		this.domElement = ( domElement !== undefined ) ? domElement : document;
 		if ( domElement ) this.domElement.setAttribute( 'tabindex', -1 );
@@ -23,10 +30,6 @@ define('threearena/controls/dota',
 
 		this.dragToLook = false;
 		this.autoForward = false;
-
-		this.activeZoneTime = 300;
-
-		this.activeZoneFactor = 20;
 
 		this.clamp = {
 			xmin: -1000,
@@ -148,7 +151,7 @@ define('threearena/controls/dota',
 
 			var container = this.getContainerDimensions();
 
-			if (this._keyboardHasFocus) return;
+			// if (this._keyboardHasFocus) return;
 
 			/*
 			if (event.pageX < container.size[ 0 ] / 100 * this.hudZoneFactor) {
@@ -164,18 +167,17 @@ define('threearena/controls/dota',
 			}
 			*/
 
-			if ( this.enabled && this.mouseEnabled ) {
+			if ( this.enabled && this.mouseEnabled && this.options.activeBorderZoneFactor) {
 
 				var now = (new Date()).getTime();
 
-				var activeZoneWidth  = container.size[ 0 ] / 100 * this.activeZoneFactor;
-				var activeZoneHeight = container.size[ 1 ] / 100 * this.activeZoneFactor;
-
+				var activeZoneWidth  = container.size[ 0 ] / 100 * this.options.activeBorderZoneFactor;
+				var activeZoneHeight = container.size[ 1 ] / 100 * this.options.activeBorderZoneFactor;
 
 				if (event.pageX > container.size[ 0 ] - activeZoneWidth) {
 
 					this._inActiveZone.right = this._inActiveZone.right || now;
-					if (now - this._inActiveZone.right > this.activeZoneTime) {
+					if (now - this._inActiveZone.right > this.options.activeBorderZoneTime) {
 						this.moveState.right = 1;
 					}
 
@@ -187,7 +189,7 @@ define('threearena/controls/dota',
 				if (event.pageX < activeZoneWidth) {
 
 					this._inActiveZone.left = this._inActiveZone.left || now;
-					if (now - this._inActiveZone.left > this.activeZoneTime) {
+					if (now - this._inActiveZone.left > this.options.activeBorderZoneTime) {
 						this.moveState.left = 1;
 					}
 
@@ -199,7 +201,7 @@ define('threearena/controls/dota',
 				if (event.pageY < activeZoneHeight) {
 
 					this._inActiveZone.forward = this._inActiveZone.forward || now;
-					if (now - this._inActiveZone.forward > this.activeZoneTime) {
+					if (now - this._inActiveZone.forward > this.options.activeBorderZoneTime) {
 						this.moveState.forward = 1;
 					}
 
@@ -211,7 +213,7 @@ define('threearena/controls/dota',
 				if (event.pageY > container.size[ 1 ] - activeZoneHeight - 200 /* FIXME crappy hack */) {
 
 					this._inActiveZone.backward = this._inActiveZone.backward || now;
-					if (now - this._inActiveZone.backward > this.activeZoneTime) {
+					if (now - this._inActiveZone.backward > this.options.activeBorderZoneTime) {
 						this.moveState.back = 1;
 					}
 

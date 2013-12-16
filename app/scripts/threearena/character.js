@@ -87,7 +87,8 @@ define('threearena/character',
                 var angle = Math.atan2(-tangent.z, tangent.x);
 
                 // set angle of the character at that position
-                self.rotation.y = angle;
+                // self.rotation.y = angle;
+                _.each(self.character.meshes, function(m){ m.rotation.y = angle; });
             }      
         }, options);
 

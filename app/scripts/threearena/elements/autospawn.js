@@ -1,5 +1,5 @@
 define('threearena/elements/autospawn',
-    ['lodash', 'microevent', 'threejs', 'threearena/utils', 'threearena/pathfinding/recast.emcc.oem'],
+    ['lodash', 'microevent', 'threejs', 'threearena/utils', 'threearena/elements/lifebar', '/recastnavigation/emscripten/build/recast.js'],
 
 function(_, MicroEvent, THREE, Utils, PathFinding) {
     PathFinding = Module;

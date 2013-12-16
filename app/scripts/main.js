@@ -152,13 +152,15 @@ require.config({
     }
 });
 
-require([ 'lodash', 'threejs', 'threearena/examples/demo' ], function ( _, THREE, Demo ) {
+var playButton = document.getElementById('game-play');
+
+playButton.innerHTML = 'Please wait while I\'m baking the map ...';
+
+require([ 'lodash', 'threejs', 'threearena/examples/simplest' ], function ( _, THREE, Demo ) {
     'use strict';
 
     // Launch demo
     var game = window.game = Demo;
-
-    var playButton = document.getElementById('game-play');
 
     var preload = function preload() {
         playButton.innerHTML = 'Loading world and stuff ...';
