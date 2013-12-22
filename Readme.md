@@ -39,7 +39,7 @@ Not ready (yet)
 Examples
 ===
 
-Please run an http server in the ```examples``` directory to view examples.
+Please run ```npm install && npm start``` to view examples.
 
 ```js
 
