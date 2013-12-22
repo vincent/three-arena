@@ -1,0 +1,22 @@
+{
+  "name": "microevent",
+  "version": "1.1.1",
+  "main": "microevent.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "homepage": "https://github.com/dezoxel/microevent.js",
+  "_release": "1.1.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.1.1",
+    "commit": "742ff4ce0e2bad2ce9e312fdf4d56ecccbf92bdf"
+  },
+  "_source": "git://github.com/dezoxel/microevent.js.git",
+  "_target": "~1.1.1",
+  "_originalSource": "microevent"
+}

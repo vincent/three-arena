@@ -1,0 +1,13 @@
+{
+  "name": "microevent.js",
+  "homepage": "https://github.com/vincent/microevent.js",
+  "_release": "master",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "0a29a232e23052f603da14d8634c77ace9f41029"
+  },
+  "_source": "https://github.com/vincent/microevent.js.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/vincent/microevent.js.git"
+}
