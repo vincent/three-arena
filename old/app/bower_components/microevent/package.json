@@ -1,6 +1,0 @@
-{
-	"name"		: "microevent",
-	"version"	: "1.1.1",
-	"description"	: "event emitter micro library (works in node+browser)",
-	"main"		: "microevent.js"
-}

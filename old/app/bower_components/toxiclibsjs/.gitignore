@@ -1,8 +1,0 @@
-*.DS_STORE
-.idea
-*.swp
-.project
-.settings
-site/*
-TODO.md
-node_modules
