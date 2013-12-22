@@ -12,11 +12,10 @@ Install dependancies
 ```sh
 cd three-arena
 npm install
-bower install
 ```
 
 Run the server
 
 ```sh
-grunt server
+npm start
 ```

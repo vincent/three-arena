@@ -4,6 +4,38 @@ Three Arena
 Three Arena is an opiniated WebGL game framework to create 3D hack-and-slash games in an HTML context. It uses [three.js](http://threejs.org) 3D engine, [machinejs](http://machinejs.maryrosecook.com) behaviour trees, [recastnavigation](https://github.com/memononen/recastnavigation) pathfinding system, [knockoutjs](http://knockoutjs.com) dom binding system and [other](three-arena/blob/master/bower.json) open source projects.
 
 
+Features
+===
+
+* click-to-move on any .obj mesh object with an easy pathfinding system
+* use your level geometry file directly, or load a custom navigation mesh
+* single unit control
+* mouse & arrow keys camera behaviour
+* customizable HTML & CSS for HUD
+* customizable scene objects interactive menus (shops, ...) 
+* generic character model system, works well with converted MD2 (Quake) files
+* spells with 3d fx, min-max distance, cooldown
+* spatial sound effects
+* built-in common 3D game objects: Flies, Water
+* built-in common RPG components: Defense Tower, Shop
+* game interaction through events
+ - `game.on('start', function)`
+ - `game.on('set:terrain', function)`
+ - `game.on('added:character', function)`
+ - `character.on('hit', function)`
+ - `character.on('death', function)`
+ - and many others..
+* You have a super fun idea ? Great !
+ - add it as a [ticket](issues)
+ - you can code it ? send me a pull request from master branch !
+
+
+Not ready (yet)
+===
+ * multiplayer, server side
+ * collisions system
+
+
 Examples
 ===
 
@@ -27,12 +59,12 @@ new Arena({
 
 .setTerrain('/gamedata/maps/simplest.obj', { // use this .OBJ as terrain
 
-  tDiffuse: '/gamedata/textures/plain_blue.png' // the terrain texture
+  map: '/path/to/terrain/texture.png' // the terrain texture
 })
 
 .addCharacter(function(done){ // add a character
 
-  new Ogro({
+  new Arena.Characters.Ogro({
 
     name: 'Shrek', // the character name
 
@@ -44,7 +76,7 @@ new Arena({
 
     onLoad: function(){
 
-      this.learnSpell(FireBulletSpell); // learn a spell
+      this.learnSpell(Arena.Spells.FireBullet); // learn a spell
 
       done(this); // on scene !
     }
@@ -52,29 +84,6 @@ new Arena({
   
 });
 ```
-
-Features
-===
-
-* click-to-move on a .obj mesh object
-* single unit control
-* mouse & arrow keys camera behaviour
-* customizable HTML for HUD and scene objects (like shops) interactive menus
-* generic character model system, works well with converted MD2 (Quake) files
-* easy pathfinding system: use the terrain file, or load a custom navigation mesh
-* spells with 3d fx, min-max distance, cooldown
-* spatial sound effects
-* built-in common 3D game objects: Flies, Water
-* built-in common RPG components: Defense Tower, Shop
-* game interaction with events
- - `game.on('start', function)`
- - `game.on('added:character', function)`
- - `character.on('hit', function)`
- - `character.on('death', function)`
- - and many others..
-* You have a super fun idea ? Great !
- - add it as a [ticket](issues)
- - you can code it ? send me a pull request from master branch !
 
 
 Show me the code
