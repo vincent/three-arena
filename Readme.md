@@ -26,13 +26,13 @@ Features
  - `character.on('death', function)`
  - and many others..
 * You have a super fun idea ? Great !
- - add it as a [ticket](issues)
- - you can code it ? send me a pull request from master branch !
+ - add it as a [ticket](https://github.com/vincent/three-arena/issues)
+ - you can code it ? send a pull request from master branch !
 
 
 Not ready (yet)
 ===
- * multiplayer, server side
+ * multiplayer game server
  * collisions system
 
 
@@ -91,14 +91,14 @@ Show me the code
 
 * The main game code is in [index.js](index.js)
 * Character class is in [lib/character.js](lib/character.js)
-* A spell example is in [lib/spells/bite.js](lib/spells/bite.js)
+* A spell example is in [lib/spell/bite.js](lib/spells/bite.js)
 
 
 Hack the pathfinding system
 ===
 
 The pathfinding is done via an javascript Emscripten-compiled interface above the c++ library [recastnavigation](https://github.com/memononen/recastnavigation).
-To add methods in this module, you need to code their [javascript interface](recastnavigation/emscripten/js_interface/main.cpp) and rebuild the javascript module with
+To add methods in this module, you need to code their [javascript interface](recastnavigation/emscripten/js_interface/main.cpp#L966) and rebuild the javascript module with
 
 ```sh
 cd recastnavigation/emscripten
