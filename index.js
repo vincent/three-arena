@@ -321,10 +321,10 @@ Arena.prototype._initLights = function(done) {
   this.pointLight.shadowCameraNear = 10;
   this.pointLight.shadowCameraFar = 100;
   this.pointLight.position.set( 0, 180, 0 );
-  this.pointLight.intensity = 8;
+  this.pointLight.intensity = 5;
   this.pointLight.distance = 250;
   this.pointLight.angle = 0.5;
-  this.pointLight.exponent = 17;
+  this.pointLight.exponent = 40;
   this.pointLight.ambient = 0xffffff;
   this.pointLight.diffuse = 0xffffff;
   this.pointLight.specular = 0xffffff; // new THREE.Color('#050101'); // 0xaaaa22;
@@ -332,7 +332,7 @@ Arena.prototype._initLights = function(done) {
 
 
 
-  this.directionalLight = new THREE.SpotLight( 0xffffff, 1, 10000 );
+  this.directionalLight = new THREE.SpotLight( 0xffffff, 1, 800 );
   this.directionalLight.ambient = 0xffffff;
   this.directionalLight.diffuse = 0xffffff;
   this.directionalLight.specular = 0xffffff; // new THREE.Color('#050101'); // 0xaaaa22;
@@ -429,10 +429,10 @@ Arena.prototype._clampCameraToGround = function() {
 
   if (this.cameraControls) {
     this.cameraControls.clamp = {
-      xmin: this.groundBbox.min.x * 0.9,
-      xmax: this.groundBbox.max.x * 0.9,
-      zmin: this.groundBbox.min.z * 0.9 + 30,
-      zmax: this.groundBbox.max.z * 0.9 + 50
+      xmin: this.ground.boundingBox.min.x * 0.9,
+      xmax: this.ground.boundingBox.max.x * 0.9,
+      zmin: this.ground.boundingBox.min.z * 0.9 + 30,
+      zmax: this.ground.boundingBox.max.z * 0.9 + 50
     };
   }
 };
@@ -907,8 +907,15 @@ Arena.prototype.setTerrain = function(file, options) {
         if ( child instanceof THREE.Mesh ) {
           child.receiveShadow = true;
 
-          if (! child.geometry.boundingBox) { child.geometry.computeBoundingBox(); }
-          self.groundBbox = child.geometry.boundingBox;
+          // use provided boundinf box if present
+          if (options.boundingBox) {
+            child.geometry.boundingBox = options.boundingBox;
+          // or compute it
+          } else if (! child.geometry.boundingBox) {
+            child.geometry.computeBoundingBox();
+          }
+          // fast access to ground bbox
+          self.ground.boundingBox = child.geometry.boundingBox;
         }
       } );
 
