@@ -18,7 +18,7 @@
   "subdomain": "three-arena",
   "scripts": {
     "install": "napa vincent/tween.js:tween maryrosecook/machinejs",
-    "start": "http-server -c-1 & open http://localhost:8080",
+    "start": "node vendor/threejs/utils/servers/simplehttpserver.js & open http://localhost:8000",
     "doc": "jsdoc ...",
     "build": "mkdir -p build && browserify index.js -d -o build/arena.build.js",
     "watch-js": "watchify browser/main.js -o static/bundle.js -dv"
