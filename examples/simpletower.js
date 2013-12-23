@@ -1,9 +1,8 @@
 var arena =  new Arena({
-  container: document.getElementById('game-container'),
-  splashContainer: document.getElementById('splash-container'),
+  container: document.getElementById('game-container')
 });
 
-arena.setTerrain('/gamedata/maps/simplest.obj', {
+arena.setTerrain('/gamedata/maps/simplest/simplest.obj', {
   wireframe: true,
   tDiffuse: '/gamedata/textures/plain_blue.png',
   tNormal: '/gamedata/textures/plain_blue.png'
@@ -14,6 +13,7 @@ arena.addCharacter(function(done){
     onLoad: function(){
       var character = this;
       character.learnSpell(Arena.Spells.FireBullet);
+      arena.asPlayer(this);
       done(character);
     }
   });

@@ -29,7 +29,7 @@ arena.on('set:lights', function () {
   arena.directionalLight.intensity = 0.7;
 });
 
-arena.setTerrain('/gamedata/maps/mountains.obj', {
+arena.setTerrain('/gamedata/maps/dota/mountains.obj', {
   map: THREE.ImageUtils.loadTexture('/gamedata/dota_map_full_compress3.jpg'),
   bumpMap: THREE.ImageUtils.loadTexture('/gamedata/dota_map_full_compress3.jpg'),
   bumpScale: 0.005,
