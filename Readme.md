@@ -39,7 +39,9 @@ Not ready (yet)
 Examples
 ===
 
-Please run ```npm install && npm start``` to view examples.
+Some examples here [three-arena.com/examples](http://three-arena.com/examples)
+
+Or run ```npm install && npm start``` to view examples.
 
 ```js
 
