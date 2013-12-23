@@ -5,7 +5,7 @@ var tic = require('tic')();
 var async = require('async');
 var TWEEN = require('tween');
 var Stats = require('./vendor/stats');
-var Detector = require('./vendor/detector');
+var detector = require('./vendor/detector');
 var inherits = require('inherits');
 var EventEmitter = require('events').EventEmitter;
 var interact = process.browser ? require('interact') : null;
@@ -53,6 +53,10 @@ module.exports = Arena;
  * 
  */
 var Arena = function (settings) {
+
+  if (process.browser && this.notCapable()) {
+    return;
+  }
 
   // FIXME
   window._ta_events = new EventEmitter();
@@ -208,6 +212,37 @@ var Arena = function (settings) {
 };
 
 inherits(Arena, EventEmitter);
+
+
+/**
+ * Test the WebGL environement
+ * 
+ * @return True if the current environement is not WebGL capable
+ */
+Arena.prototype.notCapable = function() {
+
+  if (! detector().webgl) {
+    this.settings.container.append(this.notCapableMessage());
+    return true;
+  }
+  return false;
+};
+
+/**
+ * A WebGL incentive message, for diasbled browsers
+ * 
+ * @return A DOM node element
+ */
+Arena.prototype.notCapableMessage = function() {
+  var wrapper = document.createElement('div');
+  wrapper.className = 'errorMessage';
+  var a = document.createElement('a');
+  a.title = 'You need WebGL and Pointer Lock (Chrome 23/Firefox 14) to play this game. Click here for more information.';
+  a.innerHTML = a.title;
+  a.href = 'http://get.webgl.org';
+  wrapper.appendChild(a);
+  return wrapper;
+};
 
 /**
  * Init the pathfinding subsystem, and load its settings.preload urls
