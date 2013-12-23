@@ -72,6 +72,8 @@ new Arena({
 .setTerrain('/gamedata/maps/simplest.obj', { // use this .OBJ as terrain
 
   map: '/path/to/terrain/texture.png' // the terrain texture
+
+  // other material options, like bumpMap, wireframe, etc..
 })
 
 .addCharacter(function(done){ // add a character
