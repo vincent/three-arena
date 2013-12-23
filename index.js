@@ -11,6 +11,9 @@ var EventEmitter = require('events').EventEmitter;
 var interact = process.browser ? require('interact') : null;
 // var requestAnimationFrame = require('raf');
 
+var Machine = require('./node_modules/machinejs/build/machine.build.js');
+
+
 var HUD = require('./lib/hud');
 var Utils = require('./lib/utils');
 var Entity = require('./lib/entity');
@@ -154,6 +157,12 @@ var Arena = function (settings) {
    * @type {Array}
    */
   this.intersectObjects = [];
+
+  /**
+   * The state machine enine
+   * @type {Machine}
+   */
+  this.machine = new Machine();
 
   /**
    * Parent of all helpers
@@ -791,21 +800,21 @@ Arena.prototype._onDocumentMouseUp = function(event) {
           }
 
         // it's an interactive object
-        } else if (intersects[0].object.parent && intersects[0].object.parent.parent 
-            && intersects[0].object.parent.parent instanceof InteractiveObject) {
+        } else if (intersects[0].object.parent && intersects[0].object.parent.parent &&
+            intersects[0].object.parent.parent instanceof InteractiveObject) {
 
           if (intersects[0].object.parent.parent.isNearEnough(character)) {
-              self.startInteraction(intersects[0].object.parent.parent);
+            self.startInteraction(intersects[0].object.parent.parent);
 
           } else {
-              console.log("C'est trop loin !");
+            console.log('C\'est trop loin !');
           }
         }
       }
     }
 
   } else {
-      console.log('no intersect');
+    console.log('no intersect');
   }
 };
 
@@ -1057,6 +1066,15 @@ Arena.prototype._prepareEntity = function(entity) {
     }
   });
 
+  // setup its behaviour
+  if (entity.behaviour) {
+    entity.behaviour = self.machine.generateTree(entity.behaviour, entity, entity.states);
+    // update event
+    self.on('update:behaviours', function() {
+      entity.behaviour = entity.behaviour.tick();
+    });
+  }
+
   // has a collision box
   var invisibleMaterial = new THREE.MeshBasicMaterial({ wireframe: true, color: 0xffffff, transparent: true, opacity: 0.5 });
   var box = new THREE.Box3();
@@ -1073,7 +1091,7 @@ Arena.prototype._prepareEntity = function(entity) {
   // is intersectable
   self.intersectObjects.push(box);
 
-  // add its lifebar as the alternative scene child ..
+  // add its lifebar in the alternative scene ..
   self.scene2.add(entity.lifebar);
 
   self.on('update', function(game){
@@ -1087,7 +1105,7 @@ Arena.prototype._prepareEntity = function(entity) {
     entity.lifebar.rotation.y = self.camera.rotation.y;
   });
 
-  // .. disappear whenever the character die
+  // .. disappears whenever the character die
   entity.on('death', function(){
     if (entity.lifebar.parent) {
       entity.lifebar.parent.remove(entity.lifebar);

@@ -1,6 +1,8 @@
 Three Arena
 ===
 
+http://three-arena.com/examples/#demo.js
+
 Three Arena is an opiniated WebGL game framework to create 3D hack-and-slash games in an HTML context. It uses [three.js](http://threejs.org) 3D engine, [machinejs](http://machinejs.maryrosecook.com) behaviour trees, [recastnavigation](https://github.com/memononen/recastnavigation) pathfinding system, [knockoutjs](http://knockoutjs.com) dom binding system and [other](three-arena/blob/master/bower.json) open source projects.
 
 

@@ -1,5 +1,6 @@
 'use strict';
 
+var Arena = window.Arena;
 
 var arena = new Arena({
 
@@ -80,28 +81,23 @@ arena.on('set:terrain', function(){
 /* */
 
 
-// A state Machine 
-var machine = new Machine();        
-
-
 // Another character
 arena.addCharacter(function(done){
-  var ogro = new Arena.Characters.OO7({
+  new Arena.Characters.OO7({
     onLoad: function(){
       var character = this;
-
       character.state.team = 0;
 
-      character.behaviour = machine.generateTree(Arena.Behaviours.Controlled, character, character.states);
-      arena.on('update:behaviours', function () {
-        // character.behaviour = character.behaviour.tick();
-      });
+      // character.behaviour = Arena.Behaviours.Controlled;
+
+      character.state.autoAttacks = true;
+      character.state.autoAttackSpell = 0;
 
       // learn some spells
-      character.learnSpell( Arena.Spells.FireAura );
-      character.learnSpell( Arena.Spells.FireBullet );
-      character.learnSpell( Arena.Spells.FlatFireAura );
-      character.learnSpell( Arena.Spells.Lightbolt );
+      character.learnSpell(Arena.Spells.FireAura);
+      character.learnSpell(Arena.Spells.FireBullet);
+      character.learnSpell(Arena.Spells.FlatFireAura);
+      character.learnSpell(Arena.Spells.Lightbolt);
 
       character.position.copy(arena.settings.positions.nearcamp);
 
@@ -120,15 +116,14 @@ var pool = new Arena.Elements.SpawningPool({
 });
 pool.on('spawnedone', function (character) {
   character.state.team = 1;
+
   character.learnSpell(Arena.Spells.Bite);
+
   character.state.autoAttacks = true;
   character.state.autoAttackSpell = 0;
 
   character.objective = objective1;
-  character.behaviour = machine.generateTree(Arena.Behaviours.Minion, character, character.states);
-  arena.on('update:behaviours', function() {
-    character.behaviour = character.behaviour.tick();
-  });
+  character.behaviour = Arena.Behaviours.Minion;
 });
 pool.position.copy(objective2.position);
 arena.on('start', function () {
