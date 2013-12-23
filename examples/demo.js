@@ -30,8 +30,8 @@ arena.on('set:lights', function () {
 });
 
 arena.setTerrain('/gamedata/maps/dota/mountains.obj', {
-  map: THREE.ImageUtils.loadTexture('/gamedata/dota_map_full_compress3.jpg'),
-  bumpMap: THREE.ImageUtils.loadTexture('/gamedata/dota_map_full_compress3.jpg'),
+  map: THREE.ImageUtils.loadTexture('/gamedata/maps/dota/dota_map_full_compress3.jpg'),
+  bumpMap: THREE.ImageUtils.loadTexture('/gamedata//maps/dota/dota_map_full_compress3.jpg'),
   bumpScale: 0.005,
 });
 
