@@ -1,0 +1,15 @@
+#loading-bar {
+  display: none;
+  background: url(loadingBar.png) no-repeat 0 0;
+  margin: 20% auto;
+  width: 355px;
+  height: 54px;
+  padding: 12px 4px;
+}
+
+#loading-bar .progress {
+  background: rgb(255, 0, 0);
+  opacity: 0.5;
+  height: 30px;
+  width: 0%;
+}

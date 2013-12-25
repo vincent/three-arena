@@ -8,11 +8,12 @@
 
     <!-- build:css(.tmp) styles/main.css -->
     <link rel="stylesheet" href="styles/animate.css">
+    <link rel="stylesheet" href="styles/loadingbar.css">
     <link rel="stylesheet" href="styles/hud.mini.css">
     <!-- endbuild -->
   </head>
   <body>
-    <nav style="float:left; width:20%;">
+    <nav id="menu" style="margin: 10%; line-height: 2em;">
       <li><a href="#simplest.js">The simplest scene</a></li>
       <li><a href="#simpletower.js">A simple scene with a defense tower</a></li>
       <li><a href="#dungeon.js">A dungeon</a></li>
@@ -20,6 +21,9 @@
       <li><a href="#demo.js">A complex demo</a></li>
     </nav>
 
+    <div id="loading-bar">
+      <div class="progress"></div>  
+    </div>
 
     <div id="game-container">
       <div id="selection-rectangle"></div>
@@ -179,12 +183,17 @@
     <script type="text/javascript" src="/vendor/threejs/examples/js/postprocessing/ShaderPass.js"></script>
     <script type="text/javascript" src="/vendor/threejs/examples/js/postprocessing/MaskPass.js"></script>
 
-    <script type="text/javascript" src="/node_modules/machinejs/base.js"></script>
-    <script type="text/javascript" src="/node_modules/machinejs/machine.js"></script>
-
     <script type="text/javascript" src="/build/arena.build.js"></script>
 
     <script type="text/javascript">
+      $('#menu').click(function(event){
+        event.preventDefault();
+        if (event.target.tagName === 'A') {
+          location = event.target.href;
+          location.reload();
+        }
+      });
+
       if (location.hash) {
         $('body').append($('<script src="/examples/' + location.hash.substr(1) + '"/>'));
       }

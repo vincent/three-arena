@@ -1,11 +1,16 @@
+'use strict';
 
-arena = new Arena({
+var Arena = window.Arena;
+
+var arena = new Arena({
   container: document.getElementById('game-container'),
 
   showRoutes: true
 });
 
-arena.setTerrain('/gamedata/maps/simplest/simplest.obj');
+arena.setTerrain('/gamedata/maps/simplest/simplest.obj', {
+  minimap: '/gamedata/maps/simplest/minimap.png'
+});
 
 arena.addCharacter(function(done){
   new Arena.Characters.Ogro({

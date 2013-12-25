@@ -48,3 +48,16 @@ arena.on('set:terrain', function(){
   
 });
 
+
+$('#loading-bar .progress').show();
+
+arena.init(function(arena){
+  arena.preload(
+    function(){
+      setTimeout(function(){ arena.start(); }, 500);
+    },
+    function(complete, total){
+      $('#loading-bar .progress').css('width', (98 / total * complete) + '%' );
+    }
+  );
+});

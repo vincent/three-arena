@@ -179,6 +179,7 @@ var Arena = function (settings) {
    * @type {HUD}
    */
   this.hud = new HUD.GameHud('hud-container');
+  this.hud.attachGame(this);
 
   //////////
 
@@ -249,18 +250,44 @@ Arena.prototype.notCapableMessage = function() {
  * 
  * @param  {Function} callback called when finished
  */
-Arena.prototype.preload = function(done) {
+Arena.prototype.preload = function(done, progressCallback) {
 
   var self = this;
 
   if (this.settings.preload.length > 0) {
 
-    async.parallel(this.settings.preload, function() {
+    var tasks;
+
+    if (progressCallback) {
+
+      var total = this.settings.preload.length;
+      tasks = [];
+
+      for (var i = 0; i < this.settings.preload.length; i++) {
+        tasks.push(function(pdone){
+          var selfFunc = this;
+          self.settings.preload[selfFunc.preloadIndex](function(){
+            progressCallback(selfFunc.step, selfFunc.total);
+            pdone();
+          });
+        }.bind({ preloadIndex:i, step:i+1, total:total }));
+      }
+
+    } else {
+      tasks = this.settings.preload;
+    }
+
+    async.parallel(tasks, function() {
       self.settings.preload.length = 0;
       done();
     });
 
   } else {
+
+    if (progressCallback) {
+      progressCallback(1, 1);
+    }
+
     done();
   }
 };
@@ -289,8 +316,6 @@ Arena.prototype.init = function(ready) {
 
       ], done);
     },
-
-    function(done){ self.hud.attachGame(self); done(); }, // attach HUDs
 
     function(done){ self._initSky(done); },   // sky needs terrain
 
@@ -1517,7 +1542,7 @@ Arena.prototype.start = function() {
     // timers
     self._behaviours_delta = self.clock.getDelta();
 
-  });
+  }, function(done, total){ console.log('preloaded %o of %o', done, total); });
 
   return this;
 };
