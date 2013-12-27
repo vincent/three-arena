@@ -32,6 +32,10 @@
     .navbar-fixed-top { z-index: 1; }
     .dg.ac  { top: 50px !important; left: 0 !important; right: auto !important; }
     #game-container { top: 50px; height: 96%; }
+    #page { background-color: #F5F5F5; }
+    .col-md-4 { margin-bottom: 20px; }
+    #source { display: none; }
+    #myModal iframe { width: 100%; border: none; }
     </style>
 
   </head>
@@ -47,9 +51,14 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Three Arena</a>
+          <a class="navbar-brand" href="/examples/index.html?">Three Arena</a>
         </div>
         <ul class="nav navbar-nav navbar-right">
+          <li style="padding: 8px;">
+            <button class="btn" data-toggle="modal" data-target="#myModal">
+              View source
+            </button>
+          </li>
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
             <ul class="dropdown-menu examples">
@@ -73,31 +82,54 @@
           <h2><a href="#simplest.js">The simplest scene</a></h2>
           <p>Show a small flat terrain and one controlled character.
           Look at this example as the simplest possible scene. </p>
-          <p><a class="btn btn-default" href="#simplest.js" role="button">View &raquo;</a></p>
+          <a href="#simplest.js"><img src="styles/simplest.png" /></a>
         </div>
+        <!--
         <div class="col-md-4">
           <h2><a href="#simpletower.js">A simple defense tower</a></h2>
           <p>Same small level, plus a basic defense tower with minimum & maximum attack range. </p>
+          <img src="styles/simpletower.png" />
           <p><a class="btn btn-default" href="#simpletower.js" role="button">View &raquo;</a></p>
-       </div>
+        </div>
+        -->
+        <!--
         <div class="col-md-4">
           <h2><a href="#dungeon.js">A dungeon</a></h2>
           <p>A big terrain with multiple height levels and random-positionned shop and flies. </p>
+          <img src="styles/dungeon.png" />
           <p><a class="btn btn-default" href="#dungeon.js" role="button">View &raquo;</a></p>
         </div>
+        -->
         <div class="col-md-4">
           <h2><a href="#castle.js">A small castle</a></h2>
-          <p>A small castle level directly used from <a href="http://opengameart.org/content/castle-map">OGA</a>. </p>
-          <p><a class="btn btn-default" href="#castle.js" role="button">View &raquo;</a></p>
+          <p>A scene directly picked from <a href="http://opengameart.org/content/castle-map">OGA</a> showing a basic <br>castle level. </p>
+          <a href="#castle.js"><img src="styles/castle.png" /></a>
         </div>
         <div class="col-md-4">
           <h2><a href="#demo.js">A complex demo</a></h2>
-          <p>Introducing automated characters with a middle size level, a spawning pool that create monsters who seek oponent nexus and destroy it. Keep the nexus alive ! </p>
-          <p><a class="btn btn-default" href="#demo.js" role="button">View &raquo;</a></p>
+          <p>Introducing automated characters, create monsters to seek oponent nexus. Keep the nexus alive ! </p>
+          <a href="#demo.js"><img src="styles/dota.png" /></a>
         </div>
       </div>
     </div> <!-- /container -->
 
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="myModalLabel">Source</h4>
+          </div>
+          <div class="modal-body">
+            <iframe src="#"></iframe>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
 
     <!-- game elements -->
@@ -276,9 +308,22 @@
       });
 
       if (location.hash) {
+
+        var gamescript = location.hash.substr(1);
+
         $('#page').hide();
         $('#game-wrapper').show();
-        $('body').append($('<script src="/examples/' + location.hash.substr(1) + '"/>'));
+        $('#source').show().attr('href', '/examples/' + gamescript);
+        $('html, body').css('overflow', 'hidden');
+
+        $('#myModal .modal-body iframe').attr('src', '/examples/' + gamescript);
+        setTimeout(function(){
+          var iframedoc = $('#myModal .modal-body iframe')[0].contentDocument;
+          $('pre', iframedoc).addClass('prettyprint');
+          $('body', iframedoc).append($('<script src="/examples/styles/run_prettify.js"/>'));
+        }, 5000);
+
+        $('body').append($('<script id="gamescript" src="/examples/' + gamescript + '"/>'));
       }
     </script>
   </body>

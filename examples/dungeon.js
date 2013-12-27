@@ -1,3 +1,6 @@
+'use strict';
+
+var Arena = window.Arena;
 
 var arena = new Arena({
   container: document.getElementById('game-container'),
@@ -7,9 +10,12 @@ var arena = new Arena({
   showObstacles: true
 });
 
+var terrainTexture = THREE.ImageUtils.loadTexture('/gamedata/maps/dungeon/mtl_floor03_s.jpg');
+terrainTexture.wrapS = terrainTexture.wrapT = THREE.RepeatWrapping;
+terrainTexture.repeat.set( 2, 2 );
+
 arena.setTerrain('/gamedata/maps/dungeon/dungeon_noised.obj', {
-  tDiffuse: '/gamedata/maps/dungeon/mtl_floor03_s.png',
-  tNormal: '/gamedata/textures/plain_blue.png'
+  map: terrainTexture,
 });
 
 arena.addCharacter(function(done){
