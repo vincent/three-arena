@@ -7,7 +7,7 @@ var arena = new Arena({
   container: document.getElementById('game-container'),
 
   cameraFollowsPlayer: true,
-  visibleCharactersBBox: false,
+  visibleCharactersBBox: true,
 
   lights: {
     ambientColor: 0x646464,

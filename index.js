@@ -648,8 +648,8 @@ Arena.prototype.raycast = function( event, objects ) {
   var dims = this.getContainerDimensions();
 
   this._raycasterVector.set(
-     (event.clientX / dims.width) * 2 - 1,
-    -(event.clientY / dims.height) * 2 + 1,
+     (event.layerX / dims.width) * 2 - 1,
+    -(event.layerY / dims.height) * 2 + 1,
     this.camera.near
   );
 
@@ -1136,7 +1136,12 @@ Arena.prototype._prepareEntity = function(entity) {
   }
 
   // has a collision box
-  var invisibleMaterial = new THREE.MeshBasicMaterial({ wireframe: true, color: 0xffffff, transparent: true, opacity: 0.5 });
+  var invisibleMaterial = new THREE.MeshBasicMaterial({
+    wireframe: true,
+    color: 0xffffff,
+    transparent: true,
+    opacity: self.settings.visibleCharactersBBox ? 0.5 : 0
+  });
   var box = new THREE.Box3();
   box.setFromObject(entity);
   box = new THREE.Mesh(new THREE.CubeGeometry(
@@ -1145,7 +1150,7 @@ Arena.prototype._prepareEntity = function(entity) {
     box.max.z - box.min.z,
     1, 1, 1
   ), invisibleMaterial);
-  box.visible = self.settings.visibleCharactersBBox;
+  // box.visible = self.settings.visibleCharactersBBox;
   entity.add(box);
 
   // is intersectable

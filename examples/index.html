@@ -1,164 +1,247 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <title>Three Arena Examples</title>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">
 
-    <!-- build:css(.tmp) styles/main.css -->
+    <title>Three Arena examples</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="styles/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Games CSS -->
     <link rel="stylesheet" href="styles/animate.css">
     <link rel="stylesheet" href="styles/loadingbar.css">
     <link rel="stylesheet" href="styles/hud.mini.css">
-    <!-- endbuild -->
+
+    <style type="text/css">
+    #stats { z-index: 1000; top: -50px !important; }
+    .navbar-fixed-top { z-index: 1; }
+    .dg.ac  { top: 50px !important; left: 0 !important; right: auto !important; }
+    #game-container { top: 50px; height: 96%; }
+    </style>
+
   </head>
+
   <body>
-    <nav id="menu" style="margin: 10%; line-height: 2em;">
-      <li><a href="#simplest.js">The simplest scene</a></li>
-      <li><a href="#simpletower.js">A simple scene with a defense tower</a></li>
-      <li><a href="#dungeon.js">A dungeon</a></li>
-      <li><a href="#castle.js">A small castle</a></li>
-      <li><a href="#demo.js">A complex demo</a></li>
-    </nav>
 
-    <div id="loading-bar">
-      <div class="progress"></div>  
-    </div>
-
-    <div id="game-container">
-      <div id="selection-rectangle"></div>
-    </div>
-
-    <div class="view menu" id="view-contextmenu" oncontextmenu="return false;">
-      <ul class="items" data-bind="foreach: items">
-        <li data-bind="attr: { class: action }, event: { click: $parent.click }">
-          <span class="name" data-bind="text: name"></span>
-          <span class="price" data-bind="text: price"></span>
-        </li>
-      </ul>
-    </div>
-
-    <div id="hud-container">
-
-      <div class="view front"></div>
-
-      <div class="view" id="view-character">
-        <div class="name" data-bind="text: name"></div>
-        <div class="level" data-bind="text: level"></div>
-        <div class="xp">
-          <span class="bar" data-bind="text: xpprogress"></span>
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Three Arena</a>
         </div>
-        <div class="image" data-bind="style:{ backgroundImage: 'url(' + image() + ')' }"></div>
-
-        <div class="strength" data-bind="text: strength"></div>
-        <div class="agility" data-bind="text: agility"></div>
-        <div class="intelligence" data-bind="text: intelligence"></div>
-
-        <div class="life">
-          <div class="bar" data-bind="text: life(), style: { width: life() + '%' }"></div>
-        </div>
-        <div class="mana">
-          <div class="bar" data-bind="text: mana(), style: { width: mana() + '%' }"></div>
-        </div>
-
-        <ul class="spells" data-bind="foreach: spells">
-          <li class="spell">
-            <div class="image" data-bind="event: { click: $parent.cast }, style: { backgroundImage: 'url(/gamedata/spells/' + name + '.png)' }">
-            </div>
-            <div class="cooldown" data-bind="text: ccd, style: { transform: 'skew(' + (90 / cooldown * ccd) + 'deg)' }"></div>
-            <div class="level" data-bind="text: level">
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+            <ul class="dropdown-menu examples">
+              <li><a href="#simplest.js">The simplest scene</a></li>
+              <li><a href="#simpletower.js">A simple defense tower</a></li>
+              <li><a href="#dungeon.js">A dungeon</a></li>
+              <li class="divider"></li>
+              <li><a href="#castle.js">A small castle</a></li>
+              <li class="divider"></li>
+              <li><a href="#demo.js">A complex demo</a></li>
+            </ul>
           </li>
         </ul>
       </div>
+    </div>
 
-      <div class="view" id="view-map">
-        <div class="daylight"></div>
-        <div class="map" data-bind="event: { click: onMapClick, mousemove: onMapClick }, style: { backgroundImage: 'url(' + image() + ')' }">
-          <ul data-bind="foreach: characters">
-            <li class="character-position" data-bind="event: { hover: $root.onCharacterHover }, style: { top: z + '%', left: x + '%' }"></li>
-          </ul>                    
+    <div id="page" class="container" style="margin-top: 100px;">
+      <!-- Example row of columns -->
+      <div class="row examples">
+        <div class="col-md-4">
+          <h2><a href="#simplest.js">The simplest scene</a></h2>
+          <p>Show a small flat terrain and one controlled character.
+          Look at this example as the simplest possible scene. </p>
+          <p><a class="btn btn-default" href="#simplest.js" role="button">View &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+          <h2><a href="#simpletower.js">A simple defense tower</a></h2>
+          <p>Same small level, plus a basic defense tower with minimum & maximum attack range. </p>
+          <p><a class="btn btn-default" href="#simpletower.js" role="button">View &raquo;</a></p>
+       </div>
+        <div class="col-md-4">
+          <h2><a href="#dungeon.js">A dungeon</a></h2>
+          <p>A big terrain with multiple height levels and random-positionned shop and flies. </p>
+          <p><a class="btn btn-default" href="#dungeon.js" role="button">View &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+          <h2><a href="#castle.js">A small castle</a></h2>
+          <p>A small castle level directly used from <a href="http://opengameart.org/content/castle-map">OGA</a>. </p>
+          <p><a class="btn btn-default" href="#castle.js" role="button">View &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+          <h2><a href="#demo.js">A complex demo</a></h2>
+          <p>Introducing automated characters with a middle size level, a spawning pool that create monsters who seek oponent nexus and destroy it. Keep the nexus alive ! </p>
+          <p><a class="btn btn-default" href="#demo.js" role="button">View &raquo;</a></p>
+        </div>
+      </div>
+    </div> <!-- /container -->
+
+
+
+    <!-- game elements -->
+    <div id="game-wrapper" style="display:none;">
+      <div id="game-container">
+        <div id="selection-rectangle"></div>
+
+        <div class="view menu" id="view-contextmenu" oncontextmenu="return false;">
+          <ul class="items" data-bind="foreach: items">
+            <li data-bind="attr: { class: action }, event: { click: $parent.click }">
+              <span class="name" data-bind="text: name"></span>
+              <span class="price" data-bind="text: price"></span>
+            </li>
+          </ul>
+        </div>
+
+        <div id="hud-container">
+
+          <div class="view front"></div>
+
+          <div class="view" id="view-character">
+            <div class="name" data-bind="text: name"></div>
+            <div class="level" data-bind="text: level"></div>
+            <div class="xp">
+              <span class="bar" data-bind="text: xpprogress"></span>
+            </div>
+            <div class="image" data-bind="style:{ backgroundImage: 'url(' + image() + ')' }"></div>
+
+            <div class="strength" data-bind="text: strength"></div>
+            <div class="agility" data-bind="text: agility"></div>
+            <div class="intelligence" data-bind="text: intelligence"></div>
+
+            <div class="life">
+              <div class="bar" data-bind="text: life(), style: { width: life() + '%' }"></div>
+            </div>
+            <div class="mana">
+              <div class="bar" data-bind="text: mana(), style: { width: mana() + '%' }"></div>
+            </div>
+
+            <ul class="spells" data-bind="foreach: spells">
+              <li class="spell">
+                <div class="image" data-bind="event: { click: $parent.cast }, style: { backgroundImage: 'url(/gamedata/spells/' + name + '.png)' }">
+                </div>
+                <div class="cooldown" data-bind="text: ccd, style: { transform: 'skew(' + (90 / cooldown * ccd) + 'deg)' }"></div>
+                <div class="level" data-bind="text: level">
+              </li>
+            </ul>
+          </div>
+
+          <div class="view" id="view-map">
+            <div class="daylight"></div>
+            <div class="map" data-bind="event: { click: onMapClick, mousemove: onMapClick }, style: { backgroundImage: 'url(' + image() + ')' }">
+              <ul data-bind="foreach: characters">
+                <li class="character-position" data-bind="event: { hover: $root.onCharacterHover }, style: { top: z + '%', left: x + '%' }"></li>
+              </ul>                    
+            </div>
+          </div>
+
         </div>
       </div>
 
+
+      <!-- SHADER: Glowing effect -->
+      <script id="glow_vertexshader" type="x-shader/x-vertex">
+      varying vec3 vNormal;
+      void main() 
+      {
+          vNormal = normalize( normalMatrix * normal );
+          gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+      }
+      </script>
+      <script id="glow_fragmentshader" type="x-shader/x-vertex"> 
+      varying vec3 vNormal;
+      void main() 
+      {
+          float intensity = pow( 0.7 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) ), 4.0 ); 
+          gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * intensity;
+      }
+      </script>
+
+      <script id="waterVertexShader" type="x-shader/x-vertex">
+      varying vec2 vUv;
+      void main() { 
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+      }
+      </script>
+
+      <script id="waterFragmentShader" type="x-shader/x-vertex"> 
+      uniform sampler2D baseTexture;
+      uniform float baseSpeed;
+      uniform sampler2D noiseTexture;
+      uniform float noiseScale;
+      uniform float alpha;
+      uniform float time;
+
+      varying vec2 vUv;
+      void main() {
+          vec2 uvTimeShift = vUv + vec2( -0.7, 1.5 ) * time * baseSpeed;  
+          vec4 noiseGeneratorTimeShift = texture2D( noiseTexture, uvTimeShift );
+          vec2 uvNoiseTimeShift = vUv + noiseScale * vec2( noiseGeneratorTimeShift.r, noiseGeneratorTimeShift.b );
+          vec4 baseColor = texture2D( baseTexture, uvNoiseTimeShift );
+
+          baseColor.a = alpha;
+          gl_FragColor = baseColor;
+      }  
+      </script>
+
+      <!-- SHADER: Terrain -->
+      <script id="vertexshader" type="x-shader/x-vertex">
+          attribute float size;
+          attribute vec3 pcolor;
+
+          varying vec3 vColor;
+
+          void main() {
+
+              vColor = pcolor;
+
+              vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+              gl_PointSize = size * ( 200.0 / length( mvPosition.xyz ) );
+
+              gl_Position = projectionMatrix * mvPosition;
+
+          }
+      </script>
+
+      <script type="x-shader/x-fragment" id="fragmentshader">
+          uniform sampler2D texture;
+          varying vec3 vColor;
+          void main() {
+              vec4 outColor = texture2D( texture, gl_PointCoord );
+              gl_FragColor = outColor * vec4( vColor, 1.0 );
+          }
+      </script>
     </div>
 
 
-    <!-- SHADER: Glowing effect -->
-    <script id="glow_vertexshader" type="x-shader/x-vertex">
-    varying vec3 vNormal;
-    void main() 
-    {
-        vNormal = normalize( normalMatrix * normal );
-        gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-    }
-    </script>
-    <script id="glow_fragmentshader" type="x-shader/x-vertex"> 
-    varying vec3 vNormal;
-    void main() 
-    {
-        float intensity = pow( 0.7 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) ), 4.0 ); 
-        gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * intensity;
-    }
-    </script>
-
-    <script id="waterVertexShader" type="x-shader/x-vertex">
-    varying vec2 vUv;
-    void main() { 
-        vUv = uv;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-    }
-    </script>
-
-    <script id="waterFragmentShader" type="x-shader/x-vertex"> 
-    uniform sampler2D baseTexture;
-    uniform float baseSpeed;
-    uniform sampler2D noiseTexture;
-    uniform float noiseScale;
-    uniform float alpha;
-    uniform float time;
-
-    varying vec2 vUv;
-    void main() {
-        vec2 uvTimeShift = vUv + vec2( -0.7, 1.5 ) * time * baseSpeed;  
-        vec4 noiseGeneratorTimeShift = texture2D( noiseTexture, uvTimeShift );
-        vec2 uvNoiseTimeShift = vUv + noiseScale * vec2( noiseGeneratorTimeShift.r, noiseGeneratorTimeShift.b );
-        vec4 baseColor = texture2D( baseTexture, uvNoiseTimeShift );
-
-        baseColor.a = alpha;
-        gl_FragColor = baseColor;
-    }  
-    </script>
-
-    <!-- SHADER: Terrain -->
-    <script id="vertexshader" type="x-shader/x-vertex">
-        attribute float size;
-        attribute vec3 pcolor;
-
-        varying vec3 vColor;
-
-        void main() {
-
-            vColor = pcolor;
-
-            vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-
-            gl_PointSize = size * ( 200.0 / length( mvPosition.xyz ) );
-
-            gl_Position = projectionMatrix * mvPosition;
-
-        }
-    </script>
-
-    <script type="x-shader/x-fragment" id="fragmentshader">
-        uniform sampler2D texture;
-        varying vec3 vColor;
-        void main() {
-            vec4 outColor = texture2D( texture, gl_PointCoord );
-            gl_FragColor = outColor * vec4( vColor, 1.0 );
-        }
-    </script>
-
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
     <script type="text/javascript" src="/vendor/jquery/jquery.js"></script>
+    <script type="text/javascript" src="styles/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/vendor/threejs/build/three.js"></script>
     <script type="text/javascript" src="/vendor/threejs/examples/js/libs/tween.min.js"></script>
     <script type="text/javascript" src="/vendor/threejs/examples/js/libs/dat.gui.min.js"></script>
@@ -186,15 +269,15 @@
     <script type="text/javascript" src="/build/arena.build.js"></script>
 
     <script type="text/javascript">
-      $('#menu').click(function(event){
+      $('.examples a').click(function(event){
         event.preventDefault();
-        if (event.target.tagName === 'A') {
-          location = event.target.href;
-          location.reload();
-        }
+        location = event.target.href;
+        location.reload();
       });
 
       if (location.hash) {
+        $('#page').hide();
+        $('#game-wrapper').show();
         $('body').append($('<script src="/examples/' + location.hash.substr(1) + '"/>'));
       }
     </script>
