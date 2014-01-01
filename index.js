@@ -21,7 +21,7 @@ var LifeBar = require('./lib/elements/slifebar');
 var DestinationMarker = require('./lib/controls/destinationmarker');
 var Terrain = require('./lib/elements/terrain');
 var InteractiveObject = require('./lib/elements/interactiveobject');
-var PathFinding = require('./lib/pathfinding/recast').Module;
+var PathFinding = require('./lib/pathfinding');
 var CameraControls = require('./lib/controls/dota');
 
 module.exports = Arena;
@@ -128,6 +128,8 @@ var Arena = function (settings) {
    * @type {THREE.Clock}
    */
   this.clock = new THREE.Clock();
+
+  this.pathfinder = new PathFinding(this);
 
   /**
    * Each team objectives
@@ -787,7 +789,7 @@ Arena.prototype._onDocumentMouseUp = function(event) {
     // Mark some polys as not walkable
     } else if (event.button === 0 && event.shiftKey && intersects[0].object.parent && Utils.childOf(intersects[0].object.parent, Terrain)) {
 
-      PathFinding.setPolyUnwalkable(
+      self.pathfinder.setPolyUnwalkable(
         ipos.x, ipos.y, ipos.z,
         5, 5, 5,
         0
@@ -815,16 +817,16 @@ Arena.prototype._onDocumentMouseUp = function(event) {
         character._currentTweenDestination = ipos.clone();
         */
 
-        PathFinding.findPath(
+        self.pathfinder.findPath(
           startPosition.x, startPosition.y, startPosition.z,
           ipos.x, ipos.y, ipos.z,
           10000,
-          Utils.gcb(function(path) {
+          function(path) {
             character.moveAlong(path, {
               append: event.shiftKey,
               yoyo: event.ctrlKey
             });
-          })
+          }
         );
       }
 
@@ -993,21 +995,24 @@ Arena.prototype.setTerrain = function(file, options) {
       $.ajax({
         url: file,
         success: function(data) {
-          window.Config = {};
 
-          PathFinding.set_cellSize(options.cellSize);
-          PathFinding.set_cellHeight(options.cellHeight);
+          self.pathfinder.config({
+            cellSize: options.cellSize,
+            cellHeight: options.cellHeight,
+            agentHeight: options.agentHeight,
+            agentRadius: options.agentRadius,
+            agentMaxClimb: options.agentMaxClimb,
+            agentMaxSlope: options.agentMaxSlope
+  
+          }, function(){
 
-          PathFinding.set_agentHeight(options.agentHeight);
-          PathFinding.set_agentRadius(options.agentRadius);
+            self.pathfinder.initWithFileContent(data, function() {
 
-          PathFinding.set_agentMaxClimb(options.agentMaxClimb);
-          PathFinding.set_agentMaxSlope(options.agentMaxSlope);
+              console.log('terrain ready');
+              self.emit('set:terrain', self.ground);
+            });
+          });
 
-          PathFinding.initWithFileContent(data);
-          PathFinding.build();
-
-          self.emit('set:terrain', self.ground);
         }
       });
     }
@@ -1032,7 +1037,7 @@ Arena.prototype.computeNavigationMesh = function(callback) {
 
   if (! self.navigationMesh) {
     // get the navmesh vertices
-    PathFinding.getNavMeshVertices(
+    self.pathfinder.getNavMeshVertices(
       Utils.gcb(function(vertices) {
         // build the mesh
         self.navigationMesh = Utils.meshFromVertices(vertices, {
@@ -1082,7 +1087,7 @@ Arena.prototype.groundObject = function(object) {
  */
 Arena.prototype.randomPositionOnterrain = function(callback) {
 
-  PathFinding.getRandomPoint(Utils.gcb(callback));
+  self.pathfinder.getRandomPoint(Utils.gcb(callback));
 };
 
 /**
@@ -1100,7 +1105,7 @@ Arena.prototype.addObstacle = function(position, radius, flag) {
     this.scene.add(obsctacle);
   }
 
-  PathFinding.setPolyUnwalkable(position.x, position.y, position.z, radius, radius, radius, flag);
+  self.pathfinder.setPolyUnwalkable(position.x, position.y, position.z, radius, radius, radius, flag);
 };
 
 

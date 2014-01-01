@@ -2,7 +2,7 @@
 
 var Arena = window.Arena;
 
-var arena = new Arena({
+var arena = window.arena = new Arena({
   container: document.getElementById('game-container'),
 
   showRoutes: true

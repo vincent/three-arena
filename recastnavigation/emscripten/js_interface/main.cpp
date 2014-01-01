@@ -273,7 +273,7 @@ void getNavMeshVertices(std::string callback){
 					const float y = orig[1] + (v[1]+1)*ch;
 					const float z = orig[2] + v[2]*cs;
 
-					sprintf(buff, "__tmp_recastjs_data.push(new THREE.Vector3(%f, %f, %f));", x, y, z);
+					sprintf(buff, "__tmp_recastjs_data.push({x:%f, y:%f, z:%f});", x, y, z);
 					emscripten_run_script(buff);
 				}
 			}
@@ -314,7 +314,7 @@ void getRandomPoint(std::string callback)
 
 	} else {
 
-		sprintf(buff, "%s(new THREE.Vector3(%f, %f, %f));", callback.c_str(), randomPt[0], randomPt[1], randomPt[2]);
+		sprintf(buff, "%s({x:%f, y:%f, z:%f});", callback.c_str(), randomPt[0], randomPt[1], randomPt[2]);
 		emscripten_run_script(buff);
 	}
 }
@@ -358,10 +358,10 @@ void getNavHeightfieldRegions(std::string callback)
 				else
 					color = duRGBA(0,0,0,64);
 
-				sprintf(buff, "__tmp_recastjs_data.push(new THREE.Vector3(%f, %f, %f));", fx, fy, fz);      emscripten_run_script(buff);
-				sprintf(buff, "__tmp_recastjs_data.push(new THREE.Vector3(%f, %f, %f));", fx, fy, fz+cs);   emscripten_run_script(buff);
-				sprintf(buff, "__tmp_recastjs_data.push(new THREE.Vector3(%f, %f, %f));", fx+cs, fy, fz+cs);emscripten_run_script(buff);
-				sprintf(buff, "__tmp_recastjs_data.push(new THREE.Vector3(%f, %f, %f));", fx+cs, fy, fz);   emscripten_run_script(buff);
+				sprintf(buff, "__tmp_recastjs_data.push({x:%f, y:%f, z:%f});", fx, fy, fz);      emscripten_run_script(buff);
+				sprintf(buff, "__tmp_recastjs_data.push({x:%f, y:%f, z:%f});", fx, fy, fz+cs);   emscripten_run_script(buff);
+				sprintf(buff, "__tmp_recastjs_data.push({x:%f, y:%f, z:%f});", fx+cs, fy, fz+cs);emscripten_run_script(buff);
+				sprintf(buff, "__tmp_recastjs_data.push({x:%f, y:%f, z:%f});", fx+cs, fy, fz);   emscripten_run_script(buff);
 			}
 		}
 	}
@@ -409,7 +409,7 @@ void findNearestPoly(float cx, float cy, float cz,
 			for (int i = 0; i < tile->header->vertCount; i++) {
 				float* v = &tile->verts[i];
 
-				sprintf(buff, "__tmp_recastjs_data.push(new THREE.Vector3(%f, %f, %f));", v[0], v[1], v[2]);
+				sprintf(buff, "__tmp_recastjs_data.push({x:%f, y:%f, z:%f});", v[0], v[1], v[2]);
 				emscripten_run_script(buff);
 			}	
 		}
@@ -513,7 +513,7 @@ void findPath(float startPosX, float startPosY, float startPosZ,
 
 				// why ?
 				if (!(fabs(v[0]) < 0.0000001f && fabs(v[1]) < 0.0000001f && fabs(v[2]) < 0.0000001f)) {
-					sprintf(buff, "__tmp_recastjs_data.push(new THREE.Vector3(%f, %f, %f));", v[0], v[1], v[2]);
+					sprintf(buff, "__tmp_recastjs_data.push({x:%f, y:%f, z:%f});", v[0], v[1], v[2]);
 					emscripten_run_script(buff);
 				} else {
 					sprintf(buff, "ignore %f, %f, %f", v[0], v[1], v[2]);

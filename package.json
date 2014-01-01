@@ -21,6 +21,7 @@
     "start": "node vendor/threejs/utils/servers/simplehttpserver.js & open http://localhost:8000",
     "doc": "jsdoc ...",
     "build": "mkdir -p build && browserify index.js -d -o build/arena.build.js",
+    "recast": "cd recastnavigation/emscripten && ./build.sh ../../lib/pathfinding/recast.js && cd ../.. && npm run build",
     "watch-js": "watchify browser/main.js -o static/bundle.js -dv"
   }
 }
