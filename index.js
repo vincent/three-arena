@@ -984,36 +984,29 @@ Arena.prototype.setTerrain = function(file, options) {
           // or compute it
           } else if (! child.geometry.boundingBox) {
             child.geometry.computeBoundingBox();
+            // child.geometry.boundingBox = new THREE.Box3().setFromObject(child);
           }
           // fast access to ground bbox
           self.ground.boundingBox = child.geometry.boundingBox;
         }
       } );
 
+      // configure, and load the navigation mesh
+      self.pathfinder.config({
 
-      // load the navigation mesh
-      $.ajax({
-        url: file,
-        success: function(data) {
+        cellSize: options.cellSize,
+        cellHeight: options.cellHeight,
+        agentHeight: options.agentHeight,
+        agentRadius: options.agentRadius,
+        agentMaxClimb: options.agentMaxClimb,
+        agentMaxSlope: options.agentMaxSlope
 
-          self.pathfinder.config({
-            cellSize: options.cellSize,
-            cellHeight: options.cellHeight,
-            agentHeight: options.agentHeight,
-            agentRadius: options.agentRadius,
-            agentMaxClimb: options.agentMaxClimb,
-            agentMaxSlope: options.agentMaxSlope
-  
-          }, function(){
+      }, function(){
+        self.pathfinder.initWithFile(file, function() {
 
-            self.pathfinder.initWithFileContent(data, function() {
-
-              console.log('terrain ready');
-              self.emit('set:terrain', self.ground);
-            });
-          });
-
-        }
+          console.log('terrain ready');
+          self.emit('set:terrain', self.ground);
+        });
       });
     }
   });
