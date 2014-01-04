@@ -63,6 +63,8 @@ var Arena = function (settings) {
 
   var self = this;
 
+  this.setMaxListeners(1000);
+
   /**
    * The game settings
    * @type {Object}
@@ -828,6 +830,8 @@ Arena.prototype._onDocumentMouseUp = function(event) {
             });
           }
         );
+
+        self.emit('player:move', {entity:character, destination:ipos, event:event});
       }
 
     } else if (self._waitForSelection) {
@@ -1080,7 +1084,7 @@ Arena.prototype.groundObject = function(object) {
  */
 Arena.prototype.randomPositionOnterrain = function(callback) {
 
-  self.pathfinder.getRandomPoint(Utils.gcb(callback));
+  this.pathfinder.getRandomPoint(Utils.gcb(callback));
 };
 
 /**
@@ -1098,7 +1102,7 @@ Arena.prototype.addObstacle = function(position, radius, flag) {
     this.scene.add(obsctacle);
   }
 
-  self.pathfinder.setPolyUnwalkable(position.x, position.y, position.z, radius, radius, radius, flag);
+  this.pathfinder.setPolyUnwalkable(position.x, position.y, position.z, radius, radius, radius, flag);
 };
 
 
@@ -1545,7 +1549,9 @@ Arena.prototype.start = function() {
     // timers
     self._behaviours_delta = self.clock.getDelta();
 
-  }, function(done, total){ console.log('preloaded %o of %o', done, total); });
+  }, function(){
+    console.log('preload now... consider using preload() before the game starts');
+  });
 
   return this;
 };
@@ -1599,7 +1605,6 @@ Arena.prototype.render = function() {
     // camera height ~ crraaaapp
     this.camera.position.y = this.pcs[0].position.y + this.settings.cameraHeight;
   }
-
 
   _.each(this.pcs, function(character){
     character.update(self);

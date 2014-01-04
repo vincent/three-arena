@@ -113,7 +113,11 @@ Hack the pathfinding system
 
 The pathfinding is done via an javascript Emscripten-compiled interface above the c++ library [recastnavigation](https://github.com/memononen/recastnavigation).
 To add methods in this module, you need to code their [javascript interface](recastnavigation/emscripten/js_interface/main.cpp#L966) and rebuild the javascript module with
+```sh
+npm run recast
+```
 
+Or build a separated build with
 ```sh
 cd recastnavigation/emscripten
 ./build.sh ../../lib/pathfinding/recast.js

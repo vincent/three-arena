@@ -574,6 +574,176 @@ bool initWithFileContent(std::string contents)
 	return true;
 }
 
+bool initCrowd(const int maxAgents, const float maxAgentRadius)
+{
+	m_crowd->init(maxAgents, maxAgentRadius, m_navMesh);
+
+	return true;
+}
+
+int addCrowdAgent(float posX, float posY, float posZ, float radius, float height, 
+									float maxAcceleration, float maxSpeed, unsigned char updateFlags, float separationWeight)
+{
+	dtCrowdAgentParams ap;
+	memset(&ap, 0, sizeof(ap));
+	ap.radius = radius;
+	ap.height = height;
+	ap.maxAcceleration = maxAcceleration;
+	ap.maxSpeed = maxSpeed;
+	ap.collisionQueryRange = ap.radius * 12.0f;
+	ap.pathOptimizationRange = ap.radius * 30.0f;
+	ap.updateFlags = 0; 
+	// if (m_toolParams.m_anticipateTurns)
+	// 	ap.updateFlags |= DT_CROWD_ANTICIPATE_TURNS;
+	// if (m_toolParams.m_optimizeVis)
+	// 	ap.updateFlags |= DT_CROWD_OPTIMIZE_VIS;
+	// if (m_toolParams.m_optimizeTopo)
+	// 	ap.updateFlags |= DT_CROWD_OPTIMIZE_TOPO;
+	// if (m_toolParams.m_obstacleAvoidance)
+	// 	ap.updateFlags |= DT_CROWD_OBSTACLE_AVOIDANCE;
+	// if (m_toolParams.m_separation)
+	// 	ap.updateFlags |= DT_CROWD_SEPARATION;
+	ap.obstacleAvoidanceType = 3.0;
+	ap.separationWeight = separationWeight;
+
+	float pos[3] = { posX, posY, posZ };
+
+	int idx = m_crowd->addAgent(pos, &ap);
+
+	// char buff[512];
+	// const dtCrowdAgent* ag = m_crowd->getAgent(idx);
+	// const float* p = ag->npos;
+	// const float r = ag->params.radius;
+	// sprintf(buff, "debug('new agent', { position:{x:%f,y:%f,z:%f}, radius:%f, active:%d, state:%d });", p[0], p[1], p[2], r, ag->active, ag->state);
+	// emscripten_run_script(buff);
+
+	return idx;
+}
+
+bool crowdRequestMoveTarget(int agentIdx, float posX, float posY, float posZ)
+{
+	char buff[512];
+
+	float pos[3] = { posX, posY, posZ };
+	const float ext[3] = {2,4,2};
+
+	dtPolyRef m_targetRef = 0;
+	float m_targetPos[3];
+
+	dtQueryFilter filter;
+	filter.setIncludeFlags(3);
+	filter.setExcludeFlags(0);
+
+	dtStatus findStatus = m_navQuery->findNearestPoly(pos, ext, &filter, &m_targetRef, m_targetPos);
+	if (dtStatusFailed(findStatus)) {
+		// emscripten_run_script("debug('Cannot find a poly near specified position');");
+		return false;
+	} else {
+		// emscripten_run_script("debug('MoveTarget adjusted');");
+	}
+
+	m_crowd->requestMoveTarget(agentIdx, m_targetRef, m_targetPos);	
+
+	return true;
+}
+
+bool crowdUpdate(float dt)
+{
+	char buff[512];
+
+	dtCrowdAgentDebugInfo m_agentDebug;
+	memset(&m_agentDebug, 0, sizeof(m_agentDebug));
+
+	m_crowd->update(dt, &m_agentDebug);
+
+	return true;
+}
+
+bool crowdGetActiveAgents(std::string callback)
+{
+	int maxAgents = 100;
+	char buff[512];
+
+	dtCrowdAgent** agents = (dtCrowdAgent**)dtAlloc(sizeof(dtCrowdAgent*)*maxAgents, DT_ALLOC_PERM);
+	int nagents = m_crowd->getActiveAgents(agents, maxAgents);
+
+	emscripten_run_script("__tmp_recastjs_crowd_data = [];");
+
+/*
+struct dtCrowdAgent
+{
+	/// 1 if the agent is active, or 0 if the agent is in an unused slot in the agent pool.
+	unsigned char active;
+
+	/// The type of mesh polygon the agent is traversing. (See: #CrowdAgentState)
+	unsigned char state;
+
+	/// The path corridor the agent is using.
+	dtPathCorridor corridor;
+
+	/// The local boundary data for the agent.
+	dtLocalBoundary boundary;
+	
+	/// Time since the agent's path corridor was optimized.
+	float topologyOptTime;
+	
+	/// The known neighbors of the agent.
+	dtCrowdNeighbour neis[DT_CROWDAGENT_MAX_NEIGHBOURS];
+
+	/// The number of neighbors.
+	int nneis;
+	
+	/// The desired speed.
+	float desiredSpeed;
+
+	float npos[3];		///< The current agent position. [(x, y, z)]
+	float disp[3];
+	float dvel[3];		///< The desired velocity of the agent. [(x, y, z)]
+	float nvel[3];
+	float vel[3];		///< The actual velocity of the agent. [(x, y, z)]
+
+	/// The agent's configuration parameters.
+	dtCrowdAgentParams params;
+
+	/// The local path corridor corners for the agent. (Staight path.) [(x, y, z) * #ncorners]
+	float cornerVerts[DT_CROWDAGENT_MAX_CORNERS*3];
+
+	/// The local path corridor corner flags. (See: #dtStraightPathFlags) [(flags) * #ncorners]
+	unsigned char cornerFlags[DT_CROWDAGENT_MAX_CORNERS];
+
+	/// The reference id of the polygon being entered at the corner. [(polyRef) * #ncorners]
+	dtPolyRef cornerPolys[DT_CROWDAGENT_MAX_CORNERS];
+
+	/// The number of corners.
+	int ncorners;
+	
+	unsigned char targetState;			///< State of the movement request.
+	dtPolyRef targetRef;				///< Target polyref of the movement request.
+	float targetPos[3];					///< Target position of the movement request (or velocity in case of DT_CROWDAGENT_TARGET_VELOCITY).
+	dtPathQueueRef targetPathqRef;		///< Path finder ref.
+	bool targetReplan;					///< Flag indicating that the current path is being replanned.
+	float targetReplanTime;				/// <Time since the agent's target was replanned.
+};
+ */
+
+	for (int i = 0; i < nagents; i++) {
+		dtCrowdAgent* ag = agents[i];
+		const float* p = ag->npos;
+		const float r = ag->params.radius;
+
+		// sprintf(buff, "debug({ position:{x:%f,y:%f,z:%f}, radius:%f, active:%d, state:%d });", p[0], p[1], p[2], r, ag->active, ag->state);
+		// emscripten_run_script(buff);
+
+		sprintf(buff, "__tmp_recastjs_crowd_data.push({ position:{x:%f,y:%f,z:%f}, radius:%f, active:%d, state:%d });", p[0], p[1], p[2], r, ag->active, ag->state);
+		emscripten_run_script(buff);
+	}
+
+	sprintf(buff, "%s(__tmp_recastjs_crowd_data);", callback.c_str());
+	emscripten_run_script(buff);
+
+	return true;
+}
+
 bool build()
 {
 	dd = new DebugDrawGL;
@@ -942,6 +1112,14 @@ bool build()
 		}
 	}
 
+	m_crowd = dtAllocCrowd();
+	if (!m_crowd)
+	{
+		dtFree(m_crowd);
+		m_ctx->log(RC_LOG_ERROR, "Could not create Detour Crowd");
+		return false;
+	}
+
 	printf("m_navMesh=%p \n", m_navMesh);
 	
 	printf("m_navQuery=%p \n", m_navQuery);
@@ -964,13 +1142,13 @@ bool build()
 using namespace emscripten;
 
 EMSCRIPTEN_BINDINGS(my_module) {
-    function("init", &init);
-    function("initWithFile", &initWithFile);
-    function("initWithFileContent", &initWithFileContent);
+  function("init", &init);
+  function("initWithFile", &initWithFile);
+  function("initWithFileContent", &initWithFileContent);
 
-    function("build", &build);
+  function("build", &build);
 
-    function("bareGeomInit", &bareGeomInit);
+  function("bareGeomInit", &bareGeomInit);
 	function("bareGeomAddVertex", &bareGeomAddVertex);
 	function("bareGeomAddTriangle", &bareGeomAddTriangle);
 	function("bareGeomValidate", &bareGeomValidate);
@@ -982,6 +1160,12 @@ EMSCRIPTEN_BINDINGS(my_module) {
 	function("findPath", &findPath);
 	function("setPolyUnwalkable", &setPolyUnwalkable);
 	function("getRandomPoint", &getRandomPoint);
+
+  function("initCrowd", &initCrowd);
+  function("addCrowdAgent", &addCrowdAgent);
+  function("crowdRequestMoveTarget", &crowdRequestMoveTarget);
+  function("crowdUpdate", &crowdUpdate);
+  function("crowdGetActiveAgents", &crowdGetActiveAgents);
 
 	function("set_cellSize", &set_cellSize);
 	function("set_cellHeight", &set_cellHeight);
