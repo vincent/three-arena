@@ -6,3 +6,5 @@ dist
 .sass-cache
 app/bower_components
 old
+gamedata/sandbox
+examples/sandbox
