@@ -1,0 +1,12 @@
+# Blender MTL File: 'chest.blend'
+# Material Count: 1
+
+newmtl Chest_Material.001
+Ns 166.666667
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.130682 0.130682 0.130682
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd chest.jpg

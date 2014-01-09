@@ -21,5 +21,5 @@
   "jquery": true,
   "boss": true,
   "sub": true,
-  "globals": { "THREE": true }
+  "globals": { "THREE": true, "postMessage": true, "onmessage": true }
 }

@@ -27,11 +27,13 @@ arena.addCharacter(function(done){
 arena.on('set:terrain', function(){
   var crowd = new Arena.Elements.Crowd(arena);
 
-  for (var i = 0; i < 5; i++) {
+  for (var i = 0; i < 10; i++) {
     arena.addCharacter(function(done){
       new Arena.Characters.Monsterdog({
         onLoad: function(){
+          this.scale.set(.5, .5, .5);
           crowd.add(this, {
+            radius: 4.0,
             position: { x:44.438741, y:0, z:-41.74593 },
             maxAcceleration: 30.0,
             maxSpeed: 15.0,
