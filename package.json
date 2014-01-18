@@ -1,6 +1,10 @@
 {
   "name": "threearena",
   "version": "0.0.2",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:vincent/three-arena.git"
+  },
   "dependencies": {
     "raf": "0.0.3",
     "tic": "~0.2.1",
@@ -18,7 +22,7 @@
   },
   "subdomain": "three-arena",
   "scripts": {
-    "install": "napa vincent/tween.js:tween maryrosecook/machinejs",
+    "install": "napa vincent/tween.js:tween vincent/machinejs publicclass/now",
     "start": "node vendor/threejs/utils/servers/simplehttpserver.js & open http://localhost:8000",
     "doc": "jsdoc ...",
     "build": "mkdir -p build && browserify index.js -d -o build/arena.build.js",

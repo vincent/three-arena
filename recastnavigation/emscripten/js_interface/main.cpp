@@ -581,6 +581,41 @@ bool initCrowd(const int maxAgents, const float maxAgentRadius)
 	return true;
 }
 
+struct agentUserData {
+    int idx;
+};
+
+void updateCrowdAgentParameters(const int idx, float posX, float posY, float posZ, float radius, float height, 
+																float maxAcceleration, float maxSpeed, unsigned char updateFlags, float separationWeight)
+{
+	dtCrowdAgentParams ap;
+	memset(&ap, 0, sizeof(ap));
+	ap.radius = radius;
+	ap.height = height;
+	ap.maxAcceleration = maxAcceleration;
+	ap.maxSpeed = maxSpeed;
+	ap.collisionQueryRange = ap.radius * 12.0f;
+	ap.pathOptimizationRange = ap.radius * 300.0f;
+	ap.updateFlags = 0; 
+	// if (m_toolParams.m_anticipateTurns)
+	// 	ap.updateFlags |= DT_CROWD_ANTICIPATE_TURNS;
+	// if (m_toolParams.m_optimizeVis)
+	// 	ap.updateFlags |= DT_CROWD_OPTIMIZE_VIS;
+	// if (m_toolParams.m_optimizeTopo)
+	// 	ap.updateFlags |= DT_CROWD_OPTIMIZE_TOPO;
+	// if (m_toolParams.m_obstacleAvoidance)
+	// 	ap.updateFlags |= DT_CROWD_OBSTACLE_AVOIDANCE;
+	// if (m_toolParams.m_separation)
+	// 	ap.updateFlags |= DT_CROWD_SEPARATION;
+	ap.obstacleAvoidanceType = 3.0;
+	ap.separationWeight = separationWeight;
+	ap.userData = (void *)idx;
+
+	float pos[3] = { posX, posY, posZ };
+
+	m_crowd->updateAgentParameters(idx, &ap);
+}
+
 int addCrowdAgent(float posX, float posY, float posZ, float radius, float height, 
 									float maxAcceleration, float maxSpeed, unsigned char updateFlags, float separationWeight)
 {
@@ -591,7 +626,7 @@ int addCrowdAgent(float posX, float posY, float posZ, float radius, float height
 	ap.maxAcceleration = maxAcceleration;
 	ap.maxSpeed = maxSpeed;
 	ap.collisionQueryRange = ap.radius * 12.0f;
-	ap.pathOptimizationRange = ap.radius * 30.0f;
+	ap.pathOptimizationRange = ap.radius * 300.0f;
 	ap.updateFlags = 0; 
 	// if (m_toolParams.m_anticipateTurns)
 	// 	ap.updateFlags |= DT_CROWD_ANTICIPATE_TURNS;
@@ -610,14 +645,28 @@ int addCrowdAgent(float posX, float posY, float posZ, float radius, float height
 
 	int idx = m_crowd->addAgent(pos, &ap);
 
+	// agentUserData data;
+	// memset(&data, 0, sizeof(data));
+ 	// data.idx = 99;
+ 	// ap.userData = (void *) &data;
+
+	ap.userData = (void *)idx; /* FIXME: doesnt fucking work ://// */
+	/* So we do this ?? */
+	updateCrowdAgentParameters(idx, posX, posY, posZ, radius, height, maxAcceleration, maxSpeed, updateFlags, separationWeight);
+
 	// char buff[512];
 	// const dtCrowdAgent* ag = m_crowd->getAgent(idx);
 	// const float* p = ag->npos;
 	// const float r = ag->params.radius;
-	// sprintf(buff, "debug('new agent', { position:{x:%f,y:%f,z:%f}, radius:%f, active:%d, state:%d });", p[0], p[1], p[2], r, ag->active, ag->state);
+	// sprintf(buff, "debug('new agent', { idx:%d });", idx);
 	// emscripten_run_script(buff);
 
 	return idx;
+}
+
+void removeCrowdAgent(int idx)
+{
+	m_crowd->removeAgent(idx);
 }
 
 bool crowdRequestMoveTarget(int agentIdx, float posX, float posY, float posZ)
@@ -729,12 +778,15 @@ struct dtCrowdAgent
 	for (int i = 0; i < nagents; i++) {
 		dtCrowdAgent* ag = agents[i];
 		const float* p = ag->npos;
+		const float* v = ag->vel;
 		const float r = ag->params.radius;
+		int idx = (int) ag->params.userData;
+		//agentUserData* data = (agentUserData*) ag->params.userData;
 
 		// sprintf(buff, "debug({ position:{x:%f,y:%f,z:%f}, radius:%f, active:%d, state:%d });", p[0], p[1], p[2], r, ag->active, ag->state);
 		// emscripten_run_script(buff);
 
-		sprintf(buff, "__tmp_recastjs_crowd_data.push({ position:{x:%f,y:%f,z:%f}, radius:%f, active:%d, state:%d });", p[0], p[1], p[2], r, ag->active, ag->state);
+		sprintf(buff, "__tmp_recastjs_crowd_data.push({ idx:%d, position:{x:%f,y:%f,z:%f}, velocity:{x:%f,y:%f,z:%f}, radius:%f, active:%d, state:%d, neighbors:%d });", idx, p[0], p[1], p[2], v[0], v[1], v[2], r, ag->active, ag->state, ag->nneis);
 		emscripten_run_script(buff);
 	}
 
@@ -1163,6 +1215,8 @@ EMSCRIPTEN_BINDINGS(my_module) {
 
   function("initCrowd", &initCrowd);
   function("addCrowdAgent", &addCrowdAgent);
+  function("updateCrowdAgentParameters", &updateCrowdAgentParameters);
+  function("removeCrowdAgent", &removeCrowdAgent);
   function("crowdRequestMoveTarget", &crowdRequestMoveTarget);
   function("crowdUpdate", &crowdUpdate);
   function("crowdGetActiveAgents", &crowdGetActiveAgents);

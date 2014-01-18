@@ -45,6 +45,6 @@ arena.on('set:terrain', function(){
 
 arena.on('set:terrain', function(){
   arena.init(function(arena){
-    arena.start();
+    arena.run();
   });
 });

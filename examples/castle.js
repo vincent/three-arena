@@ -1,5 +1,6 @@
+'use strict';
 
-arena = new Arena({
+arena = window.arena = new Arena({
   container: document.getElementById('game-container'),
 
   showRoutes: true
@@ -22,14 +23,16 @@ arena.setTerrain('/gamedata/maps/castle/castle.obj', {
   bumpScale: 0.05,
 });
 
-arena.addCharacter(function(done){
-  new Arena.Characters.Ogro({
-    onLoad: function(){
-      var character = this;
-      character.learnSpell(Arena.Spells.FireBullet);
-      character.position.z += 5;
-      done(character);
-    }
+arena.on('set:terrain', function(){
+  arena.addCharacter(function(done){
+    new Arena.Characters.Ogro({
+      onLoad: function(){
+        var character = this;
+        character.learnSpell(Arena.Spells.FireBullet);
+        character.position.z += 5;
+        done(character);
+      }
+    });
   });
 });
 
@@ -38,7 +41,7 @@ $('#loading-bar .progress').show();
 arena.init(function(arena){
   arena.preload(
     function(){
-      setTimeout(function(){ arena.start(); }, 500);
+      setTimeout(function(){ arena.run(); }, 500);
     },
     function(complete, total){
       $('#loading-bar .progress').css('width', (98 / total * complete) + '%' );

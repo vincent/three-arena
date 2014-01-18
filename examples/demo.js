@@ -2,7 +2,7 @@
 
 var Arena = window.Arena;
 
-var arena = new Arena({
+var arena = window.arena = new Arena({
 
   container: document.getElementById('game-container'),
 
@@ -42,15 +42,15 @@ var objective1 = new Arena.Elements.Nexus({ life: 1000000, color: '#F33' }),
 
 arena.addStatic(function(done){
   
+  objective1.state.team = 0;
   objective1.position.set(-71.2, 19, 69);
-  // arena.intersectObjects.push(objective1);
   done(objective1);
 });
 
 arena.addStatic(function(done){
   
+  objective2.state.team = 1;
   objective2.position.set(89.2, 21, -62.5);
-  // arena.intersectObjects.push(objective2);
   done(objective2);
 });
 
@@ -81,38 +81,43 @@ arena.on('set:terrain', function(){
 /* */
 
 
-// Another character
-arena.addCharacter(function(done){
-  new Arena.Characters.OO7({
-    onLoad: function(){
-      var character = this;
-      character.state.team = 0;
+arena.on('set:terrain', function(){
 
-      // character.behaviour = Arena.Behaviours.Controlled;
+  // Another character
+  arena.addCharacter(function(done){
+    new Arena.Characters.OO7({
+      maxSpeed: 10.0,
+      onLoad: function(){
+        var character = this;
+        character.state.team = 0;
 
-      character.state.autoAttacks = true;
-      character.state.autoAttackSpell = 0;
+        // character.behaviour = Arena.Behaviours.Controlled;
 
-      // learn some spells
-      character.learnSpell(Arena.Spells.FireAura);
-      character.learnSpell(Arena.Spells.FireBullet);
-      character.learnSpell(Arena.Spells.FlatFireAura);
-      character.learnSpell(Arena.Spells.Lightbolt);
+        character.state.autoAttacks = true;
+        character.state.autoAttackSpell = 0;
 
-      character.position.copy(arena.settings.positions.nearcamp);
+        // learn some spells
+        character.learnSpell(Arena.Spells.FireAura);
+        character.learnSpell(Arena.Spells.FireBullet);
+        character.learnSpell(Arena.Spells.FlatFireAura);
+        character.learnSpell(Arena.Spells.Lightbolt);
 
-      arena.asPlayer(character);
+        character.position.copy(arena.settings.positions.nearcamp);
 
-      done(character);
-    }
+        arena.asPlayer(character);
+
+        done(character);
+      }
+    });
   });
+
 });
 
 // A spawning pool
 var pool = new Arena.Elements.SpawningPool({
   entity: Arena.Characters.Monsterdog,
   groupOf: 1,
-  eachGroupInterval: 30 * 1000
+  eachGroupInterval: 20 * 1000
 });
 pool.on('spawnedone', function (character) {
   character.state.team = 1;
@@ -122,25 +127,34 @@ pool.on('spawnedone', function (character) {
   character.state.autoAttacks = true;
   character.state.autoAttackSpell = 0;
 
+  // character.position.set( 34.51927152670307, 16.415442854566393, -55.559584976370715 );
+  character.position.copy(objective2.position);
+
   character.objective = objective1;
   character.behaviour = Arena.Behaviours.Minion;
+
+  arena.addCharacter(character);
+
+  // character.emit('target', objective1);
+
 });
 pool.position.copy(objective2.position);
 arena.on('start', function () {
   pool.start();
 });
-arena.addSpawningPool(pool);
+arena.addStatic(pool);
 
 $('#loading-bar .progress').show();
 
-arena.init(function(arena){
-  arena.preload(
-    function(){
-      setTimeout(function(){ arena.start(); }, 500);
-    },
-    function(complete, total){
-      $('#loading-bar .progress').css('width', (98 / total * complete) + '%' );
-    }
-  );
+arena.on('set:terrain', function(){
+  arena.init(function(arena){
+    arena.preload(
+      function(){
+        arena.run();
+      },
+      function(complete, total){
+        $('#loading-bar .progress').css('width', (98 / total * complete) + '%' );
+      }
+    );
+  });
 });
-
