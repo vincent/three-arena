@@ -56,7 +56,7 @@ Some examples here [three-arena.com/examples](http://three-arena.com/examples)
 
 Or run ```npm install && npm start``` from the project root.
 
-<pre>
+<pre class="prettyprint lang-js">
   new Arena({
     container: 'game-container', // the container DOM ID
 
