@@ -42,6 +42,8 @@ var objective1 = new Arena.Elements.Nexus({ life: 1000000, color: '#F33' }),
 
 arena.addStatic(function(done){
   
+  objective1.state.isStatic = true;
+  objective1.isBlocking = 5.0;
   objective1.state.team = 0;
   objective1.position.set(-71.2, 19, 69);
   done(objective1);
@@ -49,6 +51,8 @@ arena.addStatic(function(done){
 
 arena.addStatic(function(done){
   
+  objective2.state.isStatic = true;
+  objective2.isBlocking = 5.0;
   objective2.state.team = 1;
   objective2.position.set(89.2, 21, -62.5);
   done(objective2);
@@ -67,18 +71,17 @@ shop.position.set( -99, 15, 94 );
 arena.addInteractive(shop);
 
 
-/* / Some flies
+// Some flies
 arena.on('set:terrain', function(){
   arena.addStatic(function (done) {
     var flies = new Arena.Elements.Flies(10);
     arena.randomPositionOnterrain(function(point){
       flies.position.copy(point);
-      arena.on('update', _.bind(flies.update, flies));
+      arena.on('update', flies.update.bind(flies));
       done(flies);
     });
   });
 });
-/* */
 
 
 arena.on('set:terrain', function(){
@@ -86,7 +89,7 @@ arena.on('set:terrain', function(){
   // Another character
   arena.addCharacter(function(done){
     new Arena.Characters.OO7({
-      maxSpeed: 10.0,
+      maxSpeed: 20.0,
       onLoad: function(){
         var character = this;
         character.state.team = 0;
@@ -115,7 +118,7 @@ arena.on('set:terrain', function(){
 
 // A spawning pool
 var pool = new Arena.Elements.SpawningPool({
-  entity: Arena.Characters.Monsterdog,
+  entity: Arena.Characters.Ogro,
   groupOf: 1,
   eachGroupInterval: 20 * 1000
 });

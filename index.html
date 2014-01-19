@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Three Arena</title>
+
+    <!-- Le styles -->
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="bootstrap/css/docs.css" rel="stylesheet">
+    <link href="bootstrap/js/google-code-prettify/prettify.css" rel="stylesheet">
+
+  </head>
+
+  <body data-spy="scroll" data-target=".bs-docs-sidebar">
+
+  <header class="jumbotron subhead" id="overview"><div class="container"><h1>Three Arena</h1><p class="lead">A WebGL game engine</p></div></header>
+
+  <div class="container">
+
+  <div class="row">
+
+<div class="span3 bs-docs-sidebar"><ul class="nav nav-list bs-docs-sidenav" data-spy="affix"><li><a href="#1">Three Arena</a></li><li><a href="#2">Features</a></li><li><a href="#3">Not ready (yet)</a></li><li><a href="#4">Examples</a></li><li><a href="#5">Show me the code</a></li><li><a href="#6">Hack the pathfinding system</a></li></ul></div><div class="span9"><p><!-- title: Three Arena -->
+<!-- subtitle: A WebGL game engine --></p>
+
+<h1 id="1">Three Arena</h1>
+
+<p><a href="http://three-arena.com/examples/#simplest.js">http://three-arena.com/examples/#simplest.js</a></p>
+
+<p>Three Arena is an opiniated WebGL game framework to create 3D hack-and-slash games in an HTML context. It uses <a href="http://threejs.org">three.js</a> 3D engine, <a href="http://machinejs.maryrosecook.com">machinejs</a> behaviour trees, <a href="https://github.com/memononen/recastnavigation">recastnavigation</a> pathfinding system, <a href="http://knockoutjs.com">knockoutjs</a> dom binding system and <a href="three-arena/blob/master/bower.json">other</a> open source projects.</p>
+
+<h1 id="2">Features</h1>
+
+<ul>
+<li>click-to-move on any .obj mesh object with an easy pathfinding system</li>
+<li>use your level geometry file directly, or load a custom navigation mesh</li>
+<li>single unit control</li>
+<li>mouse &amp; arrow keys camera behaviour</li>
+<li>customizable HTML &amp; CSS for HUD</li>
+<li>customizable scene objects interactive menus (shops, ...) </li>
+<li>generic character model system, works well with converted MD2 (Quake) files</li>
+<li>characters behaviours
+<ul><li>attack when enemmy in sight</li>
+<li>move to a greater objective)</li></ul></li>
+<li>spells with 3d fx, min-max distance, cooldown</li>
+<li>spatial sound effects</li>
+<li>built-in common 3D game objects
+<ul><li>Flies</li>
+<li>Water</li></ul></li>
+<li>built-in common RPG components
+<ul><li>Defense Tower</li>
+<li>Shop</li>
+<li>Spawning pool</li></ul></li>
+<li>game interaction through events
+<ul><li><code>game.on('start', function)</code></li>
+<li><code>game.on('set:terrain', function)</code></li>
+<li><code>game.on('added:character', function)</code></li>
+<li><code>character.on('hit', function)</code></li>
+<li><code>character.on('death', function)</code></li>
+<li>and many others..</li></ul></li>
+<li>You have a super fun idea ? Great !
+<ul><li>add it as a <a href="https://github.com/vincent/three-arena/issues">ticket</a></li>
+<li>you can code it ? send a pull request from master branch !</li></ul></li>
+</ul>
+
+<h1 id="3">Not ready (yet)</h1>
+
+<ul>
+<li>multiplayer game server</li>
+<li>collisions system</li>
+</ul>
+
+<h1 id="4">Examples</h1>
+
+<p>Some examples here <a href="http://three-arena.com/examples">three-arena.com/examples</a></p>
+
+<p>Or run <code>npm install &amp;&amp; npm start</code> from the project root.</p>
+
+<pre class="prettyprint">
+  new Arena({
+    container: 'game-container', // the container DOM ID
+
+    cameraHeight: 80,
+
+    fog: { near: 20, far: 250 }, // configure fog
+  })
+
+  .setTerrain('/gamedata/maps/simplest.obj', { // use this .OBJ as terrain
+
+    map: '/path/to/terrain/texture.png' // the terrain texture
+
+    // other material options, like bumpMap, wireframe, etc..
+  })
+
+  .addCharacter(function(done){ // add a character
+
+    new Arena.Characters.Ogro({
+
+      name: 'Shrek', // the character name
+
+      image: '/gamedata/unknown.png', // its portrait
+
+      tomb: '/gamedata/models/rts_elements.dae', // use this model when it dies
+
+      life: 100, // start with 100 life points
+
+      onLoad: function(){
+
+        this.learnSpell(Arena.Spells.FireBullet); // learn a spell
+
+        done(this); // on scene !
+      }
+    });
+
+  });
+</pre>
+
+<h1 id="5">Show me the code</h1>
+
+<ul>
+<li>The main game code is in <a href="index.js">lib/index.js</a></li>
+<li>Character class is in <a href="lib/character.js">lib/character.js</a></li>
+<li>A spell example is in <a href="lib/spells/bite.js">lib/spell/bite.js</a></li>
+</ul>
+
+<h1 id="6">Hack the pathfinding system</h1>
+
+<p>The pathfinding is done via an javascript Emscripten-compiled interface above the c++ library <a href="https://github.com/memononen/recastnavigation">recastnavigation</a>.
+To add methods in this module, you need to code their <a href="recastnavigation/emscripten/js_interface/main.cpp#L966">javascript interface</a> and rebuild the javascript module with
+<code>sh
+npm run recast
+</code></p>
+
+<p>Or build a separated build with
+<code>sh
+cd recastnavigation/emscripten
+./build.sh ../../lib/pathfinding/recast.js
+</code></p>
+      </div>
+    </div>
+
+  </div>
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="bootstrap/js/jquery.js"></script>
+    <script src="bootstrap/js/google-code-prettify/prettify.js"></script>
+    <script src="bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript">prettyPrint();</script>
+
+  </body>
+</html>

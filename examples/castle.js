@@ -1,6 +1,8 @@
 'use strict';
 
-arena = window.arena = new Arena({
+var Arena = window.Arena;
+
+var arena = window.arena = new Arena({
   container: document.getElementById('game-container'),
 
   showRoutes: true
@@ -30,6 +32,7 @@ arena.on('set:terrain', function(){
         var character = this;
         character.learnSpell(Arena.Spells.FireBullet);
         character.position.z += 5;
+        arena.asPlayer(this);
         done(character);
       }
     });

@@ -23,6 +23,7 @@ arena.addCharacter(function(done){
     onLoad: function(){
       var character = this;
       character.learnSpell(Arena.Spells.FireBullet);
+      arena.asPlayer(this);
       done(character);
     }
   });

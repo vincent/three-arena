@@ -197,6 +197,7 @@ void emscripten_log(char* string, bool escape = true)
 	char buff[1024];
 	sprintf(buff, (escape ? "console.log('%s');" : "console.log(%s);"), string);
 	emscripten_run_script(buff);
+	// free(buff);
 }
 void emscripten_debugger()
 {
@@ -282,6 +283,8 @@ void getNavMeshVertices(std::string callback){
 
 	sprintf(buff, "%s(__tmp_recastjs_data);", callback.c_str());
 	emscripten_run_script(buff);
+
+	// free(buff);
 }
 
 void getNavMeshTiles(std::string callback){
@@ -317,6 +320,8 @@ void getRandomPoint(std::string callback)
 		sprintf(buff, "%s({x:%f, y:%f, z:%f});", callback.c_str(), randomPt[0], randomPt[1], randomPt[2]);
 		emscripten_run_script(buff);
 	}
+
+	// free(buff);
 }
 
 void getNavHeightfieldRegions(std::string callback)
@@ -368,6 +373,8 @@ void getNavHeightfieldRegions(std::string callback)
 	
 	sprintf(buff, "%s(__tmp_recastjs_data);", callback.c_str());
 	emscripten_run_script(buff);
+
+	// free(buff);
 }
 
 void findNearestPoly(float cx, float cy, float cz,
@@ -417,6 +424,8 @@ void findNearestPoly(float cx, float cy, float cz,
 
 	sprintf(buff, "%s(__tmp_recastjs_data);", callback.c_str());
 	emscripten_run_script(buff);
+
+	// free(buff);
 }
 
 void setPolyUnwalkable(float posX, float posY, float posZ, float extendX, float extendY, float extendZ, unsigned short flags)
@@ -525,6 +534,8 @@ void findPath(float startPosX, float startPosY, float startPosZ,
 
 	sprintf(buff, "%s(__tmp_recastjs_data);", callback.c_str());
 	emscripten_run_script(buff);
+
+	// free(buff);
 }
 
 void set_cellSize(float val){				m_cellSize = val;				}
@@ -711,12 +722,11 @@ bool crowdUpdate(float dt)
 bool crowdGetActiveAgents(std::string callback)
 {
 	int maxAgents = 100;
-	char buff[512];
 
 	dtCrowdAgent** agents = (dtCrowdAgent**)dtAlloc(sizeof(dtCrowdAgent*)*maxAgents, DT_ALLOC_PERM);
 	int nagents = m_crowd->getActiveAgents(agents, maxAgents);
 
-	emscripten_run_script("__tmp_recastjs_crowd_data = [];");
+	char buff[1024 * nagents];
 
 /*
 struct dtCrowdAgent
@@ -775,23 +785,32 @@ struct dtCrowdAgent
 };
  */
 
+	sprintf(buff, "__tmp_recastjs_crowd_data = [];");
+
 	for (int i = 0; i < nagents; i++) {
 		dtCrowdAgent* ag = agents[i];
 		const float* p = ag->npos;
 		const float* v = ag->vel;
 		const float r = ag->params.radius;
 		int idx = (int) ag->params.userData;
-		//agentUserData* data = (agentUserData*) ag->params.userData;
+		// agentUserData* data = (agentUserData*) ag->params.userData;
 
 		// sprintf(buff, "debug({ position:{x:%f,y:%f,z:%f}, radius:%f, active:%d, state:%d });", p[0], p[1], p[2], r, ag->active, ag->state);
 		// emscripten_run_script(buff);
 
-		sprintf(buff, "__tmp_recastjs_crowd_data.push({ idx:%d, position:{x:%f,y:%f,z:%f}, velocity:{x:%f,y:%f,z:%f}, radius:%f, active:%d, state:%d, neighbors:%d });", idx, p[0], p[1], p[2], v[0], v[1], v[2], r, ag->active, ag->state, ag->nneis);
-		emscripten_run_script(buff);
+		sprintf(buff, "%s \n { \n var object = /* agentPool.get(); */ { position:{}, velocity:{} }; \n object.idx=%d; object.position.x=%f; object.position.y=%f; object.position.z=%f; object.velocity.x=%f; object.velocity.y=%f; object.velocity.z=%f; object.radius=%f; object.active=%d; object.state=%d; object.neighbors=%d; \n __tmp_recastjs_crowd_data.push(object);",
+									 buff, 	                                    			 			idx, 								 p[0], 								p[1], 								p[2], 								v[0], 							v[1], 								v[2], 							r, 								ag->active, 		 ag->state, 					ag->nneis);
 	}
 
-	sprintf(buff, "%s(__tmp_recastjs_crowd_data);", callback.c_str());
+	for (int i = 0; i < nagents; i++) {
+		sprintf(buff, "%s \n /* agentPool.add(object); */ \n}", buff);
+	}
+
+	sprintf(buff, "\n %s \n\n %s(__tmp_recastjs_crowd_data);", buff, callback.c_str());
+
 	emscripten_run_script(buff);
+
+	// free(buff);
 
 	return true;
 }

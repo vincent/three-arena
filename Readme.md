@@ -1,3 +1,6 @@
+<!-- title: Three Arena -->
+<!-- subtitle: A WebGL game engine -->
+
 Three Arena
 ===
 
@@ -53,57 +56,49 @@ Some examples here [three-arena.com/examples](http://three-arena.com/examples)
 
 Or run ```npm install && npm start``` from the project root.
 
-```js
+<pre>
+  new Arena({
+    container: 'game-container', // the container DOM ID
 
-new Arena({
+    cameraHeight: 80,
 
-  container: 'game-container', // the container DOM ID
+    fog: { near: 20, far: 250 }, // configure fog
+  })
 
-  cameraHeight: 80,
+  .setTerrain('/gamedata/maps/simplest.obj', { // use this .OBJ as terrain
 
-  fog: { near: 20, far: 250 }, // configure fog
+    map: '/path/to/terrain/texture.png' // the terrain texture
 
-  // debugging
-  showRoutes: true, // show characters route paths
-  visibleCharactersBBox: true // visible characters bounding box
-  
-})
+    // other material options, like bumpMap, wireframe, etc..
+  })
 
-.setTerrain('/gamedata/maps/simplest.obj', { // use this .OBJ as terrain
+  .addCharacter(function(done){ // add a character
 
-  map: '/path/to/terrain/texture.png' // the terrain texture
+    new Arena.Characters.Ogro({
 
-  // other material options, like bumpMap, wireframe, etc..
-})
+      name: 'Shrek', // the character name
 
-.addCharacter(function(done){ // add a character
+      image: '/gamedata/unknown.png', // its portrait
 
-  new Arena.Characters.Ogro({
+      tomb: '/gamedata/models/rts_elements.dae', // use this model when it dies
 
-    name: 'Shrek', // the character name
+      life: 100, // start with 100 life points
 
-    image: '/gamedata/unknown.png', // its portrait
+      onLoad: function(){
 
-    tomb: '/gamedata/models/rts_elements.dae', // use this model when it dies
+        this.learnSpell(Arena.Spells.FireBullet); // learn a spell
 
-    life: 100, // start with 100 life points
-
-    onLoad: function(){
-
-      this.learnSpell(Arena.Spells.FireBullet); // learn a spell
-
-      done(this); // on scene !
-    }
+        done(this); // on scene !
+      }
+    });
+    
   });
-  
-});
-```
-
+</pre>
 
 Show me the code
 ===
 
-* The main game code is in [index.js](index.js)
+* The main game code is in [lib/index.js](index.js)
 * Character class is in [lib/character.js](lib/character.js)
 * A spell example is in [lib/spell/bite.js](lib/spells/bite.js)
 

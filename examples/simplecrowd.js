@@ -15,36 +15,40 @@ arena.setTerrain('/gamedata/maps/simplest/simplecross.obj', {
   }
 });
 
-arena.addCharacter(function(done){
-  new Arena.Characters.Ogro({
-    onLoad: function(){
-      arena.asPlayer(this);
-      done(this);
-    }
-  });
-});
+var ogro;
 
 arena.on('set:terrain', function(){
-  var crowd = new Arena.Elements.Crowd(arena);
+
+  arena.addCharacter(function(done){
+    ogro = new Arena.Characters.Ogro({
+      onLoad: function(){
+        arena.asPlayer(this);
+        done(this);
+      }
+    });
+  });
 
   for (var i = 0; i < 10; i++) {
-    arena.addCharacter(function(done){
-      new Arena.Characters.Monsterdog({
-        onLoad: function(){
-          this.scale.set(.5, .5, .5);
-          crowd.add(this, {
-            radius: 4.0,
-            position: { x:44.438741, y:0, z:-41.74593 },
-            maxAcceleration: 30.0,
-            maxSpeed: 15.0,
-          });
-          done(this);
-        }
+    arena.randomPositionOnterrain(function(point){
+      arena.addCharacter(function(done){
+        new Arena.Characters.Monsterdog({
+          onLoad: function(){
+            var monster = this;
+            this.position.copy(point);
+            this.scale.set(0.5, 0.5, 0.5);
+            done(monster);
+
+            setTimeout(function(){
+              monster.emit('follow', ogro);
+            }, 5000);
+          }
+        });
       });
     });
   }
+
 });
 
 arena.init(function(arena){
-  arena.start();
+  arena.run();
 });
