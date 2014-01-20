@@ -28,8 +28,9 @@ arena.addCharacter(function(done){
   });
 });
 
-/*
 arena.on('set:terrain', function(){
+
+  /* */
   arena.addStatic(function(done){
     var collectible = new Arena.Elements.Collectible({
       onLoad: function(){
@@ -40,10 +41,8 @@ arena.on('set:terrain', function(){
       }
     });
   });
-});
-*/
+  /* */
 
-arena.on('set:terrain', function(){
   arena.init(function(arena){
     arena.run();
   });

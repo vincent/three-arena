@@ -1,4 +1,8 @@
-var arena =  new Arena({
+'use strict';
+
+var Arena = window.Arena;
+
+var arena = window.arena = new Arena({
   container: document.getElementById('game-container')
 });
 
@@ -12,9 +16,13 @@ arena.addCharacter(function(done){
   new Arena.Characters.Ogro({
     onLoad: function(){
       var character = this;
-      character.learnSpell(Arena.Spells.FireBullet);
-      arena.asPlayer(this);
-      done(character);
+      arena.randomPositionOnterrain(function(point){
+        character.position.set(16.116617015269746, 5.65605199999996, 7.858685651727598);
+        //character.position.copy(point);
+        character.learnSpell(Arena.Spells.FireBullet);
+        arena.asPlayer(character);
+        done(character);
+      });
     }
   });
 });
@@ -30,6 +38,6 @@ arena.addStatic(function(done){
 });
 
 arena.init(function(arena){
-  arena.start();
+  arena.run();
 });
 
