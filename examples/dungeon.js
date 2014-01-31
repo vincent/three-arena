@@ -10,7 +10,7 @@ var arena = new Arena({
   showObstacles: true
 });
 
-var terrainTexture = THREE.ImageUtils.loadTexture('/gamedata/maps/dungeon/mtl_floor03_s.jpg');
+var terrainTexture = THREE.ImageUtils.loadTexture('/gamedata/maps/dungeon/mtl_floor03_s.png');
 terrainTexture.wrapS = terrainTexture.wrapT = THREE.RepeatWrapping;
 terrainTexture.repeat.set( 2, 2 );
 
@@ -61,7 +61,7 @@ $('#loading-bar .progress').show();
 arena.init(function(arena){
   arena.preload(
     function(){
-      setTimeout(function(){ arena.start(); }, 500);
+      setTimeout(function(){ arena.run(); }, 500);
     },
     function(complete, total){
       $('#loading-bar .progress').css('width', (98 / total * complete) + '%' );

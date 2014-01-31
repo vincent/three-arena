@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: utils.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: utils.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
+
+var _ = require('lodash');
+var TWEEN = require('tween');
+
+module.exports = {
+
+  /**
+   * A basic glowing material, to be used on active objects
+   * @type {Object}
+   */
+  glowmaterial: {
+    ambient: new THREE.Color(1, 1, 1),
+    vertexShader:   document.getElementById( 'glow_vertexshader'   ).textContent,
+    fragmentShader: document.getElementById( 'glow_fragmentshader' ).textContent,
+    //side: THREE.BackSide,
+    blending: THREE.AdditiveBlending,
+    transparent: true
+  },
+
+  /**
+   * get a globaly defined callback
+   * @param  {Function} wrappedFunction
+   * @return {String} the wrapping function name, defined in the global scope
+   */
+  gcb: function( wrappedFunction ) {
+
+    var now = new Date(),
+        tmpname = '__tmp_' + parseInt(Math.random() + now.getTime()) + '__';
+
+    // TODO: remove tmp function when it's done
+    // var done = function(){
+    //   delete window[tmpname];
+    // };
+
+    window[tmpname] = wrappedFunction;
+
+    return tmpname;
+  },
+
+  /**
+   * Apply a glowing effect on an object
+   * @param  {THREE.Mesh} object
+   */
+  glow: function (object) {
+    _.each(this.glowmaterial, function(v, k){
+      object.material[ '_' + k] = object.material[k];
+      object.material[k] = v;
+    });
+  },
+
+  /**
+   * Remove the glowing effect from an object
+   * @param  {THREE.Mesh} object
+   */
+  unglow: function (object) {
+    _.each(this.glowmaterial, function(v, k){
+      object.material[k] = object.material[ '_' + k];
+    });
+  },
+
+
+  // selectOrAbort: function (funcValidate, funcSelect) {
+  //     document.addEventListener('click', function(event){
+
+  //     });
+  // }
+
+  meshFromVertices: function (vertices, mat_options) {
+      
+    var object = new THREE.Object3D();
+    var materials = [ new THREE.MeshBasicMaterial(mat_options) ];
+
+    for (var i = 0; i &lt; vertices.length; i++) {
+      if (!vertices[i+2]) { break; }
+
+      var child = THREE.SceneUtils.createMultiMaterialObject(
+        new THREE.ConvexGeometry([ vertices[i], vertices[i+1], vertices[i+2] ]),
+        materials);
+      object.add(child);
+    }
+    return object;
+  },
+
+  /**
+   * Move an object along a path.
+   *  to move entities or characters, use their own moveAlong method
+   * @param  {Array|THREE.Shape} the shape, or the points the character will walk along
+   * @param  {Object} options, such as
+   *              start
+   *              onStart
+   *              onComplete
+   *              onUpdate
+   * @return {Tween} the Tween.js object
+   */
+  moveAlong: function( object, shape, options ) {
+
+    options = _.merge({
+
+      game: null,
+
+      from: 0,
+      to: 1,
+
+      duration: null,
+      speed: 50,
+
+      start: true,
+      yoyo: false,
+
+      onStart: null,
+      onComplete: null,
+      onUpdate: null,
+
+      smoothness: 100,
+      easing: TWEEN.Easing.Linear.None,
+
+    }, options);
+
+    // array of vectors to determine shape
+    if (shape instanceof THREE.Shape) {
+
+    } else if (_.isArray(shape)) {
+      shape = new THREE.SplineCurve3(shape);
+
+    } else {
+      throw '2nd argument is not a Shape, nor an array of vertices';
+    }
+
+    var routeMesh;
+    if (options.game &amp;&amp; options.game.settings.showRoutes) {
+      var routeGeometry = new THREE.TubeGeometry(shape, shape.points.length, 1, 1);
+      var routeMaterial = new THREE.MeshBasicMaterial({
+        color: 0xff0000,
+        opacity: 0.5,
+        wireframe: true,
+        transparent: true
+      });
+      routeMesh = new THREE.Mesh(routeGeometry, routeMaterial);
+      options.game.scene.add(routeMesh);
+    }
+
+    options.duration = options.duration || shape.getLength();
+    options.length = options.duration * options.speed;
+
+    var tween = new TWEEN.Tween({ distance: options.from })
+      .to({ distance: options.to }, options.length)
+      .easing( options.easing )
+      .onStart(function(){
+        if (options.onStart) { options.onStart(this); }
+      })
+      .onComplete(function(){
+        if (routeMesh &amp;&amp; routeMesh.parent) { routeMesh.parent.remove(routeMesh); }
+        if (options.onComplete) { options.onComplete(this); }
+      })
+      .onUpdate(function(){
+        // get the position data half way along the path
+        var pathPosition = shape.getPointAt(this.distance);
+
+        // move to that position
+        object.position.set(pathPosition.x, pathPosition.y, pathPosition.z);
+
+        object.updateMatrix();
+
+        if (options.onUpdate) { options.onUpdate(this, shape); }
+      })
+      .yoyo(options.yoyo);
+
+    if (options.yoyo) {
+      tween.repeat(Infinity);
+    }
+
+    if (options.start) { tween.start(); }
+
+    return tween;
+  },
+
+  childOf: function ( object, Class ) {
+
+    while (object.parent &amp;&amp; ! (object instanceof Class)) {
+      object = object.parent;
+    }
+
+    return object instanceof Class ? object : null;
+  }
+
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="module-Settings.html">Settings</a></li><li><a href="module-SettingsGUI.html">SettingsGUI</a></li><li><a href="gameeditor.html">threearena/editor/gameeditor</a></li><li><a href="bufficon.html">threearena/elements/bufficon</a></li><li><a href="collectible.html">threearena/elements/collectible</a></li><li><a href="commandcenter.html">threearena/elements/commandcenter</a></li><li><a href="lifebar.html">threearena/elements/lifebar</a></li><li><a href="mineral.html">threearena/elements/mineral</a></li><li><a href="nexus.html">threearena/elements/nexus</a></li><li><a href="shop.html">threearena/elements/shop</a></li><li><a href="sound.html">threearena/elements/sound</a></li><li><a href="terrain.html">threearena/elements/terrain</a></li><li><a href="tower.html">threearena/elements/tower</a></li><li><a href="water.html">threearena/elements/water</a></li><li><a href="log.html">threearena/log</a></li><li><a href="cloud.html">threearena/particles/cloud</a></li><li><a href="flies.html">threearena/particles/flies</a></li><li><a href="shadercloud.html">threearena/particles/shadercloud</a></li><li><a href="snow.html">threearena/particles/snow</a></li><li><a href="circles.html">threearena/shaders/circles</a></li><li><a href="lifebar_.html">threearena/shaders/lifebar</a></li><li><a href="lightbolt.html">threearena/shaders/lightbolt</a></li><li><a href="bite.html">threearena/spell/bite</a></li><li><a href="fireaura.html">threearena/spell/fireaura</a></li><li><a href="firebullet.html">threearena/spell/firebullet</a></li><li><a href="flatfireaura.html">threearena/spell/flatfireaura</a></li><li><a href="lightbolt_.html">threearena/spell/lightbolt</a></li><li><a href="entityview.html">threearena/views/entityview</a></li><li><a href="gameview.html">threearena/views/gameview</a></li><li><a href="interactiveview.html">threearena/views/interactiveview</a></li></ul><h3>Classes</h3><ul><li><a href="Arena.html">Arena</a></li><li><a href="Character.html">Character</a></li><li><a href="Crowd.html">Crowd</a></li><li><a href="Entity.html">Entity</a></li><li><a href="Inventory.html">Inventory</a></li><li><a href="Spell.html">Spell</a></li><li><a href="007.html">threearena/character/007</a></li><li><a href="human.html">threearena/character/human</a></li><li><a href="monsterdog.html">threearena/character/monsterdog</a></li><li><a href="ogro.html">threearena/character/ogro</a></li><li><a href="ratamahatta.html">threearena/character/ratamahatta</a></li><li><a href="attackcircle.html">threearena/controls/attackcircle</a></li><li><a href="dota.html">threearena/controls/dota</a></li><li><a href="selection.html">threearena/controls/selection</a></li><li><a href="abovemark.html">threearena/elements/abovemark</a></li><li><a href="autospawn.html">threearena/elements/autospawn</a></li><li><a href="interactiveobject.html">threearena/elements/interactiveobject</a></li><li><a href="destinationmarker.html">threearena/spell/destinationmarker</a></li></ul><h3>Events</h3><ul><li><a href="game.html#event:added:entity">added:entity</a></li><li><a href="game.html#event:added:spawningpool">added:spawningpool</a></li><li><a href="game.html#event:added:static">added:static</a></li><li><a href="game.html#event:ready">ready</a></li><li><a href="game.html#event:start">start</a></li><li><a href="game.html#event:update">update</a></li><li><a href="game.html#event:update:behaviours">update:behaviours</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha2</a> on Wed Jan 22 2014 23:24:33 GMT+0100 (CET)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

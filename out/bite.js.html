@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: spell/bite.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: spell/bite.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
+
+var _ = require('lodash');
+var inherits = require('inherits');
+
+var Spell = require('../spell');
+var Sound = require('../elements/sound');
+
+module.exports = Bite;
+
+/**
+ * @exports threearena/spell/bite
+ */
+function Bite (options) {
+
+  var self = this;
+
+  options = _.merge({}, options, {
+    name: 'bite',
+    isMelee: true,
+    meleeLifeDamage: 10,
+
+    cooldown: 1 * 1000,
+
+    minRange: 0,
+    maxRange: 4,
+  });
+
+  this.sound = new Sound(['/gamedata/sounds/' + options.name + '.mp3'], 200.0, 1);
+  
+  window._ta_events.on('update', function(game){
+    if (self.source) {
+      self.sound.update.call(self.source, game.camera); // called with character as "this"
+    }
+  });
+
+  Spell.apply(this, [ options ]);
+}
+
+inherits(Bite, Spell);
+
+Bite.prototype.name = 'bite';
+
+///////////////////
+
+Bite.prototype.start = function(source, target) {
+  this.source = source;
+  this.sound.play();
+  target.hit(this);
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="module-Settings.html">Settings</a></li><li><a href="module-SettingsGUI.html">SettingsGUI</a></li><li><a href="gameeditor.html">threearena/editor/gameeditor</a></li><li><a href="bufficon.html">threearena/elements/bufficon</a></li><li><a href="collectible.html">threearena/elements/collectible</a></li><li><a href="commandcenter.html">threearena/elements/commandcenter</a></li><li><a href="lifebar.html">threearena/elements/lifebar</a></li><li><a href="mineral.html">threearena/elements/mineral</a></li><li><a href="nexus.html">threearena/elements/nexus</a></li><li><a href="shop.html">threearena/elements/shop</a></li><li><a href="sound.html">threearena/elements/sound</a></li><li><a href="terrain.html">threearena/elements/terrain</a></li><li><a href="tower.html">threearena/elements/tower</a></li><li><a href="water.html">threearena/elements/water</a></li><li><a href="log.html">threearena/log</a></li><li><a href="cloud.html">threearena/particles/cloud</a></li><li><a href="flies.html">threearena/particles/flies</a></li><li><a href="shadercloud.html">threearena/particles/shadercloud</a></li><li><a href="snow.html">threearena/particles/snow</a></li><li><a href="circles.html">threearena/shaders/circles</a></li><li><a href="lifebar_.html">threearena/shaders/lifebar</a></li><li><a href="lightbolt.html">threearena/shaders/lightbolt</a></li><li><a href="bite.html">threearena/spell/bite</a></li><li><a href="fireaura.html">threearena/spell/fireaura</a></li><li><a href="firebullet.html">threearena/spell/firebullet</a></li><li><a href="flatfireaura.html">threearena/spell/flatfireaura</a></li><li><a href="lightbolt_.html">threearena/spell/lightbolt</a></li><li><a href="entityview.html">threearena/views/entityview</a></li><li><a href="gameview.html">threearena/views/gameview</a></li><li><a href="interactiveview.html">threearena/views/interactiveview</a></li></ul><h3>Classes</h3><ul><li><a href="Arena.html">Arena</a></li><li><a href="Character.html">Character</a></li><li><a href="Crowd.html">Crowd</a></li><li><a href="Entity.html">Entity</a></li><li><a href="Inventory.html">Inventory</a></li><li><a href="Spell.html">Spell</a></li><li><a href="007.html">threearena/character/007</a></li><li><a href="human.html">threearena/character/human</a></li><li><a href="monsterdog.html">threearena/character/monsterdog</a></li><li><a href="ogro.html">threearena/character/ogro</a></li><li><a href="ratamahatta.html">threearena/character/ratamahatta</a></li><li><a href="attackcircle.html">threearena/controls/attackcircle</a></li><li><a href="dota.html">threearena/controls/dota</a></li><li><a href="selection.html">threearena/controls/selection</a></li><li><a href="abovemark.html">threearena/elements/abovemark</a></li><li><a href="autospawn.html">threearena/elements/autospawn</a></li><li><a href="interactiveobject.html">threearena/elements/interactiveobject</a></li><li><a href="destinationmarker.html">threearena/spell/destinationmarker</a></li></ul><h3>Events</h3><ul><li><a href="game.html#event:added:entity">added:entity</a></li><li><a href="game.html#event:added:spawningpool">added:spawningpool</a></li><li><a href="game.html#event:added:static">added:static</a></li><li><a href="game.html#event:ready">ready</a></li><li><a href="game.html#event:start">start</a></li><li><a href="game.html#event:update">update</a></li><li><a href="game.html#event:update:behaviours">update:behaviours</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha2</a> on Wed Jan 22 2014 23:24:33 GMT+0100 (CET)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

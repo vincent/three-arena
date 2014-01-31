@@ -6,7 +6,7 @@ Three Arena
 
 http://three-arena.com/examples/#simplest.js
 
-Three Arena is an opiniated WebGL game framework to create 3D hack-and-slash games in an HTML context. It uses [three.js](http://threejs.org) 3D engine, [machinejs](http://machinejs.maryrosecook.com) behaviour trees, [recastnavigation](https://github.com/memononen/recastnavigation) pathfinding system, [knockoutjs](http://knockoutjs.com) dom binding system and [other](three-arena/blob/master/bower.json) open source projects.
+Three Arena is an opiniated WebGL game framework to create 3D terrain-based games in an HTML context. It uses [three.js](http://threejs.org) 3D engine, [machinejs](http://machinejs.maryrosecook.com) behaviour trees, [recastnavigation](https://github.com/memononen/recastnavigation) pathfinding system, [knockoutjs](http://knockoutjs.com) dom binding system and other open source projects.
 
 
 Features
@@ -21,16 +21,17 @@ Features
 * generic character model system, works well with converted MD2 (Quake) files
 * characters behaviours
  - attack when enemmy in sight
- - move to a greater objective)
+ - move to a greater objective
+ - collect a ressource like StarCraft II SCVs
 * spells with 3d fx, min-max distance, cooldown
 * spatial sound effects
 * built-in common 3D game objects
  - Flies
  - Water
-* built-in common RPG components
  - Defense Tower
  - Shop
  - Spawning pool
+ - Collectible
 * game interaction through events
  - `game.on('start', function)`
  - `game.on('set:terrain', function)`

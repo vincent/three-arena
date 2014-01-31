@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: entity.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: entity.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>'use strict';
+
+var now = require('now');
+var _ = require('lodash');
+var debug = require('debug')('entity');
+var inherits = require('inherits');
+//var EventEmitter = require('events').EventEmitter;
+
+var log = require('./log');
+var settings = require('./settings');
+var LifeBar = require('./elements/slifebar');
+var AttackCircle = require('./controls/attackcircle');
+var Inventory = require('./inventory');
+
+module.exports = Entity;
+
+
+/**
+ * A living entity
+ *
+ * @summary azd azdzad azd zadazd azdzadzadazdazdzd
+ * 
+ * @exports Entity
+ * 
+ * @constructor
+ * 
+ * @triggers 'changed' when state (attributes, spells, etc) change
+ * @triggers 'hit' when being hit
+ * @triggers 'death' when being killed
+ *
+ * @param {Object} options
+ *          name, image, life, mana, strength, agility, intelligence,
+ *          spells, level, meleeDef, meleeDamage, spellDefense, spellDamage
+ */
+function Entity (options) {
+
+  var self = this;
+
+  this.game = null;
+
+  THREE.Object3D.apply(this);
+
+  this.state = _.merge({
+
+    name: Math.random(),
+    image: '/gamedata/unknown.png',
+
+    tomb: '/gamedata/models/rts_elements.dae',
+
+    life: 100,
+    mana: 0,
+
+    separationWeight: settings.data.crowdDefaultSeparationWeight,
+    maxAcceleration: settings.data.crowdDefaultMaxAcceleration,
+    updateFlags: settings.data.crowdDefaultUpdateFlags,
+    maxSpeed: settings.data.crowdDefaultMaxSpeed,
+    radius: settings.data.crowdDefaultRadius,
+    height: settings.data.crowdDefaultHeight,
+
+    strength: 1,
+    agility: 1,
+    intelligence: 1,
+
+    spells: [],
+
+    inventory: new Inventory(self),
+
+    level: 1,
+
+    meleeDefense: 1,
+    meleeDamage: 1,
+
+    spellDefense: 1,
+    spellDamage: 1,
+
+    attackRange: 0
+
+  }, options);
+
+  this._baseLife = this.state.life;
+  this._baseMana = this.state.mana;
+  this.state.position = this.position;
+
+  // this.attachLifeBar(); // now done in game.add()
+  this.attachTombstone();
+
+  this.on('death', function(){
+    if (this.behaviour) {
+      this.behaviour.identifier = 'beDead';
+    }
+  });
+
+  this._meleeCircle = new AttackCircle(5);
+  this.add(this._meleeCircle);
+  this._spellCircle = new AttackCircle(20);
+  this.add(this._spellCircle);
+
+  this.states = {
+
+    idle: function() { },
+
+    canBeDead: function() { return self.isDead(); },
+    beDead: function() { },
+
+    canFightObjective: function () {
+      return ! self.isDead() &amp;&amp; self.objective &amp;&amp; (! self.objective.isDead || ! self.objective.isDead()) &amp;&amp; self.state.spells[0].canHit(self, self.objective, 2);
+    },
+    fightObjective: function () {
+      self.isFighting = true;
+      self.cast(self.state.spells[0], self.objective);
+    },
+
+    canFightNearbyEnnemy: function () {
+      if (self.isDead()) { return false; }
+
+      var i = -1,
+          spell = null,
+          ennemy = null,
+          nearestEnnemy = null,
+          minDistance = Number.MAX_VALUE,
+          charDistance = Number.MAX_VALUE;
+
+      if (self.state.autoAttackSpell !== null &amp;&amp; self.state.autoAttacks &amp;&amp; self.state.spells[ self.state.autoAttackSpell ]) {
+
+        spell = self.state.spells[ self.state.autoAttackSpell ];
+
+        while (i++ &lt; self.game.entities.length - 1) {
+          ennemy = self.game.entities[i];
+
+          if (ennemy === self || ennemy.isDead()) { continue; }
+
+          charDistance = ennemy.position.distanceTo(self.position);
+          // debug('evaluating if', self, 'has a neighbor: charDistance='+charDistance + '  team='+ennemy.state.team + '  canHit='+spell.canHit(self, ennemy, 3));
+          if (charDistance &lt; minDistance &amp;&amp; self.state.team !== ennemy.state.team &amp;&amp; spell.canHit(self, ennemy, 5)) {
+            minDistance = charDistance;
+            nearestEnnemy = ennemy;
+          }
+        }
+      }
+
+      if (! nearestEnnemy) {
+
+        // had an ennemy
+        if (self._nearestEnnemy) {
+          debug('entity %o gives up on %o' + (self._nearestEnnemy.isDead() ? '(dead)' : ''), this, self._nearestEnnemy);
+          self._nearestEnnemy = null;
+
+          if (! self._crowd_destination) {
+            debug('%o was fighting, must replan to %o', self, self.objective);
+            self.emit('destination', self.objective);
+          }
+        }
+
+        self.isFighting = false;
+
+      } else {
+        
+        if (self._nearestEnnemy === nearestEnnemy) {
+          // debug(self, 'is on the same near ennemy:', self._nearestEnnemy);
+
+        } else {
+          self._nearestEnnemy = nearestEnnemy;
+          debug('%o found a new near ennemy: %o', self, self._nearestEnnemy);
+          self.emit('follow', self._nearestEnnemy);
+        }
+
+      }
+
+      return self._nearestEnnemy;
+    },
+    fightNearbyEnnemy: function () {
+      self.isFighting = true;
+      self.cast(self.state.spells[0], self._nearestEnnemy);
+    },
+
+    plotCourseToObjective: function () {
+      if (! self._crowd_destination) {
+        self.emit('destination', self.objective);
+      }
+    },
+    canPlotCourseToObjective: function () {
+      return ! self.isDead() &amp;&amp; // not dead
+        (self.objective  &amp;&amp; // has an objective
+          ! self._crowd_destination &amp;&amp; // objective targetted
+          ! self.objective.isDead() &amp;&amp; // objective is not dead
+          ! self.states.canFightNearbyEnnemy()
+        );
+    },
+
+    followCourseToObjective: function () {
+    },
+
+    canFollowCourseToObjective: function () {
+      return ! self.isDead() &amp;&amp; // not dead
+        (self.objective  &amp;&amp; // has an objective
+          self.objective === self._crowd_destination &amp;&amp; // objective targetted
+          ! self.objective.isDead() &amp;&amp; // objective is not dead
+          ! self.states.canFightNearbyEnnemy() &amp;&amp;
+          self.objective.position.distanceTo(self.position) > (self.objective.state ? self.objective.state.radius : 2) // not arrived yet
+        );
+    },
+
+    canFindNearestCollectible: function () {
+      return (!self._crowd_destination || !self._crowd_destination.collectible) &amp;&amp; self.state.inventory.contents.length === 0;
+    },
+    findNearestCollectible: function () {
+      var mineral = self.game.findWithClass('Mineral', self.position, function(obj){ return obj.collectible.amount > 0; });
+      if (mineral) {
+        self.emit('destination', mineral);
+      }
+    },
+
+    canCollect: function () {
+      return  self.state.inventory.contents.length &lt; 10 &amp;&amp;
+              self._crowd_destination &amp;&amp;
+              self._crowd_destination.collectible &amp;&amp;
+              self._crowd_destination.collectible.amount > 0 &amp;&amp;
+              self._crowd_destination.position.distanceTo(self.position) - self.state.radius &lt; 1.0;
+    },
+    collect: function () {
+      var time = now();
+      if (!self.state._last_collect || self.state._last_collect &lt; time - 1000) {
+        self._crowd_destination.collectedBy(self, function(){
+          self.state._last_collect = time;
+        });
+      }
+    },
+
+    canFindNearestCollector: function () {
+      return  self.state.inventory.contents.length > 9 ||
+              (self._crowd_destination &amp;&amp;
+               self._crowd_destination.collectible &amp;&amp;
+               self._crowd_destination.collectible.amount &lt;= 0);
+    },
+    findNearestCollector: function () {
+      var cc = self.game.findWithClass('CommandCenter', self.position);
+      if (cc) {
+        self.emit('destination', cc);
+      }
+    },
+
+    canDepositToNearestCollector: function () {
+      return  self.state.inventory.contents.length > 0 &amp;&amp;
+              self._crowd_destination &amp;&amp;
+              self._crowd_destination.collector &amp;&amp;
+              self._crowd_destination.position.distanceTo(self.position) - self.state.radius &lt; 1.0;
+    },
+    depositToNearestCollector: function () {
+      self.emit('nodestination');
+      self.state.inventory.contents = [];
+    },
+
+  };
+
+  this.emit('changed', this.state);
+}
+
+inherits(Entity, THREE.Object3D);
+
+//////////////////
+
+Entity.prototype.on = Entity.prototype.addEventListener;
+
+Entity.prototype.emit = function (event, data) {
+  data = data || {};
+  data.type = event;
+  this.dispatchEvent(data);
+};
+
+/**
+ * String representation of the entity
+ */
+Entity.prototype.toString = function() {
+
+  return this.constructor.name + '#' + this.id;
+};
+
+/**
+ * Attach a life/mana bar above the entity
+ */
+Entity.prototype.attachLifeBar = function() {
+
+  this.lifebar = new LifeBar();
+};
+
+/**
+ * Update the character lifebar
+ */
+Entity.prototype.updateLifeBar = function() {
+
+  var eventData = {
+    life: this._baseLife === false ? false : this._baseLife > 0 ? 1 / this._baseLife * this.state.life : 0,
+    mana: this._baseMana === false ? false : this._baseMana > 0 ? 1 / this._baseMana * this.state.mana : 0
+  };
+
+  // this.lifebar.position.copy(this.position.x).setY(20);
+  this.lifebar.set(eventData);
+
+  this.emit('changed', eventData);
+};
+
+/**
+ * Attach a tomb, to replace the dead entity
+ */
+Entity.prototype.attachTombstone = function() {
+
+  var self = this;
+  var loader = new THREE.ColladaLoader();
+  loader.load( self.state.tomb, function ( loaded ) {
+
+    self.tomb = loaded.scene.getObjectByName('Cross2');
+
+    self.tomb.castShadow = true;
+    self.tomb.rotation.x = -90 * Math.PI / 180;
+    self.tomb.scale.set(2, 2, 2);
+    self.tomb.position.set(0, 0, 0);
+
+    // when character die, show just a tomb
+    self.on('death', function() {
+      self.update = function(){};
+
+      var children = _.clone(self.children);
+      _.each(children, function(child){ self.remove(child); });
+
+      children = _.clone(self.character.children);
+      _.each(children, function(child){ self.character.remove(child); });
+
+      self.add(self.tomb);
+    });
+  });
+};
+
+
+/**
+ * Add a life amount
+ * @param  {Number} increment
+ * @return {Number} new life amount
+ */
+Entity.prototype.incrementLife = function(inc) {
+
+  this.state.life = Math.max( 0, this.state.life + inc );
+  return this.state.life;
+};
+
+/**
+ * Add a mana amount
+ * @param  {Number} inc
+ * @return {Number} new mana amount
+ */
+Entity.prototype.incrementMana = function(inc) {
+
+  this.state.mana = Math.max( 0, this.state.mana + inc );
+  return this.state.mana;
+};
+
+/**
+ * Returns true if entity is dead
+ * @return {Boolean}
+ */
+Entity.prototype.isDead = function() {
+
+  return this.state.life &lt;= 0;
+};
+
+/**
+ * Returns true if entity is alive
+ * @return {Boolean}
+ */
+Entity.prototype.isAlive = function() {
+
+  return ! this.isDead();
+};
+
+/**
+ * Returns true if entity is out of mana
+ * @return {Boolean}
+ */
+Entity.prototype.isOutOfMana = function() {
+
+  return this.state.mana &lt;= 0;
+};
+
+/**
+ * Make the entity move along a path
+ * @param  {Array|THREE.Shape} the shape, or the points the entity will walk along
+ * @param  {Object} options, such as
+ *              start
+ *              onStart
+ *              onComplete
+ *              onUpdate
+ * @return {Tween} the Tween.js object
+ */
+Entity.prototype.moveAlong = function() {
+
+  throw 'Parent class Entity cannot move';
+};
+
+/**
+ * Learn a spell
+ * @param  {Spell} spell class
+ * @trigger 'changed'
+ */
+Entity.prototype.learnSpell = function(SpellClass) {
+
+  this.state.spells.push(new SpellClass({ source: this }));
+
+  this.emit('changed', this);
+};
+
+/**
+ * Cast a spell
+ * @param  {Spell} spell
+ * @return {Boolean} True if spell has been casted
+ */
+Entity.prototype.cast = function(spell, target) {
+
+  if (this.isDead()) {
+    debug('%o cannot cast this spell because it is dead !', this);
+    return;
+  }
+
+  // handle cooldown
+  if (spell.ccd > 0) {
+
+    // debug('this spell is not ready yet (%dms)', spell.ccd);
+    return;
+
+  } else {
+    spell.startCooldown(this);
+  }
+
+  debug('%o begins to cast %o', this, spell);
+
+  // place myself on a correct attacking range arc
+  if (spell.isMelee &amp;&amp; ! this._fightingArc) {
+
+    var radius  = spell.maxRange + target.state.attackRange,
+        start   = (new THREE.Vector3( -radius, 0, 0 )).add(target.position),
+        middle  = (new THREE.Vector3( 0, 0, -radius )).add(target.position),
+        end     = (new THREE.Vector3(  radius, 0, 0 )).add(target.position);
+
+    this._fightingArc = new THREE.QuadraticBezierCurve3(start, middle, end);
+    var p = this._fightingArc.getPointAt(Math.random());
+
+    this.position.set( p.x, p.y, p.z );
+  }
+
+  spell.start(this, target);
+
+  return true;
+};
+
+/**
+ * Hit this entity with a spell
+ * 
+ * @param  {Spell} spell
+ * @triggers 'hit', 'changed', 'death'
+ */
+Entity.prototype.hit = function(spell) {
+
+  if (this.isDead()) {
+    debug('%o is already dead !', this);
+    return;
+  }
+
+  spell.target = this;
+
+  var eventData = {
+    dodged: 0,
+    meleeLifeDamageReceived: 0,
+    magicLifeDamageReceived: 0,
+    manaDamageReceived: 0,
+    spell: spell
+  };
+
+  eventData.meleeLifeDamageReceived = spell.meleeLifeDamage;
+  eventData.magicLifeDamageReceived = spell.magicLifeDamage;
+  eventData.manaDamageReceived = spell.manaDamage;
+
+  eventData.totalLifeDamage = eventData.meleeLifeDamageReceived + eventData.magicLifeDamageReceived;
+
+  // apply hits
+  this.incrementLife(-eventData.totalLifeDamage);
+  this.incrementMana(-eventData.manaDamageReceived);
+
+  this.updateLifeBar();
+
+  this.emit('hit', eventData);
+
+  debug('%o hit %o with %o : %d + %d + %d (%s) - %s' ,
+    spell.source, this,
+    spell.name, eventData.magicLifeDamageReceived, eventData.meleeLifeDamageReceived, eventData.manaDamageReceived,
+    (spell.isCritical ? 'critical' : 'normal'), eventData.damageAbsorbed
+  );
+
+  // send events &amp; animations
+  if (this.isDead()) {
+
+    this.emit('death', eventData);
+    if (this.character) { this.character.setAnimation('death'); }
+
+  } else {
+
+    if (this.character) { this.character.setAnimation('pain'); }
+  }
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="module-Settings.html">Settings</a></li><li><a href="module-SettingsGUI.html">SettingsGUI</a></li><li><a href="gameeditor.html">threearena/editor/gameeditor</a></li><li><a href="bufficon.html">threearena/elements/bufficon</a></li><li><a href="collectible.html">threearena/elements/collectible</a></li><li><a href="commandcenter.html">threearena/elements/commandcenter</a></li><li><a href="lifebar.html">threearena/elements/lifebar</a></li><li><a href="mineral.html">threearena/elements/mineral</a></li><li><a href="nexus.html">threearena/elements/nexus</a></li><li><a href="shop.html">threearena/elements/shop</a></li><li><a href="sound.html">threearena/elements/sound</a></li><li><a href="terrain.html">threearena/elements/terrain</a></li><li><a href="tower.html">threearena/elements/tower</a></li><li><a href="water.html">threearena/elements/water</a></li><li><a href="log.html">threearena/log</a></li><li><a href="cloud.html">threearena/particles/cloud</a></li><li><a href="flies.html">threearena/particles/flies</a></li><li><a href="shadercloud.html">threearena/particles/shadercloud</a></li><li><a href="snow.html">threearena/particles/snow</a></li><li><a href="circles.html">threearena/shaders/circles</a></li><li><a href="lifebar_.html">threearena/shaders/lifebar</a></li><li><a href="lightbolt.html">threearena/shaders/lightbolt</a></li><li><a href="bite.html">threearena/spell/bite</a></li><li><a href="fireaura.html">threearena/spell/fireaura</a></li><li><a href="firebullet.html">threearena/spell/firebullet</a></li><li><a href="flatfireaura.html">threearena/spell/flatfireaura</a></li><li><a href="lightbolt_.html">threearena/spell/lightbolt</a></li><li><a href="entityview.html">threearena/views/entityview</a></li><li><a href="gameview.html">threearena/views/gameview</a></li><li><a href="interactiveview.html">threearena/views/interactiveview</a></li></ul><h3>Classes</h3><ul><li><a href="Arena.html">Arena</a></li><li><a href="Character.html">Character</a></li><li><a href="Crowd.html">Crowd</a></li><li><a href="Entity.html">Entity</a></li><li><a href="Inventory.html">Inventory</a></li><li><a href="Spell.html">Spell</a></li><li><a href="007.html">threearena/character/007</a></li><li><a href="human.html">threearena/character/human</a></li><li><a href="monsterdog.html">threearena/character/monsterdog</a></li><li><a href="ogro.html">threearena/character/ogro</a></li><li><a href="ratamahatta.html">threearena/character/ratamahatta</a></li><li><a href="attackcircle.html">threearena/controls/attackcircle</a></li><li><a href="dota.html">threearena/controls/dota</a></li><li><a href="selection.html">threearena/controls/selection</a></li><li><a href="abovemark.html">threearena/elements/abovemark</a></li><li><a href="autospawn.html">threearena/elements/autospawn</a></li><li><a href="interactiveobject.html">threearena/elements/interactiveobject</a></li><li><a href="destinationmarker.html">threearena/spell/destinationmarker</a></li></ul><h3>Events</h3><ul><li><a href="game.html#event:added:entity">added:entity</a></li><li><a href="game.html#event:added:spawningpool">added:spawningpool</a></li><li><a href="game.html#event:added:static">added:static</a></li><li><a href="game.html#event:ready">ready</a></li><li><a href="game.html#event:start">start</a></li><li><a href="game.html#event:update">update</a></li><li><a href="game.html#event:update:behaviours">update:behaviours</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha2</a> on Wed Jan 22 2014 23:24:33 GMT+0100 (CET)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

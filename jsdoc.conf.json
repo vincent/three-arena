@@ -1,0 +1,11 @@
+{
+  "tags": {
+    "allowUnknownTags": true
+  },
+  "source": {
+    "exclude": [ "lib/node_modules", "lib//pathfinding/recast.js" ]
+  },
+  "plugins": [ "plugins/markdown" ],
+  "templates": {
+  }
+}
