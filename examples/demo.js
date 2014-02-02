@@ -58,12 +58,12 @@ arena.addStatic(function(done){
   done(objective2);
 });
 
-/*
+/* * /
 arena.addStatic(function(done){
 
-    // Add a particle system
+  // Add a particle system
   var bullet_particles = new Arena.stemkoski.ParticleEngine();
-  bullet_particles.setValues( Arena.stemkoski.Examples.clouds);
+  bullet_particles.setValues( Arena.stemkoski.Examples.fireball);
   bullet_particles.initialize();
 
   arena.on('update', function(arena){
@@ -73,7 +73,7 @@ arena.addStatic(function(done){
   done(bullet_particles.particleMesh);
 
 });
-*/
+/* */
 
 // A shop
 var shop = new Arena.Elements.Shop({
@@ -104,7 +104,7 @@ arena.on('set:terrain', function(){
 
   // Another character
   arena.addCharacter(function(done){
-    new Arena.Characters.OO7({
+    var hero = new Arena.Characters.OO7({
       maxSpeed: 20.0,
       onLoad: function(){
         var character = this;
@@ -128,6 +128,11 @@ arena.on('set:terrain', function(){
         done(character);
       }
     });
+
+    hero.on('death', function(){
+      $('#deadscreen').show();
+    });
+
   });
 
 });
