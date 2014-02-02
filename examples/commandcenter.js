@@ -71,19 +71,21 @@ arena.on('set:terrain', function(){
   }
 
   for (var i = 0; i < 10; i++) {
-    arena.addCharacter(function(done){
-      arena.randomPositionOnterrain(function(point){
-        new Arena.Characters.SCV({
-          radius: 2.0,
-          onLoad: function(){
-            this.behaviour = Arena.Behaviours.Collector;
-            // this.position.copy(point);
-            if (!arena.entity) { arena.asPlayer(this); }
-            done(this);
-          }
+    setTimeout(function(){
+      arena.addCharacter(function(done){
+        arena.randomPositionOnterrain(function(point){
+          new Arena.Characters.SCV({
+            radius: 2.0,
+            onLoad: function(){
+              this.behaviour = Arena.Behaviours.Collector;
+              // this.position.copy(point);
+              if (!arena.entity) { arena.asPlayer(this); }
+              done(this);
+            }
+          });
         });
       });
-    });
+    }, i * 1000);
   }
 
   arena.init(function(arena){

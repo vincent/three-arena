@@ -58,6 +58,22 @@ arena.addStatic(function(done){
   done(objective2);
 });
 
+/*
+arena.addStatic(function(done){
+
+    // Add a particle system
+  var bullet_particles = new Arena.stemkoski.ParticleEngine();
+  bullet_particles.setValues( Arena.stemkoski.Examples.clouds);
+  bullet_particles.initialize();
+
+  arena.on('update', function(arena){
+    bullet_particles.update(arena.delta);
+  });
+
+  done(bullet_particles.particleMesh);
+
+});
+*/
 
 // A shop
 var shop = new Arena.Elements.Shop({

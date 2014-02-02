@@ -14,7 +14,8 @@
     "async": "~0.2.9",
     "knockout": "~3.0.0",
     "napa": "~0.2.0",
-    "debug": "~0.7.4"
+    "debug": "~0.7.4",
+    "gp-controls": "0.0.0"
   },
   "devDependencies": {},
   "engines": {

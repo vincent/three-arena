@@ -680,6 +680,12 @@ void removeCrowdAgent(int idx)
 	m_crowd->removeAgent(idx);
 }
 
+void requestMoveVelocity(int agentIdx, float velX, float velY, float velZ)
+{
+	float vel[3] = { velX, velY, velZ };
+	m_crowd->requestMoveVelocity(agentIdx, vel);
+}
+
 bool crowdRequestMoveTarget(int agentIdx, float posX, float posY, float posZ)
 {
 	char buff[512];
@@ -1239,6 +1245,8 @@ EMSCRIPTEN_BINDINGS(my_module) {
   function("crowdRequestMoveTarget", &crowdRequestMoveTarget);
   function("crowdUpdate", &crowdUpdate);
   function("crowdGetActiveAgents", &crowdGetActiveAgents);
+  function("requestMoveVelocity", &requestMoveVelocity);
+
 
 	function("set_cellSize", &set_cellSize);
 	function("set_cellHeight", &set_cellHeight);
