@@ -331,7 +331,7 @@
         setTimeout(function(){
           var iframedoc = $('#myModal .modal-body iframe')[0].contentDocument;
           $('pre', iframedoc).addClass('prettyprint');
-          $('body', iframedoc).append($('<script src="/examples/styles/run_prettify.js"/>'));
+          // $('body', iframedoc).append($('<script src="/examples/styles/run_prettify.js"/>'));
         }, 5000);
 
         $('body').append($('<script id="gamescript" src="/examples/' + gamescript + '"/>'));

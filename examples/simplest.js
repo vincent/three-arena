@@ -22,6 +22,7 @@ arena.setTerrain('/gamedata/maps/simplest/simplest.obj', {
 arena.addCharacter(function(done){
   new Arena.Characters.Ogro({
     onLoad: function(){
+      this.learnSpell(Arena.Spells.Teleport);
       arena.asPlayer(this);
       done(this);
     }
@@ -32,11 +33,11 @@ arena.on('set:terrain', function(){
 
   /* */
   arena.addStatic(function(done){
-    var collectible = new Arena.Elements.Collectible({
+    var object = new Arena.Elements.Spikes({
       onLoad: function(){
         arena.randomPositionOnterrain(function(point){
-          collectible.position.copy(point);
-          done(collectible);
+          object.position.copy(point);
+          done(object);
         });
       }
     });

@@ -23,7 +23,7 @@
   },
   "subdomain": "three-arena",
   "scripts": {
-    "install": "napa vincent/tween.js:tween vincent/machinejs publicclass/now",
+    "install": "napa vincent/tween.js:tween vincent/machinejs vincent/EventEmitter publicclass/now",
     "start": "node vendor/threejs/utils/servers/simplehttpserver.js & open http://localhost:8000",
     "doc": "jsdoc ...",
     "web": "markdown2bootstrap -n -h Readme.md && mv Readme.html index.html && sed -i '' -e 's/\"bootstrap/\"examples\\/styles\\/bootstrap/g' index.html",

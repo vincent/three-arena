@@ -428,6 +428,39 @@ void findNearestPoly(float cx, float cy, float cz,
 	// free(buff);
 }
 
+void findNearestPoint(float cx, float cy, float cz,
+					float ex, float ey, float ez,
+					 /*const dtQueryFilter* filter,
+					 dtPolyRef* nearestRef, float* nearestPt*/
+					std::string callback)
+{
+	emscripten_run_script("__tmp_recastjs_data = [];");
+	char buff[512];
+
+	const float p[3] = {cx,cy,cz};
+	const float ext[3] = {ex,ey,ez};
+	float nearestPt[3];
+
+	dtQueryFilter filter;
+	filter.setIncludeFlags(3);
+	filter.setExcludeFlags(0);
+
+	dtPolyRef ref = 0;
+	float nearestPos[3];
+
+	dtStatus findStatus = m_navQuery->findNearestPoly(p, ext, &filter, &ref, nearestPos);
+
+	if (dtStatusFailed(findStatus)) {
+		sprintf(buff, "%s(null);", callback.c_str());
+
+	} else {
+
+		sprintf(buff, "%s({ x:%f, y:%f, z:%f });", callback.c_str(), nearestPos[0], nearestPos[1], nearestPos[2]);
+	}
+
+	emscripten_run_script(buff);
+}
+
 void setPolyUnwalkable(float posX, float posY, float posZ, float extendX, float extendY, float extendZ, unsigned short flags)
 {
 	dtQueryFilter filter;
@@ -1234,6 +1267,7 @@ EMSCRIPTEN_BINDINGS(my_module) {
 	function("getNavHeightfieldRegions", &getNavHeightfieldRegions);
 
 	function("findNearestPoly", &findNearestPoly);
+	function("findNearestPoint", &findNearestPoint);
 	function("findPath", &findPath);
 	function("setPolyUnwalkable", &setPolyUnwalkable);
 	function("getRandomPoint", &getRandomPoint);
