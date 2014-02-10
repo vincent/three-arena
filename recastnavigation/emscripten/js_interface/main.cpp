@@ -609,16 +609,12 @@ bool initWithFileContent(std::string contents)
 	printf("loading from contents \n");
 	// printf(contents.c_str());
 
-	emscripten_log("initWithFileContent   \n");
-
 	m_geom = new InputGeom;
 	if (!m_geom || !m_geom->loadMeshFromContents(m_ctx, contents.c_str()))
 	{
-		emscripten_log("initWithFileContent  fail \n");
 		printf("cannot load OBJ contents \n");
 		return false;		
 	}
-	emscripten_log("initWithFileContent  success \n");
 	return true;
 }
 
