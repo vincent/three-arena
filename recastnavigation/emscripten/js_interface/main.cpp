@@ -609,12 +609,16 @@ bool initWithFileContent(std::string contents)
 	printf("loading from contents \n");
 	// printf(contents.c_str());
 
+	emscripten_log("initWithFileContent   \n");
+
 	m_geom = new InputGeom;
 	if (!m_geom || !m_geom->loadMeshFromContents(m_ctx, contents.c_str()))
 	{
+		emscripten_log("initWithFileContent  fail \n");
 		printf("cannot load OBJ contents \n");
 		return false;		
 	}
+	emscripten_log("initWithFileContent  success \n");
 	return true;
 }
 
@@ -824,7 +828,7 @@ struct dtCrowdAgent
 };
  */
 
-	sprintf(buff, "__tmp_recastjs_crowd_data = [];");
+	sprintf(buff, "__tmp_recastjs_crowd_data = []; var object;");
 
 	for (int i = 0; i < nagents; i++) {
 		dtCrowdAgent* ag = agents[i];
@@ -837,15 +841,18 @@ struct dtCrowdAgent
 		// sprintf(buff, "debug({ position:{x:%f,y:%f,z:%f}, radius:%f, active:%d, state:%d });", p[0], p[1], p[2], r, ag->active, ag->state);
 		// emscripten_run_script(buff);
 
-		sprintf(buff, "%s \n { \n var object = /* agentPool.get(); */ { position:{}, velocity:{} }; \n object.idx=%d; object.position.x=%f; object.position.y=%f; object.position.z=%f; object.velocity.x=%f; object.velocity.y=%f; object.velocity.z=%f; object.radius=%f; object.active=%d; object.state=%d; object.neighbors=%d; \n __tmp_recastjs_crowd_data.push(object);",
-									 buff, 	                                    			 			idx, 								 p[0], 								p[1], 								p[2], 								v[0], 							v[1], 								v[2], 							r, 								ag->active, 		 ag->state, 					ag->nneis);
-	}
+//		sprintf(buff, "%s \n { \n var object = /* agentPool.get(); */ { position:{}, velocity:{} }; \n object.idx=%d; object.position.x=%f; object.position.y=%f; object.position.z=%f; object.velocity.x=%f; object.velocity.y=%f; object.velocity.z=%f; object.radius=%f; object.active=%d; object.state=%d; object.neighbors=%d; \n __tmp_recastjs_crowd_data.push(object);",
+//									 buff, 	                                    			 			idx, 								 p[0], 								p[1], 								p[2], 								v[0], 							v[1], 								v[2], 							r, 								ag->active, 		 ag->state, 					ag->nneis);
 
-	for (int i = 0; i < nagents; i++) {
-		sprintf(buff, "%s \n /* agentPool.add(object); */ \n}", buff);
+		sprintf(buff, "%s \n object = agentPool.get(%d,  %f,   %f,   %f,   %f,   %f,   %f,   %f, %d,         %d,        %d); \n __tmp_recastjs_crowd_data.push(object);",
+									 buff, 	                      idx, p[0], p[1], p[2], v[0], v[1], v[2], r,  ag->active, ag->state, ag->nneis);
 	}
 
 	sprintf(buff, "\n %s \n\n %s(__tmp_recastjs_crowd_data);", buff, callback.c_str());
+
+	for (int i = 0; i < nagents; i++) {
+		sprintf(buff, "%s \n agentPool.add(__tmp_recastjs_crowd_data[%d]); \n", buff, i);
+	}
 
 	emscripten_run_script(buff);
 

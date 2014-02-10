@@ -6,13 +6,16 @@ var arena = window.arena = new Arena({
   container: document.getElementById('game-container'),
 
   showRoutes: true,
-
-  lightAmbientColor: 0xa0a0a0,
-
 });
 
-arena.setTerrain('/gamedata/maps/simplest/simplest.obj', {
+var texture = THREE.ImageUtils.loadTexture('/gamedata/maps/football/map.jpg');
+// texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
+// texture.repeat.set(1,1);
+
+arena.setTerrain('/gamedata/maps/football/football.obj', {
   minimap: '/gamedata/maps/simplest/minimap.png',
+
+  map: texture,
 
   cellSize: 0.5,          // nav mesh cell size (.8 > 2)
   cellHeight: 0.8,        // nav mesh cell height (.5 > 1)
@@ -24,7 +27,7 @@ arena.setTerrain('/gamedata/maps/simplest/simplest.obj', {
 
 /* */
 arena.addCharacter(function(done){
-  new Arena.Characters.Ogro({
+  new Arena.Characters.OO7({
     onLoad: function(){
       this.learnSpell(Arena.Spells.Teleport);
       arena.asPlayer(this);
@@ -36,7 +39,7 @@ arena.addCharacter(function(done){
 
 arena.on('set:terrain', function(){
 
-  /* */
+  /* * /
   arena.addStatic(function(done){
     var object = new Arena.Elements.Spikes({
       onLoad: function(){
