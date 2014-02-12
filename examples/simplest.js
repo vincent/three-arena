@@ -8,6 +8,8 @@ var arena = window.arena = new Arena({
   showRoutes: true,
 
   lightAmbientColor: 0xa0a0a0,
+  lightPointColor: 0xa0a0a0,
+  lightPointIntensity: 2.5,
 
 });
 
@@ -39,6 +41,19 @@ arena.on('set:terrain', function(){
   /* */
   arena.addStatic(function(done){
     var object = new Arena.Elements.Spikes({
+      onLoad: function(){
+        arena.randomPositionOnterrain(function(point){
+          object.position.copy(point);
+          done(object);
+        });
+      }
+    });
+  });
+  /* */
+
+  /* */
+  arena.addStatic(function(done){
+    var object = new Arena.Elements.Checkpoint({
       onLoad: function(){
         arena.randomPositionOnterrain(function(point){
           object.position.copy(point);
