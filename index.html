@@ -30,7 +30,7 @@
 
 <p><a href="http://three-arena.com/examples/#simplest.js">http://three-arena.com/examples/#simplest.js</a></p>
 
-<p>Three Arena is an opiniated WebGL game framework to create 3D hack-and-slash games in an HTML context. It uses <a href="http://threejs.org">three.js</a> 3D engine, <a href="http://machinejs.maryrosecook.com">machinejs</a> behaviour trees, <a href="https://github.com/memononen/recastnavigation">recastnavigation</a> pathfinding system, <a href="http://knockoutjs.com">knockoutjs</a> dom binding system and <a href="three-arena/blob/master/bower.json">other</a> open source projects.</p>
+<p>Three Arena is an opiniated WebGL game framework to create 3D terrain-based games in an HTML context. It uses <a href="http://threejs.org">three.js</a> 3D engine, <a href="http://machinejs.maryrosecook.com">machinejs</a> behaviour trees, <a href="https://github.com/memononen/recastnavigation">recastnavigation</a> pathfinding system, <a href="http://knockoutjs.com">knockoutjs</a> dom binding system and other open source projects.</p>
 
 <h1 id="2">Features</h1>
 
@@ -44,16 +44,17 @@
 <li>generic character model system, works well with converted MD2 (Quake) files</li>
 <li>characters behaviours
 <ul><li>attack when enemmy in sight</li>
-<li>move to a greater objective)</li></ul></li>
+<li>move to a greater objective</li>
+<li>collect a ressource like StarCraft II SCVs</li></ul></li>
 <li>spells with 3d fx, min-max distance, cooldown</li>
 <li>spatial sound effects</li>
 <li>built-in common 3D game objects
 <ul><li>Flies</li>
-<li>Water</li></ul></li>
-<li>built-in common RPG components
-<ul><li>Defense Tower</li>
+<li>Water</li>
+<li>Defense Tower</li>
 <li>Shop</li>
-<li>Spawning pool</li></ul></li>
+<li>Spawning pool</li>
+<li>Collectible</li></ul></li>
 <li>game interaction through events
 <ul><li><code>game.on('start', function)</code></li>
 <li><code>game.on('set:terrain', function)</code></li>

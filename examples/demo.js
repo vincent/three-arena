@@ -89,6 +89,7 @@ arena.addInteractive(shop);
 
 // Some flies
 arena.on('set:terrain', function(){
+
   arena.addStatic(function (done) {
     var flies = new Arena.Elements.Flies(10);
     arena.randomPositionOnterrain(function(point){
@@ -97,6 +98,7 @@ arena.on('set:terrain', function(){
       done(flies);
     });
   });
+
 });
 
 
@@ -113,11 +115,12 @@ arena.on('set:terrain', function(){
         // character.behaviour = Arena.Behaviours.Controlled;
 
         character.state.autoAttacks = true;
-        character.state.autoAttackSpell = 0;
+        character.state.autoAttackSpell = 1;
 
         // learn some spells
-        character.learnSpell(Arena.Spells.FireAura);
+        character.learnSpell(Arena.Spells.Teleport);
         character.learnSpell(Arena.Spells.FireBullet);
+        // character.learnSpell(Arena.Spells.FireAura);
         character.learnSpell(Arena.Spells.FlatFireAura);
         character.learnSpell(Arena.Spells.Lightbolt);
 
@@ -139,7 +142,7 @@ arena.on('set:terrain', function(){
 
 // A spawning pool
 var pool = new Arena.Elements.SpawningPool({
-  entity: Arena.Characters.Ogro,
+  entity: Arena.Characters.Zombie,
   groupOf: 1,
   eachGroupInterval: 20 * 1000
 });
@@ -147,6 +150,9 @@ pool.on('spawnedone', function (character) {
   character.state.team = 1;
 
   character.learnSpell(Arena.Spells.Bite);
+
+  character.state.maxAcceleration = 1.0;
+  character.state.maxSpeed = 2.0;
 
   character.state.autoAttacks = true;
   character.state.autoAttackSpell = 0;

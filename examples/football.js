@@ -50,6 +50,15 @@ arena.on('set:terrain', function(){
       }
     });
   });
+  /* * /
+
+  for (var i = 0; i < 5; i++) {
+    arena.addStatic(function(done){
+      var grass = new Arena.Elements.Grass();
+      grass.position.set(50 * i, 0, 0);
+      done(grass);
+    });
+  }
   /* */
 
   arena.init(function(arena){

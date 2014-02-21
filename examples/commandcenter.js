@@ -70,7 +70,7 @@ arena.on('set:terrain', function(){
     }.bind(minerals[i]));
   }
 
-  for (var i = 0; i < 10; i++) {
+  for (var i = 0; i < 20; i++) {
     setTimeout(function(){
       arena.addCharacter(function(done){
         arena.randomPositionOnterrain(function(point){
