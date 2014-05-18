@@ -26,7 +26,7 @@ arena.setTerrain('/gamedata/maps/simplest/simplest.obj', {
 
 /* */
 arena.addCharacter(function(done){
-  new Arena.Characters.Dummy({
+  new Arena.Characters.Marine({
     onLoad: function(){
       this.learnSpell(Arena.Spells.Teleport);
       arena.asPlayer(this);
