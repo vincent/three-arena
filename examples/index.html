@@ -140,6 +140,7 @@
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
+    <div id="loading-bar"><div class="progress"></div></div>
 
     <!-- game elements -->
     <div id="game-wrapper" style="display:none;">
@@ -152,6 +153,15 @@
             <li data-bind="attr: { class: action }, event: { click: $parent.click }">
               <span class="name" data-bind="text: name"></span>
               <span class="price" data-bind="text: price"></span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="view menu" id="view-dialogmenu" oncontextmenu="return false;">
+          <div class="text" data-bind="text: text"></div>
+          <ul class="choices" data-bind="foreach: choices">
+            <li data-bind="attr: { class: action }, event: { click: $parent.click }">
+              <span class="choicetext" data-bind="text: text"></span>
             </li>
           </ul>
         </div>
@@ -287,6 +297,7 @@
     <script type="text/javascript" src="/vendor/threejs/build/three.js"></script>
     <script type="text/javascript" src="/vendor/threejs/examples/js/libs/tween.min.js"></script>
     <script type="text/javascript" src="/vendor/dat.gui.js"></script>
+    <script type="text/javascript" src="/vendor/shaderparticles/ShaderParticles.js"></script>
     <script type="text/javascript" src="/vendor/threejs/examples/js/Sparks.js"></script>
     <script type="text/javascript" src="/vendor/threejs/examples/js/MD2Character.js"></script>
     <script type="text/javascript" src="/vendor/threejs/examples/js/MD2CharacterComplex.js"></script>

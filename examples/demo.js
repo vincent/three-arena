@@ -31,14 +31,19 @@ arena.on('set:lights', function () {
 });
 
 arena.setTerrain('/gamedata/maps/dota/mountains.obj', {
+  minimap: THREE.ImageUtils.loadTexture('/gamedata/maps/dota/dota_map_full_compress3.jpg'),
   map: THREE.ImageUtils.loadTexture('/gamedata/maps/dota/dota_map_full_compress3.jpg'),
-  bumpMap: THREE.ImageUtils.loadTexture('/gamedata//maps/dota/dota_map_full_compress3.jpg'),
-  bumpScale: 0.005,
+  // bumpMap: THREE.ImageUtils.loadTexture('/gamedata//maps/dota/dota_map_full_compress3.jpg'),
+  // bumpScale: 0.005,
 });
 
 
 var objective1 = new Arena.Elements.Nexus({ life: 1000000, color: '#F33' }),
     objective2 = new Arena.Elements.Nexus({ life: 1000000, color: '#3F3' });
+
+objective1.dialog = {
+  
+};
 
 arena.addStatic(function(done){
   
@@ -121,6 +126,7 @@ arena.on('set:terrain', function(){
         character.learnSpell(Arena.Spells.Teleport);
         character.learnSpell(Arena.Spells.FireBullet);
         // character.learnSpell(Arena.Spells.FireAura);
+        character.learnSpell(Arena.Spells.Heal);
         character.learnSpell(Arena.Spells.FlatFireAura);
         character.learnSpell(Arena.Spells.Lightbolt);
 
@@ -142,7 +148,7 @@ arena.on('set:terrain', function(){
 
 // A spawning pool
 var pool = new Arena.Elements.SpawningPool({
-  entity: Arena.Characters.Zombie,
+  entity: Arena.Characters.Dummy,
   groupOf: 1,
   eachGroupInterval: 20 * 1000
 });
@@ -174,16 +180,22 @@ arena.on('start', function () {
 });
 arena.addStatic(pool);
 
-$('#loading-bar .progress').show();
+$('#loading-bar, #loading-bar .progress').show();
 
 arena.on('set:terrain', function(){
   arena.init(function(arena){
+    var completed = 0;
     arena.preload(
       function(){
         arena.run();
       },
       function(complete, total){
-        $('#loading-bar .progress').css('width', (98 / total * complete) + '%' );
+        if (complete >= total) {
+          $('#loading-bar, #loading-bar .progress').hide();
+        } else {
+          completed++;
+          $('#loading-bar .progress').css('width', (98 / total * completed) + '%' );
+        }
       }
     );
   });
