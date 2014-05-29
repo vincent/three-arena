@@ -13,7 +13,7 @@ var arena = window.arena = new Arena({
 
 arena.setTerrain('/gamedata/maps/xelnaga/caverneXELNAGA2.obj', {
   minimap: THREE.ImageUtils.loadTexture('/gamedata/maps/dota/dota_map_full_compress3.jpg'),
-  map: THREE.ImageUtils.loadTexture('/gamedata/maps/dota/dota_map_full_compress4.jpg'),
+  map: THREE.ImageUtils.loadTexture('/gamedata/textures/grass2.jpg'),
   // bumpMap: THREE.ImageUtils.loadTexture('/gamedata//maps/dota/dota_map_full_compress3.jpg'),
   // bumpScale: 0.005,
 });
@@ -58,11 +58,13 @@ var modes = {
 
 };
 
-var gui = arena.gui.addFolder('Pursuits');
-gui.add(modes, 'go away');
-gui.add(modes, 'objective');
-gui.add(modes, 'follow');
-// gui.add(modes, 'follow_on_sight');
+if (arena.gui) {
+  var gui = arena.gui.addFolder('Pursuits');
+  gui.add(modes, 'go away');
+  gui.add(modes, 'objective');
+  gui.add(modes, 'follow');
+  // gui.add(modes, 'follow_on_sight');
+}
 
 arena.on('set:terrain', function(){
 

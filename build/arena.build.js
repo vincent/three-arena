@@ -2933,11 +2933,12 @@ function Terrain (file, options) {
   var shader = THREE.ShaderLib[ 'phong' ];
   var uniforms = THREE.UniformsUtils.clone( shader.uniforms );
 
+  // debugger;
 
   if (uniforms.map) {
     uniforms.map.value = options.map;
-    uniforms.map.value.wrapS = uniforms.map.value.wrapT = THREE.RepeatWrapping;
-    uniforms.map.value.repeat.set( 20000, 20000);
+    // uniforms.map.value.wrapS = uniforms.map.value.wrapT = THREE.RepeatWrapping;
+    // uniforms.map.value.repeat.set( 20000, 20000);
   }
 
 
@@ -2959,7 +2960,7 @@ function Terrain (file, options) {
     uniforms.tDiffuse.value = THREE.ImageUtils.loadTexture( options.map );
     uniforms.tDiffuse.value.wrapS = uniforms[ 'tDiffuse' ].value.wrapT = THREE.RepeatWrapping;
     uniforms.tDiffuse.value.repeat.set( 20000, 20000);
-    uniforms.diffuse.value.setHex( 0xffffff );
+    // uniforms.diffuse.value.setHex( 0xffffff );
   }
   /* */
 
@@ -2986,10 +2987,6 @@ function Terrain (file, options) {
 
   // uniforms[ 'enableAO' ].value = true;
   // uniforms[ 'tAO' ].value = THREE.ImageUtils.loadTexture( '/gamedata/dota_map_full_compress3.jpg' );
-
-  uniforms[ 'uDiffuseColor' ].value.setHex( diffuse );
-  uniforms[ 'uSpecularColor' ].value.setHex( specular );
-  uniforms[ 'uAmbientColor' ].value.setHex( ambient );
 
   /*
   uniforms[ 'enableDiffuse' ].value = false;
@@ -3026,13 +3023,14 @@ function Terrain (file, options) {
     vertexShader: shader.vertexShader,
     uniforms: uniforms,
     lights: true,
-    fog: true,
+    fog: false,
     overdraw: true
   }, options);
 
-  self.material = new THREE.ShaderMaterial( parameters );
+  // self.material = new THREE.ShaderMaterial( parameters );
   // self.material = new THREE.MeshBasicMaterial( parameters );
   // self.material = new THREE.MeshLambertMaterial(parameters);
+  self.material = new THREE.MeshPhongMaterial(parameters);
   // self.material.wrapAround = true;
 
   // self.material.shading = THREE.FlatShading;
@@ -5898,14 +5896,6 @@ Arena.prototype.run = function() {
       // keep the delta
       // self.delta = timestep;
 
-  // Crowd update
-  /* */
-  if (self.frameTime - self._lastCrowdUpdate > 0) {
-    self._lastCrowdUpdate = self.frameTime;
-    self.crowd.update(self);
-  }
-  /* */
-
       // update
       var updatesStart = now(), updated = 0;
       accumulator += frameTime;
@@ -6010,6 +6000,14 @@ Arena.prototype.update = function() {
 
   this.delta = this.timestep;
   this.frameTime = now();
+
+  // Crowd update
+  /* */
+  if (self.frameTime - self._lastCrowdUpdate > 0) {
+    self._lastCrowdUpdate = self.frameTime;
+    self.crowd.update(self);
+  }
+  /* */
 
   self._timings.lastDuration_taevents = window._ta_events.emit('update', this);
 
