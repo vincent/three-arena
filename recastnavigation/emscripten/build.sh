@@ -6,7 +6,7 @@ EMCC_FAST_COMPILER=0
 export LLVM='/usr/local/opt/llvm/bin'
 export CC='/Users/vincent/Workspace/emscripten/emcc'
 
-export CFLAGS='--closure 1 -O2 -g -s WARN_ON_UNDEFINED_SYMBOLS=0 -s NO_EXIT_RUNTIME=1 -s LINKABLE=0 -s ALLOW_MEMORY_GROWTH=1 -s DISABLE_GL_EMULATION=1 -s DISABLE_EXCEPTION_CATCHING=1 --bind'
+export CFLAGS='--closure 1 -O2 -g -s WARN_ON_UNDEFINED_SYMBOLS=0 -s NO_EXIT_RUNTIME=1 -s LINKABLE=0 -s ALLOW_MEMORY_GROWTH=1 -s DISABLE_GL_EMULATION=1 -s DISABLE_EXCEPTION_CATCHING=0 --bind'
 export DEFINES='-D NOT_GCC -D EMSCRIPTEN -D USES_UNIX_DIR'
 export INCLUDES='-I ../src/Recast/Include 			
 				 -I ../src/Detour/Include 			
