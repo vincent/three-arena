@@ -298,7 +298,8 @@ public:
 	///  @param[in]		dt		The time, in seconds, to update the simulation. [Limit: > 0]
 	///  @param[out]	debug	A debug object to load with debug information. [Opt]
 	void update(const float dt, dtCrowdAgentDebugInfo* debug);
-	
+	void updateWithoutDebug(const float dt);
+
 	/// Gets the filter used by the crowd.
 	/// @return The filter used by the crowd.
 	const dtQueryFilter* getFilter() const { return &m_filter; }

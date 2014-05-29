@@ -1,9 +1,12 @@
-#!/bin/sh
- 
+#!/bin/bash
+
+EMCC_FAST_COMPILER=0
+
 # PATH TO EMCC
+export LLVM='/usr/local/opt/llvm/bin'
 export CC='/Users/vincent/Workspace/emscripten/emcc'
 
-export CFLAGS='--closure 0 -O2 -g -s LINKABLE=0 -s ALLOW_MEMORY_GROWTH=1 -s DISABLE_GL_EMULATION=1 --bind'
+export CFLAGS='--closure 1 -O2 -g -s WARN_ON_UNDEFINED_SYMBOLS=0 -s NO_EXIT_RUNTIME=1 -s LINKABLE=0 -s ALLOW_MEMORY_GROWTH=1 -s DISABLE_GL_EMULATION=1 -s DISABLE_EXCEPTION_CATCHING=1 --bind'
 export DEFINES='-D NOT_GCC -D EMSCRIPTEN -D USES_UNIX_DIR'
 export INCLUDES='-I ../src/Recast/Include 			
 				 -I ../src/Detour/Include 			
@@ -52,7 +55,7 @@ export FILES='../src/DebugUtils/Source/DebugDraw.cpp
 			  ../src/RecastDemo/Source/ValueHistory.cpp
 
 			  js_interface/JavascriptInterface.cpp
-			  js_interface/main.cpp'
+			  js_interface/main.new.cpp'
 
 #			  ../src/RecastDemo/Source/SampleInterfaces.cpp
 #			  ../src/RecastDemo/Source/Sample_TempObstacles.cpp
@@ -61,7 +64,8 @@ export FLAGS='-v'
 export PRELOAD=''
 
 export PREJS='--pre-js js_interface/module.js'
+export LIBRARYJS='--js-library js_interface/library_recast.js'
 
 mkdir -p build
  
-$CC $FLAGS $DEFINES $INCLUDES $CFLAGS $FILES -s EXPORTED_FUNCTIONS='[]' $PREJS -o $1 $PRELOAD
+$PRE_FLAGS $CC $FLAGS $DEFINES $INCLUDES $CFLAGS $FILES $LIBRARYJS -s EXPORTED_FUNCTIONS='[]' $PREJS -o $1 $PRELOAD

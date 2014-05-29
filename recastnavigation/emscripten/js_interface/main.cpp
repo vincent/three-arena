@@ -751,7 +751,7 @@ bool crowdUpdate(float dt)
 	char buff[512];
 
 	dtCrowdAgentDebugInfo m_agentDebug;
-	memset(&m_agentDebug, 0, sizeof(m_agentDebug));
+	// memset(&m_agentDebug, 0, sizeof(m_agentDebug));
 
 	m_crowd->update(dt, &m_agentDebug);
 
