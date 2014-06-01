@@ -3023,7 +3023,7 @@ function Terrain (file, options) {
     vertexShader: shader.vertexShader,
     uniforms: uniforms,
     lights: true,
-    fog: false,
+    fog: true,
     overdraw: true
   }, options);
 
