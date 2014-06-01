@@ -68,17 +68,15 @@ if (arena.gui) {
 
 arena.on('set:terrain', function(){
 
-  arena.randomPositionOnterrain(function(point){
-    arena.loadCharacter(Arena.Characters.Ogro, function(done){
-      player = this;
-      player.position.copy(point);
-      arena.asPlayer(player);
-      player.state.team = 0;
-      // learn some spells
-      player.learnSpell(Arena.Spells.Teleport);
-      player.learnSpell(Arena.Spells.FireBullet);
-      done(player);
-    });
+  arena.loadCharacter(Arena.Characters.Ogro, function(done){
+    player = this;
+    player.position.set(-81.870, 0.000, 350.338);
+    arena.asPlayer(player);
+    player.state.team = 0;
+    // learn some spells
+    player.learnSpell(Arena.Spells.Teleport);
+    player.learnSpell(Arena.Spells.FireBullet);
+    done(player);
   });
 
   for (var i = 0; i < 5; i++) {

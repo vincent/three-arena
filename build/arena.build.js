@@ -7749,6 +7749,7 @@ function Pathfinding () {
 inherits(Pathfinding, EventEmitter);
 
 Pathfinding.prototype.messageWorker = function(type, data, callback) {
+  var self = this;
   var sendingMessage = {
     type: type,
     data: data
@@ -7758,7 +7759,9 @@ Pathfinding.prototype.messageWorker = function(type, data, callback) {
     callbacks[funcName] = callback;
     sendingMessage.funcName = funcName;
   }
-  this.worker.postMessage(sendingMessage);
+  setTimeout(function(){
+    self.worker.postMessage(sendingMessage);
+  }, 0);
 };
 
 Pathfinding.prototype.config = function(config, callback) {
