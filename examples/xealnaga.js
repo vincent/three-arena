@@ -91,6 +91,20 @@ arena.on('set:terrain', function(){
     });
   }
 
+  /* */
+  arena.addStatic(function(done){
+    var object = new Arena.Elements.Water({
+      renderer: arena.renderer,
+      camera: arena.camera,
+      scene: arena.scene,
+      directionalLight: arena.directionalLight,
+      options: {}
+    });
+    // object.position.y = 5;
+    done(object);
+  });
+  /* */
+
 });
 
 arena.init(function(arena){
