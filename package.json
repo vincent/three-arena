@@ -6,16 +6,17 @@
     "url": "git@github.com:vincent/three-arena.git"
   },
   "dependencies": {
-    "raf": "0.0.3",
-    "tic": "~0.2.1",
-    "lodash": "~2.4.1",
-    "inherits": "~2.0.1",
-    "interact": "0.0.3",
     "async": "~0.2.9",
-    "knockout": "~3.0.0",
-    "napa": "~0.2.0",
     "debug": "~0.7.4",
     "gp-controls": "0.0.0",
+    "inherits": "~2.0.1",
+    "interact": "0.0.3",
+    "knockout": "~3.0.0",
+    "lodash": "~2.4.1",
+    "napa": "~0.2.0",
+    "raf": "0.0.3",
+    "recast.js": "0.0.2",
+    "tic": "~0.2.1",
     "wolfy87-eventemitter": "*"
   },
   "devDependencies": {},
@@ -34,7 +35,7 @@
     "start": "node vendor/threejs/utils/servers/simplehttpserver.js & open http://localhost:8000",
     "doc": "jsdoc ...",
     "web": "markdown2bootstrap -n -h Readme.md && mv Readme.html index.html && sed -i '' -e 's/\"bootstrap/\"examples\\/styles\\/bootstrap/g' index.html",
-    "build": "mkdir -p build && browserify index.js -o build/arena.build.js",
+    "build": "mkdir -p build && browserify --noparse node_modules/recast.js/lib/recast.js index.js -o build/arena.build.js",
     "recast": "cd recastnavigation/emscripten && ./build.sh ../../lib/pathfinding/recast.js && cd ../.. && npm run build",
     "watch-js": "watchify browser/main.js -o static/bundle.js -dv"
   }

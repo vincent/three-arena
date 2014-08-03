@@ -18,7 +18,7 @@ function d(enabled){
   }
 }
 
-},{"./lib/index.js":47,"debug":75}],2:[function(require,module,exports){
+},{"./lib/index.js":47,"debug":74}],2:[function(require,module,exports){
 module.exports = {
   Controlled: require('./controlled'),
   Collector: require('./collector'),
@@ -81,6 +81,8 @@ module.exports = Character;
 function Character (options) {
 
   Entity.apply( this, [ options ]);
+
+  // this.state.name = chain.generateWord(5, 10, true);
 
   /*
 
@@ -185,7 +187,7 @@ Character.prototype.moveAlong = function(linepoints, options) {
 
 Character.prototype.constructor = Character;
 
-},{"./entity":42,"./utils":68,"debug":75,"inherits":76,"lodash":87}],7:[function(require,module,exports){
+},{"./entity":42,"./utils":67,"debug":74,"inherits":75,"lodash":86}],7:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -302,7 +304,7 @@ function ZeroZeroSeven ( options ) {
 
 inherits(ZeroZeroSeven, Character);
 
-},{"../character":6,"inherits":76,"lodash":87}],8:[function(require,module,exports){
+},{"../character":6,"inherits":75,"lodash":86}],8:[function(require,module,exports){
 module.exports = {
   Dummy: require('./dummy'),
   OO7: require('./007'),
@@ -357,6 +359,9 @@ function Dummy (options) {
       color: '#FFEEDD'
     })
   );
+
+  self.character.meshBody = self.character;
+
   self.character.position.y = 2.5;
   self.character.controls = {};
   self.character.update = self.character.setAnimation = function() { };
@@ -369,7 +374,7 @@ function Dummy (options) {
 inherits(Dummy, Character);
 
 
-},{"../character":6,"inherits":76,"lodash":87}],10:[function(require,module,exports){
+},{"../character":6,"inherits":75,"lodash":86}],10:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -459,7 +464,7 @@ Ghost.prototype.update = function(arena) {
   this.character.update(arena.delta);
 };
 
-},{"../character":6,"inherits":76,"lodash":87}],11:[function(require,module,exports){
+},{"../character":6,"inherits":75,"lodash":86}],11:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -510,7 +515,7 @@ function Human ( options ) {
 
 inherits(Human, Character);
 
-},{"../character":6,"inherits":76,"lodash":87}],12:[function(require,module,exports){
+},{"../character":6,"inherits":75,"lodash":86}],12:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -585,7 +590,7 @@ function Marine (options) {
 inherits(Marine, Character);
 
 
-},{"../character":6,"inherits":76,"lodash":87}],13:[function(require,module,exports){
+},{"../character":6,"inherits":75,"lodash":86}],13:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -666,7 +671,7 @@ function Monsterdog ( options ) {
 
 inherits(Monsterdog, Character);
 
-},{"../character":6,"inherits":76,"lodash":87}],14:[function(require,module,exports){
+},{"../character":6,"inherits":75,"lodash":86}],14:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -786,7 +791,7 @@ function Ogro ( options ) {
 inherits(Ogro, Character);
 
 
-},{"../character":6,"inherits":76,"lodash":87}],15:[function(require,module,exports){
+},{"../character":6,"inherits":75,"lodash":86}],15:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -862,7 +867,7 @@ function Ratamahatta ( options ) {
 
 inherits(Ratamahatta, Character);
 
-},{"../character":6,"inherits":76,"lodash":87}],16:[function(require,module,exports){
+},{"../character":6,"inherits":75,"lodash":86}],16:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -920,7 +925,7 @@ function SCV (options) {
 inherits(SCV, Character);
 
 
-},{"../character":6,"inherits":76,"lodash":87}],17:[function(require,module,exports){
+},{"../character":6,"inherits":75,"lodash":86}],17:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1006,7 +1011,7 @@ function Zombie ( options ) {
 
 inherits(Zombie, Character);
 
-},{"../character":6,"inherits":76,"lodash":87}],18:[function(require,module,exports){
+},{"../character":6,"inherits":75,"lodash":86}],18:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -1051,7 +1056,7 @@ AttackCircle.prototype.place = function ( object ) {
   return position;
 };
 
-},{"inherits":76}],19:[function(require,module,exports){
+},{"inherits":75}],19:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -1105,7 +1110,7 @@ DestinationMarker.prototype.animate = function () {
 };
 
 
-},{"../shaders/lightbolt":58,"inherits":76}],20:[function(require,module,exports){
+},{"../shaders/lightbolt":57,"inherits":75}],20:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1454,7 +1459,7 @@ DotaControls.prototype.getContainerDimensions = function() {
 
 
 
-},{"lodash":87}],21:[function(require,module,exports){
+},{"lodash":86}],21:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1520,7 +1525,7 @@ ZoneSelector.prototype.emit = function (event, data) {
 };
 
 
-},{"inherits":76,"lodash":87}],22:[function(require,module,exports){
+},{"inherits":75,"lodash":86}],22:[function(require,module,exports){
 'use strict';
 
 var debug = require('debug')('crowd');
@@ -1574,7 +1579,14 @@ function Crowd (game) {
 
   // this.game.on('update', update);
 
-  this.game.pathfinder.on('activeAgents', this._boundCrowdUpdate);
+  if (self.game.pathfinder) {
+    self.game.pathfinder.vent.on('update', self._boundCrowdUpdate);
+
+  } else {
+    self.game.on('set:terrain', function(){
+      self.game.pathfinder.vent.on('update', self._boundCrowdUpdate);
+    });
+  }
 
   settings.on('allCrowdAgentsUpdated', function (allCrowd) {
     for (var i = 0; i < self.agentsCount; i++) {
@@ -1620,7 +1632,7 @@ Crowd.prototype.addAgent = function(entity, options, destination, follow, callba
   entity._crowd_options = crowdOptions(options);
 
   // add the recast navigation
-  self.game.pathfinder.addCrowdAgent(entity._crowd_options, function(idx){
+  self.game.pathfinder.addCrowdAgent(entity._crowd_options, self.game.pathfinder.cb(function(idx){
 
     self.agentsCount++;
 
@@ -1699,7 +1711,7 @@ Crowd.prototype.addAgent = function(entity, options, destination, follow, callba
 
     entity.emit( destination ? 'destination' : 'nodestination', destination);
     entity.emit( follow ? 'follow' : 'nofollow', follow);
-  });
+  }));
 };
 
 Crowd.prototype.removeAgent = function(entity) {
@@ -1742,22 +1754,28 @@ Crowd.prototype.teleport = function(entity, newPosition, callback) {
 
   entity._crowd_dirty = true;
 
-  entity.game.pathfinder.findNearest(newPosition, function(nearestPosition){
+  entity.game.pathfinder.findNearestPoint(
+    newPosition.x,
+    newPosition.y,
+    newPosition.z,
+    1, 2, 1,
+    self.game.pathfinder.cb(function(posx, posy, posz){
 
-    entity._crowd_removeAllListeners();
+      entity._crowd_removeAllListeners();
 
-    var options = entity._crowd_options;
-    // need to copy because nearestPosition is pooled
-    options.position.copy(nearestPosition);
+      var options = entity._crowd_options;
+      // need to copy because nearestPosition is pooled
+      options.position.copy({ x:posx, y:posy, z:posz });
 
-    var following = null; // entity._crowd_following;
-    var destination = null; // entity._crowd_destination;
+      var following = null; // entity._crowd_following;
+      var destination = null; // entity._crowd_destination;
 
-    self.removeAgent(entity);
-    self.addAgent(entity, options, destination, following, callback);
+      self.removeAgent(entity);
+      self.addAgent(entity, options, destination, following, callback);
 
-    entity._crowd_dirty = false;
-  });
+      entity._crowd_dirty = false;
+      })
+  );
 };
 
 Crowd.prototype.update = function() {
@@ -1921,7 +1939,7 @@ Crowd.prototype._updateAgents = function(agents){
 };
 
 function crowdOptions(options) {
-  return options = _.merge({
+  options = _.merge({
     position: { x:0, y:0, z:0 },
     separationWeight: settings.data.crowdDefaultSeparationWeight,
     maxAcceleration: settings.data.crowdDefaultMaxAcceleration,
@@ -1938,9 +1956,16 @@ function crowdOptions(options) {
     radius: options.radius,
     height: options.height
   });
+
+  // double check positions
+  options.position.x = options.position.x || 0;
+  options.position.y = options.position.y || 0;
+  options.position.z = options.position.z || 0;
+
+  return options;
 }
 
-},{"./settings":56,"async":74,"debug":75,"lodash":87,"now":89}],23:[function(require,module,exports){
+},{"./settings":55,"async":73,"debug":74,"lodash":86,"now":88}],23:[function(require,module,exports){
 module.exports = {
   SpawningPool: require('./autospawn'),
   DefenseTower: require('./tower'),
@@ -2065,7 +2090,7 @@ AutoSpawn.prototype.spanwOne = function() {
 };
 
 
-},{"inherits":76,"lodash":87}],25:[function(require,module,exports){
+},{"inherits":75,"lodash":86}],25:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2126,7 +2151,7 @@ Checkpoint.prototype.update = function(arena) {
     }
   }
 };
-},{"../shaders/lightbolt":58,"inherits":76,"lodash":87}],26:[function(require,module,exports){
+},{"../shaders/lightbolt":57,"inherits":75,"lodash":86}],26:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2152,9 +2177,8 @@ function Collectible (options) {
   }, options);
 
   var loader = new THREE.OBJMTLLoader();
-  loader.addEventListener( 'load', function ( event ) {
 
-    var object = event.content;
+  loader.load('/gamedata/models/chest/chest.obj', '/gamedata/models/chest/chest.mtl', function ( object ) {
 
     object.scale.set(8, 8, 8);
 
@@ -2162,8 +2186,6 @@ function Collectible (options) {
 
     if (options.onLoad) { options.onLoad(); }
   });
-
-  loader.load('/gamedata/models/chest/chest.obj', '/gamedata/models/chest/chest.mtl');
 }
 
 inherits(Collectible, THREE.Object3D);
@@ -2204,7 +2226,7 @@ Collectible.prototype.collectedBy = function(entity, callback) {
 };
 
 
-},{"inherits":76,"lodash":87}],27:[function(require,module,exports){
+},{"inherits":75,"lodash":86}],27:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2293,7 +2315,7 @@ Collectible.prototype.collectedBy = function(entity, callback) {
 };
 
 
-},{"inherits":76,"lodash":87}],28:[function(require,module,exports){
+},{"inherits":75,"lodash":86}],28:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2329,7 +2351,7 @@ function CommandCenter (options) {
 }
 
 inherits(CommandCenter, Entity);
-},{"../entity":42,"inherits":76}],29:[function(require,module,exports){
+},{"../entity":42,"inherits":75}],29:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2411,7 +2433,7 @@ Flies.prototype.update = function(game) {
     this.points.vertices[i].set(point.x, point.y, point.z);
   }
 };
-},{"inherits":76}],30:[function(require,module,exports){
+},{"inherits":75}],30:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2522,7 +2544,7 @@ Grass.prototype.update = function(arena) {
   }
 };
 
-},{"inherits":76}],31:[function(require,module,exports){
+},{"inherits":75}],31:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2581,7 +2603,7 @@ InteractiveObject.prototype.isNearEnough = function(object) {
   return this.position.distanceTo(object.position) <= 20;
 };
 
-},{"../utils":68,"inherits":76}],32:[function(require,module,exports){
+},{"../utils":67,"inherits":75}],32:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2609,9 +2631,8 @@ function Mineral (options) {
   Collectible.apply(this, options);
 
   var loader = new THREE.OBJMTLLoader();
-  loader.addEventListener( 'load', function ( event ) {
 
-    var object = event.content;
+  loader.load('/gamedata/models/mineral/mineral.obj', '/gamedata/models/mineral/mineral.mtl', function ( object ) {
 
     object.scale.set(8, 8, 8);
 
@@ -2619,13 +2640,11 @@ function Mineral (options) {
 
     if (options.onLoad) { options.onLoad(); }
   });
-
-  loader.load('/gamedata/models/mineral/mineral.obj', '/gamedata/models/mineral/mineral.mtl');
 }
 
 inherits(Mineral, Collectible);
 
-},{"./collectible":27,"inherits":76,"lodash":87}],33:[function(require,module,exports){
+},{"./collectible":27,"inherits":75,"lodash":86}],33:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2666,7 +2685,7 @@ function Nexus (options) {
 
 inherits(Nexus, Entity);
 
-},{"../entity":42,"inherits":76}],34:[function(require,module,exports){
+},{"../entity":42,"inherits":75}],34:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2700,7 +2719,7 @@ function Shop (options) {
 }
 
 inherits(Shop, InteractiveObject);
-},{"./interactiveobject":31,"inherits":76}],35:[function(require,module,exports){
+},{"./interactiveobject":31,"inherits":75}],35:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2753,7 +2772,7 @@ LifeBar.prototype.update = function(delta) {
 };
 
 
-},{"../shaders/lifebar":57,"inherits":76,"lodash":87}],36:[function(require,module,exports){
+},{"../shaders/lifebar":56,"inherits":75,"lodash":86}],36:[function(require,module,exports){
 'use strict';
 
 module.exports = Sound;
@@ -2905,7 +2924,7 @@ Spikes.prototype.update = function(arena) {
   }
 };
 
-},{"../spell":59,"inherits":76,"tween":91}],38:[function(require,module,exports){
+},{"../spell":58,"inherits":75,"tween":91}],38:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3082,7 +3101,7 @@ inherits(Terrain, THREE.Object3D);
 
 
 
-},{"./water":40,"inherits":76,"lodash":87}],39:[function(require,module,exports){
+},{"./water":40,"inherits":75,"lodash":86}],39:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3261,7 +3280,7 @@ DefenseTower.prototype.fireTo = function(target) {
     .start();
 };
 
-},{"../entity":42,"../particles/cloud":52,"../spell":59,"inherits":76,"lodash":87,"tween":91}],40:[function(require,module,exports){
+},{"../entity":42,"../particles/cloud":52,"../spell":58,"inherits":75,"lodash":86,"tween":91}],40:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3320,7 +3339,7 @@ Water.prototype.update = function(game) {
 };
 
 
-},{"inherits":76,"lodash":87}],41:[function(require,module,exports){
+},{"inherits":75,"lodash":86}],41:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3371,7 +3390,7 @@ Water.prototype.update = function(game) {
 };
 
 
-},{"../materials/water":51,"inherits":76,"lodash":87}],42:[function(require,module,exports){
+},{"../materials/water":51,"inherits":75,"lodash":86}],42:[function(require,module,exports){
 'use strict';
 
 var now = require('now');
@@ -3920,7 +3939,7 @@ Entity.prototype.hit = function(spell) {
   }
 };
 
-},{"./controls/attackcircle":18,"./elements/slifebar":35,"./inventory":49,"./log":50,"./settings":56,"debug":75,"inherits":76,"lodash":87,"now":89}],43:[function(require,module,exports){
+},{"./controls/attackcircle":18,"./elements/slifebar":35,"./inventory":49,"./log":50,"./settings":55,"debug":74,"inherits":75,"lodash":86,"now":88}],43:[function(require,module,exports){
 module.exports = {
   GameHud: require('./ingame'),
   Sidemenu: require('./sidemenu')
@@ -4065,7 +4084,7 @@ GameHud.prototype.startInteraction = function(object) {
 };
 
 
-},{"../elements/interactiveobject":31,"../entity":42,"../views/dialogview":69,"../views/entityview":70,"../views/gameview":71,"../views/interactiveview":72,"knockout":86,"lodash":87}],45:[function(require,module,exports){
+},{"../elements/interactiveobject":31,"../entity":42,"../views/dialogview":68,"../views/entityview":69,"../views/gameview":70,"../views/interactiveview":71,"knockout":85,"lodash":86}],45:[function(require,module,exports){
 'use strict';
 
 module.exports = Sidemenu;
@@ -4209,7 +4228,7 @@ function SpellTexts (game, options) {
   };
 }
 
-},{"lodash":87,"tween":91}],47:[function(require,module,exports){
+},{"lodash":86,"tween":91}],47:[function(require,module,exports){
 var process=require("__browserify_process");'use strict';
 
 var debug = require('debug')('arena');
@@ -4240,7 +4259,7 @@ var LifeBar = require('./elements/slifebar');
 var DestinationMarker = require('./controls/destinationmarker');
 var Terrain = require('./elements/terrain');
 var InteractiveObject = require('./elements/interactiveobject');
-var PathFinding = require('./pathfinding');
+var PathFinding = require('recast.js/lib/recast.withworker');
 var CameraControls = require('./controls/dota');
 var SpellTexts = require('./hud/spelltexts');
 var Collectible = require('./elements/collectible');
@@ -4331,7 +4350,7 @@ var Arena = function (overrideSettings) {
    */
   this.clock = new THREE.Clock();
 
-  this.pathfinder = new PathFinding(this);
+  this.pathfinder = null;
 
   /**
    * Each team objectives
@@ -4971,7 +4990,7 @@ Arena.prototype.raycast = function( event, objects ) {
   this._projector.unprojectVector(this._raycasterVector, this.camera);
 
   this._raycaster = new THREE.Raycaster(this.camera.position,
-  this._raycasterVector.sub(this.camera.position).normalize());
+    this._raycasterVector.sub(this.camera.position).normalize());
 
   var intersects = this._raycaster.intersectObjects(objects, true); // recursive
 
@@ -5303,24 +5322,26 @@ Arena.prototype.setTerrain = function(file, options) {
       });
       */
 
-      // configure, and load the navigation mesh
-      self.pathfinder.on('configured', function(){
-        self.pathfinder.initWithFile(file);
+      self.pathfinder = new PathFinding('/node_modules/recast.js/lib/recast.js', function(){
+
+        // configure, and load the navigation mesh
+        self.pathfinder.vent.on('settings', function(){
+          self.pathfinder.OBJLoader(file, self.pathfinder.cb(function () {
+            debug('terrain ready');
+            self.emit('set:terrain', self.ground);
+          }));
+        });
+
+        self.pathfinder.settings({
+          cellSize: options.cellSize,
+          cellHeight: options.cellHeight,
+          agentHeight: options.agentHeight,
+          agentRadius: options.agentRadius,
+          agentMaxClimb: options.agentMaxClimb,
+          agentMaxSlope: options.agentMaxSlope
+        });
       });
 
-      self.pathfinder.on('built', function(){
-          debug('terrain ready');
-          self.emit('set:terrain', self.ground);
-      });
-
-      self.pathfinder.config({
-        cellSize: options.cellSize,
-        cellHeight: options.cellHeight,
-        agentHeight: options.agentHeight,
-        agentRadius: options.agentRadius,
-        agentMaxClimb: options.agentMaxClimb,
-        agentMaxSlope: options.agentMaxSlope
-      });
     }
   });
 
@@ -5419,7 +5440,7 @@ Arena.prototype.addObstacle = function(position, radius, flag) {
     this.scene.add(obsctacle);
   }
 
-  this.pathfinder.setPolyUnwalkable(position, radius, flag);
+  this.pathfinder.setPolyFlags(position, radius, flag);
 };
 
 
@@ -6345,7 +6366,7 @@ Arena.stemkoski = require('./particles/stemkoski_ParticleEngine');
 
 
 
-},{"../vendor/detector":92,"../vendor/stats":93,"./behaviours/all":2,"./character/all":8,"./controls/destinationmarker":19,"./controls/dota":20,"./controls/zoneselector":21,"./crowd":22,"./elements/all":23,"./elements/collectible":27,"./elements/interactiveobject":31,"./elements/slifebar":35,"./elements/terrain":38,"./entity":42,"./hud":43,"./hud/spelltexts":46,"./input/mouse":48,"./particles/stemkoski_ParticleEngine":53,"./pathfinding":54,"./settings":56,"./settings-gui":55,"./spell/all":60,"./utils":68,"EventEmitter":73,"__browserify_process":96,"async":74,"debug":75,"inherits":76,"interact":77,"lodash":87,"machinejs":88,"now":89,"tic":90,"tween":91}],48:[function(require,module,exports){
+},{"../vendor/detector":92,"../vendor/stats":93,"./behaviours/all":2,"./character/all":8,"./controls/destinationmarker":19,"./controls/dota":20,"./controls/zoneselector":21,"./crowd":22,"./elements/all":23,"./elements/collectible":27,"./elements/interactiveobject":31,"./elements/slifebar":35,"./elements/terrain":38,"./entity":42,"./hud":43,"./hud/spelltexts":46,"./input/mouse":48,"./particles/stemkoski_ParticleEngine":53,"./settings":55,"./settings-gui":54,"./spell/all":59,"./utils":67,"EventEmitter":72,"__browserify_process":97,"async":73,"debug":74,"inherits":75,"interact":76,"lodash":86,"machinejs":87,"now":88,"recast.js/lib/recast.withworker":89,"tic":90,"tween":91}],48:[function(require,module,exports){
 'use strict';
 
 var debug = require('debug')('controls:mouse');
@@ -6611,7 +6632,7 @@ MouseControl.prototype._onDocumentMouseMove = function(event) {
 
   this.arena.updateSelectionCoords(event.clientX, event.clientY);
 };
-},{"../elements/collectible":27,"../elements/interactiveobject":31,"../elements/terrain":38,"../entity":42,"../settings":56,"../utils":68,"debug":75}],49:[function(require,module,exports){
+},{"../elements/collectible":27,"../elements/interactiveobject":31,"../elements/terrain":38,"../entity":42,"../settings":55,"../utils":67,"debug":74}],49:[function(require,module,exports){
 'use strict';
 
 module.exports = Inventory;
@@ -8129,134 +8150,6 @@ module.exports = {
 },{}],54:[function(require,module,exports){
 'use strict';
 
-var debug = require('debug')('recast:main');
-var inherits = require('inherits');
-var EventEmitter = require('EventEmitter');
-
-// var now = require('now');
-
-module.exports = Pathfinding;
-
-var callbacks = {}, next = 0;
-
-function Pathfinding () {
-
-  var self = this;
-
-  var emitable = {
-    activeAgents: true,
-    configured: true,
-    built: true
-  };
-
-  this.worker = new Worker('../lib/pathfinding/recast.worker.js');
-
-  this.worker.addEventListener('message', function(event){
-    var data = event.data;
-
-    if (emitable[data.type]) {
-      self.emit(data.type, data.data);
-    }
-
-    if (data.funcName !== undefined && callbacks[data.funcName]) {
-      callbacks[data.funcName](data.data);
-      delete callbacks[data.funcName];
-    }
-  });
-}
-
-inherits(Pathfinding, EventEmitter);
-
-Pathfinding.prototype.messageWorker = function(type, data, callback) {
-  var self = this;
-  var sendingMessage = {
-    type: type,
-    data: data
-  };
-  if (typeof callback === 'function') {
-    var funcName = next++;
-    callbacks[funcName] = callback;
-    sendingMessage.funcName = funcName;
-  }
-  setTimeout(function(){
-    self.worker.postMessage(sendingMessage);
-  }, 0);
-};
-
-Pathfinding.prototype.config = function(config, callback) {
-  this.messageWorker('config', config, callback);
-};
-
-Pathfinding.prototype.ready = function() {
-  debug('Pathfinding worker ready');
-};
-
-Pathfinding.prototype.initWithFile = function(data, callback) {
-  this.messageWorker('initWithFile', data, callback);
-};
-
-Pathfinding.prototype.initWithFileContent = function(data, callback) {
-  this.messageWorker('initWithFileContent', data, callback);
-};
-
-Pathfinding.prototype.getRandomPoint = function(callback) {
-  this.messageWorker('getRandomPoint', null, callback);
-};
-
-Pathfinding.prototype.setPolyUnwalkable = function(position, radius, flags, callback) {
-  this.messageWorker('setPolyUnwalkable', { sx:position.x, sy:position.y, sz:position.z, dx:radius.x, dy:radius.y, dz:radius.z, flags:flags }, callback);
-};
-
-Pathfinding.prototype.findNearest = function(position, extend, callback) {
-  if (typeof extend === 'function' && ! callback) {
-    callback = extend;
-    extend = { x: 2, y: 4, z: 2 };
-  }
-  this.messageWorker('findNearestPoint', {
-    position: position,
-    extend: extend
-  }, callback);
-};
-
-Pathfinding.prototype.findPath = function(sx, sy, sz, dx, dy, dz, max, callback) {
-  this.messageWorker('findPath', { sx:sx, sy:sy, sz:sz, dx:dx, dy:dy, dz:dz, max:max }, callback);
-};
-
-Pathfinding.prototype.addCrowdAgent = function(options, callback) {
-  this.messageWorker('addCrowdAgent', options, callback);
-};
-
-Pathfinding.prototype.updateCrowdAgentParameters = function(agent, options, callback) {
-  this.messageWorker('updateCrowdAgentParameters', {
-    agent: agent,
-    options: options
-  }, callback);
-};
-
-Pathfinding.prototype.requestMoveVelocity = function(agent, velocity, callback) {
-  this.messageWorker('requestMoveVelocity', {
-    agent: agent,
-    velocity: velocity
-  }, callback);
-};
-
-Pathfinding.prototype.removeCrowdAgent = function(agent, callback) {
-  this.messageWorker('removeCrowdAgent', agent, callback);
-};
-
-Pathfinding.prototype.crowdUpdate = function(delta, callback) {
-  this.messageWorker('crowdUpdate', delta, callback);
-};
-
-Pathfinding.prototype.crowdRequestMoveTarget = function(agent, position, callback) {
-  this.messageWorker('crowdRequestMoveTarget', { agent:agent, x:position.x, y:position.y, z:position.z }, callback);
-};
-
-
-
-},{"EventEmitter":73,"debug":75,"inherits":76}],55:[function(require,module,exports){
-'use strict';
-
 /* global dat: true, _gaq: true */
 
 /**
@@ -8505,7 +8398,7 @@ exports.shortcut = function(label){
 };
 
 
-},{"./settings":56}],56:[function(require,module,exports){
+},{"./settings":55}],55:[function(require,module,exports){
 'use strict';
 
 /**
@@ -8707,7 +8600,7 @@ settings.data = {
 
 
 
-},{"events":94}],57:[function(require,module,exports){
+},{"events":95}],56:[function(require,module,exports){
 'use strict';
 
 var TWEEN = require('tween');
@@ -8854,7 +8747,7 @@ LifebarShaderMaterial.prototype.setMana = function(value) {
 };
 
 
-},{"inherits":76,"tween":91}],58:[function(require,module,exports){
+},{"inherits":75,"tween":91}],57:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -8945,7 +8838,7 @@ function LightboltShaderMaterial (strands) {
 
 inherits(LightboltShaderMaterial, THREE.ShaderMaterial);
 
-},{"inherits":76}],59:[function(require,module,exports){
+},{"inherits":75}],58:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9059,7 +8952,7 @@ Spell.prototype.startCooldown = function (source) {
   setTimeout(updateCD, 50);
 };
 
-},{"debug":75,"lodash":87}],60:[function(require,module,exports){
+},{"debug":74,"lodash":86}],59:[function(require,module,exports){
 module.exports = {
   Bite: require('./bite'),
   FireAura: require('./fireaura'),
@@ -9070,7 +8963,7 @@ module.exports = {
   Teleport: require('./teleport'),
 };
 
-},{"./bite":61,"./fireaura":62,"./firebullet":63,"./flatfireaura":64,"./heal":65,"./lightbolt":66,"./teleport":67}],61:[function(require,module,exports){
+},{"./bite":60,"./fireaura":61,"./firebullet":62,"./flatfireaura":63,"./heal":64,"./lightbolt":65,"./teleport":66}],60:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9128,7 +9021,7 @@ Bite.prototype.start = function(source, target) {
   target.hit(this);
 };
 
-},{"../elements/sound":36,"../spell":59,"inherits":76,"lodash":87}],62:[function(require,module,exports){
+},{"../elements/sound":36,"../spell":58,"inherits":75,"lodash":86}],61:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9178,7 +9071,7 @@ FireAura.prototype.start = function (caster, target) {
   }, 5000);
 };
 
-},{"../particles/cloud":52,"../spell":59,"inherits":76,"lodash":87}],63:[function(require,module,exports){
+},{"../particles/cloud":52,"../spell":58,"inherits":75,"lodash":86}],62:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -9271,7 +9164,7 @@ FireBullet.prototype.start = function (caster, target) {
     .start();
 };
 
-},{"../elements/sound":36,"../particles/cloud":52,"../particles/stemkoski_ParticleEngine":53,"../spell":59,"../utils":68,"inherits":76,"lodash":87,"tween":91}],64:[function(require,module,exports){
+},{"../elements/sound":36,"../particles/cloud":52,"../particles/stemkoski_ParticleEngine":53,"../spell":58,"../utils":67,"inherits":75,"lodash":86,"tween":91}],63:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9329,7 +9222,7 @@ FlatFireAura.prototype.start = function (caster, target) {
   }, 5000);
 };
 
-},{"../spell":59,"inherits":76,"lodash":87}],65:[function(require,module,exports){
+},{"../spell":58,"inherits":75,"lodash":86}],64:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -9429,7 +9322,7 @@ Heal.prototype.start = function (caster, target) {
     .start();
 };
 
-},{"../elements/sound":36,"../particles/cloud":52,"../particles/stemkoski_ParticleEngine":53,"../spell":59,"../utils":68,"inherits":76,"lodash":87,"tween":91}],66:[function(require,module,exports){
+},{"../elements/sound":36,"../particles/cloud":52,"../particles/stemkoski_ParticleEngine":53,"../spell":58,"../utils":67,"inherits":75,"lodash":86,"tween":91}],65:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9535,7 +9428,7 @@ Lightbolt.prototype.start = function (caster, target) {
   })
   .start();
 };
-},{"../shaders/lightbolt":58,"../spell":59,"inherits":76,"lodash":87,"tween":91}],67:[function(require,module,exports){
+},{"../shaders/lightbolt":57,"../spell":58,"inherits":75,"lodash":86,"tween":91}],66:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9652,7 +9545,7 @@ Teleport.prototype.updateZoneSelector = function(source, arena) {
   }
 };
 
-},{"../elements/sound":36,"../settings":56,"../spell":59,"inherits":76,"lodash":87,"tween":91}],68:[function(require,module,exports){
+},{"../elements/sound":36,"../settings":55,"../spell":58,"inherits":75,"lodash":86,"tween":91}],67:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9841,7 +9734,7 @@ module.exports = {
 
 };
 
-},{"lodash":87,"tween":91}],69:[function(require,module,exports){
+},{"lodash":86,"tween":91}],68:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9876,7 +9769,7 @@ function DialogViewModel (dialog) {
 
   dialog.on('changed', this.update.bind(this));
 }
-},{"knockout":86,"lodash":87}],70:[function(require,module,exports){
+},{"knockout":85,"lodash":86}],69:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9964,7 +9857,7 @@ function EntityViewModel (entity, game) {
 
   entity.on('changed', this.update.bind(this));
 }
-},{"../entity":42,"../utils":68,"knockout":86,"lodash":87}],71:[function(require,module,exports){
+},{"../entity":42,"../utils":67,"knockout":85,"lodash":86}],70:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10087,7 +9980,7 @@ GameViewModel.prototype.onMapClick = function(gameview, event) {
 GameViewModel.prototype.onCharacterHover = function(event) {
 };
 
-},{"knockout":86,"lodash":87}],72:[function(require,module,exports){
+},{"knockout":85,"lodash":86}],71:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10122,7 +10015,7 @@ function InteractiveViewModel (interactive) {
 
   interactive.on('changed', this.update.bind(this));
 }
-},{"knockout":86,"lodash":87}],73:[function(require,module,exports){
+},{"knockout":85,"lodash":86}],72:[function(require,module,exports){
 /*!
  * EventEmitter v4.2.7 - git.io/ee
  * Oliver Caldwell
@@ -10596,7 +10489,7 @@ function InteractiveViewModel (interactive) {
 	}
 }.call(this));
 
-},{}],74:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 var process=require("__browserify_process");/*global setImmediate: false, setTimeout: false, console: false */
 (function () {
 
@@ -11556,7 +11449,7 @@ var process=require("__browserify_process");/*global setImmediate: false, setTim
 
 }());
 
-},{"__browserify_process":96}],75:[function(require,module,exports){
+},{"__browserify_process":97}],74:[function(require,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -11695,7 +11588,7 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],76:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -11720,7 +11613,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],77:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 var lock = require('pointer-lock')
   , drag = require('drag-stream')
   , full = require('fullscreen')
@@ -11827,7 +11720,7 @@ function usedrag(el) {
   return ee
 }
 
-},{"drag-stream":78,"events":94,"fullscreen":84,"pointer-lock":85,"stream":101}],78:[function(require,module,exports){
+},{"drag-stream":77,"events":95,"fullscreen":83,"pointer-lock":84,"stream":102}],77:[function(require,module,exports){
 module.exports = dragstream
 
 var Stream = require('stream')
@@ -11895,10 +11788,10 @@ function dragstream(el) {
   }
 }
 
-},{"domnode-dom":79,"stream":101,"through":83}],79:[function(require,module,exports){
+},{"domnode-dom":78,"stream":102,"through":82}],78:[function(require,module,exports){
 module.exports = require('./lib/index')
 
-},{"./lib/index":80}],80:[function(require,module,exports){
+},{"./lib/index":79}],79:[function(require,module,exports){
 var WriteStream = require('./writable')
   , ReadStream = require('./readable')
   , DOMStream = {}
@@ -11936,7 +11829,7 @@ DOMStream.createEventStream = function(el, type, preventDefault) {
 module.exports = DOMStream
 
 
-},{"./readable":81,"./writable":82}],81:[function(require,module,exports){
+},{"./readable":80,"./writable":81}],80:[function(require,module,exports){
 module.exports = DOMStream
 
 var Stream = require('stream').Stream
@@ -12047,7 +11940,7 @@ function valueFromElement(el) {
   return el.value
 }
 
-},{"stream":101}],82:[function(require,module,exports){
+},{"stream":102}],81:[function(require,module,exports){
 module.exports = DOMStream
 
 var Stream = require('stream').Stream
@@ -12129,7 +12022,7 @@ proto.constructTextPlain = function(data) {
   return [textNode]
 }
 
-},{"stream":101}],83:[function(require,module,exports){
+},{"stream":102}],82:[function(require,module,exports){
 var process=require("__browserify_process");var Stream = require('stream')
 
 // through
@@ -12234,7 +12127,7 @@ function through (write, end) {
 }
 
 
-},{"__browserify_process":96,"stream":101}],84:[function(require,module,exports){
+},{"__browserify_process":97,"stream":102}],83:[function(require,module,exports){
 module.exports = fullscreen
 fullscreen.available = available
 
@@ -12325,7 +12218,7 @@ function shim(el) {
     el.oRequestFullScreen)
 }
 
-},{"events":94}],85:[function(require,module,exports){
+},{"events":95}],84:[function(require,module,exports){
 module.exports = pointer
 
 pointer.available = available
@@ -12489,7 +12382,7 @@ function shim(el) {
     null
 }
 
-},{"events":94,"stream":101}],86:[function(require,module,exports){
+},{"events":95,"stream":102}],85:[function(require,module,exports){
 // Knockout JavaScript library v3.0.0
 // (c) Steven Sanderson - http://knockoutjs.com/
 // License: MIT (http://www.opensource.org/licenses/mit-license.php)
@@ -16716,7 +16609,7 @@ ko.exportSymbol('nativeTemplateEngine', ko.nativeTemplateEngine);
 }());
 })();
 
-},{}],87:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/**
  * @license
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
@@ -23503,7 +23396,7 @@ var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? 
   }
 }.call(this));
 
-},{}],88:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 /*
   Machine.js
   by mary rose cook
@@ -23779,7 +23672,7 @@ var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? 
 })();
 
 
-},{}],89:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 
 module.exports = (function() {
   return typeof window != 'undefined' && window.performance
@@ -23792,7 +23685,321 @@ module.exports = (function() {
     : Date.now || function(){ return +new Date() };
 })()
 
-},{}],90:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
+var process=require("__browserify_process");/*jshint onevar: false, indent:4, strict:false */
+/*global setImmediate: false, setTimeout: false, console: false, module: true, process: true, define: true */
+
+var ENVIRONMENT_IS_NODE = typeof process === 'object' && typeof require === 'function';
+var ENVIRONMENT_IS_WEB = typeof window === 'object';
+var ENVIRONMENT_IS_WORKER = typeof importScripts === 'function';
+var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIRONMENT_IS_WORKER;
+
+/**
+ * Tiny event emitter for Node.js and the browser
+ * from https://github.com/joaquimserafim/tiny-eventemitter
+ */
+function EventEmitter () {
+  if (!(this instanceof EventEmitter)) return new EventEmitter();
+  EventEmitter.init.call(this);
+}
+
+EventEmitter.init = function () {
+  this._listeners = {};
+};
+
+EventEmitter.prototype._addListenner = function (type, listener, once) {
+  if (typeof listener !== 'function')
+    throw TypeError('listener must be a function');
+
+  if (!this._listeners[type])
+    this._listeners[type] = {
+      once: once,
+      fn: function () {
+        return listener.apply(this, arguments);
+      }
+    };
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function () {
+  return Object.keys(this._listeners);
+};
+
+EventEmitter.prototype.on = function (type, listener) {
+  return this._addListenner(type, listener, 0);
+};
+
+EventEmitter.prototype.once = function (type, listener) {
+  return this._addListenner(type, listener, 1);
+};
+
+EventEmitter.prototype.remove = function (type) {
+  if (type) {
+    delete this._listeners[type];
+    return this;
+  }
+
+  for (var e in this._listeners) delete this._listeners[e];
+
+  return this;
+};
+
+EventEmitter.prototype.emit = function (type) {
+  if (!this._listeners[type])
+    return;
+
+  var args = Array.prototype.slice.call(arguments, 1);
+
+  // exec event
+  this._listeners[type].fn.apply(this, args);
+
+  // remove events that run only once
+  if (this._listeners[type].once) this.remove(type);
+  
+  return this;
+};
+
+EventEmitter.prototype.deferEmit = function (type) {
+  var self = this;
+
+  if (!self._listeners[type])
+    throw new Error('Event "' + type + '" don\'t exists');
+
+  var args = Array.prototype.slice.call(arguments, 1);
+
+  process.nextTick(function () {
+    // exec event
+    self._listeners[type].fn.apply(self, args);
+
+    // remove events that run only once
+    if (self._listeners[type].once) self.remove(type);
+  });
+
+  return self;
+};
+
+
+
+/*!
+ * recast.js
+ * https://github.com/vincent/recast.js
+ *
+ * Copyright 2014 Vincent Lark
+ * Released under the MIT license
+ */
+var root = this;
+
+var Recast = function (worker_url, onWorkerReady) {
+
+    var recast = this;
+
+    this.vent = new EventEmitter();
+
+    this.__RECAST_CALLBACKS = {};
+    this.__RECAST_CALLBACKS.size = 0;
+
+    if (ENVIRONMENT_IS_WEB && typeof Worker !== 'undefined') {
+
+        // Create a new worker and run onReady when it is correctly initialized.
+
+        var spawnWorker = function (workerurl, onReady) {
+            var worker = new Worker(workerurl);
+            worker.onmessage = function() {
+                worker.onmessage = null;
+                onReady(worker);
+            };
+            worker.postMessage();
+            return worker;
+        };
+
+        this.worker = spawnWorker(worker_url, function() {
+
+            recast.worker.addEventListener('message', function(event){
+                var message = event.data;
+
+                if (typeof message.callback === 'number') {
+                    recast.__RECAST_CALLBACKS[message.callback].apply(event, message.data);
+                }
+
+                if (message.vent) {
+                    recast.vent.emit(message.type, message.data);
+                }
+            });
+
+            if (typeof onWorkerReady === 'function') {
+                onWorkerReady(recast);
+            }
+        });
+    
+    } else if (ENVIRONMENT_IS_NODE) {
+        var child_process = require('child_process');
+        this.worker = child_process.fork(worker_url);
+
+        this.worker.postMessage = function(eventData) {
+            recast.worker.send({
+                type: 'message',
+                data: eventData
+            });
+        };
+
+        this.worker.on('message', function(event){
+            var message = event.data;
+
+            if (typeof message.callback === 'number') {
+                recast.__RECAST_CALLBACKS[message.callback].apply(event, message.data);
+            }
+            if (message.vent) {
+                recast.vent.emit(message.type, message.data);
+            } 
+        });
+
+        if (typeof onWorkerReady === 'function') {
+            onWorkerReady(recast);
+        }
+    }
+};
+
+Recast.prototype.set_cellSize = function (data) {
+    this.worker.postMessage({type: 'set_cellSize', data: data });
+};
+
+Recast.prototype.set_cellHeight = function (data) {
+    this.worker.postMessage({type: 'set_cellHeight', data: data });
+};
+
+Recast.prototype.set_agentHeight = function (data) {
+    this.worker.postMessage({type: 'set_agentHeight', data: data });
+};
+
+Recast.prototype.set_agentRadius = function (data) {
+    this.worker.postMessage({type: 'set_agentRadius', data: data });
+};
+
+Recast.prototype.set_agentMaxClimb = function (data) {
+    this.worker.postMessage({type: 'set_agentMaxClimb', data: data });
+};
+
+Recast.prototype.set_agentMaxSlope = function (data) {
+    this.worker.postMessage({type: 'set_agentMaxSlope', data: data });
+};
+
+Recast.prototype.settings = function (data, callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
+    this.worker.postMessage({type: 'settings', data: data, callback: callback_id });
+};
+
+Recast.prototype.build = function (data, callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
+    this.worker.postMessage({type: 'build', data: data, callback: callback_id });
+};
+
+Recast.prototype.initCrowd = function (data, callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
+    this.worker.postMessage({type: 'initCrowd', data: data, callback: callback_id });
+};
+
+Recast.prototype.initWithFileContent = function (data, callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
+    this.worker.postMessage({type: 'initWithFileContent', data: data, callback: callback_id });
+};
+
+Recast.prototype.findNearestPoint = function (sx, sy, sz, dx, dy, dz, callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
+    this.worker.postMessage({type: 'findNearestPoint', data: { position: {x:sx,y:sy,z:sz}, extend:{x:dx,y:dy,z:dz} }, callback: callback_id });
+};
+
+Recast.prototype.findNearestPoly = function (sx, sy, sz, dx, dy, dz, callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
+    this.worker.postMessage({type: 'findNearestPoly', data: { position: {x:sx,y:sy,z:sz}, extend:{x:dx,y:dy,z:dz} }, callback: callback_id });
+};
+
+Recast.prototype.setPolyFlags = function (position, radius, flags, callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
+    this.worker.postMessage({type: 'setPolyFlags', data: { sx:position.x, sy:position.x, sz:position.x, dx:radius, dy:radius, dz:radius, flags:flags}, callback: callback_id });
+};
+
+Recast.prototype.findPath = function (sx, sy, sz, dx, dy, dz, max, callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
+    this.worker.postMessage({type: 'findPath', data: { sx:sx, sy:sy, sz:sz, dx:dx, dy:dy, dz:dz, max:max }, callback: callback_id });
+};
+
+Recast.prototype.getRandomPoint = function (callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
+    this.worker.postMessage({type: 'getRandomPoint', data: null, callback: callback_id });
+};
+
+Recast.prototype.addCrowdAgent = function (data, callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
+    this.worker.postMessage({type: 'addCrowdAgent', data: data, callback: callback_id });
+};
+
+Recast.prototype.updateCrowdAgentParameters = function (agent, options, callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
+    this.worker.postMessage({type: 'updateCrowdAgentParameters', data: { agent: agent, options: options }, callback: callback_id });
+};
+
+Recast.prototype.requestMoveVelocity = function (agent, velocity, callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
+    this.worker.postMessage({type: 'requestMoveVelocity', data: { agent: agent, velocity: velocity }, callback: callback_id });
+};
+
+Recast.prototype.removeCrowdAgent = function (agent, callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
+    this.worker.postMessage({type: 'removeCrowdAgent', data: agent, callback: callback_id });
+};
+
+Recast.prototype.crowdRequestMoveTarget = function (agent, position, callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
+    this.worker.postMessage({type: 'crowdRequestMoveTarget', data: { agent:agent, x:position.x, y:position.y, z:position.z }, callback: callback_id });
+};
+
+Recast.prototype.crowdUpdate = function (data, callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
+    this.worker.postMessage({type: 'crowdUpdate', data: data, callback: callback_id });
+};
+
+Recast.prototype.crowdGetActiveAgents = function (callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
+    this.worker.postMessage({type: 'crowdGetActiveAgents', data: null, callback: callback_id });
+};
+
+Recast.prototype.addAgent = function (data, callback_id) {
+    this.worker.postMessage({ type: 'addCrowdAgent', data: data, callback: callback_id });
+};
+
+Recast.prototype.cb = function (func) {
+    if (!func) return null;
+    this.__RECAST_CALLBACKS.size = this.__RECAST_CALLBACKS.size % 10;
+    var last = (++this.__RECAST_CALLBACKS.size) - 1;
+    this.__RECAST_CALLBACKS[last] = func;
+    return last;
+};
+
+Recast.prototype.OBJLoader = function(path, callback_id) {
+    this.worker.postMessage({type: 'OBJLoader', data: path, callback: callback_id });
+};
+
+Recast.prototype.OBJDataLoader = function(path, callback_id) {
+    this.worker.postMessage({type: 'OBJDataLoader', data: path, callback: callback_id });
+};
+
+// Node.js
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = Recast;
+}
+// AMD / RequireJS
+else if (typeof define !== 'undefined' && define.amd) {
+    define([], function () {
+        return Recast;
+    });
+}
+// included directly via <script> tag
+else {
+    root.Recast = Recast;
+}
+
+},{"__browserify_process":97,"child_process":94}],90:[function(require,module,exports){
 /*
  * tic
  * https://github.com/shama/tic
@@ -24792,6 +24999,8 @@ var Stats = function () {
 
 module.exports = Stats
 },{}],94:[function(require,module,exports){
+
+},{}],95:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -25093,9 +25302,9 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],95:[function(require,module,exports){
-module.exports=require(76)
 },{}],96:[function(require,module,exports){
+module.exports=require(75)
+},{}],97:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -25149,7 +25358,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],97:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 var base64 = require('base64-js')
 var TA = require('typedarray')
 
@@ -26303,7 +26512,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":98,"typedarray":99}],98:[function(require,module,exports){
+},{"base64-js":99,"typedarray":100}],99:[function(require,module,exports){
 (function (exports) {
 	'use strict';
 
@@ -26389,7 +26598,7 @@ function assert (test, message) {
 	module.exports.fromByteArray = uint8ToBase64;
 }());
 
-},{}],99:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 var undefined = (void 0); // Paranoia
 
 // Beyond this value, index getters/setters (i.e. array[0], array[1]) are so slow to
@@ -27021,7 +27230,7 @@ function packF32(v) { return packIEEE754(v, 8, 23); }
 
 }());
 
-},{}],100:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27095,7 +27304,7 @@ function onend() {
   });
 }
 
-},{"./readable.js":104,"./writable.js":106,"inherits":95,"process/browser.js":102}],101:[function(require,module,exports){
+},{"./readable.js":105,"./writable.js":107,"inherits":96,"process/browser.js":103}],102:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27224,9 +27433,9 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"./duplex.js":100,"./passthrough.js":103,"./readable.js":104,"./transform.js":105,"./writable.js":106,"events":94,"inherits":95}],102:[function(require,module,exports){
-module.exports=require(96)
-},{}],103:[function(require,module,exports){
+},{"./duplex.js":101,"./passthrough.js":104,"./readable.js":105,"./transform.js":106,"./writable.js":107,"events":95,"inherits":96}],103:[function(require,module,exports){
+module.exports=require(97)
+},{}],104:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27269,7 +27478,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./transform.js":105,"inherits":95}],104:[function(require,module,exports){
+},{"./transform.js":106,"inherits":96}],105:[function(require,module,exports){
 var process=require("__browserify_process");// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -28204,7 +28413,7 @@ function indexOf (xs, x) {
   return -1;
 }
 
-},{"./index.js":101,"__browserify_process":96,"buffer":97,"events":94,"inherits":95,"process/browser.js":102,"string_decoder":107}],105:[function(require,module,exports){
+},{"./index.js":102,"__browserify_process":97,"buffer":98,"events":95,"inherits":96,"process/browser.js":103,"string_decoder":108}],106:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -28410,7 +28619,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./duplex.js":100,"inherits":95}],106:[function(require,module,exports){
+},{"./duplex.js":101,"inherits":96}],107:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -28780,7 +28989,7 @@ function endWritable(stream, state, cb) {
   state.ended = true;
 }
 
-},{"./index.js":101,"buffer":97,"inherits":95,"process/browser.js":102}],107:[function(require,module,exports){
+},{"./index.js":102,"buffer":98,"inherits":96,"process/browser.js":103}],108:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -28973,5 +29182,5 @@ function base64DetectIncompleteChar(buffer) {
   return incomplete;
 }
 
-},{"buffer":97}]},{},[1])
+},{"buffer":98}]},{},[1])
 ;
