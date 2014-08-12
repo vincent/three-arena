@@ -18,7 +18,7 @@ function d(enabled){
   }
 }
 
-},{"./lib/index.js":47,"debug":74}],2:[function(require,module,exports){
+},{"./lib/index.js":47,"debug":75}],2:[function(require,module,exports){
 module.exports = {
   Controlled: require('./controlled'),
   Collector: require('./collector'),
@@ -187,7 +187,7 @@ Character.prototype.moveAlong = function(linepoints, options) {
 
 Character.prototype.constructor = Character;
 
-},{"./entity":42,"./utils":67,"debug":74,"inherits":75,"lodash":86}],7:[function(require,module,exports){
+},{"./entity":42,"./utils":68,"debug":75,"inherits":76,"lodash":87}],7:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -304,7 +304,7 @@ function ZeroZeroSeven ( options ) {
 
 inherits(ZeroZeroSeven, Character);
 
-},{"../character":6,"inherits":75,"lodash":86}],8:[function(require,module,exports){
+},{"../character":6,"inherits":76,"lodash":87}],8:[function(require,module,exports){
 module.exports = {
   Dummy: require('./dummy'),
   OO7: require('./007'),
@@ -353,28 +353,35 @@ function Dummy (options) {
 
   Character.apply( this, [ options ]);
 
-  self.character = new THREE.Mesh(
+  this.setCharacter(options.object || new THREE.Mesh(
     new THREE.CylinderGeometry(5, 5, 8),
     new THREE.MeshBasicMaterial({
       color: '#FFEEDD'
     })
-  );
+  ));
 
-  self.character.meshBody = self.character;
-
-  self.character.position.y = 2.5;
-  self.character.controls = {};
-  self.character.update = self.character.setAnimation = function() { };
-
-  self.add( self.character );
-
-  if (options.onLoad) { options.onLoad.apply(self); }
+  if (options.onLoad) { options.onLoad.apply(this); }
 }
 
 inherits(Dummy, Character);
 
+Dummy.prototype.setCharacter = function(object) {
 
-},{"../character":6,"inherits":75,"lodash":86}],10:[function(require,module,exports){
+  this.character = object;
+
+  this.character.meshBody = this.character;
+
+  this.character.position.y = 2.5;
+  this.character.controls = {};
+
+  this.character.update = this.character.update || function() { };
+  this.character.setAnimation = this.character.setAnimation || function() { };
+
+  this.add( this.character );
+};
+
+
+},{"../character":6,"inherits":76,"lodash":87}],10:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -464,7 +471,7 @@ Ghost.prototype.update = function(arena) {
   this.character.update(arena.delta);
 };
 
-},{"../character":6,"inherits":75,"lodash":86}],11:[function(require,module,exports){
+},{"../character":6,"inherits":76,"lodash":87}],11:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -515,7 +522,7 @@ function Human ( options ) {
 
 inherits(Human, Character);
 
-},{"../character":6,"inherits":75,"lodash":86}],12:[function(require,module,exports){
+},{"../character":6,"inherits":76,"lodash":87}],12:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -590,7 +597,7 @@ function Marine (options) {
 inherits(Marine, Character);
 
 
-},{"../character":6,"inherits":75,"lodash":86}],13:[function(require,module,exports){
+},{"../character":6,"inherits":76,"lodash":87}],13:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -671,7 +678,7 @@ function Monsterdog ( options ) {
 
 inherits(Monsterdog, Character);
 
-},{"../character":6,"inherits":75,"lodash":86}],14:[function(require,module,exports){
+},{"../character":6,"inherits":76,"lodash":87}],14:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -791,7 +798,7 @@ function Ogro ( options ) {
 inherits(Ogro, Character);
 
 
-},{"../character":6,"inherits":75,"lodash":86}],15:[function(require,module,exports){
+},{"../character":6,"inherits":76,"lodash":87}],15:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -867,7 +874,7 @@ function Ratamahatta ( options ) {
 
 inherits(Ratamahatta, Character);
 
-},{"../character":6,"inherits":75,"lodash":86}],16:[function(require,module,exports){
+},{"../character":6,"inherits":76,"lodash":87}],16:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -925,7 +932,7 @@ function SCV (options) {
 inherits(SCV, Character);
 
 
-},{"../character":6,"inherits":75,"lodash":86}],17:[function(require,module,exports){
+},{"../character":6,"inherits":76,"lodash":87}],17:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1011,7 +1018,7 @@ function Zombie ( options ) {
 
 inherits(Zombie, Character);
 
-},{"../character":6,"inherits":75,"lodash":86}],18:[function(require,module,exports){
+},{"../character":6,"inherits":76,"lodash":87}],18:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -1056,7 +1063,7 @@ AttackCircle.prototype.place = function ( object ) {
   return position;
 };
 
-},{"inherits":75}],19:[function(require,module,exports){
+},{"inherits":76}],19:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -1110,7 +1117,7 @@ DestinationMarker.prototype.animate = function () {
 };
 
 
-},{"../shaders/lightbolt":57,"inherits":75}],20:[function(require,module,exports){
+},{"../shaders/lightbolt":57,"inherits":76}],20:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1459,7 +1466,7 @@ DotaControls.prototype.getContainerDimensions = function() {
 
 
 
-},{"lodash":86}],21:[function(require,module,exports){
+},{"lodash":87}],21:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1525,7 +1532,7 @@ ZoneSelector.prototype.emit = function (event, data) {
 };
 
 
-},{"inherits":75,"lodash":86}],22:[function(require,module,exports){
+},{"inherits":76,"lodash":87}],22:[function(require,module,exports){
 'use strict';
 
 var debug = require('debug')('crowd');
@@ -1534,10 +1541,6 @@ var settings = require('./settings');
 var _ = require('lodash');
 var now = require('now');
 var async = require('async');
-
-var MIN_DESTINATION_CHANGE = 0.5;
-var MIN_SPEED_ANIMATION = 0.5;
-var MIN_SPEED_ROTATION = 1.5;
 
 module.exports = Crowd;
 
@@ -1649,7 +1652,7 @@ Crowd.prototype.addAgent = function(entity, options, destination, follow, callba
       entity._crowd_following = null;
       // dont call the worker for a minor change 
       if (! entity._crowd_destination ||
-        destination.position.distanceTo(entity._crowd_destination.position) > MIN_DESTINATION_CHANGE)
+        destination.position.distanceTo(entity._crowd_destination.position) > settings.data.crowdMinDestinationChange)
       {
         self.game.pathfinder.crowdRequestMoveTarget(idx, destination.position);
         debug('%o walk towards %o', entity, destination);
@@ -1662,7 +1665,7 @@ Crowd.prototype.addAgent = function(entity, options, destination, follow, callba
       entity._crowd_destination = null;
       // dont call the worker for a minor change 
       if (!entity._crowd_following || entity._crowd_following !== following ||
-        following.position.distanceTo(entity._crowd_following.position) > MIN_DESTINATION_CHANGE)
+        following.position.distanceTo(entity._crowd_following.position) > settings.data.crowdMinDestinationChange)
       {
         entity._crowd_following_last_position = following.position.clone();
         self.game.pathfinder.crowdRequestMoveTarget(idx, following.position);
@@ -1822,7 +1825,7 @@ Crowd.prototype._checkAgents = function(entity, idx) {
   // TODO: also use a _dirtyMove flag ?
   if (entity._crowd_following) {
     // dont call the worker for a minor change 
-    if (entity._crowd_following_last_position.distanceTo(entity._crowd_following.position) > 2.0 * MIN_DESTINATION_CHANGE)
+    if (entity._crowd_following_last_position.distanceTo(entity._crowd_following.position) > 2.0 * settings.data.crowdMinDestinationChange)
     {
       this.game.pathfinder.crowdRequestMoveTarget(idx, entity._crowd_following.position);
       entity._crowd_following_last_position.copy(entity._crowd_following.position);
@@ -1901,7 +1904,7 @@ Crowd.prototype._updateAgent = function(agent){
   // update back entity position & rotation
   entity.position.copy(agent.position);
 
-  if (speed > MIN_SPEED_ANIMATION) {
+  if (speed > settings.data.crowdMinSpeedAnimation) {
 
     if (entity.character) {
       entity.character.controls.moveForward = true;
@@ -1916,7 +1919,7 @@ Crowd.prototype._updateAgent = function(agent){
     }
   }
 
-  if (speed > MIN_SPEED_ROTATION) {
+  if (speed > settings.data.crowdMinSpeedRotation) {
     var angle = Math.atan2(- this._tmp_velocity.z, this._tmp_velocity.x);
     entity.rotation.y = angle;
   }
@@ -1965,7 +1968,7 @@ function crowdOptions(options) {
   return options;
 }
 
-},{"./settings":55,"async":73,"debug":74,"lodash":86,"now":88}],23:[function(require,module,exports){
+},{"./settings":55,"async":74,"debug":75,"lodash":87,"now":89}],23:[function(require,module,exports){
 module.exports = {
   SpawningPool: require('./autospawn'),
   DefenseTower: require('./tower'),
@@ -2090,7 +2093,7 @@ AutoSpawn.prototype.spanwOne = function() {
 };
 
 
-},{"inherits":75,"lodash":86}],25:[function(require,module,exports){
+},{"inherits":76,"lodash":87}],25:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2151,7 +2154,7 @@ Checkpoint.prototype.update = function(arena) {
     }
   }
 };
-},{"../shaders/lightbolt":57,"inherits":75,"lodash":86}],26:[function(require,module,exports){
+},{"../shaders/lightbolt":57,"inherits":76,"lodash":87}],26:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2226,7 +2229,7 @@ Collectible.prototype.collectedBy = function(entity, callback) {
 };
 
 
-},{"inherits":75,"lodash":86}],27:[function(require,module,exports){
+},{"inherits":76,"lodash":87}],27:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2315,7 +2318,7 @@ Collectible.prototype.collectedBy = function(entity, callback) {
 };
 
 
-},{"inherits":75,"lodash":86}],28:[function(require,module,exports){
+},{"inherits":76,"lodash":87}],28:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2351,7 +2354,7 @@ function CommandCenter (options) {
 }
 
 inherits(CommandCenter, Entity);
-},{"../entity":42,"inherits":75}],29:[function(require,module,exports){
+},{"../entity":42,"inherits":76}],29:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2433,7 +2436,7 @@ Flies.prototype.update = function(game) {
     this.points.vertices[i].set(point.x, point.y, point.z);
   }
 };
-},{"inherits":75}],30:[function(require,module,exports){
+},{"inherits":76}],30:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2544,7 +2547,7 @@ Grass.prototype.update = function(arena) {
   }
 };
 
-},{"inherits":75}],31:[function(require,module,exports){
+},{"inherits":76}],31:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2603,7 +2606,7 @@ InteractiveObject.prototype.isNearEnough = function(object) {
   return this.position.distanceTo(object.position) <= 20;
 };
 
-},{"../utils":67,"inherits":75}],32:[function(require,module,exports){
+},{"../utils":68,"inherits":76}],32:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2644,7 +2647,7 @@ function Mineral (options) {
 
 inherits(Mineral, Collectible);
 
-},{"./collectible":27,"inherits":75,"lodash":86}],33:[function(require,module,exports){
+},{"./collectible":27,"inherits":76,"lodash":87}],33:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2685,7 +2688,7 @@ function Nexus (options) {
 
 inherits(Nexus, Entity);
 
-},{"../entity":42,"inherits":75}],34:[function(require,module,exports){
+},{"../entity":42,"inherits":76}],34:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2719,7 +2722,7 @@ function Shop (options) {
 }
 
 inherits(Shop, InteractiveObject);
-},{"./interactiveobject":31,"inherits":75}],35:[function(require,module,exports){
+},{"./interactiveobject":31,"inherits":76}],35:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2772,7 +2775,7 @@ LifeBar.prototype.update = function(delta) {
 };
 
 
-},{"../shaders/lifebar":56,"inherits":75,"lodash":86}],36:[function(require,module,exports){
+},{"../shaders/lifebar":56,"inherits":76,"lodash":87}],36:[function(require,module,exports){
 'use strict';
 
 module.exports = Sound;
@@ -2924,7 +2927,7 @@ Spikes.prototype.update = function(arena) {
   }
 };
 
-},{"../spell":58,"inherits":75,"tween":91}],38:[function(require,module,exports){
+},{"../spell":58,"inherits":76,"tween":92}],38:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3084,7 +3087,7 @@ function Terrain (file, options) {
     if (options.onLoad) { options.onLoad(self); }
   };
 
-  if (file instanceof THREE.Mesh) {
+  if (file instanceof THREE.Mesh || file instanceof THREE.Object3D) {
 
     onLoad(file);
 
@@ -3101,7 +3104,7 @@ inherits(Terrain, THREE.Object3D);
 
 
 
-},{"./water":40,"inherits":75,"lodash":86}],39:[function(require,module,exports){
+},{"./water":40,"inherits":76,"lodash":87}],39:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3280,7 +3283,7 @@ DefenseTower.prototype.fireTo = function(target) {
     .start();
 };
 
-},{"../entity":42,"../particles/cloud":52,"../spell":58,"inherits":75,"lodash":86,"tween":91}],40:[function(require,module,exports){
+},{"../entity":42,"../particles/cloud":52,"../spell":58,"inherits":76,"lodash":87,"tween":92}],40:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3339,7 +3342,7 @@ Water.prototype.update = function(game) {
 };
 
 
-},{"inherits":75,"lodash":86}],41:[function(require,module,exports){
+},{"inherits":76,"lodash":87}],41:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3390,7 +3393,7 @@ Water.prototype.update = function(game) {
 };
 
 
-},{"../materials/water":51,"inherits":75,"lodash":86}],42:[function(require,module,exports){
+},{"../materials/water":51,"inherits":76,"lodash":87}],42:[function(require,module,exports){
 'use strict';
 
 var now = require('now');
@@ -3752,12 +3755,17 @@ Entity.prototype.attachTombstone = function() {
     // when character die, show just a tomb
     self.on('death', function() {
       self.update = function(){};
+      var children;
 
-      var children = _.clone(self.children);
-      _.each(children, function(child){ self.remove(child); });
+      if (self.children) {
+        children = _.clone(self.children);
+        _.each(children, function(child){ self.remove(child); });        
+      }
 
-      children = _.clone(self.character.children);
-      _.each(children, function(child){ self.character.remove(child); });
+      if (self.character && self.character.children) {
+        children = _.clone(self.character.children);
+        _.each(children, function(child){ self.character.remove(child); });        
+      }
 
       self.add(self.tomb);
     });
@@ -3834,9 +3842,9 @@ Entity.prototype.moveAlong = function() {
  * @param  {Spell} spell class
  * @trigger 'changed'
  */
-Entity.prototype.learnSpell = function(SpellClass) {
+Entity.prototype.learnSpell = function(SpellClass, args) {
 
-  this.state.spells.push(new SpellClass({ source: this }));
+  this.state.spells.push(new SpellClass(_.extend(args || {}, { source: this })));
 
   this.emit('changed', this);
 };
@@ -3939,7 +3947,7 @@ Entity.prototype.hit = function(spell) {
   }
 };
 
-},{"./controls/attackcircle":18,"./elements/slifebar":35,"./inventory":49,"./log":50,"./settings":55,"debug":74,"inherits":75,"lodash":86,"now":88}],43:[function(require,module,exports){
+},{"./controls/attackcircle":18,"./elements/slifebar":35,"./inventory":49,"./log":50,"./settings":55,"debug":75,"inherits":76,"lodash":87,"now":89}],43:[function(require,module,exports){
 module.exports = {
   GameHud: require('./ingame'),
   Sidemenu: require('./sidemenu')
@@ -4084,7 +4092,7 @@ GameHud.prototype.startInteraction = function(object) {
 };
 
 
-},{"../elements/interactiveobject":31,"../entity":42,"../views/dialogview":68,"../views/entityview":69,"../views/gameview":70,"../views/interactiveview":71,"knockout":85,"lodash":86}],45:[function(require,module,exports){
+},{"../elements/interactiveobject":31,"../entity":42,"../views/dialogview":69,"../views/entityview":70,"../views/gameview":71,"../views/interactiveview":72,"knockout":86,"lodash":87}],45:[function(require,module,exports){
 'use strict';
 
 module.exports = Sidemenu;
@@ -4228,7 +4236,7 @@ function SpellTexts (game, options) {
   };
 }
 
-},{"lodash":86,"tween":91}],47:[function(require,module,exports){
+},{"lodash":87,"tween":92}],47:[function(require,module,exports){
 var process=require("__browserify_process");'use strict';
 
 var debug = require('debug')('arena');
@@ -4259,7 +4267,7 @@ var LifeBar = require('./elements/slifebar');
 var DestinationMarker = require('./controls/destinationmarker');
 var Terrain = require('./elements/terrain');
 var InteractiveObject = require('./elements/interactiveobject');
-var PathFinding = require('recast.js/lib/recast.withworker');
+var PathFinding = require('recastjs/lib/recast.withworker');
 var CameraControls = require('./controls/dota');
 var SpellTexts = require('./hud/spelltexts');
 var Collectible = require('./elements/collectible');
@@ -4295,7 +4303,7 @@ module.exports = Arena;
  * @param {boolean=} settings.debug.visibleCharactersHelpers Show characters bounding boxes
  * 
  */
-var Arena = function (overrideSettings) {
+function Arena (overrideSettings) {
 
   if (process.browser && this.notCapable()) {
     return;
@@ -4310,15 +4318,16 @@ var Arena = function (overrideSettings) {
     this.setMaxListeners(1000);
   }
 
+  for (var s in overrideSettings) {
+    settings.data[s] = overrideSettings[s];
+  }
+
   /**
    * The game params
    * @type {Object}
    */
   this.settings = settings.data;
 
-  for (var s in overrideSettings) {
-    this.settings[s] = overrideSettings[s];
-  }
 
   //////////
 
@@ -5322,12 +5331,30 @@ Arena.prototype.setTerrain = function(file, options) {
       });
       */
 
-      self.pathfinder = new PathFinding('/node_modules/recast.js/lib/recast.js', function(){
+      self.pathfinder = new PathFinding('/node_modules/recastjs/lib/recast.js', function(){
 
         // configure, and load the navigation mesh
         self.pathfinder.vent.on('settings', function(){
-          self.pathfinder.OBJLoader(file, self.pathfinder.cb(function () {
+
+          self.pathfinder.OBJLoader(file.url ? file.url : file, self.pathfinder.cb(function () {
+
+            switch (settings.data.navmeshType) {
+
+              case 'tiled':
+                self.pathfinder.buildTiled();
+                break;
+
+              default:
+              case 'solo':
+                self.pathfinder.buildSolo();
+                break;
+                
+            }
+
+            self.pathfinder.initCrowd(100, 1.0);
+
             debug('terrain ready');
+
             self.emit('set:terrain', self.ground);
           }));
         });
@@ -6122,11 +6149,15 @@ Arena.prototype.update = function() {
   if (this.entity) {
 
     // place a light near the main player
+    this.pointLight.position.copy(this.entity.position)
+                            .add(settings.data.lightPointOffset);
+    /*
     this.pointLight.position.set(
       this.entity.position.x - 50,
       180,
       this.entity.position.z + 100
     );
+    */
     this.pointLight.target = this.entity;
 
     // camera position
@@ -6200,6 +6231,8 @@ Arena.prototype.render = function() {
   // render scene
   this.renderer.clear();
   this.composer.render();
+
+  this.emit('render', this);
 
   // clear depth buffer & render front scene
   this.renderer.clear( false, true, false );
@@ -6366,7 +6399,7 @@ Arena.stemkoski = require('./particles/stemkoski_ParticleEngine');
 
 
 
-},{"../vendor/detector":92,"../vendor/stats":93,"./behaviours/all":2,"./character/all":8,"./controls/destinationmarker":19,"./controls/dota":20,"./controls/zoneselector":21,"./crowd":22,"./elements/all":23,"./elements/collectible":27,"./elements/interactiveobject":31,"./elements/slifebar":35,"./elements/terrain":38,"./entity":42,"./hud":43,"./hud/spelltexts":46,"./input/mouse":48,"./particles/stemkoski_ParticleEngine":53,"./settings":55,"./settings-gui":54,"./spell/all":59,"./utils":67,"EventEmitter":72,"__browserify_process":97,"async":73,"debug":74,"inherits":75,"interact":76,"lodash":86,"machinejs":87,"now":88,"recast.js/lib/recast.withworker":89,"tic":90,"tween":91}],48:[function(require,module,exports){
+},{"../vendor/detector":93,"../vendor/stats":94,"./behaviours/all":2,"./character/all":8,"./controls/destinationmarker":19,"./controls/dota":20,"./controls/zoneselector":21,"./crowd":22,"./elements/all":23,"./elements/collectible":27,"./elements/interactiveobject":31,"./elements/slifebar":35,"./elements/terrain":38,"./entity":42,"./hud":43,"./hud/spelltexts":46,"./input/mouse":48,"./particles/stemkoski_ParticleEngine":53,"./settings":55,"./settings-gui":54,"./spell/all":59,"./utils":68,"EventEmitter":73,"__browserify_process":98,"async":74,"debug":75,"inherits":76,"interact":77,"lodash":87,"machinejs":88,"now":89,"recastjs/lib/recast.withworker":90,"tic":91,"tween":92}],48:[function(require,module,exports){
 'use strict';
 
 var debug = require('debug')('controls:mouse');
@@ -6632,7 +6665,7 @@ MouseControl.prototype._onDocumentMouseMove = function(event) {
 
   this.arena.updateSelectionCoords(event.clientX, event.clientY);
 };
-},{"../elements/collectible":27,"../elements/interactiveobject":31,"../elements/terrain":38,"../entity":42,"../settings":55,"../utils":67,"debug":74}],49:[function(require,module,exports){
+},{"../elements/collectible":27,"../elements/interactiveobject":31,"../elements/terrain":38,"../entity":42,"../settings":55,"../utils":68,"debug":75}],49:[function(require,module,exports){
 'use strict';
 
 module.exports = Inventory;
@@ -8485,6 +8518,10 @@ settings.data = {
   crowdDefaultRadius: 2.0,
   crowdDefaultHeight: 3.0,
 
+  crowdMinDestinationChange: 0.5,
+  crowdMinSpeedAnimation: 0.5,
+  crowdMinSpeedRotation: 1.5,
+
   /**
    * Fog color
    * @type {Hex}
@@ -8532,6 +8569,16 @@ settings.data = {
    * @type {Float}
    */
   lightPointAngle: 0.5,
+
+  /**
+   * Point light position from the main entity
+   * @type {Object}
+   */
+  lightPointOffset: {
+    x: -50,
+    y:  20,
+    z: 100
+  },
 
   /**
    * Directionnal light color
@@ -8600,7 +8647,7 @@ settings.data = {
 
 
 
-},{"events":95}],56:[function(require,module,exports){
+},{"events":96}],56:[function(require,module,exports){
 'use strict';
 
 var TWEEN = require('tween');
@@ -8747,7 +8794,7 @@ LifebarShaderMaterial.prototype.setMana = function(value) {
 };
 
 
-},{"inherits":75,"tween":91}],57:[function(require,module,exports){
+},{"inherits":76,"tween":92}],57:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -8838,7 +8885,7 @@ function LightboltShaderMaterial (strands) {
 
 inherits(LightboltShaderMaterial, THREE.ShaderMaterial);
 
-},{"inherits":75}],58:[function(require,module,exports){
+},{"inherits":76}],58:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -8917,6 +8964,9 @@ Spell.prototype.start = function (source, target) {
   return false;
 };
 
+Spell.prototype.prepare = function() {
+};
+
 /**
  * Start the spell cooldown
  * 
@@ -8952,7 +9002,7 @@ Spell.prototype.startCooldown = function (source) {
   setTimeout(updateCD, 50);
 };
 
-},{"debug":74,"lodash":86}],59:[function(require,module,exports){
+},{"debug":75,"lodash":87}],59:[function(require,module,exports){
 module.exports = {
   Bite: require('./bite'),
   FireAura: require('./fireaura'),
@@ -8961,9 +9011,10 @@ module.exports = {
   Lightbolt: require('./lightbolt'),
   Heal: require('./heal'),
   Teleport: require('./teleport'),
+  PlaceObject: require('./placeobject')
 };
 
-},{"./bite":60,"./fireaura":61,"./firebullet":62,"./flatfireaura":63,"./heal":64,"./lightbolt":65,"./teleport":66}],60:[function(require,module,exports){
+},{"./bite":60,"./fireaura":61,"./firebullet":62,"./flatfireaura":63,"./heal":64,"./lightbolt":65,"./placeobject":66,"./teleport":67}],60:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9021,7 +9072,7 @@ Bite.prototype.start = function(source, target) {
   target.hit(this);
 };
 
-},{"../elements/sound":36,"../spell":58,"inherits":75,"lodash":86}],61:[function(require,module,exports){
+},{"../elements/sound":36,"../spell":58,"inherits":76,"lodash":87}],61:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9071,7 +9122,7 @@ FireAura.prototype.start = function (caster, target) {
   }, 5000);
 };
 
-},{"../particles/cloud":52,"../spell":58,"inherits":75,"lodash":86}],62:[function(require,module,exports){
+},{"../particles/cloud":52,"../spell":58,"inherits":76,"lodash":87}],62:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -9164,7 +9215,7 @@ FireBullet.prototype.start = function (caster, target) {
     .start();
 };
 
-},{"../elements/sound":36,"../particles/cloud":52,"../particles/stemkoski_ParticleEngine":53,"../spell":58,"../utils":67,"inherits":75,"lodash":86,"tween":91}],63:[function(require,module,exports){
+},{"../elements/sound":36,"../particles/cloud":52,"../particles/stemkoski_ParticleEngine":53,"../spell":58,"../utils":68,"inherits":76,"lodash":87,"tween":92}],63:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9222,7 +9273,7 @@ FlatFireAura.prototype.start = function (caster, target) {
   }, 5000);
 };
 
-},{"../spell":58,"inherits":75,"lodash":86}],64:[function(require,module,exports){
+},{"../spell":58,"inherits":76,"lodash":87}],64:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -9322,7 +9373,7 @@ Heal.prototype.start = function (caster, target) {
     .start();
 };
 
-},{"../elements/sound":36,"../particles/cloud":52,"../particles/stemkoski_ParticleEngine":53,"../spell":58,"../utils":67,"inherits":75,"lodash":86,"tween":91}],65:[function(require,module,exports){
+},{"../elements/sound":36,"../particles/cloud":52,"../particles/stemkoski_ParticleEngine":53,"../spell":58,"../utils":68,"inherits":76,"lodash":87,"tween":92}],65:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9428,7 +9479,133 @@ Lightbolt.prototype.start = function (caster, target) {
   })
   .start();
 };
-},{"../shaders/lightbolt":57,"../spell":58,"inherits":75,"lodash":86,"tween":91}],66:[function(require,module,exports){
+},{"../shaders/lightbolt":57,"../spell":58,"inherits":76,"lodash":87,"tween":92}],66:[function(require,module,exports){
+'use strict';
+
+var _ = require('lodash');
+var inherits = require('inherits');
+
+var TWEEN = require('tween');
+
+var settings = require('../settings');
+
+var Spell = require('../spell');
+var Sound = require('../elements/sound');
+
+module.exports = PlaceObject;
+
+/**
+ * @exports threearena/spell/PlaceObject
+ */
+function PlaceObject (options) {
+
+  var self = this;
+
+  options = _.merge({}, options, {
+    name: 'PlaceObject',
+
+    cooldown: 1 * 1000,
+
+    minRange: 0,
+    maxRange: 20,
+
+    needsTargetZone: true,
+
+    object: new THREE.Mesh(
+      new THREE.BoxGeometry(5, 5, 5),
+      new THREE.MeshBasicMaterial({ color: 'white' })
+    )
+  });
+
+  this.sound = new Sound(['/gamedata/sounds/' + options.name + '.mp3'], 200.0, 1);
+  
+  window._ta_events.on('update', function(game){
+    if (self.source) {
+      self.sound.update.call(self.source, game.camera); // called with character as "this"
+    }
+  });
+
+  Spell.apply(this, [ options ]);
+}
+
+inherits(PlaceObject, Spell);
+
+PlaceObject.prototype.name = 'PlaceObject';
+
+///////////////////
+
+PlaceObject.prototype.prepare = function() {
+  Spell.prototype.prepare.apply(this);
+
+  this.handle = (typeof this.object === 'function') ? this.object() : this.object.clone();
+};
+
+/**
+ * Return `true` if this spell cast by source can hit target
+ * 
+ * @param  {Entity} source         The caster entity
+ * @param  {Entity} target         The target entity
+ * @param  {Number} toleranceRatio acceptable distance ratio
+ * @return {Boolean}               `true` if this spell can hit the specified target      
+ */
+PlaceObject.prototype.canHit = function (source, target, toleranceRatio) {
+
+  toleranceRatio = toleranceRatio || 1;
+  return source !== target && source.position.distanceTo(target.position) < (this.maxRange * toleranceRatio);
+};
+
+
+PlaceObject.prototype.start = function(source, target) {
+
+  var self = this;
+
+  if (! target) {
+    console.warn('This spell needs a target zone');
+    return;
+  }
+
+  self.sound.play();
+
+  var recast = source.game.pathfinder;
+
+  source.game.pathfinder.findNearestPoly(
+    source.position.x,
+    source.position.y,
+    source.position.z,
+    target.position.x,
+    target.position.y,
+    target.position.z,
+    recast.cb(function (polygon) {
+
+      // mark this polygon as unwalkable
+      recast.setPolyFlagsByRef(polygon.ref, recast.FLAG_DISABLED);
+
+      self.handle.material.transparent = false;
+      self.handle.material.opacity = 1;
+    }));
+};
+
+
+PlaceObject.prototype.updateZoneSelector = function(source, arena) {
+  var status = arena._currentZoneSelector.position.distanceTo(source.position) < this.maxRange ? 'enabled' : 'disabled';
+
+  if (arena._currentZoneSelector._dirtyStatus !== status) {
+    arena._currentZoneSelector.emit(status);
+  }
+
+  // update our object at potential position
+  this.handle.position.copy(arena._currentZoneSelector.position);
+
+  // if it cannot be placed here, set it more transparent
+  this.handle.material.transparent = true;
+  this.handle.material.opacity = status === 'enabled' ? 0.8 : 0.3;
+
+  arena.scene.add(this.handle);
+};
+
+
+
+},{"../elements/sound":36,"../settings":55,"../spell":58,"inherits":76,"lodash":87,"tween":92}],67:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9545,7 +9722,7 @@ Teleport.prototype.updateZoneSelector = function(source, arena) {
   }
 };
 
-},{"../elements/sound":36,"../settings":55,"../spell":58,"inherits":75,"lodash":86,"tween":91}],67:[function(require,module,exports){
+},{"../elements/sound":36,"../settings":55,"../spell":58,"inherits":76,"lodash":87,"tween":92}],68:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9556,7 +9733,7 @@ module.exports = {
   /**
    * A basic glowing material, to be used on active objects
    * @type {Object}
-   */
+   * /
   glowmaterial: {
     ambient: new THREE.Color(1, 1, 1),
     vertexShader:   document.getElementById( 'glow_vertexshader'   ).textContent,
@@ -9565,6 +9742,7 @@ module.exports = {
     blending: THREE.AdditiveBlending,
     transparent: true
   },
+  */
 
   /**
    * get a globaly defined callback
@@ -9734,7 +9912,7 @@ module.exports = {
 
 };
 
-},{"lodash":86,"tween":91}],68:[function(require,module,exports){
+},{"lodash":87,"tween":92}],69:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9769,7 +9947,7 @@ function DialogViewModel (dialog) {
 
   dialog.on('changed', this.update.bind(this));
 }
-},{"knockout":85,"lodash":86}],69:[function(require,module,exports){
+},{"knockout":86,"lodash":87}],70:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9827,6 +10005,8 @@ function EntityViewModel (entity, game) {
 
     } else if (spell.needsTargetZone) {
 
+      spell.prepare();
+
       var updateZoneSelector = function() {
         spell.updateZoneSelector(entity, game);
       };
@@ -9857,7 +10037,7 @@ function EntityViewModel (entity, game) {
 
   entity.on('changed', this.update.bind(this));
 }
-},{"../entity":42,"../utils":67,"knockout":85,"lodash":86}],70:[function(require,module,exports){
+},{"../entity":42,"../utils":68,"knockout":86,"lodash":87}],71:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9980,7 +10160,7 @@ GameViewModel.prototype.onMapClick = function(gameview, event) {
 GameViewModel.prototype.onCharacterHover = function(event) {
 };
 
-},{"knockout":85,"lodash":86}],71:[function(require,module,exports){
+},{"knockout":86,"lodash":87}],72:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10015,7 +10195,7 @@ function InteractiveViewModel (interactive) {
 
   interactive.on('changed', this.update.bind(this));
 }
-},{"knockout":85,"lodash":86}],72:[function(require,module,exports){
+},{"knockout":86,"lodash":87}],73:[function(require,module,exports){
 /*!
  * EventEmitter v4.2.7 - git.io/ee
  * Oliver Caldwell
@@ -10489,7 +10669,7 @@ function InteractiveViewModel (interactive) {
 	}
 }.call(this));
 
-},{}],73:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 var process=require("__browserify_process");/*global setImmediate: false, setTimeout: false, console: false */
 (function () {
 
@@ -11449,7 +11629,7 @@ var process=require("__browserify_process");/*global setImmediate: false, setTim
 
 }());
 
-},{"__browserify_process":97}],74:[function(require,module,exports){
+},{"__browserify_process":98}],75:[function(require,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -11588,7 +11768,7 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],75:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -11613,7 +11793,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],76:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 var lock = require('pointer-lock')
   , drag = require('drag-stream')
   , full = require('fullscreen')
@@ -11720,7 +11900,7 @@ function usedrag(el) {
   return ee
 }
 
-},{"drag-stream":77,"events":95,"fullscreen":83,"pointer-lock":84,"stream":102}],77:[function(require,module,exports){
+},{"drag-stream":78,"events":96,"fullscreen":84,"pointer-lock":85,"stream":103}],78:[function(require,module,exports){
 module.exports = dragstream
 
 var Stream = require('stream')
@@ -11788,10 +11968,10 @@ function dragstream(el) {
   }
 }
 
-},{"domnode-dom":78,"stream":102,"through":82}],78:[function(require,module,exports){
+},{"domnode-dom":79,"stream":103,"through":83}],79:[function(require,module,exports){
 module.exports = require('./lib/index')
 
-},{"./lib/index":79}],79:[function(require,module,exports){
+},{"./lib/index":80}],80:[function(require,module,exports){
 var WriteStream = require('./writable')
   , ReadStream = require('./readable')
   , DOMStream = {}
@@ -11829,7 +12009,7 @@ DOMStream.createEventStream = function(el, type, preventDefault) {
 module.exports = DOMStream
 
 
-},{"./readable":80,"./writable":81}],80:[function(require,module,exports){
+},{"./readable":81,"./writable":82}],81:[function(require,module,exports){
 module.exports = DOMStream
 
 var Stream = require('stream').Stream
@@ -11940,7 +12120,7 @@ function valueFromElement(el) {
   return el.value
 }
 
-},{"stream":102}],81:[function(require,module,exports){
+},{"stream":103}],82:[function(require,module,exports){
 module.exports = DOMStream
 
 var Stream = require('stream').Stream
@@ -12022,7 +12202,7 @@ proto.constructTextPlain = function(data) {
   return [textNode]
 }
 
-},{"stream":102}],82:[function(require,module,exports){
+},{"stream":103}],83:[function(require,module,exports){
 var process=require("__browserify_process");var Stream = require('stream')
 
 // through
@@ -12127,7 +12307,7 @@ function through (write, end) {
 }
 
 
-},{"__browserify_process":97,"stream":102}],83:[function(require,module,exports){
+},{"__browserify_process":98,"stream":103}],84:[function(require,module,exports){
 module.exports = fullscreen
 fullscreen.available = available
 
@@ -12218,7 +12398,7 @@ function shim(el) {
     el.oRequestFullScreen)
 }
 
-},{"events":95}],84:[function(require,module,exports){
+},{"events":96}],85:[function(require,module,exports){
 module.exports = pointer
 
 pointer.available = available
@@ -12382,7 +12562,7 @@ function shim(el) {
     null
 }
 
-},{"events":95,"stream":102}],85:[function(require,module,exports){
+},{"events":96,"stream":103}],86:[function(require,module,exports){
 // Knockout JavaScript library v3.0.0
 // (c) Steven Sanderson - http://knockoutjs.com/
 // License: MIT (http://www.opensource.org/licenses/mit-license.php)
@@ -16609,7 +16789,7 @@ ko.exportSymbol('nativeTemplateEngine', ko.nativeTemplateEngine);
 }());
 })();
 
-},{}],86:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/**
  * @license
  * Lo-Dash 2.4.1 (Custom Build) <http://lodash.com/>
@@ -23396,7 +23576,7 @@ var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? 
   }
 }.call(this));
 
-},{}],87:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 /*
   Machine.js
   by mary rose cook
@@ -23672,7 +23852,7 @@ var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? 
 })();
 
 
-},{}],88:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 
 module.exports = (function() {
   return typeof window != 'undefined' && window.performance
@@ -23685,14 +23865,20 @@ module.exports = (function() {
     : Date.now || function(){ return +new Date() };
 })()
 
-},{}],89:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 var process=require("__browserify_process");/*jshint onevar: false, indent:4, strict:false */
-/*global setImmediate: false, setTimeout: false, console: false, module: true, process: true, define: true */
+/*global setImmediate: false, setTimeout: false, console: false, module: true, process: true, define: true, require: true */
 
 var ENVIRONMENT_IS_NODE = typeof process === 'object' && typeof require === 'function';
 var ENVIRONMENT_IS_WEB = typeof window === 'object';
-var ENVIRONMENT_IS_WORKER = typeof importScripts === 'function';
-var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIRONMENT_IS_WORKER;
+
+var ENVIRONMENT = 'unkonwn';
+if (ENVIRONMENT_IS_WEB) {
+    ENVIRONMENT = 'web';
+}
+if (ENVIRONMENT_IS_NODE) {
+    ENVIRONMENT = 'node';
+}
 
 /**
  * Tiny event emitter for Node.js and the browser
@@ -23727,6 +23913,7 @@ EventEmitter.prototype.listeners = function () {
 };
 
 EventEmitter.prototype.on = function (type, listener) {
+  // console.log('in context', ENVIRONMENT, 'add a listener on', type, listener);
   return this._addListenner(type, listener, 0);
 };
 
@@ -23746,6 +23933,7 @@ EventEmitter.prototype.remove = function (type) {
 };
 
 EventEmitter.prototype.emit = function (type) {
+  // console.log('in context', ENVIRONMENT, 'emit a event on', type, this._listeners[type] ? this._listeners[type].length : 0, 'listeners');
   if (!this._listeners[type])
     return;
 
@@ -23894,6 +24082,16 @@ Recast.prototype.build = function (data, callback_id) {
     this.worker.postMessage({type: 'build', data: data, callback: callback_id });
 };
 
+Recast.prototype.buildSolo = function (data, callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
+    this.worker.postMessage({type: 'buildSolo', data: data, callback: callback_id });
+};
+
+Recast.prototype.buildTiled = function (data, callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
+    this.worker.postMessage({type: 'buildTiled', data: data, callback: callback_id });
+};
+
 Recast.prototype.initCrowd = function (data, callback_id) {
     callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
     this.worker.postMessage({type: 'initCrowd', data: data, callback: callback_id });
@@ -23902,6 +24100,11 @@ Recast.prototype.initCrowd = function (data, callback_id) {
 Recast.prototype.initWithFileContent = function (data, callback_id) {
     callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
     this.worker.postMessage({type: 'initWithFileContent', data: data, callback: callback_id });
+};
+
+Recast.prototype.findNearest = function (position, callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
+    this.worker.postMessage({type: 'findNearestPoint', data: { position: position, extend:{x:3,y:3,z:3} }, callback: callback_id });
 };
 
 Recast.prototype.findNearestPoint = function (sx, sy, sz, dx, dy, dz, callback_id) {
@@ -23914,9 +24117,22 @@ Recast.prototype.findNearestPoly = function (sx, sy, sz, dx, dy, dz, callback_id
     this.worker.postMessage({type: 'findNearestPoly', data: { position: {x:sx,y:sy,z:sz}, extend:{x:dx,y:dy,z:dz} }, callback: callback_id });
 };
 
+Recast.prototype.queryPolygons = function (sx, sy, sz, dx, dy, dz, maxPolys, callback_id) {
+    if (typeof callback_id === 'undefined') {
+        callback_id = maxPolys;
+        maxPolys    = 1000; 
+    }
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
+    this.worker.postMessage({type: 'queryPolygons', data: { position: {x:sx,y:sy,z:sz}, extend:{x:dx,y:dy,z:dz}, maxPolys:maxPolys }, callback: callback_id });
+};
+
 Recast.prototype.setPolyFlags = function (position, radius, flags, callback_id) {
     callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
     this.worker.postMessage({type: 'setPolyFlags', data: { sx:position.x, sy:position.x, sz:position.x, dx:radius, dy:radius, dz:radius, flags:flags}, callback: callback_id });
+};
+Recast.prototype.setPolyFlagsByRef = function (ref, flags, callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
+    this.worker.postMessage({type: 'setPolyFlagsByRef', data: { ref:ref, flags:flags}, callback: callback_id });
 };
 
 Recast.prototype.findPath = function (sx, sy, sz, dx, dy, dz, max, callback_id) {
@@ -23944,6 +24160,10 @@ Recast.prototype.requestMoveVelocity = function (agent, velocity, callback_id) {
     this.worker.postMessage({type: 'requestMoveVelocity', data: { agent: agent, velocity: velocity }, callback: callback_id });
 };
 
+Recast.prototype.addAgent = function (data, callback_id) {
+    this.worker.postMessage({ type: 'addCrowdAgent', data: data, callback: callback_id });
+};
+
 Recast.prototype.removeCrowdAgent = function (agent, callback_id) {
     callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
     this.worker.postMessage({type: 'removeCrowdAgent', data: agent, callback: callback_id });
@@ -23964,8 +24184,24 @@ Recast.prototype.crowdGetActiveAgents = function (callback_id) {
     this.worker.postMessage({type: 'crowdGetActiveAgents', data: null, callback: callback_id });
 };
 
-Recast.prototype.addAgent = function (data, callback_id) {
-    this.worker.postMessage({ type: 'addCrowdAgent', data: data, callback: callback_id });
+Recast.prototype.addTempObstacle = function (posX, posY, posZ, radius, callback_id) {
+    this.worker.postMessage({ type: 'addTempObstacle', data: { posX:posX, posY:posY, posZ:posZ, radius:radius }, callback: callback_id });
+};
+
+Recast.prototype.removeTempObstacle = function (ref, callback_id) {
+    this.worker.postMessage({ type: 'removeTempObstacle', data: ref, callback: callback_id });
+};
+
+Recast.prototype.removeAllTempObstacles = function (callback_id) {
+    this.worker.postMessage({ type: 'removeAllTempObstacles', data: null, callback: callback_id });
+};
+
+Recast.prototype.getAllTempObstacles = function (callback_id) {
+    this.worker.postMessage({ type: 'getAllTempObstacles', data: null, callback: callback_id });
+};
+
+Recast.prototype.addOffMeshConnection = function (startX, startY, startZ,endX, endY, endZ, radius, bidir, callback_id) {
+    this.worker.postMessage({ type: 'addOffMeshConnection', data: { startX:startX, startY:startY, startZ:startZ, endX:endX, endY:endY, endZ:endZ, radius:radius, bidir:bidir }, callback: callback_id });
 };
 
 Recast.prototype.cb = function (func) {
@@ -23980,8 +24216,12 @@ Recast.prototype.OBJLoader = function(path, callback_id) {
     this.worker.postMessage({type: 'OBJLoader', data: path, callback: callback_id });
 };
 
-Recast.prototype.OBJDataLoader = function(path, callback_id) {
-    this.worker.postMessage({type: 'OBJDataLoader', data: path, callback: callback_id });
+Recast.prototype.OBJDataLoader = function(objdata, callback_id) {
+    this.worker.postMessage({type: 'OBJDataLoader', data: objdata, callback: callback_id });
+};
+
+Recast.prototype.getNavMeshVertices = function(callback_id) {
+	this.worker.postMessage({type: 'getNavMeshVertices', data: null, callback: callback_id });
 };
 
 // Node.js
@@ -23999,7 +24239,7 @@ else {
     root.Recast = Recast;
 }
 
-},{"__browserify_process":97,"child_process":94}],90:[function(require,module,exports){
+},{"__browserify_process":98,"child_process":95}],91:[function(require,module,exports){
 /*
  * tic
  * https://github.com/shama/tic
@@ -24046,7 +24286,7 @@ Tic.prototype.tick = function(dt) {
   });
 };
 
-},{}],91:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 // tween.js - http://github.com/sole/tween.js
 /**
  * @author sole / http://soledadpenades.com
@@ -24791,7 +25031,7 @@ TWEEN.Interpolation = {
 };
 
 module.exports=TWEEN;
-},{}],92:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 /**
  * @author alteredq / http://alteredqualia.com/
  * @author mr.doob / http://mrdoob.com/
@@ -24852,7 +25092,7 @@ module.exports = function() {
   };
 }
 
-},{}],93:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 /**
  * @author mrdoob / http://mrdoob.com/
  */
@@ -24998,9 +25238,9 @@ var Stats = function () {
 };
 
 module.exports = Stats
-},{}],94:[function(require,module,exports){
-
 },{}],95:[function(require,module,exports){
+
+},{}],96:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -25302,9 +25542,9 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],96:[function(require,module,exports){
-module.exports=require(75)
 },{}],97:[function(require,module,exports){
+module.exports=require(76)
+},{}],98:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -25358,7 +25598,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],98:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 var base64 = require('base64-js')
 var TA = require('typedarray')
 
@@ -26512,7 +26752,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":99,"typedarray":100}],99:[function(require,module,exports){
+},{"base64-js":100,"typedarray":101}],100:[function(require,module,exports){
 (function (exports) {
 	'use strict';
 
@@ -26598,7 +26838,7 @@ function assert (test, message) {
 	module.exports.fromByteArray = uint8ToBase64;
 }());
 
-},{}],100:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 var undefined = (void 0); // Paranoia
 
 // Beyond this value, index getters/setters (i.e. array[0], array[1]) are so slow to
@@ -27230,7 +27470,7 @@ function packF32(v) { return packIEEE754(v, 8, 23); }
 
 }());
 
-},{}],101:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27304,7 +27544,7 @@ function onend() {
   });
 }
 
-},{"./readable.js":105,"./writable.js":107,"inherits":96,"process/browser.js":103}],102:[function(require,module,exports){
+},{"./readable.js":106,"./writable.js":108,"inherits":97,"process/browser.js":104}],103:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27433,9 +27673,9 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"./duplex.js":101,"./passthrough.js":104,"./readable.js":105,"./transform.js":106,"./writable.js":107,"events":95,"inherits":96}],103:[function(require,module,exports){
-module.exports=require(97)
-},{}],104:[function(require,module,exports){
+},{"./duplex.js":102,"./passthrough.js":105,"./readable.js":106,"./transform.js":107,"./writable.js":108,"events":96,"inherits":97}],104:[function(require,module,exports){
+module.exports=require(98)
+},{}],105:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27478,7 +27718,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./transform.js":106,"inherits":96}],105:[function(require,module,exports){
+},{"./transform.js":107,"inherits":97}],106:[function(require,module,exports){
 var process=require("__browserify_process");// Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -28413,7 +28653,7 @@ function indexOf (xs, x) {
   return -1;
 }
 
-},{"./index.js":102,"__browserify_process":97,"buffer":98,"events":95,"inherits":96,"process/browser.js":103,"string_decoder":108}],106:[function(require,module,exports){
+},{"./index.js":103,"__browserify_process":98,"buffer":99,"events":96,"inherits":97,"process/browser.js":104,"string_decoder":109}],107:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -28619,7 +28859,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./duplex.js":101,"inherits":96}],107:[function(require,module,exports){
+},{"./duplex.js":102,"inherits":97}],108:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -28989,7 +29229,7 @@ function endWritable(stream, state, cb) {
   state.ended = true;
 }
 
-},{"./index.js":102,"buffer":98,"inherits":96,"process/browser.js":103}],108:[function(require,module,exports){
+},{"./index.js":103,"buffer":99,"inherits":97,"process/browser.js":104}],109:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -29182,5 +29422,5 @@ function base64DetectIncompleteChar(buffer) {
   return incomplete;
 }
 
-},{"buffer":98}]},{},[1])
+},{"buffer":99}]},{},[1])
 ;

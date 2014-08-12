@@ -35,7 +35,7 @@
     "start": "node vendor/threejs/utils/servers/simplehttpserver.js & open http://localhost:8000",
     "doc": "jsdoc ...",
     "web": "markdown2bootstrap -n -h Readme.md && mv Readme.html index.html && sed -i '' -e 's/\"bootstrap/\"examples\\/styles\\/bootstrap/g' index.html",
-    "build": "mkdir -p build && browserify --noparse node_modules/recast.js/lib/recast.js index.js -o build/arena.build.js",
+    "build": "mkdir -p build && browserify --noparse node_modules/recastjs/lib/recast.js index.js -o build/arena.build.js",
     "recast": "cd recastnavigation/emscripten && ./build.sh ../../lib/pathfinding/recast.js && cd ../.. && npm run build",
     "watch-js": "watchify browser/main.js -o static/bundle.js -dv"
   }
