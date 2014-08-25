@@ -24,48 +24,34 @@ arena.setTerrain('/gamedata/maps/simplest/flat.obj', {
   agentMaxSlope: 50.0,    // max degre character can climb (20 > 40)
 });
 
-/* */
-arena.addCharacter(function(done){
-  new Arena.Characters.Dummy({
-    maxSpeed: 5.0,
-    onLoad: function(){
-      this.learnSpell(Arena.Spells.Teleport);
-      arena.asPlayer(this);
-      done(this);
-    }
-  });
-});
-/* */
-
 arena.on('set:terrain', function(){
-
-  /* * /
-  arena.addStatic(function(done){
-    var object = new Arena.Elements.Spikes({
-      onLoad: function(){
-        arena.randomPositionOnterrain(function(point){
-          object.position.copy(point);
-          done(object);
-        });
-      }
-    });
-  });
-  /* */
-
-  /* * /
-  arena.addStatic(function(done){
-    var object = new Arena.Elements.Checkpoint({
-      onLoad: function(){
-        arena.randomPositionOnterrain(function(point){
-          object.position.copy(point);
-          done(object);
-        });
-      }
-    });
-  });
-  /* */
-
   arena.init(function(arena){
+
+    arena.addCharacter(function(done){
+      new Arena.Characters.Dummy({
+        maxSpeed: 8.0,
+        onLoad: function(){
+          this.learnSpell(Arena.Spells.Teleport);
+          arena.asPlayer(this);
+          this.steerings.currently('wander', true);
+          done(this);
+        }
+      });
+    });
+
+    arena.addCharacter(function(done){
+      new Arena.Characters.Dummy({
+        maxSpeed: 5.0,
+        onLoad: function(){
+          debugger;
+          this.setTarget(arena.entity);
+          this.steerings.currently('wander', true);
+          this.steerings.currently('seek', true);
+          done(this);
+        }
+      });
+    });
+
     arena.run();
   });
 });
