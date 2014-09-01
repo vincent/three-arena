@@ -5,8 +5,6 @@ var Arena = window.Arena;
 var arena = window.arena = new Arena({
   container: document.getElementById('game-container'),
 
-  showRoutes: true,
-
   lightAmbientColor: '#343434',
   lightPointColor: '#2aac8d',
   lightPointIntensity: 1.5,
@@ -27,7 +25,7 @@ arena.setTerrain('/gamedata/maps/simplest/flat.obj', {
 /* */
 arena.addCharacter(function(done){
   new Arena.Characters.Dummy({
-    maxSpeed: 5.0,
+    maxSpeed: 15.0,
     onLoad: function(){
       this.learnSpell(Arena.Spells.Teleport);
       arena.asPlayer(this);
@@ -38,33 +36,6 @@ arena.addCharacter(function(done){
 /* */
 
 arena.on('set:terrain', function(){
-
-  /* * /
-  arena.addStatic(function(done){
-    var object = new Arena.Elements.Spikes({
-      onLoad: function(){
-        arena.randomPositionOnterrain(function(point){
-          object.position.copy(point);
-          done(object);
-        });
-      }
-    });
-  });
-  /* */
-
-  /* * /
-  arena.addStatic(function(done){
-    var object = new Arena.Elements.Checkpoint({
-      onLoad: function(){
-        arena.randomPositionOnterrain(function(point){
-          object.position.copy(point);
-          done(object);
-        });
-      }
-    });
-  });
-  /* */
-
   arena.init(function(arena){
     arena.run();
   });

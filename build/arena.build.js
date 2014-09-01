@@ -18,7 +18,7 @@ function d(enabled){
   }
 }
 
-},{"./lib/index.js":47,"debug":80}],2:[function(require,module,exports){
+},{"./lib/index.js":54,"debug":83}],2:[function(require,module,exports){
 module.exports = {
   Controlled: require('./controlled'),
   Collector: require('./collector'),
@@ -60,6 +60,112 @@ module.exports = {
 };
 
 },{}],6:[function(require,module,exports){
+module.exports = function (arena, entity, target, deceleration) {
+
+    return target.position;
+};
+},{}],7:[function(require,module,exports){
+module.exports = function (arena, entity, target) {
+
+    return entity.position.clone()
+                                    .sub(target.position)
+                                    .multiplyScalar(entity.state.maxSpeed / 10);
+};
+},{}],8:[function(require,module,exports){
+var flee = require('./flee');
+
+module.exports = function (arena, entity, target) {
+
+    // horrible hack !
+    entity.coverSystem.arena = arena;
+
+    var hidingSpot = entity.coverSystem.nearestHidingPosition(target);
+
+    if (! hidingSpot) {
+        return flee(arena, entity, target);
+    } else {
+        return hidingSpot;
+    }
+};
+},{"./flee":7}],9:[function(require,module,exports){
+module.exports = {
+    seek:       require('./seek'),
+    flee:         require('./flee'),
+    arrive:     require('./arrive'),
+    hide:     require('./hide'),
+    // pursuit:    require('./pursuit'),
+    // evade:   require('./evade'),
+    wander:  require('./wander'),
+};
+
+var steerings = Object.keys(module.exports);
+
+function Machine () {
+    this.behaviours = {};
+    for (var i = 0; i < steerings.length; i++) {
+        this.behaviours[ steerings[i] ] = false;
+    }
+}
+
+Machine.prototype.empty = function() {
+    for (var i = 0; i < steerings.length; i++) {
+        if (this.behaviours[ steerings[i] ]) {
+            return false;
+        }
+    }
+    return true;
+};
+
+Machine.prototype.currently = function (behaviour, force) {
+    var present = this.behaviours[behaviour];
+
+    if (force !== undefined) {
+        if (force != present) {
+            this.behaviours[behaviour] = force;
+        }
+        return force;
+    }
+    return present;
+};
+
+Machine.prototype.off = function(behaviour) {
+    return this.currently(behaviour, false);
+};
+
+module.exports.machine = Machine;
+},{"./arrive":6,"./flee":7,"./hide":8,"./seek":10,"./wander":11}],10:[function(require,module,exports){
+module.exports = function (arena, entity, target) {
+
+    return target.position;
+};
+},{}],11:[function(require,module,exports){
+var randomP1 = new THREE.Vector3();
+var randomP2 = new THREE.Vector3();
+
+function rand (jitter) {
+    return (2 * Math.random() - 1) * jitter;
+}
+
+module.exports = function (arena, entity) {
+
+    var radius   = 30.0 * Math.random();
+    var distance = 10.0 * Math.random();
+    var jitter   = 8.0;
+
+    randomP1.set(rand(jitter), 0.01, rand(jitter));
+    randomP2.z = distance;
+
+    var wanderTarget = entity.position.clone()
+                                    .add(randomP1)
+                                    .normalize()
+                                    .multiplyScalar(radius)
+                                    .add(randomP2);
+
+    var wanderTargetWorld = entity.localToWorld(wanderTarget);
+
+    return wanderTargetWorld;
+};
+},{}],12:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -187,7 +293,7 @@ Character.prototype.moveAlong = function(linepoints, options) {
 
 Character.prototype.constructor = Character;
 
-},{"./entity":42,"./utils":73,"debug":80,"inherits":81,"lodash":92}],7:[function(require,module,exports){
+},{"./entity":49,"./utils":76,"debug":83,"inherits":84,"lodash":95}],13:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -304,7 +410,7 @@ function ZeroZeroSeven ( options ) {
 
 inherits(ZeroZeroSeven, Character);
 
-},{"../character":6,"inherits":81,"lodash":92}],8:[function(require,module,exports){
+},{"../character":12,"inherits":84,"lodash":95}],14:[function(require,module,exports){
 module.exports = {
   Dummy: require('./dummy'),
   OO7: require('./007'),
@@ -317,7 +423,7 @@ module.exports = {
   Zombie: require('./zombie'),
   Marine: require('./marine')
 };
-},{"./007":7,"./dummy":9,"./ghost":10,"./human":11,"./marine":12,"./monsterdog":13,"./ogro":14,"./ratamahatta":15,"./scv":16,"./zombie":17}],9:[function(require,module,exports){
+},{"./007":13,"./dummy":15,"./ghost":16,"./human":17,"./marine":18,"./monsterdog":19,"./ogro":20,"./ratamahatta":21,"./scv":22,"./zombie":23}],15:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -354,7 +460,7 @@ function Dummy (options) {
   Character.apply( this, [ options ]);
 
   this.setCharacter(options.object || new THREE.Mesh(
-    new THREE.CylinderGeometry(5, 5, 8),
+    new THREE.CylinderGeometry(this.state.radius, this.state.radius, 8),
     new THREE.MeshBasicMaterial({
       color: '#FFEEDD'
     })
@@ -381,7 +487,7 @@ Dummy.prototype.setCharacter = function(object) {
 };
 
 
-},{"../character":6,"inherits":81,"lodash":92}],10:[function(require,module,exports){
+},{"../character":12,"inherits":84,"lodash":95}],16:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -471,7 +577,7 @@ Ghost.prototype.update = function(arena) {
   this.character.update(arena.delta);
 };
 
-},{"../character":6,"inherits":81,"lodash":92}],11:[function(require,module,exports){
+},{"../character":12,"inherits":84,"lodash":95}],17:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -522,7 +628,7 @@ function Human ( options ) {
 
 inherits(Human, Character);
 
-},{"../character":6,"inherits":81,"lodash":92}],12:[function(require,module,exports){
+},{"../character":12,"inherits":84,"lodash":95}],18:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -597,7 +703,7 @@ function Marine (options) {
 inherits(Marine, Character);
 
 
-},{"../character":6,"inherits":81,"lodash":92}],13:[function(require,module,exports){
+},{"../character":12,"inherits":84,"lodash":95}],19:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -678,7 +784,7 @@ function Monsterdog ( options ) {
 
 inherits(Monsterdog, Character);
 
-},{"../character":6,"inherits":81,"lodash":92}],14:[function(require,module,exports){
+},{"../character":12,"inherits":84,"lodash":95}],20:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -798,7 +904,7 @@ function Ogro ( options ) {
 inherits(Ogro, Character);
 
 
-},{"../character":6,"inherits":81,"lodash":92}],15:[function(require,module,exports){
+},{"../character":12,"inherits":84,"lodash":95}],21:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -874,7 +980,7 @@ function Ratamahatta ( options ) {
 
 inherits(Ratamahatta, Character);
 
-},{"../character":6,"inherits":81,"lodash":92}],16:[function(require,module,exports){
+},{"../character":12,"inherits":84,"lodash":95}],22:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -932,7 +1038,7 @@ function SCV (options) {
 inherits(SCV, Character);
 
 
-},{"../character":6,"inherits":81,"lodash":92}],17:[function(require,module,exports){
+},{"../character":12,"inherits":84,"lodash":95}],23:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1018,7 +1124,7 @@ function Zombie ( options ) {
 
 inherits(Zombie, Character);
 
-},{"../character":6,"inherits":81,"lodash":92}],18:[function(require,module,exports){
+},{"../character":12,"inherits":84,"lodash":95}],24:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -1063,7 +1169,7 @@ AttackCircle.prototype.place = function ( object ) {
   return position;
 };
 
-},{"inherits":81}],19:[function(require,module,exports){
+},{"inherits":84}],25:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -1117,7 +1223,7 @@ DestinationMarker.prototype.animate = function () {
 };
 
 
-},{"../shaders/lightbolt":57,"inherits":81}],20:[function(require,module,exports){
+},{"../shaders/lightbolt":64,"inherits":84}],26:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1466,7 +1572,7 @@ DotaControls.prototype.getContainerDimensions = function() {
 
 
 
-},{"lodash":92}],21:[function(require,module,exports){
+},{"lodash":95}],27:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1532,7 +1638,116 @@ ZoneSelector.prototype.emit = function (event, data) {
 };
 
 
-},{"inherits":81,"lodash":92}],22:[function(require,module,exports){
+},{"inherits":84,"lodash":95}],28:[function(require,module,exports){
+
+var utils = require('../utils');
+var Entity;
+
+module.exports = CoverSystem;
+
+function CoverSystem (arena, entity) {
+    var self = this;
+
+    Entity = require('../entity');
+
+    this.arena = arena;
+    this.entity = entity;
+
+    this.twopi = 2 * Math.PI;
+    this.upVector = new THREE.Vector3(0, 1, 0);
+
+    this.pathfindExtendVector = new THREE.Vector3(1, 5, 1);
+    this.raycastTestingVector = new THREE.Vector3();
+    this.raycastDirVector = new THREE.Vector3();
+    this.raycaster = new THREE.Raycaster();
+};
+
+CoverSystem.prototype.raycastFront = function(walls, from, direction) {
+    this.raycaster.set(from, direction);
+    this.raycaster.far = 100;
+    return this.raycaster.intersectObjects(walls, true);
+};
+
+CoverSystem.prototype.hidingPositions = function(fromTarget) {
+    this.raycastDirVector.set(1, 0, 0);
+    var positions = [];
+
+    var walls = [];
+    for (var i = 0; i < this.arena.intersectObjects.length; i++) {
+        if (! utils.childOf(this.arena.intersectObjects[i], Entity)) {
+            walls.push(this.arena.intersectObjects[i]);
+        }
+    };
+
+    for (var i = 0; i < this.twopi; i += 0.5) {
+        this.raycastDirVector.applyAxisAngle(this.upVector, i);
+        this.raycastTestingVector.copy(this.raycastDirVector).multiplyScalar(20);
+
+        var intersects = this.raycastFront(walls, fromTarget.position, this.raycastDirVector);
+
+        for (var j = 0; j < intersects.length; j++) {
+            positions.push(intersects[j].point.add(this.raycastTestingVector));
+            /*
+            var possibleHidingPosition = intersects[j].point.add(this.raycastTestingVector);
+            this.arena.pathfinder.findNearestPoint(
+                possibleHidingPosition.x,
+                possibleHidingPosition.y,
+                possibleHidingPosition.z,
+                this.pathfindExtendVector.x,
+                this.pathfindExtendVector.y,
+                this.pathfindExtendVector.z,
+                this.arena.pathfinder.cb(function (x, y, z) {
+                    positions.push(new THREE.Vector3(x, y, z));
+                })
+            );
+            */
+        }
+    }
+
+    return positions;
+};
+
+CoverSystem.prototype.nearestHidingPosition = function(fromTarget, maxDistance) {
+    var distance = maxDistance || Infinity, tmp, best;
+
+    var possibleHidingPositions = this.hidingPositions(fromTarget, 40);
+    for (var i = 0; i < possibleHidingPositions.length; i++) {
+
+        // var axisHelper = new THREE.AxisHelper(50);
+        // axisHelper.position.copy(possibleHidingPositions[i]);
+        // this.arena.scene.add(axisHelper);
+
+        tmp = this.entity.position.distanceTo(possibleHidingPositions[i]);
+        if (tmp < distance) {
+            distance = tmp;
+            best = possibleHidingPositions[i];
+        }
+    }
+
+    return best;
+};
+
+CoverSystem.prototype.nearestHidingPositionFrom = function(fromTarget, near, maxDistance) {
+    var distance = maxDistance || Infinity, tmp, best;
+
+    var possibleHidingPositions = this.hidingPositions(fromTarget, 40);
+    for (var i = 0; i < possibleHidingPositions.length; i++) {
+
+        // var axisHelper = new THREE.AxisHelper(50);
+        // axisHelper.position.copy(possibleHidingPositions[i]);
+        // this.arena.scene.add(axisHelper);
+
+        tmp = near.distanceTo(possibleHidingPositions[i]);
+        if (tmp < distance) {
+            distance = tmp;
+            best = possibleHidingPositions[i];
+        }
+    }
+
+    return best;
+};
+
+},{"../entity":49,"../utils":76}],29:[function(require,module,exports){
 'use strict';
 
 var debug = require('debug')('crowd');
@@ -1813,6 +2028,14 @@ Crowd.prototype.update = function() {
 
 Crowd.prototype._checkAgents = function(entity, idx) {
 
+  if (entity.isDead()) {
+    return;
+  }
+
+  if (entity.state.isStatic) {
+    return;
+  }
+
   idx = parseInt(idx, 0);
 
   // update dirty params
@@ -1831,11 +2054,10 @@ Crowd.prototype._checkAgents = function(entity, idx) {
     return;
   }
 
-    // use only steering
+  // use steering
   if (! entity.steerings.empty()) {
     entity.applySteerings();
   }
-
 
   // update dirty follow
   // TODO: also use a _dirtyMove flag ?
@@ -1857,12 +2079,10 @@ Crowd.prototype._updateAgent = function(agent){
 
   if (entity._crowd_idx && (entity._crowd_dirty || ! agent.active || entity.isDead())) {
     this.removeAgent(entity);
-    // continue;
     return;
   }
 
   if (entity.state.isStatic) {
-    // continue;
     return;
   }
 
@@ -1878,14 +2098,13 @@ Crowd.prototype._updateAgent = function(agent){
     // check if agent is arrived
     // could be done in recastnavigation, but not all entities are agents :/
     if (destinationDistance <= 0) {
+
       agent.velocity.x = agent.velocity.y = agent.velocity.z = 0.0;
       agent.position = entity.position;
 
     } else {
 
       var mul = 1;
-
-      // console.log('velocity change : %o', destinationDistance / mul);
 
       agent.velocity.x *= destinationDistance / mul;
       agent.velocity.y *= destinationDistance / mul;
@@ -1985,7 +2204,7 @@ function crowdOptions(options) {
   return options;
 }
 
-},{"./settings":55,"async":79,"debug":80,"lodash":92,"now":94}],23:[function(require,module,exports){
+},{"./settings":62,"async":82,"debug":83,"lodash":95,"now":97}],30:[function(require,module,exports){
 module.exports = {
   SpawningPool: require('./autospawn'),
   DefenseTower: require('./tower'),
@@ -2002,7 +2221,7 @@ module.exports = {
   Water: require('./water2')
 };
 
-},{"./autospawn":24,"./checkpoint":25,"./chest":26,"./collectible":27,"./commandcenter":28,"./flies":29,"./grass":30,"./mineral":32,"./nexus":33,"./shop":34,"./spikes":37,"./tower":39,"./water2":41}],24:[function(require,module,exports){
+},{"./autospawn":31,"./checkpoint":32,"./chest":33,"./collectible":34,"./commandcenter":35,"./flies":36,"./grass":37,"./mineral":39,"./nexus":40,"./shop":41,"./spikes":44,"./tower":46,"./water2":48}],31:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2110,7 +2329,7 @@ AutoSpawn.prototype.spanwOne = function() {
 };
 
 
-},{"inherits":81,"lodash":92}],25:[function(require,module,exports){
+},{"inherits":84,"lodash":95}],32:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2171,7 +2390,7 @@ Checkpoint.prototype.update = function(arena) {
     }
   }
 };
-},{"../shaders/lightbolt":57,"inherits":81,"lodash":92}],26:[function(require,module,exports){
+},{"../shaders/lightbolt":64,"inherits":84,"lodash":95}],33:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2246,7 +2465,7 @@ Collectible.prototype.collectedBy = function(entity, callback) {
 };
 
 
-},{"inherits":81,"lodash":92}],27:[function(require,module,exports){
+},{"inherits":84,"lodash":95}],34:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2335,7 +2554,7 @@ Collectible.prototype.collectedBy = function(entity, callback) {
 };
 
 
-},{"inherits":81,"lodash":92}],28:[function(require,module,exports){
+},{"inherits":84,"lodash":95}],35:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2371,7 +2590,7 @@ function CommandCenter (options) {
 }
 
 inherits(CommandCenter, Entity);
-},{"../entity":42,"inherits":81}],29:[function(require,module,exports){
+},{"../entity":49,"inherits":84}],36:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2453,7 +2672,7 @@ Flies.prototype.update = function(game) {
     this.points.vertices[i].set(point.x, point.y, point.z);
   }
 };
-},{"inherits":81}],30:[function(require,module,exports){
+},{"inherits":84}],37:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2564,7 +2783,7 @@ Grass.prototype.update = function(arena) {
   }
 };
 
-},{"inherits":81}],31:[function(require,module,exports){
+},{"inherits":84}],38:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2623,7 +2842,7 @@ InteractiveObject.prototype.isNearEnough = function(object) {
   return this.position.distanceTo(object.position) <= 20;
 };
 
-},{"../utils":73,"inherits":81}],32:[function(require,module,exports){
+},{"../utils":76,"inherits":84}],39:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2664,7 +2883,7 @@ function Mineral (options) {
 
 inherits(Mineral, Collectible);
 
-},{"./collectible":27,"inherits":81,"lodash":92}],33:[function(require,module,exports){
+},{"./collectible":34,"inherits":84,"lodash":95}],40:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2705,7 +2924,7 @@ function Nexus (options) {
 
 inherits(Nexus, Entity);
 
-},{"../entity":42,"inherits":81}],34:[function(require,module,exports){
+},{"../entity":49,"inherits":84}],41:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2739,7 +2958,7 @@ function Shop (options) {
 }
 
 inherits(Shop, InteractiveObject);
-},{"./interactiveobject":31,"inherits":81}],35:[function(require,module,exports){
+},{"./interactiveobject":38,"inherits":84}],42:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2792,7 +3011,7 @@ LifeBar.prototype.update = function(delta) {
 };
 
 
-},{"../shaders/lifebar":56,"inherits":81,"lodash":92}],36:[function(require,module,exports){
+},{"../shaders/lifebar":63,"inherits":84,"lodash":95}],43:[function(require,module,exports){
 'use strict';
 
 module.exports = Sound;
@@ -2837,7 +3056,7 @@ function Sound ( sources, radius, volume ) {
   };
 
 }
-},{}],37:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2944,7 +3163,7 @@ Spikes.prototype.update = function(arena) {
   }
 };
 
-},{"../spell":58,"inherits":81,"tween":97}],38:[function(require,module,exports){
+},{"../spell":65,"inherits":84,"tween":100}],45:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3121,7 +3340,7 @@ inherits(Terrain, THREE.Object3D);
 
 
 
-},{"./water":40,"inherits":81,"lodash":92}],39:[function(require,module,exports){
+},{"./water":47,"inherits":84,"lodash":95}],46:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3300,7 +3519,7 @@ DefenseTower.prototype.fireTo = function(target) {
     .start();
 };
 
-},{"../entity":42,"../particles/cloud":52,"../spell":58,"inherits":81,"lodash":92,"tween":97}],40:[function(require,module,exports){
+},{"../entity":49,"../particles/cloud":59,"../spell":65,"inherits":84,"lodash":95,"tween":100}],47:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3359,7 +3578,7 @@ Water.prototype.update = function(game) {
 };
 
 
-},{"inherits":81,"lodash":92}],41:[function(require,module,exports){
+},{"inherits":84,"lodash":95}],48:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3410,7 +3629,7 @@ Water.prototype.update = function(game) {
 };
 
 
-},{"../materials/water":51,"inherits":81,"lodash":92}],42:[function(require,module,exports){
+},{"../materials/water":58,"inherits":84,"lodash":95}],49:[function(require,module,exports){
 'use strict';
 
 var now = require('now');
@@ -3424,7 +3643,9 @@ var settings = require('./settings');
 var LifeBar = require('./elements/slifebar');
 var AttackCircle = require('./controls/attackcircle');
 var Inventory = require('./inventory');
-var Steering = require('./steering');
+var Steering = require('./ai/steering');
+var TargetSystem = require('./target-system');
+var CoverSystem = require('./cover-system');
 
 module.exports = Entity;
 
@@ -3433,11 +3654,11 @@ module.exports = Entity;
  * A living entity
  *
  * @summary azd azdzad azd zadazd azdzadzadazdazdzd
- * 
+ *
  * @exports Entity
- * 
+ *
  * @constructor
- * 
+ *
  * @triggers 'changed' when state (attributes, spells, etc) change
  * @triggers 'hit' when being hit
  * @triggers 'death' when being killed
@@ -3498,6 +3719,9 @@ function Entity (options) {
   this.steerings = new Steering.machine();
   // this.steerings.currently('seek', true);
   // this.steerings.currently('wander', true);
+
+  this.targetSystem = new TargetSystem(this.game, this);
+  this.coverSystem = new CoverSystem(this.game, this);
 
   // this.attachLifeBar(); // now done in game.add()
   this.attachTombstone();
@@ -3793,17 +4017,20 @@ Entity.prototype.applySteerings = function () {
     this._lastSteerings = now;
 
     if (this.hasTarget() && ! this.atTarget() && this.steerings.currently('seek')) {
-      this.game.pathfinder.requestMoveVelocity(this._crowd_idx, Steering.seek(this.arena, this, this.currentTarget()));
+      this.game.pathfinder.crowdRequestMoveTarget(this._crowd_idx, Steering.seek(this.arena, this, this.currentTarget()));
 
     } else if (this.hasTarget() && this.steerings.currently('flee')) {
-      this.game.pathfinder.requestMoveVelocity(this._crowd_idx, Steering.flee(this.arena, this, this.currentTarget()));
+      this.game.pathfinder.crowdRequestMoveTarget(this._crowd_idx, Steering.flee(this.arena, this, this.currentTarget()));
+
+    } else if (this.hasTarget() && this.steerings.currently('hide')) {
+      this.game.pathfinder.crowdRequestMoveTarget(this._crowd_idx, Steering.hide(this.arena, this, this.currentTarget()));
 
     } else {
       // clear crowd targetting
       // this.clearTarget();
 
       if (this.steerings.currently('wander')) {
-        this.game.pathfinder.requestMoveVelocity(this._crowd_idx, Steering.wander(this.arena, this));
+        this.game.pathfinder.crowdRequestMoveTarget(this._crowd_idx, Steering.wander(this.arena, this));
       }
     }
 
@@ -4055,12 +4282,12 @@ Entity.prototype.hit = function(spell) {
   }
 };
 
-},{"./controls/attackcircle":18,"./elements/slifebar":35,"./inventory":49,"./log":50,"./settings":55,"./steering":70,"debug":80,"inherits":81,"lodash":92,"now":94}],43:[function(require,module,exports){
+},{"./ai/steering":9,"./controls/attackcircle":24,"./cover-system":28,"./elements/slifebar":42,"./inventory":56,"./log":57,"./settings":62,"./target-system":75,"debug":83,"inherits":84,"lodash":95,"now":97}],50:[function(require,module,exports){
 module.exports = {
   GameHud: require('./ingame'),
   Sidemenu: require('./sidemenu')
 };
-},{"./ingame":44,"./sidemenu":45}],44:[function(require,module,exports){
+},{"./ingame":51,"./sidemenu":52}],51:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -4200,7 +4427,7 @@ GameHud.prototype.startInteraction = function(object) {
 };
 
 
-},{"../elements/interactiveobject":31,"../entity":42,"../views/dialogview":74,"../views/entityview":75,"../views/gameview":76,"../views/interactiveview":77,"knockout":91,"lodash":92}],45:[function(require,module,exports){
+},{"../elements/interactiveobject":38,"../entity":49,"../views/dialogview":77,"../views/entityview":78,"../views/gameview":79,"../views/interactiveview":80,"knockout":94,"lodash":95}],52:[function(require,module,exports){
 'use strict';
 
 module.exports = Sidemenu;
@@ -4233,7 +4460,7 @@ Sidemenu.prototype.isOpen = function () {
   return this.root.style.zIndex > 0;
   // return this.root.classList.contains( 'fadeInLeft' );
 };
-},{}],46:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -4344,7 +4571,7 @@ function SpellTexts (game, options) {
   };
 }
 
-},{"lodash":92,"tween":97}],47:[function(require,module,exports){
+},{"lodash":95,"tween":100}],54:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -5600,6 +5827,7 @@ Arena.prototype._prepareEntity = function(entity) {
 
   // give entities a reference to this
   entity.game = this;
+  entity.arena = this;
 
   // entities in the crowd
   if (entity.character) {
@@ -6111,6 +6339,7 @@ Arena.prototype.run = function() {
 
       newTime = self.time = now();
       frameTime = newTime - currentTime;
+      settings.data.stats.frameTime = frameTime;
       maxframeTime = timestep * settings.data.maxUpdatesPerFrame;
       currentTime = newTime;
 
@@ -6153,6 +6382,7 @@ Arena.prototype.run = function() {
       self.render();
       var renderEnd = now();
       if (renderEnd - renderStart > timestep) {
+        settings.data.stats.renderTime   = renderEnd - renderStart;
         debug(SLOW_RENDER, (renderEnd - renderStart).toFixed(2));
       }
 
@@ -6179,7 +6409,7 @@ Arena.prototype.run = function() {
  * Start a new game
  *
  * @return {this} The game object
- * 
+ *
  * @fires module:threearena/game#start
  */
 Arena.prototype.start = function() {
@@ -6217,7 +6447,7 @@ Arena.prototype.start = function() {
 
 /**
  * Where things are updated, inside the loop
- * 
+ *
  * @fires module:threearena/game#update
  * @fires module:threearena/game#update:behaviours
  */
@@ -6283,13 +6513,13 @@ Arena.prototype.update = function() {
     //this.camera.lookAt(this.entity.position);
 
     if (cameraType === settings.CAMERA_MANUAL) {
-    
+
     } else if (cameraType === settings.CAMERA_FOLLOW) {
       this.camera.position.x = this.entity.position.x;
       this.camera.position.z = this.entity.position.z + 200;
       // camera height ~ crraaaapp
       this.camera.position.y = this.entity.position.y + settings.data.cameraHeight;
-    }    
+    }
   }
 
   end = now();
@@ -6306,13 +6536,16 @@ Arena.prototype.update = function() {
 
   end = now();
   self._timings.lastDuration_entities = end - start;
+  settings.data.stats.entitiesUpdateTime = end - start;
 
-  // current entity 
+
+  // current entity
   start = now();
   // FIXME: Use this.speed
   TWEEN.update();
   end = now();
   self._timings.lastDuration_tween = end - start;
+  settings.data.stats.tweenTime          = end - start;
 
 
   // debug('timings %o', {
@@ -6333,7 +6566,6 @@ Arena.prototype.update = function() {
   //     self._timings.lastDuration_entities +
   //     self._timings.lastDuration_tween + 'ms'
   // });
-  
 };
 
 /**
@@ -6508,7 +6740,7 @@ Arena.prototype.findWithClass = function(oneclass, from, filter) {
 
 if (window) { window.Arena = Arena; }
 
-Arena.Behaviours = require('./behaviours/all');
+Arena.Behaviours = require('./ai/behaviours/all');
 Arena.Characters = require('./character/all');
 Arena.Elements = require('./elements/all');
 Arena.Spells = require('./spell/all');
@@ -6518,7 +6750,7 @@ Arena.stemkoski = require('./particles/stemkoski_ParticleEngine');
 
 
 }).call(this,require('_process'))
-},{"../vendor/detector":98,"../vendor/stats":99,"./behaviours/all":2,"./character/all":8,"./controls/destinationmarker":19,"./controls/dota":20,"./controls/zoneselector":21,"./crowd":22,"./elements/all":23,"./elements/collectible":27,"./elements/interactiveobject":31,"./elements/slifebar":35,"./elements/terrain":38,"./entity":42,"./hud":43,"./hud/spelltexts":46,"./input/mouse":48,"./particles/stemkoski_ParticleEngine":53,"./settings":55,"./settings-gui":54,"./spell/all":59,"./utils":73,"EventEmitter":78,"_process":107,"async":79,"debug":80,"inherits":81,"interact":82,"lodash":92,"machinejs":93,"now":94,"recastjs/lib/recast.withworker":95,"tic":96,"tween":97}],48:[function(require,module,exports){
+},{"../vendor/detector":101,"../vendor/stats":102,"./ai/behaviours/all":2,"./character/all":14,"./controls/destinationmarker":25,"./controls/dota":26,"./controls/zoneselector":27,"./crowd":29,"./elements/all":30,"./elements/collectible":34,"./elements/interactiveobject":38,"./elements/slifebar":42,"./elements/terrain":45,"./entity":49,"./hud":50,"./hud/spelltexts":53,"./input/mouse":55,"./particles/stemkoski_ParticleEngine":60,"./settings":62,"./settings-gui":61,"./spell/all":66,"./utils":76,"EventEmitter":81,"_process":110,"async":82,"debug":83,"inherits":84,"interact":85,"lodash":95,"machinejs":96,"now":97,"recastjs/lib/recast.withworker":98,"tic":99,"tween":100}],55:[function(require,module,exports){
 'use strict';
 
 var debug = require('debug')('controls:mouse');
@@ -6784,7 +7016,7 @@ MouseControl.prototype._onDocumentMouseMove = function(event) {
 
   this.arena.updateSelectionCoords(event.clientX, event.clientY);
 };
-},{"../elements/collectible":27,"../elements/interactiveobject":31,"../elements/terrain":38,"../entity":42,"../settings":55,"../utils":73,"debug":80}],49:[function(require,module,exports){
+},{"../elements/collectible":34,"../elements/interactiveobject":38,"../elements/terrain":45,"../entity":49,"../settings":62,"../utils":76,"debug":83}],56:[function(require,module,exports){
 'use strict';
 
 module.exports = Inventory;
@@ -6837,14 +7069,14 @@ Inventory.prototype.has = function(kind) {
 
   return amount;
 };
-},{}],50:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 'use strict';
 
 module.exports = Log;
 
 /**
  * Logging facility
- * 
+ *
  * @exports threearena/log
  */
 function Log( /* arg1, arg2 ... */ ) {
@@ -6857,7 +7089,7 @@ Log.SYS_INFO  = 'SYS_INFO';
 Log.SYS_ERROR = 'SYS_ERROR';
 Log.COMBAT    = 'COMBAT';
 
-},{}],51:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 /**
  * @author jbouny / https://github.com/jbouny
  *
@@ -7215,7 +7447,7 @@ THREE.Water.prototype.renderTemp = function () {
     }
 
 };
-},{}],52:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -7478,7 +7710,7 @@ function Aura ( geometry, particulesCount, texture, light ) {
   return cloud;
 }
 
-},{}],53:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 /**
 * @author Lee Stemkoski   http://www.adelphi.edu/~stemkoski/
 */
@@ -8301,7 +8533,7 @@ module.exports = {
   Type: Type,
   Tween: Tween
 };
-},{}],54:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 'use strict';
 
 /* global dat: true, _gaq: true */
@@ -8340,8 +8572,13 @@ module.exports.create = function( initParams ) {
 
   var f;
 
-
   // GENERAL
+  f = gui.addFolder('Stats');
+  f.add(settings.data.stats, 'frameTime').name('Frame time').listen();
+  f.add(settings.data.stats, 'renderTime').name('Render time').listen();
+  f.add(settings.data.stats, 'entitiesUpdateTime').name('Entities update time').listen();
+  f.add(settings.data.stats, 'tweenTime').name('TWEEN time').listen();
+
   f = gui.addFolder('Generic');
   f.add(exports,'shortcut','O').name('Show panels');
   f.add(exports,'shortcut','0').name('Debug renderer');
@@ -8562,7 +8799,7 @@ exports.shortcut = function(label){
 };
 
 
-},{"./settings":55}],55:[function(require,module,exports){
+},{"./settings":62}],62:[function(require,module,exports){
 'use strict';
 
 /**
@@ -8774,11 +9011,20 @@ settings.data = {
 
   positionOrigin: new THREE.Vector3( 0, 0, 0 ),
 
+  /**
+   * Use to tracks game performances
+   */
+  stats: {
+    frameTime: -1,
+    renderTime: -1,
+    entitiesUpdateTime: -1,
+    tweenTime: -1,
+  }
 };
 
 
 
-},{"events":104}],56:[function(require,module,exports){
+},{"events":107}],63:[function(require,module,exports){
 'use strict';
 
 var TWEEN = require('tween');
@@ -8926,7 +9172,7 @@ LifebarShaderMaterial.prototype.setMana = function(value) {
 };
 
 
-},{"inherits":81,"tween":97}],57:[function(require,module,exports){
+},{"inherits":84,"tween":100}],64:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -9017,7 +9263,7 @@ function LightboltShaderMaterial (strands) {
 
 inherits(LightboltShaderMaterial, THREE.ShaderMaterial);
 
-},{"inherits":81}],58:[function(require,module,exports){
+},{"inherits":84}],65:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9142,7 +9388,7 @@ Spell.prototype.startCooldown = function (source) {
   setTimeout(updateCD, 50);
 };
 
-},{"EventEmitter":78,"debug":80,"inherits":81,"lodash":92}],59:[function(require,module,exports){
+},{"EventEmitter":81,"debug":83,"inherits":84,"lodash":95}],66:[function(require,module,exports){
 module.exports = {
   Bite: require('./bite'),
   FireAura: require('./fireaura'),
@@ -9154,7 +9400,7 @@ module.exports = {
   PlaceObject: require('./placeobject')
 };
 
-},{"./bite":60,"./fireaura":61,"./firebullet":62,"./flatfireaura":63,"./heal":64,"./lightbolt":65,"./placeobject":66,"./teleport":67}],60:[function(require,module,exports){
+},{"./bite":67,"./fireaura":68,"./firebullet":69,"./flatfireaura":70,"./heal":71,"./lightbolt":72,"./placeobject":73,"./teleport":74}],67:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9212,7 +9458,7 @@ Bite.prototype.start = function(source, target) {
   target.hit(this);
 };
 
-},{"../elements/sound":36,"../spell":58,"inherits":81,"lodash":92}],61:[function(require,module,exports){
+},{"../elements/sound":43,"../spell":65,"inherits":84,"lodash":95}],68:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9262,7 +9508,7 @@ FireAura.prototype.start = function (caster, target) {
   }, 5000);
 };
 
-},{"../particles/cloud":52,"../spell":58,"inherits":81,"lodash":92}],62:[function(require,module,exports){
+},{"../particles/cloud":59,"../spell":65,"inherits":84,"lodash":95}],69:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -9355,7 +9601,7 @@ FireBullet.prototype.start = function (caster, target) {
     .start();
 };
 
-},{"../elements/sound":36,"../particles/cloud":52,"../particles/stemkoski_ParticleEngine":53,"../spell":58,"../utils":73,"inherits":81,"lodash":92,"tween":97}],63:[function(require,module,exports){
+},{"../elements/sound":43,"../particles/cloud":59,"../particles/stemkoski_ParticleEngine":60,"../spell":65,"../utils":76,"inherits":84,"lodash":95,"tween":100}],70:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9413,7 +9659,7 @@ FlatFireAura.prototype.start = function (caster, target) {
   }, 5000);
 };
 
-},{"../spell":58,"inherits":81,"lodash":92}],64:[function(require,module,exports){
+},{"../spell":65,"inherits":84,"lodash":95}],71:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -9513,7 +9759,7 @@ Heal.prototype.start = function (caster, target) {
     .start();
 };
 
-},{"../elements/sound":36,"../particles/cloud":52,"../particles/stemkoski_ParticleEngine":53,"../spell":58,"../utils":73,"inherits":81,"lodash":92,"tween":97}],65:[function(require,module,exports){
+},{"../elements/sound":43,"../particles/cloud":59,"../particles/stemkoski_ParticleEngine":60,"../spell":65,"../utils":76,"inherits":84,"lodash":95,"tween":100}],72:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9619,7 +9865,7 @@ Lightbolt.prototype.start = function (caster, target) {
   })
   .start();
 };
-},{"../shaders/lightbolt":57,"../spell":58,"inherits":81,"lodash":92,"tween":97}],66:[function(require,module,exports){
+},{"../shaders/lightbolt":64,"../spell":65,"inherits":84,"lodash":95,"tween":100}],73:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9760,7 +10006,7 @@ PlaceObject.prototype.updateZoneSelector = function(source, arena) {
 
 
 
-},{"../elements/sound":36,"../settings":55,"../spell":58,"inherits":81,"lodash":92,"tween":97}],67:[function(require,module,exports){
+},{"../elements/sound":43,"../settings":62,"../spell":65,"inherits":84,"lodash":95,"tween":100}],74:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9877,120 +10123,93 @@ Teleport.prototype.updateZoneSelector = function(source, arena) {
   }
 };
 
-},{"../elements/sound":36,"../settings":55,"../spell":58,"inherits":81,"lodash":92,"tween":97}],68:[function(require,module,exports){
-module.exports = function (arena, entity, target, deceleration) {
+},{"../elements/sound":43,"../settings":62,"../spell":65,"inherits":84,"lodash":95,"tween":100}],75:[function(require,module,exports){
+module.exports = TargetSystem;
 
-    var toTarget = taget.position.clone()
-                                    .sub(entity.position);
+function TargetSystem (arena, entity) {
+    var self = this;
 
-    var distance = toTarget.length();
+    this.arena = arena;
+    this.entity = entity;
+    this.currentTarget = null;
 
-    if (distance > 0)  {
+    this._filterEnemy = (function (obj) {
+        return obj.state.team != self.entity.state.team;
+    }).bind(this);
+};
 
-    	// tweaking
-    	var decelerationTweak = 0.3;
+TargetSystem.prototype.current = function() {
+    return this.currentTarget;
+};
 
-    	var speed = Math.min(entity.state.maxSpeed, distance / (deceleration * decelerationTweak));
+TargetSystem.prototype.hasTarget = function() {
+    return this.currentTarget != null;
+};
 
-    	var velocity = toTarget.multiplyScalar(speed / distance);
+TargetSystem.prototype.hasTargetOrThrow = function() {
+    if (! this.hasTarget()) {
+        throw new Error('not currently targetting');
+    }
+};
 
-    	return velocity.sub(entity.state.velocity);
+TargetSystem.prototype.findNearest = function() {
+    var self = this;
+    this.currentTarget = this.arena.findWithClass('Entity',  this._filterEnemy);
+    return this.current();
+};
+
+TargetSystem.prototype.distanceToTarget = function() {
+    this.hasTargetOrThrow();
+    return this.currentTarget.position.distanceTo(this.entity.position);
+};
+
+TargetSystem.prototype.isTargetStillNearest = function() {
+    this.hasTargetOrThrow();
+    return this.currentTarget === this.arena.findWithClass('Entity', this._filterEnemy);
+};
+
+TargetSystem.prototype.isTargetStillPresent = function(maxDistance) {
+    if (! maxDistance) { maxDistance = 10; }
+    return this.hasTarget() && ! this.current().isDead() && this.distanceToTarget() < maxDistance;
+};
+
+TargetSystem.prototype.isTargetInSight = function(maxDistance) {
+    if (! maxDistance) { maxDistance = 10; }
+    return this.hasTarget()
+                    && ! this.current().isDead()
+                    && this.distanceToTarget() < maxDistance
+                    /* && this.arena.pathfinding.raycast(this.entity.position, this.current().position) */
+                    ;
+};
+
+TargetSystem.prototype.bestSpellForTarget = function(entity) {
+    var spell, target = entity;
+    if (! target) {
+        this.hasTargetOrThrow();
+        target = this.current();
     }
 
-    return new THREE.Vector3();
-};
-},{}],69:[function(require,module,exports){
-module.exports = function (arena, entity, target) {
+    var maxDamage = 0;
 
-    var desiredVelocity = entity.position.clone()
-                                    .sub(target.position)
-                                    .multiplyScalar(entity.state.maxSpeed / 10);
+    // autoAttackSpell has been forced
+    if (this.entity.state.autoAttackSpell && this.entity.state.spells[ this.entity.state.autoAttackSpell ]) {
+        spell = this.entity.state.spells[ this.entity.state.autoAttackSpell ];
 
-    return desiredVelocity;
-};
-},{}],70:[function(require,module,exports){
-module.exports = {
-    seek:       require('./seek'),
-    flee:         require('./flee'),
-    arrive:     require('./arrive'),
-    // pursuit:    require('./pursuit'),
-    // evade:   require('./evade'),
-    wander:  require('./wander'),
-};
-
-var steerings = Object.keys(module.exports);
-
-function Machine () {
-    this.behaviours = {};
-    for (var i = 0; i < steerings.length; i++) {
-        this.behaviours[ steerings[i] ] = false;
-    }
-}
-
-Machine.prototype.empty = function() {
-    for (var i = 0; i < steerings.length; i++) {
-        if (this.behaviours[ steerings[i] ]) {
-            return false;
+    // find a spell
+    } else {
+        for (var i = 0; i < this.entity.state.spells.length; i++) {
+            var _spell = this.entity.state.spells[i];
+            if (_spell.canHit(this.entity, target, 5) && maxDamage < _spell.meleeLifeDamage) {
+                spell = _spell;
+            }
         }
     }
-    return true;
+
+    return spell;
 };
 
-Machine.prototype.currently = function (behaviour, force) {
-    var present = this.behaviours[behaviour];
 
-    if (force !== undefined) {
-        if (force != present) {
-            this.behaviours[behaviour] = force;
-        }
-        return force;
-    }
-    return present;
-};
-
-Machine.prototype.off = function(behaviour) {
-    return this.currently(behaviour, false);
-};
-
-module.exports.machine = Machine;
-},{"./arrive":68,"./flee":69,"./seek":71,"./wander":72}],71:[function(require,module,exports){
-module.exports = function (arena, entity, target) {
-
-    var desiredVelocity = target.position.clone()
-                                    .sub(entity.position)
-                                    .normalize()
-                                    .multiplyScalar(entity.state.maxSpeed);
-
-    return desiredVelocity;
-};
-},{}],72:[function(require,module,exports){
-var randomP1 = new THREE.Vector3();
-var randomP2 = new THREE.Vector3();
-
-function rand (jitter) {
-    return (2 * Math.random() - 1) * jitter;
-}
-
-module.exports = function (arena, entity) {
-
-    var radius   = 30.0 * Math.random();
-    var distance = 10.0 * Math.random();
-    var jitter   = 8.0;
-
-    randomP1.set(rand(jitter), 0.01, rand(jitter));
-    randomP2.z = distance;
-
-    var wanderTarget = entity.position.clone()
-                                    .add(randomP1)
-                                    .normalize()
-                                    .multiplyScalar(radius)
-                                    .add(randomP2);
-
-    var wanderTargetWorld = entity.localToWorld(wanderTarget);
-
-    return wanderTargetWorld.sub(entity.position);
-};
-},{}],73:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10180,7 +10399,7 @@ module.exports = {
 
 };
 
-},{"lodash":92,"tween":97}],74:[function(require,module,exports){
+},{"lodash":95,"tween":100}],77:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10215,7 +10434,7 @@ function DialogViewModel (dialog) {
 
   dialog.on('changed', this.update.bind(this));
 }
-},{"knockout":91,"lodash":92}],75:[function(require,module,exports){
+},{"knockout":94,"lodash":95}],78:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10305,7 +10524,7 @@ function EntityViewModel (entity, game) {
 
   entity.on('changed', this.update.bind(this));
 }
-},{"../entity":42,"../utils":73,"knockout":91,"lodash":92}],76:[function(require,module,exports){
+},{"../entity":49,"../utils":76,"knockout":94,"lodash":95}],79:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10428,7 +10647,7 @@ GameViewModel.prototype.onMapClick = function(gameview, event) {
 GameViewModel.prototype.onCharacterHover = function(event) {
 };
 
-},{"knockout":91,"lodash":92}],77:[function(require,module,exports){
+},{"knockout":94,"lodash":95}],80:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10463,7 +10682,7 @@ function InteractiveViewModel (interactive) {
 
   interactive.on('changed', this.update.bind(this));
 }
-},{"knockout":91,"lodash":92}],78:[function(require,module,exports){
+},{"knockout":94,"lodash":95}],81:[function(require,module,exports){
 /*!
  * EventEmitter v4.2.7 - git.io/ee
  * Oliver Caldwell
@@ -10937,7 +11156,7 @@ function InteractiveViewModel (interactive) {
 	}
 }.call(this));
 
-},{}],79:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 (function (process){
 /*global setImmediate: false, setTimeout: false, console: false */
 (function () {
@@ -11899,7 +12118,7 @@ function InteractiveViewModel (interactive) {
 }());
 
 }).call(this,require('_process'))
-},{"_process":107}],80:[function(require,module,exports){
+},{"_process":110}],83:[function(require,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -12038,7 +12257,7 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],81:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -12063,7 +12282,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],82:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 var lock = require('pointer-lock')
   , drag = require('drag-stream')
   , full = require('fullscreen')
@@ -12170,7 +12389,7 @@ function usedrag(el) {
   return ee
 }
 
-},{"drag-stream":83,"events":104,"fullscreen":89,"pointer-lock":90,"stream":120}],83:[function(require,module,exports){
+},{"drag-stream":86,"events":107,"fullscreen":92,"pointer-lock":93,"stream":123}],86:[function(require,module,exports){
 module.exports = dragstream
 
 var Stream = require('stream')
@@ -12238,10 +12457,10 @@ function dragstream(el) {
   }
 }
 
-},{"domnode-dom":84,"stream":120,"through":88}],84:[function(require,module,exports){
+},{"domnode-dom":87,"stream":123,"through":91}],87:[function(require,module,exports){
 module.exports = require('./lib/index')
 
-},{"./lib/index":85}],85:[function(require,module,exports){
+},{"./lib/index":88}],88:[function(require,module,exports){
 var WriteStream = require('./writable')
   , ReadStream = require('./readable')
   , DOMStream = {}
@@ -12279,7 +12498,7 @@ DOMStream.createEventStream = function(el, type, preventDefault) {
 module.exports = DOMStream
 
 
-},{"./readable":86,"./writable":87}],86:[function(require,module,exports){
+},{"./readable":89,"./writable":90}],89:[function(require,module,exports){
 module.exports = DOMStream
 
 var Stream = require('stream').Stream
@@ -12390,7 +12609,7 @@ function valueFromElement(el) {
   return el.value
 }
 
-},{"stream":120}],87:[function(require,module,exports){
+},{"stream":123}],90:[function(require,module,exports){
 module.exports = DOMStream
 
 var Stream = require('stream').Stream
@@ -12472,7 +12691,7 @@ proto.constructTextPlain = function(data) {
   return [textNode]
 }
 
-},{"stream":120}],88:[function(require,module,exports){
+},{"stream":123}],91:[function(require,module,exports){
 (function (process){
 var Stream = require('stream')
 
@@ -12579,7 +12798,7 @@ function through (write, end) {
 
 
 }).call(this,require('_process'))
-},{"_process":107,"stream":120}],89:[function(require,module,exports){
+},{"_process":110,"stream":123}],92:[function(require,module,exports){
 module.exports = fullscreen
 fullscreen.available = available
 
@@ -12670,7 +12889,7 @@ function shim(el) {
     el.oRequestFullScreen)
 }
 
-},{"events":104}],90:[function(require,module,exports){
+},{"events":107}],93:[function(require,module,exports){
 module.exports = pointer
 
 pointer.available = available
@@ -12834,7 +13053,7 @@ function shim(el) {
     null
 }
 
-},{"events":104,"stream":120}],91:[function(require,module,exports){
+},{"events":107,"stream":123}],94:[function(require,module,exports){
 // Knockout JavaScript library v3.0.0
 // (c) Steven Sanderson - http://knockoutjs.com/
 // License: MIT (http://www.opensource.org/licenses/mit-license.php)
@@ -17061,7 +17280,7 @@ ko.exportSymbol('nativeTemplateEngine', ko.nativeTemplateEngine);
 }());
 })();
 
-},{}],92:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -23850,7 +24069,7 @@ ko.exportSymbol('nativeTemplateEngine', ko.nativeTemplateEngine);
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],93:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 /*
   Machine.js
   by mary rose cook
@@ -24126,7 +24345,7 @@ ko.exportSymbol('nativeTemplateEngine', ko.nativeTemplateEngine);
 })();
 
 
-},{}],94:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 
 module.exports = (function() {
   return typeof window != 'undefined' && window.performance
@@ -24139,7 +24358,7 @@ module.exports = (function() {
     : Date.now || function(){ return +new Date() };
 })()
 
-},{}],95:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 (function (process){
 /*jshint onevar: false, indent:4, strict:false */
 /*global setImmediate: false, setTimeout: false, console: false, module: true, process: true, define: true, require: true */
@@ -24515,7 +24734,7 @@ else {
 }
 
 }).call(this,require('_process'))
-},{"_process":107,"child_process":100}],96:[function(require,module,exports){
+},{"_process":110,"child_process":103}],99:[function(require,module,exports){
 /*
  * tic
  * https://github.com/shama/tic
@@ -24562,7 +24781,7 @@ Tic.prototype.tick = function(dt) {
   });
 };
 
-},{}],97:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 // tween.js - http://github.com/sole/tween.js
 /**
  * @author sole / http://soledadpenades.com
@@ -25307,7 +25526,7 @@ TWEEN.Interpolation = {
 };
 
 module.exports=TWEEN;
-},{}],98:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 /**
  * @author alteredq / http://alteredqualia.com/
  * @author mr.doob / http://mrdoob.com/
@@ -25368,7 +25587,7 @@ module.exports = function() {
   };
 }
 
-},{}],99:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 /**
  * @author mrdoob / http://mrdoob.com/
  */
@@ -25514,9 +25733,9 @@ var Stats = function () {
 };
 
 module.exports = Stats
-},{}],100:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 
-},{}],101:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -26687,7 +26906,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":102,"ieee754":103}],102:[function(require,module,exports){
+},{"base64-js":105,"ieee754":106}],105:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -26809,7 +27028,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],103:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -26895,7 +27114,7 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],104:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27200,14 +27419,14 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],105:[function(require,module,exports){
-module.exports=require(81)
-},{}],106:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
+module.exports=require(84)
+},{}],109:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],107:[function(require,module,exports){
+},{}],110:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -27272,10 +27491,10 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],108:[function(require,module,exports){
+},{}],111:[function(require,module,exports){
 module.exports = require("./lib/_stream_duplex.js")
 
-},{"./lib/_stream_duplex.js":109}],109:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":112}],112:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -27368,7 +27587,7 @@ function forEach (xs, f) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_readable":111,"./_stream_writable":113,"_process":107,"core-util-is":114,"inherits":105}],110:[function(require,module,exports){
+},{"./_stream_readable":114,"./_stream_writable":116,"_process":110,"core-util-is":117,"inherits":108}],113:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27416,7 +27635,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./_stream_transform":112,"core-util-is":114,"inherits":105}],111:[function(require,module,exports){
+},{"./_stream_transform":115,"core-util-is":117,"inherits":108}],114:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -28402,7 +28621,7 @@ function indexOf (xs, x) {
 }
 
 }).call(this,require('_process'))
-},{"_process":107,"buffer":101,"core-util-is":114,"events":104,"inherits":105,"isarray":106,"stream":120,"string_decoder/":115}],112:[function(require,module,exports){
+},{"_process":110,"buffer":104,"core-util-is":117,"events":107,"inherits":108,"isarray":109,"stream":123,"string_decoder/":118}],115:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -28614,7 +28833,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./_stream_duplex":109,"core-util-is":114,"inherits":105}],113:[function(require,module,exports){
+},{"./_stream_duplex":112,"core-util-is":117,"inherits":108}],116:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -29004,7 +29223,7 @@ function endWritable(stream, state, cb) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_duplex":109,"_process":107,"buffer":101,"core-util-is":114,"inherits":105,"stream":120}],114:[function(require,module,exports){
+},{"./_stream_duplex":112,"_process":110,"buffer":104,"core-util-is":117,"inherits":108,"stream":123}],117:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -29114,7 +29333,7 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 }).call(this,require("buffer").Buffer)
-},{"buffer":101}],115:[function(require,module,exports){
+},{"buffer":104}],118:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -29337,10 +29556,10 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":101}],116:[function(require,module,exports){
+},{"buffer":104}],119:[function(require,module,exports){
 module.exports = require("./lib/_stream_passthrough.js")
 
-},{"./lib/_stream_passthrough.js":110}],117:[function(require,module,exports){
+},{"./lib/_stream_passthrough.js":113}],120:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Readable = exports;
 exports.Writable = require('./lib/_stream_writable.js');
@@ -29348,13 +29567,13 @@ exports.Duplex = require('./lib/_stream_duplex.js');
 exports.Transform = require('./lib/_stream_transform.js');
 exports.PassThrough = require('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":109,"./lib/_stream_passthrough.js":110,"./lib/_stream_readable.js":111,"./lib/_stream_transform.js":112,"./lib/_stream_writable.js":113}],118:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":112,"./lib/_stream_passthrough.js":113,"./lib/_stream_readable.js":114,"./lib/_stream_transform.js":115,"./lib/_stream_writable.js":116}],121:[function(require,module,exports){
 module.exports = require("./lib/_stream_transform.js")
 
-},{"./lib/_stream_transform.js":112}],119:[function(require,module,exports){
+},{"./lib/_stream_transform.js":115}],122:[function(require,module,exports){
 module.exports = require("./lib/_stream_writable.js")
 
-},{"./lib/_stream_writable.js":113}],120:[function(require,module,exports){
+},{"./lib/_stream_writable.js":116}],123:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -29483,4 +29702,4 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":104,"inherits":105,"readable-stream/duplex.js":108,"readable-stream/passthrough.js":116,"readable-stream/readable.js":117,"readable-stream/transform.js":118,"readable-stream/writable.js":119}]},{},[1]);
+},{"events":107,"inherits":108,"readable-stream/duplex.js":111,"readable-stream/passthrough.js":119,"readable-stream/readable.js":120,"readable-stream/transform.js":121,"readable-stream/writable.js":122}]},{},[1]);
