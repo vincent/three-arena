@@ -11,7 +11,7 @@
     "gp-controls": "0.0.0",
     "inherits": "~2.0.1",
     "interact": "0.0.3",
-    "knockout": "~3.0.0",
+    "knockout": "^3.2.0",
     "lodash": "~2.4.1",
     "napa": "~0.2.0",
     "raf": "0.0.3",

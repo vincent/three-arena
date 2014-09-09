@@ -11,8 +11,8 @@ var arena = window.arena = new Arena({
 
 });
 
-arena.setTerrain('/gamedata/maps/simplest/flat.obj', {
-  minimap: '/gamedata/maps/simplest/minimap.png',
+arena.setTerrain('/gamedata/maps/simplest/simplest.obj', {
+  minimap: THREE.ImageUtils.loadTexture('/gamedata/maps/simplest/minimap.png'),
 
   cellSize: 0.9,          // nav mesh cell size (.8 > 2)
   cellHeight: 0.8,        // nav mesh cell height (.5 > 1)

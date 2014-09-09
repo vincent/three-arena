@@ -10,7 +10,7 @@
 
     <script type="text/javascript" src="/vendor/jquery/jquery.js"></script>
     <script type="text/javascript" src="styles/bootstrap/js/bootstrap.min.js"></script>
- 
+
     <title>Three Arena examples</title>
 
     <!-- Bootstrap core CSS -->
@@ -33,7 +33,7 @@
     <style type="text/css">
     #stats { z-index: 1000; top: -50px !important; }
     .navbar-fixed-top { z-index: 1; }
-    .dg.main  { position: absolute !important; top: 50px !important; left: 0 !important; right: auto !important; }
+    .dg.main  { position: absolute !important; top: 50px !important; right: 125px !important; left: auto !important; }
     .dg .selector { width: 125px !important; }
     #game-container { top: 50px; height: 96%; }
     #page { background-color: #F5F5F5; }
@@ -41,6 +41,15 @@
     #source { display: none; }
     #myModal iframe { width: 100%; border: none; }
     #deadscreen { display: none; width: 100%; height: 100%; background: url(styles/youaredead.jpg) no-repeat 0 0; background-size: contain; }
+
+#hud-container #view-map {
+border: 1px solid transparent;
+overflow: hidden;
+}
+#hud-container .map {
+-width: 1000px;
+-height: 1000px;
+}
     </style>
 
   </head>
@@ -204,10 +213,12 @@
 
           <div class="view" id="view-map">
             <div class="daylight"></div>
-            <div class="map" data-bind="event: { click: onMapClick, mousemove: onMapClick }, style: { backgroundImage: 'url(' + image() + ')' }">
-              <ul data-bind="foreach: characters">
-                <li class="character-position" data-bind="event: { hover: $root.onCharacterHover }, style: { top: z + '%', left: x + '%' }"></li>
-              </ul>                    
+            <div class="map-container">
+              <div class="map" data-bind="event: { click: onMapClick, mousemove: onMapClick }, style: { backgroundOrigin: minimapOrigin(), backgroundSize: minimapCover(), backgroundRepeat: 'no-repeat', backgroundImage: 'url(' + image() + ')', backgroundPositionX: mapOffsetX() + 'px', backgroundPositionY: mapOffsetY() + 'px', transform: 'rotateZ(' + orientation() + 'rad) scale(' + mapZoom() + ')' }">
+                <ul data-bind="foreach: entities">
+                  <li class="character-position" data-bind="event: { hover: $root.onCharacterHover }, style: { top: z + '%', left: x + '%', display: dead ? 'none' : 'auto' }"></li>
+                </ul>
+              </div>
             </div>
           </div>
 
