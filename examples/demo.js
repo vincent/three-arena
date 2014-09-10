@@ -127,7 +127,7 @@ arena.on('set:terrain', function(){
         character.learnSpell(Arena.Spells.FireBullet);
         // character.learnSpell(Arena.Spells.FireAura);
         character.learnSpell(Arena.Spells.Heal);
-        character.learnSpell(Arena.Spells.FlatFireAura);
+        // character.learnSpell(Arena.Spells.FlatFireAura);
         character.learnSpell(Arena.Spells.Lightbolt);
 
         character.position.copy(arena.settings.positions.nearcamp);

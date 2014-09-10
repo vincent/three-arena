@@ -18,7 +18,7 @@ function d(enabled){
   }
 }
 
-},{"./lib/index.js":54,"debug":83}],2:[function(require,module,exports){
+},{"./lib/index.js":54,"debug":84}],2:[function(require,module,exports){
 module.exports = {
   Controlled: require('./controlled'),
   Collector: require('./collector'),
@@ -293,7 +293,7 @@ Character.prototype.moveAlong = function(linepoints, options) {
 
 Character.prototype.constructor = Character;
 
-},{"./entity":49,"./utils":76,"debug":83,"inherits":84,"lodash":95}],13:[function(require,module,exports){
+},{"./entity":49,"./utils":77,"debug":84,"inherits":85,"lodash":96}],13:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -410,7 +410,7 @@ function ZeroZeroSeven ( options ) {
 
 inherits(ZeroZeroSeven, Character);
 
-},{"../character":12,"inherits":84,"lodash":95}],14:[function(require,module,exports){
+},{"../character":12,"inherits":85,"lodash":96}],14:[function(require,module,exports){
 module.exports = {
   Dummy: require('./dummy'),
   OO7: require('./007'),
@@ -487,7 +487,7 @@ Dummy.prototype.setCharacter = function(object) {
 };
 
 
-},{"../character":12,"inherits":84,"lodash":95}],16:[function(require,module,exports){
+},{"../character":12,"inherits":85,"lodash":96}],16:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -577,7 +577,7 @@ Ghost.prototype.update = function(arena) {
   this.character.update(arena.delta);
 };
 
-},{"../character":12,"inherits":84,"lodash":95}],17:[function(require,module,exports){
+},{"../character":12,"inherits":85,"lodash":96}],17:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -628,7 +628,7 @@ function Human ( options ) {
 
 inherits(Human, Character);
 
-},{"../character":12,"inherits":84,"lodash":95}],18:[function(require,module,exports){
+},{"../character":12,"inherits":85,"lodash":96}],18:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -703,7 +703,7 @@ function Marine (options) {
 inherits(Marine, Character);
 
 
-},{"../character":12,"inherits":84,"lodash":95}],19:[function(require,module,exports){
+},{"../character":12,"inherits":85,"lodash":96}],19:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -784,7 +784,7 @@ function Monsterdog ( options ) {
 
 inherits(Monsterdog, Character);
 
-},{"../character":12,"inherits":84,"lodash":95}],20:[function(require,module,exports){
+},{"../character":12,"inherits":85,"lodash":96}],20:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -904,7 +904,7 @@ function Ogro ( options ) {
 inherits(Ogro, Character);
 
 
-},{"../character":12,"inherits":84,"lodash":95}],21:[function(require,module,exports){
+},{"../character":12,"inherits":85,"lodash":96}],21:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -980,7 +980,7 @@ function Ratamahatta ( options ) {
 
 inherits(Ratamahatta, Character);
 
-},{"../character":12,"inherits":84,"lodash":95}],22:[function(require,module,exports){
+},{"../character":12,"inherits":85,"lodash":96}],22:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1038,7 +1038,7 @@ function SCV (options) {
 inherits(SCV, Character);
 
 
-},{"../character":12,"inherits":84,"lodash":95}],23:[function(require,module,exports){
+},{"../character":12,"inherits":85,"lodash":96}],23:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1124,7 +1124,7 @@ function Zombie ( options ) {
 
 inherits(Zombie, Character);
 
-},{"../character":12,"inherits":84,"lodash":95}],24:[function(require,module,exports){
+},{"../character":12,"inherits":85,"lodash":96}],24:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -1169,7 +1169,7 @@ AttackCircle.prototype.place = function ( object ) {
   return position;
 };
 
-},{"inherits":84}],25:[function(require,module,exports){
+},{"inherits":85}],25:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -1223,7 +1223,7 @@ DestinationMarker.prototype.animate = function () {
 };
 
 
-},{"../shaders/lightbolt":64,"inherits":84}],26:[function(require,module,exports){
+},{"../shaders/lightbolt":65,"inherits":85}],26:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1572,7 +1572,7 @@ DotaControls.prototype.getContainerDimensions = function() {
 
 
 
-},{"lodash":95}],27:[function(require,module,exports){
+},{"lodash":96}],27:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1638,7 +1638,7 @@ ZoneSelector.prototype.emit = function (event, data) {
 };
 
 
-},{"inherits":84,"lodash":95}],28:[function(require,module,exports){
+},{"inherits":85,"lodash":96}],28:[function(require,module,exports){
 
 var utils = require('../utils');
 var Entity;
@@ -1747,7 +1747,7 @@ CoverSystem.prototype.nearestHidingPositionFrom = function(fromTarget, near, max
     return best;
 };
 
-},{"../entity":49,"../utils":76}],29:[function(require,module,exports){
+},{"../entity":49,"../utils":77}],29:[function(require,module,exports){
 'use strict';
 
 var debug = require('debug')('crowd');
@@ -2204,7 +2204,7 @@ function crowdOptions(options) {
   return options;
 }
 
-},{"./settings":62,"async":82,"debug":83,"lodash":95,"now":97}],30:[function(require,module,exports){
+},{"./settings":62,"async":83,"debug":84,"lodash":96,"now":98}],30:[function(require,module,exports){
 module.exports = {
   SpawningPool: require('./autospawn'),
   DefenseTower: require('./tower'),
@@ -2329,7 +2329,7 @@ AutoSpawn.prototype.spanwOne = function() {
 };
 
 
-},{"inherits":84,"lodash":95}],32:[function(require,module,exports){
+},{"inherits":85,"lodash":96}],32:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2390,7 +2390,7 @@ Checkpoint.prototype.update = function(arena) {
     }
   }
 };
-},{"../shaders/lightbolt":64,"inherits":84,"lodash":95}],33:[function(require,module,exports){
+},{"../shaders/lightbolt":65,"inherits":85,"lodash":96}],33:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2465,7 +2465,7 @@ Collectible.prototype.collectedBy = function(entity, callback) {
 };
 
 
-},{"inherits":84,"lodash":95}],34:[function(require,module,exports){
+},{"inherits":85,"lodash":96}],34:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2554,7 +2554,7 @@ Collectible.prototype.collectedBy = function(entity, callback) {
 };
 
 
-},{"inherits":84,"lodash":95}],35:[function(require,module,exports){
+},{"inherits":85,"lodash":96}],35:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2590,7 +2590,7 @@ function CommandCenter (options) {
 }
 
 inherits(CommandCenter, Entity);
-},{"../entity":49,"inherits":84}],36:[function(require,module,exports){
+},{"../entity":49,"inherits":85}],36:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2672,7 +2672,7 @@ Flies.prototype.update = function(game) {
     this.points.vertices[i].set(point.x, point.y, point.z);
   }
 };
-},{"inherits":84}],37:[function(require,module,exports){
+},{"inherits":85}],37:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2783,7 +2783,7 @@ Grass.prototype.update = function(arena) {
   }
 };
 
-},{"inherits":84}],38:[function(require,module,exports){
+},{"inherits":85}],38:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2842,7 +2842,7 @@ InteractiveObject.prototype.isNearEnough = function(object) {
   return this.position.distanceTo(object.position) <= 20;
 };
 
-},{"../utils":76,"inherits":84}],39:[function(require,module,exports){
+},{"../utils":77,"inherits":85}],39:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2883,7 +2883,7 @@ function Mineral (options) {
 
 inherits(Mineral, Collectible);
 
-},{"./collectible":34,"inherits":84,"lodash":95}],40:[function(require,module,exports){
+},{"./collectible":34,"inherits":85,"lodash":96}],40:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2924,7 +2924,7 @@ function Nexus (options) {
 
 inherits(Nexus, Entity);
 
-},{"../entity":49,"inherits":84}],41:[function(require,module,exports){
+},{"../entity":49,"inherits":85}],41:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2958,7 +2958,7 @@ function Shop (options) {
 }
 
 inherits(Shop, InteractiveObject);
-},{"./interactiveobject":38,"inherits":84}],42:[function(require,module,exports){
+},{"./interactiveobject":38,"inherits":85}],42:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3011,7 +3011,7 @@ LifeBar.prototype.update = function(delta) {
 };
 
 
-},{"../shaders/lifebar":63,"inherits":84,"lodash":95}],43:[function(require,module,exports){
+},{"../shaders/lifebar":64,"inherits":85,"lodash":96}],43:[function(require,module,exports){
 'use strict';
 
 module.exports = Sound;
@@ -3163,7 +3163,7 @@ Spikes.prototype.update = function(arena) {
   }
 };
 
-},{"../spell":65,"inherits":84,"tween":100}],45:[function(require,module,exports){
+},{"../spell":66,"inherits":85,"tween":101}],45:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3340,7 +3340,7 @@ inherits(Terrain, THREE.Object3D);
 
 
 
-},{"./water":47,"inherits":84,"lodash":95}],46:[function(require,module,exports){
+},{"./water":47,"inherits":85,"lodash":96}],46:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3519,7 +3519,7 @@ DefenseTower.prototype.fireTo = function(target) {
     .start();
 };
 
-},{"../entity":49,"../particles/cloud":59,"../spell":65,"inherits":84,"lodash":95,"tween":100}],47:[function(require,module,exports){
+},{"../entity":49,"../particles/cloud":59,"../spell":66,"inherits":85,"lodash":96,"tween":101}],47:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3578,7 +3578,7 @@ Water.prototype.update = function(game) {
 };
 
 
-},{"inherits":84,"lodash":95}],48:[function(require,module,exports){
+},{"inherits":85,"lodash":96}],48:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3629,7 +3629,7 @@ Water.prototype.update = function(game) {
 };
 
 
-},{"../materials/water":58,"inherits":84,"lodash":95}],49:[function(require,module,exports){
+},{"../materials/water":58,"inherits":85,"lodash":96}],49:[function(require,module,exports){
 'use strict';
 
 var now = require('now');
@@ -4282,7 +4282,7 @@ Entity.prototype.hit = function(spell) {
   }
 };
 
-},{"./ai/steering":9,"./controls/attackcircle":24,"./cover-system":28,"./elements/slifebar":42,"./inventory":56,"./log":57,"./settings":62,"./target-system":75,"debug":83,"inherits":84,"lodash":95,"now":97}],50:[function(require,module,exports){
+},{"./ai/steering":9,"./controls/attackcircle":24,"./cover-system":28,"./elements/slifebar":42,"./inventory":56,"./log":57,"./settings":62,"./target-system":76,"debug":84,"inherits":85,"lodash":96,"now":98}],50:[function(require,module,exports){
 module.exports = {
   GameHud: require('./ingame'),
   Sidemenu: require('./sidemenu')
@@ -4436,7 +4436,7 @@ GameHud.prototype.startInteraction = function(object) {
 };
 
 
-},{"../elements/interactiveobject":38,"../entity":49,"../views/dialogview":77,"../views/entityview":78,"../views/gameview":79,"../views/interactiveview":80,"knockout":94,"lodash":95}],52:[function(require,module,exports){
+},{"../elements/interactiveobject":38,"../entity":49,"../views/dialogview":78,"../views/entityview":79,"../views/gameview":80,"../views/interactiveview":81,"knockout":95,"lodash":96}],52:[function(require,module,exports){
 'use strict';
 
 module.exports = Sidemenu;
@@ -4580,7 +4580,7 @@ function SpellTexts (game, options) {
   };
 }
 
-},{"lodash":95,"tween":100}],54:[function(require,module,exports){
+},{"lodash":96,"tween":101}],54:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -6799,7 +6799,7 @@ Arena.stemkoski = require('./particles/stemkoski_ParticleEngine');
 
 
 }).call(this,require('_process'))
-},{"../vendor/detector":101,"../vendor/stats":102,"./ai/behaviours/all":2,"./character/all":14,"./controls/destinationmarker":25,"./controls/dota":26,"./controls/zoneselector":27,"./crowd":29,"./elements/all":30,"./elements/collectible":34,"./elements/interactiveobject":38,"./elements/slifebar":42,"./elements/terrain":45,"./entity":49,"./hud":50,"./hud/spelltexts":53,"./input/mouse":55,"./particles/stemkoski_ParticleEngine":60,"./settings":62,"./settings-gui":61,"./spell/all":66,"./utils":76,"EventEmitter":81,"_process":110,"async":82,"debug":83,"inherits":84,"interact":85,"lodash":95,"machinejs":96,"now":97,"recastjs/lib/recast.withworker":98,"tic":99,"tween":100}],55:[function(require,module,exports){
+},{"../vendor/detector":102,"../vendor/stats":103,"./ai/behaviours/all":2,"./character/all":14,"./controls/destinationmarker":25,"./controls/dota":26,"./controls/zoneselector":27,"./crowd":29,"./elements/all":30,"./elements/collectible":34,"./elements/interactiveobject":38,"./elements/slifebar":42,"./elements/terrain":45,"./entity":49,"./hud":50,"./hud/spelltexts":53,"./input/mouse":55,"./particles/stemkoski_ParticleEngine":60,"./settings":62,"./settings-gui":61,"./spell/all":67,"./utils":77,"EventEmitter":82,"_process":111,"async":83,"debug":84,"inherits":85,"interact":86,"lodash":96,"machinejs":97,"now":98,"recastjs/lib/recast.withworker":99,"tic":100,"tween":101}],55:[function(require,module,exports){
 'use strict';
 
 var debug = require('debug')('controls:mouse');
@@ -7064,7 +7064,7 @@ MouseControl.prototype._onDocumentMouseMove = function(event) {
 
   this.arena.updateSelectionCoords(event.clientX, event.clientY);
 };
-},{"../elements/collectible":34,"../elements/interactiveobject":38,"../elements/terrain":45,"../entity":49,"../settings":62,"../utils":76,"debug":83}],56:[function(require,module,exports){
+},{"../elements/collectible":34,"../elements/interactiveobject":38,"../elements/terrain":45,"../entity":49,"../settings":62,"../utils":77,"debug":84}],56:[function(require,module,exports){
 'use strict';
 
 module.exports = Inventory;
@@ -9092,7 +9092,191 @@ settings.data = {
 
 
 
-},{"events":107}],63:[function(require,module,exports){
+},{"events":108}],63:[function(require,module,exports){
+module.exports = [
+
+'//',
+'// GLSL textureless classic 3D noise "cnoise",',
+'// with an RSL-style periodic variant "pnoise".',
+'// Author:  Stefan Gustavson (stefan.gustavson@liu.se)',
+'// Version: 2011-10-11',
+'//',
+'// Many thanks to Ian McEwan of Ashima Arts for the',
+'// ideas for permutation and gradient selection.',
+'//',
+'// Copyright (c) 2011 Stefan Gustavson. All rights reserved.',
+'// Distributed under the MIT license. See LICENSE file.',
+'// https://github.com/ashima/webgl-noise',
+'//',
+
+'vec3 mod289(vec3 x)',
+'{',
+'  return x - floor(x * (1.0 / 289.0)) * 289.0;',
+'}',
+
+'vec4 mod289(vec4 x)',
+'{',
+'  return x - floor(x * (1.0 / 289.0)) * 289.0;',
+'}',
+
+'vec4 permute(vec4 x)',
+'{',
+'  return mod289(((x*34.0)+1.0)*x);',
+'}',
+
+'vec4 taylorInvSqrt(vec4 r)',
+'{',
+'  return 1.79284291400159 - 0.85373472095314 * r;',
+'}',
+
+'vec3 fade(vec3 t) {',
+'  return t*t*t*(t*(t*6.0-15.0)+10.0);',
+'}',
+
+'// Classic Perlin noise',
+'float cnoise(vec3 P)',
+'{',
+'  vec3 Pi0 = floor(P); // Integer part for indexing',
+'  vec3 Pi1 = Pi0 + vec3(1.0); // Integer part + 1',
+'  Pi0 = mod289(Pi0);',
+'  Pi1 = mod289(Pi1);',
+'  vec3 Pf0 = fract(P); // Fractional part for interpolation',
+'  vec3 Pf1 = Pf0 - vec3(1.0); // Fractional part - 1.0',
+'  vec4 ix = vec4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);',
+'  vec4 iy = vec4(Pi0.yy, Pi1.yy);',
+'  vec4 iz0 = Pi0.zzzz;',
+'  vec4 iz1 = Pi1.zzzz;',
+
+'  vec4 ixy = permute(permute(ix) + iy);',
+'  vec4 ixy0 = permute(ixy + iz0);',
+'  vec4 ixy1 = permute(ixy + iz1);',
+
+'  vec4 gx0 = ixy0 * (1.0 / 7.0);',
+'  vec4 gy0 = fract(floor(gx0) * (1.0 / 7.0)) - 0.5;',
+'  gx0 = fract(gx0);',
+'  vec4 gz0 = vec4(0.5) - abs(gx0) - abs(gy0);',
+'  vec4 sz0 = step(gz0, vec4(0.0));',
+'  gx0 -= sz0 * (step(0.0, gx0) - 0.5);',
+'  gy0 -= sz0 * (step(0.0, gy0) - 0.5);',
+
+'  vec4 gx1 = ixy1 * (1.0 / 7.0);',
+'  vec4 gy1 = fract(floor(gx1) * (1.0 / 7.0)) - 0.5;',
+'  gx1 = fract(gx1);',
+'  vec4 gz1 = vec4(0.5) - abs(gx1) - abs(gy1);',
+'  vec4 sz1 = step(gz1, vec4(0.0));',
+'  gx1 -= sz1 * (step(0.0, gx1) - 0.5);',
+'  gy1 -= sz1 * (step(0.0, gy1) - 0.5);',
+
+'  vec3 g000 = vec3(gx0.x,gy0.x,gz0.x);',
+'  vec3 g100 = vec3(gx0.y,gy0.y,gz0.y);',
+'  vec3 g010 = vec3(gx0.z,gy0.z,gz0.z);',
+'  vec3 g110 = vec3(gx0.w,gy0.w,gz0.w);',
+'  vec3 g001 = vec3(gx1.x,gy1.x,gz1.x);',
+'  vec3 g101 = vec3(gx1.y,gy1.y,gz1.y);',
+'  vec3 g011 = vec3(gx1.z,gy1.z,gz1.z);',
+'  vec3 g111 = vec3(gx1.w,gy1.w,gz1.w);',
+
+'  vec4 norm0 = taylorInvSqrt(vec4(dot(g000, g000), dot(g010, g010), dot(g100, g100), dot(g110, g110)));',
+'  g000 *= norm0.x;',
+'  g010 *= norm0.y;',
+'  g100 *= norm0.z;',
+'  g110 *= norm0.w;',
+'  vec4 norm1 = taylorInvSqrt(vec4(dot(g001, g001), dot(g011, g011), dot(g101, g101), dot(g111, g111)));',
+'  g001 *= norm1.x;',
+'  g011 *= norm1.y;',
+'  g101 *= norm1.z;',
+'  g111 *= norm1.w;',
+
+'  float n000 = dot(g000, Pf0);',
+'  float n100 = dot(g100, vec3(Pf1.x, Pf0.yz));',
+'  float n010 = dot(g010, vec3(Pf0.x, Pf1.y, Pf0.z));',
+'  float n110 = dot(g110, vec3(Pf1.xy, Pf0.z));',
+'  float n001 = dot(g001, vec3(Pf0.xy, Pf1.z));',
+'  float n101 = dot(g101, vec3(Pf1.x, Pf0.y, Pf1.z));',
+'  float n011 = dot(g011, vec3(Pf0.x, Pf1.yz));',
+'  float n111 = dot(g111, Pf1);',
+
+'  vec3 fade_xyz = fade(Pf0);',
+'  vec4 n_z = mix(vec4(n000, n100, n010, n110), vec4(n001, n101, n011, n111), fade_xyz.z);',
+'  vec2 n_yz = mix(n_z.xy, n_z.zw, fade_xyz.y);',
+'  float n_xyz = mix(n_yz.x, n_yz.y, fade_xyz.x); ',
+'  return 2.2 * n_xyz;',
+'}',
+
+'// Classic Perlin noise, periodic variant',
+'float pnoise(vec3 P, vec3 rep)',
+'{',
+'  vec3 Pi0 = mod(floor(P), rep); // Integer part, modulo period',
+'  vec3 Pi1 = mod(Pi0 + vec3(1.0), rep); // Integer part + 1, mod period',
+'  Pi0 = mod289(Pi0);',
+'  Pi1 = mod289(Pi1);',
+'  vec3 Pf0 = fract(P); // Fractional part for interpolation',
+'  vec3 Pf1 = Pf0 - vec3(1.0); // Fractional part - 1.0',
+'  vec4 ix = vec4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);',
+'  vec4 iy = vec4(Pi0.yy, Pi1.yy);',
+'  vec4 iz0 = Pi0.zzzz;',
+'  vec4 iz1 = Pi1.zzzz;',
+
+'  vec4 ixy = permute(permute(ix) + iy);',
+'  vec4 ixy0 = permute(ixy + iz0);',
+'  vec4 ixy1 = permute(ixy + iz1);',
+
+'  vec4 gx0 = ixy0 * (1.0 / 7.0);',
+'  vec4 gy0 = fract(floor(gx0) * (1.0 / 7.0)) - 0.5;',
+'  gx0 = fract(gx0);',
+'  vec4 gz0 = vec4(0.5) - abs(gx0) - abs(gy0);',
+'  vec4 sz0 = step(gz0, vec4(0.0));',
+'  gx0 -= sz0 * (step(0.0, gx0) - 0.5);',
+'  gy0 -= sz0 * (step(0.0, gy0) - 0.5);',
+
+'  vec4 gx1 = ixy1 * (1.0 / 7.0);',
+'  vec4 gy1 = fract(floor(gx1) * (1.0 / 7.0)) - 0.5;',
+'  gx1 = fract(gx1);',
+'  vec4 gz1 = vec4(0.5) - abs(gx1) - abs(gy1);',
+'  vec4 sz1 = step(gz1, vec4(0.0));',
+'  gx1 -= sz1 * (step(0.0, gx1) - 0.5);',
+'  gy1 -= sz1 * (step(0.0, gy1) - 0.5);',
+
+'  vec3 g000 = vec3(gx0.x,gy0.x,gz0.x);',
+'  vec3 g100 = vec3(gx0.y,gy0.y,gz0.y);',
+'  vec3 g010 = vec3(gx0.z,gy0.z,gz0.z);',
+'  vec3 g110 = vec3(gx0.w,gy0.w,gz0.w);',
+'  vec3 g001 = vec3(gx1.x,gy1.x,gz1.x);',
+'  vec3 g101 = vec3(gx1.y,gy1.y,gz1.y);',
+'  vec3 g011 = vec3(gx1.z,gy1.z,gz1.z);',
+'  vec3 g111 = vec3(gx1.w,gy1.w,gz1.w);',
+
+'  vec4 norm0 = taylorInvSqrt(vec4(dot(g000, g000), dot(g010, g010), dot(g100, g100), dot(g110, g110)));',
+'  g000 *= norm0.x;',
+'  g010 *= norm0.y;',
+'  g100 *= norm0.z;',
+'  g110 *= norm0.w;',
+'  vec4 norm1 = taylorInvSqrt(vec4(dot(g001, g001), dot(g011, g011), dot(g101, g101), dot(g111, g111)));',
+'  g001 *= norm1.x;',
+'  g011 *= norm1.y;',
+'  g101 *= norm1.z;',
+'  g111 *= norm1.w;',
+
+'  float n000 = dot(g000, Pf0);',
+'  float n100 = dot(g100, vec3(Pf1.x, Pf0.yz));',
+'  float n010 = dot(g010, vec3(Pf0.x, Pf1.y, Pf0.z));',
+'  float n110 = dot(g110, vec3(Pf1.xy, Pf0.z));',
+'  float n001 = dot(g001, vec3(Pf0.xy, Pf1.z));',
+'  float n101 = dot(g101, vec3(Pf1.x, Pf0.y, Pf1.z));',
+'  float n011 = dot(g011, vec3(Pf0.x, Pf1.yz));',
+'  float n111 = dot(g111, Pf1);',
+
+'  vec3 fade_xyz = fade(Pf0);',
+'  vec4 n_z = mix(vec4(n000, n100, n010, n110), vec4(n001, n101, n011, n111), fade_xyz.z);',
+'  vec2 n_yz = mix(n_z.xy, n_z.zw, fade_xyz.y);',
+'  float n_xyz = mix(n_yz.x, n_yz.y, fade_xyz.x); ',
+'  return 2.2 * n_xyz;',
+'}'
+
+].join("\n");
+
+
+},{}],64:[function(require,module,exports){
 'use strict';
 
 var TWEEN = require('tween');
@@ -9235,10 +9419,12 @@ LifebarShaderMaterial.prototype.setMana = function(value) {
 };
 
 
-},{"inherits":84,"tween":100}],64:[function(require,module,exports){
+},{"inherits":85,"tween":101}],65:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
+
+var ashima3Dnoise = require('./ashima/classicnoise3D.glsl');
 
 module.exports = LightboltShaderMaterial;
 
@@ -9256,77 +9442,101 @@ function LightboltShaderMaterial (strands) {
       time: { type: 'f', value: 1.0 },
       resolution: { type: 'v2', value: new THREE.Vector2() }
     },
-    vertexShader: ' varying vec2 vUv;       '
-                + ' void main()             '
-                + ' {                       '
-                + '    vUv = uv;            '
-                + '    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );   '
-                + '    gl_Position = projectionMatrix * mvPosition;                 '
-                + ' }',
-    fragmentShader: '  uniform vec2 resolution;             '
-                + '    uniform float time;                  '
+    vertexShader: [
+        // ashima3Dnoise,
+        // 'float turbulence( vec3 p ) {',
+        // '    float w = 100.0;',
+        // '    float t = -.5;',
+        // '    for (float f = 1.0 ; f <= 10.0 ; f++ ){',
+        // '        float power = pow( 2.0, f );',
+        // '        t += abs( pnoise( vec3( power * p ), vec3( 10.0, 10.0, 10.0 ) ) / power );',
+        // '    }',
+        // '    return t;',
+        // '}',
 
-                + '    varying vec2 vUv;                    '
+        'varying vec2 vUv;',
+        'void main() {',
+        '   vUv = uv;',
 
-                        // Lightning shader
-                        // rand,noise,fmb functions from https://www.shadertoy.com/view/Xsl3zN
+        // // get a turbulent 3d noise using the normal, normal to high freq
+        // '   noise = 10.0 *  -.10 * turbulence( .5 * normal );',
+        // // get a 3d noise using the position, low frequency
+        // '   float b = 5.0 * pnoise( 0.05 * position, vec3( 100.0 ) );',
+        // // compose both noises
+        // '   float displacement = - 10. * noise + b;',
+        // // move the position along the normal and transform it
+        // '   vec3 newPosition = position + normal * displacement;',
 
-                + '    float rand(vec2 n) {                 '
-                + '        return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);       '
-                + '    }                                    '
+        '   vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
+        '   gl_Position = projectionMatrix * mvPosition;',
+        '}'
+    ].join(''),
 
-                + '    float noise(vec2 n) {                '
-                + '        const vec2 d = vec2(0.0, 1.0);   '
-                + '        vec2 b = floor(n), f = smoothstep(vec2(0.0), vec2(1.0), fract(n));   '
-                + '        return mix(mix(rand(b), rand(b + d.yx), f.x), mix(rand(b + d.xy), rand(b + d.yy), f.x), f.y);       '
-                + '    }                                 '
+    fragmentShader: [
+        'uniform vec2 resolution;',
+        'uniform float time;',
 
-                + '    float fbm(vec2 n) {                          '
-                + '        float total = 0.0, amplitude = 1.0;      '
-                + '        for (int i = 0; i < 7; i++) {            '
-                + '            total += noise(n) * amplitude;       '
-                + '            n += n;                              '
-                + '            amplitude *= 0.5;                    '
-                + '        }                                        '
-                + '        return total;                            '
-                + '    }                                            '
+        'varying vec2 vUv;',
 
-                + '    void main(void)                              '
-                + '    {                                            '
-                + '        vec2 position = vUv;                     '
-                + '        vec4 col = vec4(0,0,0,0);                '
+         // Lightning shader
+         // rand,noise,fmb functions from https://www.shadertoy.com/view/Xsl3zN
 
-                            // vec2 uv = gl_FragCoord.xy * 1.0 / resolution.xy; // screen space
-                + '        vec2 uv = 1.0 * position;        ' // object face space
+        'float rand(vec2 n) {',
+        '    return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);',
+        '}',
 
-                            // draw a line, left side is fixed
-                + '        vec2 t = uv * vec2(2.0,1.0) - time*3.0;       '
-                + '        vec2 t2 = (vec2(1,-1) + uv) * vec2(3.0,1.0) - time*3.0;        ' // a second strand
+        'float noise(vec2 n) {',
+        '    const vec2 d = vec2(0.0, 1.0);',
+        '    vec2 b = floor(n), f = smoothstep(vec2(0.0), vec2(1.0), fract(n));',
+        '    return mix(mix(rand(b), rand(b + d.yx), f.x), mix(rand(b + d.xy), rand(b + d.yy), f.x), f.y);',
+        '}',
 
-                            // draw the lines,
-                            // this make the left side fixed, can be useful
-                            // float ycenter = mix( 0.5, 0.25 + 0.25*fbm( t ), uv.x*4.0);
-                            // float ycenter2 = mix( 0.5, 0.25 + 0.25*fbm( t2 ), uv.x*4.0);
-                + '        float ycenter = fbm(t)*0.5;       '
-                + '        float ycenter2= fbm(t2)*0.5;       '
+        'float fbm(vec2 n) {',
+        '    float total = 0.0, amplitude = 1.0;',
+        '    for (int i = 0; i < 7; i++) {',
+        '        total += noise(n) * amplitude;',
+        '        n += n;',
+        '        amplitude *= 0.5;',
+        '    }',
+        '    return total;',
+        '}',
 
-                            // falloff
-                + '        float diff = abs(uv.y - ycenter);       '
-                + '        float c1 = 1.0 - mix(0.0,1.0,diff*40.0);       '
+        'void main(void) {',
+        '    vec2 position = vUv;',
+        '    vec4 col = vec4(0,0,0,0);',
 
-                + '        float diff2 = abs(uv.y - ycenter2);       '
-                + '        float c2 = 1.0 - mix(0.0,1.0,diff2*20.0);       '
+             // vec2 uv = gl_FragCoord.xy * 1.0 / resolution.xy; // screen space
+        '    vec2 uv = 1.0 * position;', // object face space
 
-                + '        float c = max(c1,c2);       '
-                + '        col = vec4(c*0.4,0.2*c2,c,c);       '
-                + '        gl_FragColor = col;       '
-                + '    }'
-  }]);
+             // draw a line, left side is fixed
+        '    vec2 t = uv * vec2(2.0,1.0) - time*3.0;',
+        '    vec2 t2 = (vec2(1,-1) + uv) * vec2(3.0,1.0) - time*3.0;', // a second strand
+
+             // draw the lines,
+             // this make the left side fixed, can be useful
+             // float ycenter = mix( 0.5, 0.25 + 0.25*fbm( t ), uv.x*4.0);
+             // float ycenter2 = mix( 0.5, 0.25 + 0.25*fbm( t2 ), uv.x*4.0);
+        '    float ycenter = fbm(t)*0.5;',
+        '    float ycenter2= fbm(t2)*0.5;',
+
+             // falloff
+        '    float diff = abs(uv.y - ycenter);',
+        '    float c1 = 1.0 - mix(0.0,1.0,diff*40.0);',
+
+        '    float diff2 = abs(uv.y - ycenter2);',
+        '    float c2 = 1.0 - mix(0.0,1.0,diff2*20.0);',
+
+        '    float c = max(c1,c2);',
+        '    col = vec4(c*0.4,0.2*c2,c,c);',
+        '    gl_FragColor = col;',
+        '}'
+    ].join(''),
+    }]);
 }
 
 inherits(LightboltShaderMaterial, THREE.ShaderMaterial);
 
-},{"inherits":84}],65:[function(require,module,exports){
+},{"./ashima/classicnoise3D.glsl":63,"inherits":85}],66:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9451,7 +9661,7 @@ Spell.prototype.startCooldown = function (source) {
   setTimeout(updateCD, 50);
 };
 
-},{"EventEmitter":81,"debug":83,"inherits":84,"lodash":95}],66:[function(require,module,exports){
+},{"EventEmitter":82,"debug":84,"inherits":85,"lodash":96}],67:[function(require,module,exports){
 module.exports = {
   Bite: require('./bite'),
   FireAura: require('./fireaura'),
@@ -9463,7 +9673,7 @@ module.exports = {
   PlaceObject: require('./placeobject')
 };
 
-},{"./bite":67,"./fireaura":68,"./firebullet":69,"./flatfireaura":70,"./heal":71,"./lightbolt":72,"./placeobject":73,"./teleport":74}],67:[function(require,module,exports){
+},{"./bite":68,"./fireaura":69,"./firebullet":70,"./flatfireaura":71,"./heal":72,"./lightbolt":73,"./placeobject":74,"./teleport":75}],68:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9521,7 +9731,7 @@ Bite.prototype.start = function(source, target) {
   target.hit(this);
 };
 
-},{"../elements/sound":43,"../spell":65,"inherits":84,"lodash":95}],68:[function(require,module,exports){
+},{"../elements/sound":43,"../spell":66,"inherits":85,"lodash":96}],69:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9571,7 +9781,7 @@ FireAura.prototype.start = function (caster, target) {
   }, 5000);
 };
 
-},{"../particles/cloud":59,"../spell":65,"inherits":84,"lodash":95}],69:[function(require,module,exports){
+},{"../particles/cloud":59,"../spell":66,"inherits":85,"lodash":96}],70:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -9664,7 +9874,7 @@ FireBullet.prototype.start = function (caster, target) {
     .start();
 };
 
-},{"../elements/sound":43,"../particles/cloud":59,"../particles/stemkoski_ParticleEngine":60,"../spell":65,"../utils":76,"inherits":84,"lodash":95,"tween":100}],70:[function(require,module,exports){
+},{"../elements/sound":43,"../particles/cloud":59,"../particles/stemkoski_ParticleEngine":60,"../spell":66,"../utils":77,"inherits":85,"lodash":96,"tween":101}],71:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9722,7 +9932,7 @@ FlatFireAura.prototype.start = function (caster, target) {
   }, 5000);
 };
 
-},{"../spell":65,"inherits":84,"lodash":95}],71:[function(require,module,exports){
+},{"../spell":66,"inherits":85,"lodash":96}],72:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -9822,7 +10032,7 @@ Heal.prototype.start = function (caster, target) {
     .start();
 };
 
-},{"../elements/sound":43,"../particles/cloud":59,"../particles/stemkoski_ParticleEngine":60,"../spell":65,"../utils":76,"inherits":84,"lodash":95,"tween":100}],72:[function(require,module,exports){
+},{"../elements/sound":43,"../particles/cloud":59,"../particles/stemkoski_ParticleEngine":60,"../spell":66,"../utils":77,"inherits":85,"lodash":96,"tween":101}],73:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9852,7 +10062,7 @@ function Lightbolt (options) {
     minRange: 0,
     maxRange: 10,
 
-    needsTarget: true
+    needsTarget: false
   });
 
   Spell.apply(this, [ options ]);
@@ -9864,7 +10074,7 @@ function Lightbolt (options) {
   //  |             |
   //  ° 0,0         |
   //  |_____________|
-  //  
+  //
   //   ______________
   //  |      °      |
   //  |      0,0    |
@@ -9872,7 +10082,7 @@ function Lightbolt (options) {
   //  |             |
   //  |             |
   //  |_____________|
-  //  
+  //
 
   var geometry = new THREE.PlaneGeometry( 1, 10 );
   // THREE.CylinderGeometry( radiusTop, radiusBottom, height, segmentsRadius, segmentsHeight, openEnded )
@@ -9909,7 +10119,7 @@ Lightbolt.prototype.start = function (caster, target) {
   };
 
   self.tween = new TWEEN.Tween(self.plane.scale)
-  .to({ x: 30, y: 3 }, 300) // use 
+  .to({ x: 30, y: 3 }, 300) // use
   .easing( TWEEN.Easing.Elastic.InOut )
   .onStart(function(){
     caster.game.on('update', update);
@@ -9928,7 +10138,7 @@ Lightbolt.prototype.start = function (caster, target) {
   })
   .start();
 };
-},{"../shaders/lightbolt":64,"../spell":65,"inherits":84,"lodash":95,"tween":100}],73:[function(require,module,exports){
+},{"../shaders/lightbolt":65,"../spell":66,"inherits":85,"lodash":96,"tween":101}],74:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10069,7 +10279,7 @@ PlaceObject.prototype.updateZoneSelector = function(source, arena) {
 
 
 
-},{"../elements/sound":43,"../settings":62,"../spell":65,"inherits":84,"lodash":95,"tween":100}],74:[function(require,module,exports){
+},{"../elements/sound":43,"../settings":62,"../spell":66,"inherits":85,"lodash":96,"tween":101}],75:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10186,7 +10396,7 @@ Teleport.prototype.updateZoneSelector = function(source, arena) {
   }
 };
 
-},{"../elements/sound":43,"../settings":62,"../spell":65,"inherits":84,"lodash":95,"tween":100}],75:[function(require,module,exports){
+},{"../elements/sound":43,"../settings":62,"../spell":66,"inherits":85,"lodash":96,"tween":101}],76:[function(require,module,exports){
 module.exports = TargetSystem;
 
 function TargetSystem (arena, entity) {
@@ -10272,7 +10482,7 @@ TargetSystem.prototype.bestSpellForTarget = function(entity) {
 };
 
 
-},{}],76:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10462,7 +10672,7 @@ module.exports = {
 
 };
 
-},{"lodash":95,"tween":100}],77:[function(require,module,exports){
+},{"lodash":96,"tween":101}],78:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10497,7 +10707,7 @@ function DialogViewModel (dialog) {
 
   dialog.on('changed', this.update.bind(this));
 }
-},{"knockout":94,"lodash":95}],78:[function(require,module,exports){
+},{"knockout":95,"lodash":96}],79:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10587,7 +10797,7 @@ function EntityViewModel (entity, game) {
 
   entity.on('changed', this.update.bind(this));
 }
-},{"../entity":49,"../utils":76,"knockout":94,"lodash":95}],79:[function(require,module,exports){
+},{"../entity":49,"../utils":77,"knockout":95,"lodash":96}],80:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10842,7 +11052,7 @@ GameViewModel.prototype.onMapClick = function(gameview, event) {
 GameViewModel.prototype.onCharacterHover = function(event) {
 };
 
-},{"../settings":62,"knockout":94,"lodash":95}],80:[function(require,module,exports){
+},{"../settings":62,"knockout":95,"lodash":96}],81:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10877,7 +11087,7 @@ function InteractiveViewModel (interactive) {
 
   interactive.on('changed', this.update.bind(this));
 }
-},{"knockout":94,"lodash":95}],81:[function(require,module,exports){
+},{"knockout":95,"lodash":96}],82:[function(require,module,exports){
 /*!
  * EventEmitter v4.2.8 - git.io/ee
  * Oliver Caldwell
@@ -11351,7 +11561,7 @@ function InteractiveViewModel (interactive) {
 	}
 }.call(this));
 
-},{}],82:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 (function (process){
 /*global setImmediate: false, setTimeout: false, console: false */
 (function () {
@@ -12313,7 +12523,7 @@ function InteractiveViewModel (interactive) {
 }());
 
 }).call(this,require('_process'))
-},{"_process":110}],83:[function(require,module,exports){
+},{"_process":111}],84:[function(require,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -12452,7 +12662,7 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],84:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -12477,7 +12687,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],85:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 var lock = require('pointer-lock')
   , drag = require('drag-stream')
   , full = require('fullscreen')
@@ -12584,7 +12794,7 @@ function usedrag(el) {
   return ee
 }
 
-},{"drag-stream":86,"events":107,"fullscreen":92,"pointer-lock":93,"stream":123}],86:[function(require,module,exports){
+},{"drag-stream":87,"events":108,"fullscreen":93,"pointer-lock":94,"stream":124}],87:[function(require,module,exports){
 module.exports = dragstream
 
 var Stream = require('stream')
@@ -12652,10 +12862,10 @@ function dragstream(el) {
   }
 }
 
-},{"domnode-dom":87,"stream":123,"through":91}],87:[function(require,module,exports){
+},{"domnode-dom":88,"stream":124,"through":92}],88:[function(require,module,exports){
 module.exports = require('./lib/index')
 
-},{"./lib/index":88}],88:[function(require,module,exports){
+},{"./lib/index":89}],89:[function(require,module,exports){
 var WriteStream = require('./writable')
   , ReadStream = require('./readable')
   , DOMStream = {}
@@ -12693,7 +12903,7 @@ DOMStream.createEventStream = function(el, type, preventDefault) {
 module.exports = DOMStream
 
 
-},{"./readable":89,"./writable":90}],89:[function(require,module,exports){
+},{"./readable":90,"./writable":91}],90:[function(require,module,exports){
 module.exports = DOMStream
 
 var Stream = require('stream').Stream
@@ -12804,7 +13014,7 @@ function valueFromElement(el) {
   return el.value
 }
 
-},{"stream":123}],90:[function(require,module,exports){
+},{"stream":124}],91:[function(require,module,exports){
 module.exports = DOMStream
 
 var Stream = require('stream').Stream
@@ -12886,7 +13096,7 @@ proto.constructTextPlain = function(data) {
   return [textNode]
 }
 
-},{"stream":123}],91:[function(require,module,exports){
+},{"stream":124}],92:[function(require,module,exports){
 (function (process){
 var Stream = require('stream')
 
@@ -12993,7 +13203,7 @@ function through (write, end) {
 
 
 }).call(this,require('_process'))
-},{"_process":110,"stream":123}],92:[function(require,module,exports){
+},{"_process":111,"stream":124}],93:[function(require,module,exports){
 module.exports = fullscreen
 fullscreen.available = available
 
@@ -13084,7 +13294,7 @@ function shim(el) {
     el.oRequestFullScreen)
 }
 
-},{"events":107}],93:[function(require,module,exports){
+},{"events":108}],94:[function(require,module,exports){
 module.exports = pointer
 
 pointer.available = available
@@ -13248,7 +13458,7 @@ function shim(el) {
     null
 }
 
-},{"events":107,"stream":123}],94:[function(require,module,exports){
+},{"events":108,"stream":124}],95:[function(require,module,exports){
 /*!
  * Knockout JavaScript library v3.2.0
  * (c) Steven Sanderson - http://knockoutjs.com/
@@ -18549,7 +18759,7 @@ ko.exportSymbol('nativeTemplateEngine', ko.nativeTemplateEngine);
 }());
 })();
 
-},{}],95:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -25338,7 +25548,7 @@ ko.exportSymbol('nativeTemplateEngine', ko.nativeTemplateEngine);
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],96:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 /*
   Machine.js
   by mary rose cook
@@ -25614,7 +25824,7 @@ ko.exportSymbol('nativeTemplateEngine', ko.nativeTemplateEngine);
 })();
 
 
-},{}],97:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 
 module.exports = (function() {
   return typeof window != 'undefined' && window.performance
@@ -25627,7 +25837,7 @@ module.exports = (function() {
     : Date.now || function(){ return +new Date() };
 })()
 
-},{}],98:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 (function (process){
 /*jshint onevar: false, indent:4, strict:false */
 /*global setImmediate: false, setTimeout: false, console: false, module: true, process: true, define: true, require: true */
@@ -26003,7 +26213,7 @@ else {
 }
 
 }).call(this,require('_process'))
-},{"_process":110,"child_process":103}],99:[function(require,module,exports){
+},{"_process":111,"child_process":104}],100:[function(require,module,exports){
 /*
  * tic
  * https://github.com/shama/tic
@@ -26050,7 +26260,7 @@ Tic.prototype.tick = function(dt) {
   });
 };
 
-},{}],100:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 // tween.js - http://github.com/sole/tween.js
 /**
  * @author sole / http://soledadpenades.com
@@ -26795,7 +27005,7 @@ TWEEN.Interpolation = {
 };
 
 module.exports=TWEEN;
-},{}],101:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 /**
  * @author alteredq / http://alteredqualia.com/
  * @author mr.doob / http://mrdoob.com/
@@ -26856,7 +27066,7 @@ module.exports = function() {
   };
 }
 
-},{}],102:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 /**
  * @author mrdoob / http://mrdoob.com/
  */
@@ -27002,9 +27212,9 @@ var Stats = function () {
 };
 
 module.exports = Stats
-},{}],103:[function(require,module,exports){
-
 },{}],104:[function(require,module,exports){
+
+},{}],105:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -28175,7 +28385,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":105,"ieee754":106}],105:[function(require,module,exports){
+},{"base64-js":106,"ieee754":107}],106:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -28297,7 +28507,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],106:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -28383,7 +28593,7 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],107:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -28688,14 +28898,14 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],108:[function(require,module,exports){
-module.exports=require(84)
 },{}],109:[function(require,module,exports){
+module.exports=require(85)
+},{}],110:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],110:[function(require,module,exports){
+},{}],111:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -28760,10 +28970,10 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],111:[function(require,module,exports){
+},{}],112:[function(require,module,exports){
 module.exports = require("./lib/_stream_duplex.js")
 
-},{"./lib/_stream_duplex.js":112}],112:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":113}],113:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -28856,7 +29066,7 @@ function forEach (xs, f) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_readable":114,"./_stream_writable":116,"_process":110,"core-util-is":117,"inherits":108}],113:[function(require,module,exports){
+},{"./_stream_readable":115,"./_stream_writable":117,"_process":111,"core-util-is":118,"inherits":109}],114:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -28904,7 +29114,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./_stream_transform":115,"core-util-is":117,"inherits":108}],114:[function(require,module,exports){
+},{"./_stream_transform":116,"core-util-is":118,"inherits":109}],115:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -29890,7 +30100,7 @@ function indexOf (xs, x) {
 }
 
 }).call(this,require('_process'))
-},{"_process":110,"buffer":104,"core-util-is":117,"events":107,"inherits":108,"isarray":109,"stream":123,"string_decoder/":118}],115:[function(require,module,exports){
+},{"_process":111,"buffer":105,"core-util-is":118,"events":108,"inherits":109,"isarray":110,"stream":124,"string_decoder/":119}],116:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -30102,7 +30312,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./_stream_duplex":112,"core-util-is":117,"inherits":108}],116:[function(require,module,exports){
+},{"./_stream_duplex":113,"core-util-is":118,"inherits":109}],117:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -30492,7 +30702,7 @@ function endWritable(stream, state, cb) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_duplex":112,"_process":110,"buffer":104,"core-util-is":117,"inherits":108,"stream":123}],117:[function(require,module,exports){
+},{"./_stream_duplex":113,"_process":111,"buffer":105,"core-util-is":118,"inherits":109,"stream":124}],118:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -30602,7 +30812,7 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 }).call(this,require("buffer").Buffer)
-},{"buffer":104}],118:[function(require,module,exports){
+},{"buffer":105}],119:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -30825,10 +31035,10 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":104}],119:[function(require,module,exports){
+},{"buffer":105}],120:[function(require,module,exports){
 module.exports = require("./lib/_stream_passthrough.js")
 
-},{"./lib/_stream_passthrough.js":113}],120:[function(require,module,exports){
+},{"./lib/_stream_passthrough.js":114}],121:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Readable = exports;
 exports.Writable = require('./lib/_stream_writable.js');
@@ -30836,13 +31046,13 @@ exports.Duplex = require('./lib/_stream_duplex.js');
 exports.Transform = require('./lib/_stream_transform.js');
 exports.PassThrough = require('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":112,"./lib/_stream_passthrough.js":113,"./lib/_stream_readable.js":114,"./lib/_stream_transform.js":115,"./lib/_stream_writable.js":116}],121:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":113,"./lib/_stream_passthrough.js":114,"./lib/_stream_readable.js":115,"./lib/_stream_transform.js":116,"./lib/_stream_writable.js":117}],122:[function(require,module,exports){
 module.exports = require("./lib/_stream_transform.js")
 
-},{"./lib/_stream_transform.js":115}],122:[function(require,module,exports){
+},{"./lib/_stream_transform.js":116}],123:[function(require,module,exports){
 module.exports = require("./lib/_stream_writable.js")
 
-},{"./lib/_stream_writable.js":116}],123:[function(require,module,exports){
+},{"./lib/_stream_writable.js":117}],124:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -30971,4 +31181,4 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":107,"inherits":108,"readable-stream/duplex.js":111,"readable-stream/passthrough.js":119,"readable-stream/readable.js":120,"readable-stream/transform.js":121,"readable-stream/writable.js":122}]},{},[1]);
+},{"events":108,"inherits":109,"readable-stream/duplex.js":112,"readable-stream/passthrough.js":120,"readable-stream/readable.js":121,"readable-stream/transform.js":122,"readable-stream/writable.js":123}]},{},[1]);
