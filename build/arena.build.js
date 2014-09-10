@@ -1713,9 +1713,9 @@ CoverSystem.prototype.nearestHidingPosition = function(fromTarget, maxDistance) 
     var possibleHidingPositions = this.hidingPositions(fromTarget, 40);
     for (var i = 0; i < possibleHidingPositions.length; i++) {
 
-        // var axisHelper = new THREE.AxisHelper(50);
-        // axisHelper.position.copy(possibleHidingPositions[i]);
-        // this.arena.scene.add(axisHelper);
+        var axisHelper = new THREE.AxisHelper(50);
+        axisHelper.position.copy(possibleHidingPositions[i]);
+        this.arena.scene.add(axisHelper);
 
         tmp = this.entity.position.distanceTo(possibleHidingPositions[i]);
         if (tmp < distance) {
@@ -4616,29 +4616,29 @@ module.exports = Arena;
 
 /**
  * The main game class
- * 
+ *
  * @exports Arena
- * 
+ *
  * @constructor
- * 
+ *
  * @param {object} settings
  * @param {string} settings.container Game container #id
  * @param {string} settings.splashContainer Game splashscreen, to be hidden when the game will start
- * 
+ *
  * @param {number=} settings.speed Game speed. Accelerated > 1 > Deccelerated
- * 
+ *
  * @param {object=} settings.fog Fog settings
  * @param {colorstring=} settings.fog.color Fog color
  * @param {number=} settings.fog.near Fog near
  * @param {number=} settings.fog.far Fog far
- * 
+ *
  * @param {object=} settings.hud HUD settings
  * @param {number=} settings.hud.mouseBorderDetection Border percentage after which the camera moves, set to false to disable
  *
  * @param {object=} settings.debug Debugging settings
  * @param {boolean=} settings.debug.showRoutes Show character routes as they are created
  * @param {boolean=} settings.debug.visibleCharactersHelpers Show characters bounding boxes
- * 
+ *
  */
 function Arena (overrideSettings) {
 
@@ -4669,7 +4669,7 @@ function Arena (overrideSettings) {
   //////////
 
   /**
-   * True if the game has started 
+   * True if the game has started
    * @type {Boolean}
    */
   this.started = false;
@@ -4807,7 +4807,7 @@ function Arena (overrideSettings) {
   }
 
   /**
-   * The dat.GUI instance 
+   * The dat.GUI instance
    * @type {dat.GUI}
    */
   this.gui = settingsGUI.create({ });
@@ -4815,7 +4815,7 @@ function Arena (overrideSettings) {
   //////////
 
   this._initScene(function () { });
-  
+
   //////////
 
   this.on('set:terrain', function(){
@@ -4841,7 +4841,7 @@ Arena.prototype.use = function(Component) {
 
 /**
  * Test the WebGL environement
- * 
+ *
  * @return True if the current environement is not WebGL capable
  */
 Arena.prototype.notCapable = function() {
@@ -4855,7 +4855,7 @@ Arena.prototype.notCapable = function() {
 
 /**
  * A WebGL incentive message, for diasbled browsers
- * 
+ *
  * @return A DOM node element
  */
 Arena.prototype.notCapableMessage = function() {
@@ -4871,7 +4871,7 @@ Arena.prototype.notCapableMessage = function() {
 
 /**
  * Init the pathfinding subsystem, and load its settings.preload urls
- * 
+ *
  * @param  {Function} callback called when finished
  */
 Arena.prototype.preload = function(done, progressCallback) {
@@ -4918,9 +4918,9 @@ Arena.prototype.preload = function(done, progressCallback) {
 
 /**
  * Init the game, reset characters and map elements
- * 
+ *
  * @param  {Function} callback called when ready to run
- * 
+ *
  * @fires module:threearena/game#ready
  */
 Arena.prototype.init = function(ready) {
@@ -4952,7 +4952,7 @@ Arena.prototype.init = function(ready) {
 
 /**
  * Init the game camera
- * 
+ *
  * @private
  */
 Arena.prototype._initCamera = function(done) {
@@ -4977,7 +4977,7 @@ Arena.prototype._initCamera = function(done) {
 
 /**
  * Init scene
- * 
+ *
  * @private
  */
 Arena.prototype._initScene = function(done) {
@@ -5011,7 +5011,7 @@ Arena.prototype._initScene = function(done) {
 
 /**
  * Init scene
- * 
+ *
  * @private
  */
 Arena.prototype._initCrowd = function(done) {
@@ -5026,7 +5026,7 @@ Arena.prototype._initCrowd = function(done) {
 
 /**
  * Init global game lights
- * 
+ *
  * @private
  */
 Arena.prototype._initLights = function(done) {
@@ -5052,7 +5052,11 @@ Arena.prototype._initLights = function(done) {
   this.pointLight.shadowCameraVisible = true;
   this.pointLight.shadowCameraNear = 10;
   this.pointLight.shadowCameraFar = 100;
-  this.pointLight.position.set( 0, 180, 0 );
+  this.pointLight.position.set(
+    settings.data.lightPointOffsetX,
+    settings.data.lightPointOffsetY,
+    settings.data.lightPointOffsetZ
+  );
   this.pointLight.intensity = settings.data.lightPointIntensity;
   this.pointLight.distance = settings.data.lightPointDistance;
   this.pointLight.angle = settings.data.lightPointAngle;
@@ -5067,7 +5071,11 @@ Arena.prototype._initLights = function(done) {
   this.directionalLight.diffuse = 0xffffff;
   this.directionalLight.specular = 0xffffff; // new THREE.Color('#050101'); // 0xaaaa22;
 
-  this.directionalLight.position.set( -200, 400, -200 );
+  this.directionalLight.position.set(
+    settings.data.lightDirectionalPositionX,
+    settings.data.lightDirectionalPositionY,
+    settings.data.lightDirectionalPositionZ
+  );
   this.directionalLight.intensity = settings.data.lightDirectionalIntensity;
   this.directionalLight.castShadow = self.settings.lightDirectionalShadows;
   this.directionalLight.shadowMapWidth = 1024;
@@ -5086,11 +5094,16 @@ Arena.prototype._initLights = function(done) {
     self.pointLight.intensity = self.settings.lightPointIntensity;
     self.pointLight.distance = self.settings.lightPointDistance;
     self.pointLight.angle = self.settings.lightPointAngle;
-    
+
     self.directionalLight.color.set(self.settings.lightDirectionalColor);
     self.directionalLight.intensity = self.settings.lightDirectionalIntensity;
     self.directionalLight.distance = self.settings.lightDirectionalDistance;
     self.directionalLight.castShadow = self.settings.lightDirectionalShadows;
+    self.directionalLight.position.set(
+      settings.data.lightDirectionalPositionX,
+      settings.data.lightDirectionalPositionY,
+      settings.data.lightDirectionalPositionZ
+    );
 
   });
 
@@ -5099,7 +5112,7 @@ Arena.prototype._initLights = function(done) {
 
 /**
  * Init the renderer
- * 
+ *
  * @private
  */
 Arena.prototype._initRenderer = function(done) {
@@ -5181,7 +5194,7 @@ Arena.prototype._initRenderer = function(done) {
 
 /**
  * Clamp the camera movement to the ground boundings
- * 
+ *
  * @private
  */
 Arena.prototype._clampCameraToGround = function() {
@@ -5237,7 +5250,7 @@ Arena.prototype.inTerrainScreenPercentage = function(vector) {
 
 /**
  * Init the skybox
- * 
+ *
  * @private
  * @param  {Function} done called when finished
  */
@@ -5262,7 +5275,7 @@ Arena.prototype._initSky = function(done) {
 
   this.on('set:terrain', function(terrain){
 
-    // build the skybox Mesh 
+    // build the skybox Mesh
     var skyboxMesh = new THREE.Mesh( new THREE.CubeGeometry( 1000, 1000, 1000 ), material );
     skyboxMesh.flipSided = true;
     // tskyboxMesh.renderDepth = 1e20;
@@ -5312,7 +5325,7 @@ Arena.prototype.waitForEntitySelection = function(onSelection) {
 
 /**
  * Attach a listener for the next zone selection. There can be only one listener.
- * 
+ *
  * @param  {Function} onSelection
  */
 Arena.prototype.waitForZoneSelection = function(onSelection, zoneSelector) {
@@ -5339,7 +5352,7 @@ Arena.prototype.waitForZoneSelection = function(onSelection, zoneSelector) {
 
 /**
  * Cast a Raycaster in camera space
- * 
+ *
  * @param  {Array} objects specify which objects to raycast against, all intersectables object by default
  * @return {object} An intersections object
  *
@@ -5384,7 +5397,7 @@ Arena.prototype.raycast = function( event, objects ) {
 
 /**
  * Get the game container dimensions
- * 
+ *
  * @return {object} { width:W, height:H }
  */
 Arena.prototype.getContainerDimensions = function() {
@@ -5399,7 +5412,7 @@ Arena.prototype.getContainerDimensions = function() {
 
 /**
  * Set listeners to play the game in the browser
- * 
+ *
  * @private
  */
 Arena.prototype._initControls = function() {
@@ -5418,8 +5431,8 @@ Arena.prototype._initControls = function() {
 /**
  * Test a key against the specified binding
  * @param  {literal} value  Value to be tested
- * @param  {string} key Binding name: 
- * @return {boolean} True if the value match the specified binding name config 
+ * @param  {string} key Binding name:
+ * @return {boolean} True if the value match the specified binding name config
  */
 Arena.prototype._testKey = function(value, key) {
 
@@ -5438,7 +5451,7 @@ Arena.prototype._testKey = function(value, key) {
 
 /**
  * Resize listener
- * 
+ *
  * @private
  */
 Arena.prototype._onWindowResize = function() {
@@ -5455,7 +5468,7 @@ Arena.prototype._onWindowResize = function() {
 
 /**
  * Keyboard listener
- * 
+ *
  * @private
  */
 Arena.prototype._onKeyUp = function(event) {
@@ -5479,7 +5492,7 @@ Arena.prototype._onCursorMove = function(event) {
 
 /**
  * Camera zoom
- * 
+ *
  * @private
  */
 Arena.prototype.zoom = function(delta) {
@@ -5547,7 +5560,7 @@ Arena.prototype.zoomAt = function(object, duration, callback) {
 
 /**
  * Reet camera zoom
- * 
+ *
  * @private
  */
 Arena.prototype.zoomReset = function() {
@@ -5582,7 +5595,7 @@ Arena.prototype.zoomReset = function() {
 
 /**
  * Update selction with screen coordinates
- * 
+ *
  * @private
  */
 Arena.prototype.updateSelectionCoords = function(selX, selY) {
@@ -5610,7 +5623,7 @@ Arena.prototype.updateSelectionCoords = function(selX, selY) {
 
 /**
  * Update zone selection with screen coordinates
- * 
+ *
  * @private
  */
 Arena.prototype.updateZoneSelector = function(event) {
@@ -5647,7 +5660,7 @@ Arena.prototype.updateZoneSelector = function(event) {
 
 /**
  * Set the walkable terrain
- * 
+ *
  * @param {string} file Path to the .OBJ file
  * @param {object=} options Common three.js material options, plus options below (see RecastNavigation options)
  * @param {float=} options.cellSize Navmesh cell size (.8 > 2)
@@ -5733,7 +5746,7 @@ Arena.prototype.setTerrain = function(file, options) {
               case 'solo':
                 self.pathfinder.buildSolo();
                 break;
-                
+
             }
 
             self.pathfinder.initCrowd(100, 1.0);
@@ -5767,7 +5780,7 @@ Arena.prototype.setTerrain = function(file, options) {
  *
  * Warning: you don't need this to have a walkable terrain.
  * This method is available for debugging purposes.
- * 
+ *
  * @param {function} callback Callback to be called with the produced THREE.Mesh
  */
 Arena.prototype.computeNavigationMesh = function(callback) {
@@ -5822,7 +5835,7 @@ Arena.prototype.groundObject = function(object) {
 
 /**
  * Get a random postion on the terrain surface.
- * 
+ *
  * @param  {Function} callback Callback to be called with the generated position
  */
 Arena.prototype.randomPositionOnterrain = function(callback) {
@@ -5837,7 +5850,7 @@ Arena.prototype.randomPositionOnterrain = function(callback) {
  * @param {integer} flag    Walkable flags (0 will completely block moves)
  */
 Arena.prototype.addObstacle = function(position, radius, flag) {
-  
+
   radius = { x:radius, y:radius, z:radius };
   flag = flag || 0;
 
@@ -5858,7 +5871,7 @@ Arena.prototype.addObstacle = function(position, radius, flag) {
 
 /**
  * Setup an entity before it get added in the scene
- * 
+ *
  * @param  {Entity} entity The entity to be setup
  */
 Arena.prototype._prepareEntity = function(entity) {
@@ -5975,13 +5988,13 @@ Arena.prototype._prepareEntity = function(entity) {
 
 /**
  * Add a static object
- * 
+ *
  * @param {Function(object)} builder Function to be called with the fully initialized object.
- * 
+ *
  * @fires module:threearena/game#added:static
- * 
+ *
  * @return {this} The game object
- * 
+ *
  * @example
  * game.addStatic(function (done) {
  *   var petShop = new Shop({
@@ -6047,12 +6060,12 @@ Arena.prototype.addStatic = function(builder) {
 
 /**
  * Add an interactive object
- * 
+ *
  * @param {InteractiveObject} builder Interactive Object
  * @param {object} options Options
- * 
+ *
  * @fires module:threearena/game#added:interactive
- * 
+ *
  * @return {this} The game object
  */
 Arena.prototype.addInteractive = function(builder) {
@@ -6093,13 +6106,13 @@ Arena.prototype.addInteractive = function(builder) {
 
 /**
  * End all not-near-enough interaction
- * 
+ *
  * @return {this} The game object
  */
 Arena.prototype.endAllInteractions = function () {
 
   var character = this.entity;
-  
+
   _.each(this._selected_objects, function (object) {
     if (object.isNearEnough && ! object.isNearEnough(character)) {
       object.deselect();
@@ -6113,7 +6126,7 @@ Arena.prototype.endAllInteractions = function () {
  * Begin a new interaction with an interactive object
  *
  * @param  {InteractiveObject} interactiveObject
- * 
+ *
  * @return {this} The game object
  */
 Arena.prototype.startInteraction = function (interactiveObject) {
@@ -6132,14 +6145,14 @@ Arena.prototype.startInteraction = function (interactiveObject) {
 
 /**
  * Load a character.
- * 
+ *
  * @example
  * game.addCharacter(function (done) {
  *   var character = new Ogro({
  *     onload: function () { done(this); }
  *   });
  * })
- * 
+ *
  * @fires module:threearena/game#added:entity
  */
 Arena.prototype.loadCharacter = function(Builder, callback) {
@@ -6155,18 +6168,18 @@ Arena.prototype.loadCharacter = function(Builder, callback) {
 
 /**
  * Add a character
- * 
+ *
  * @param {Function(object)} builder Function to be called with the fully initialized object.
  *
  * @return {this} The game object
- * 
+ *
  * @example
  * game.addCharacter(function (done) {
  *   var character = new Ogro({
  *     onload: function () { done(this); }
  *   });
  * })
- * 
+ *
  * @fires module:threearena/game#added:entity
  */
 Arena.prototype.addCharacter = function(builder) {
@@ -6214,11 +6227,11 @@ Arena.prototype.addCharacter = function(builder) {
 
 /**
  * Remove a character from the scene
- * 
+ *
  * @param  {Entity} character
- * 
+ *
  * @return {this} The game object
- * 
+ *
  * @fires module:threearena/game#removed:entity
  */
 Arena.prototype.removeCharacter = function(character) {
@@ -6246,9 +6259,9 @@ Arena.prototype._selected_objects = [ ];
 
 /**
  * Deselect all selected characters
- * 
+ *
  * @param  {Array} butCharacters These characters should not be deselected
- * 
+ *
  * @return {this} The game object
  *
  * @fires module:threearena/game#unselect:all
@@ -6263,7 +6276,7 @@ Arena.prototype.unselectCharacters = function () {
       this._selected_objects[i].remove(this._selected_objects[i]._marker);
     }
   }
-  
+
   this._selected_objects.length = 0;
   self.waitForEntitySelection(null);
   this._inGroundSelection = null;
@@ -6276,12 +6289,12 @@ Arena.prototype.unselectCharacters = function () {
 
 /**
  * Select all characters in a zone and return them. This method ignores Y component.
- * 
+ *
  * @param  {Vector3} start Top left point of the select area
  * @param  {Vector3} end Bottom right point of the select area
- * 
+ *
  * @return {Array} Array of selected characters
- * 
+ *
  * @fires module:threearena/game#select:entities
  */
 Arena.prototype.selectCharactersInZone = function (start, end) {
@@ -6530,21 +6543,17 @@ Arena.prototype.update = function() {
   }
   /* */
 
-  // current entity 
+  // current entity
   start = now();
 
   if (this.entity) {
 
     // place a light near the main player
-    this.pointLight.position.copy(this.entity.position)
-                            .add(settings.data.lightPointOffset);
-    /*
-    this.pointLight.position.set(
-      this.entity.position.x - 50,
-      180,
-      this.entity.position.z + 100
-    );
-    */
+    this.pointLight.position.copy(this.entity.position);
+    this.pointLight.position.x += settings.data.lightPointOffsetX;
+    this.pointLight.position.y += settings.data.lightPointOffsetY;
+    this.pointLight.position.z += settings.data.lightPointOffsetZ;
+
     this.pointLight.target = this.entity;
 
     // camera position
@@ -6564,7 +6573,7 @@ Arena.prototype.update = function() {
   end = now();
   self._timings.lastDuration_thisentity = end - start;
 
-  // current entity 
+  // current entity
   start = now();
 
   async.each(this.entities, function(entity){
@@ -6609,7 +6618,7 @@ Arena.prototype.update = function() {
 
 /**
  * Where things are rendered, inside the render loop
- * 
+ *
  * @fires module:threearena/game#update
  * @fires module:threearena/game#update:behaviours
  */
@@ -6638,7 +6647,7 @@ Arena.prototype.render = function() {
 
 /**
  * Finds a game object by name and returns it.
- * 
+ *
  * @param name Name of object
  */
 Arena.prototype.find = function(name) {
@@ -8671,12 +8680,12 @@ module.exports.create = function( initParams ) {
 
   // MINIMAP
   f = gui.addFolder('Minimap');
-  f.add(settings.data.minimap, 'type',{
+  f.add(settings.data, 'minimapType',{
     'Absolute': 1,
     'Relative': 2,
   }).name('Type');
-  f.add(settings.data.minimap, 'rotate');
-  f.add(settings.data.minimap, 'zoom');
+  f.add(settings.data, 'minimapRotate').name('Can rotate');
+  f.add(settings.data, 'minimapZoom').name('Can zoom');
 
 
   var fl = gui.addFolder('Lighting');
@@ -8691,9 +8700,9 @@ module.exports.create = function( initParams ) {
   f.addColor(settings.data, 'lightAmbientColor').name('Ambient color').onChange(lightsUpdated);
 
   f = fl.addFolder('Point light');
-  f.add(settings.data.lightPointOffset, 'x', -10, 100).onChange(lightsUpdated);
-  f.add(settings.data.lightPointOffset, 'y', -10, 100).onChange(lightsUpdated);
-  f.add(settings.data.lightPointOffset, 'z', -10, 100).onChange(lightsUpdated);
+  f.add(settings.data, 'lightPointOffsetX', -1000, 1000).onChange(lightsUpdated);
+  f.add(settings.data, 'lightPointOffsetY', -1000, 1000).onChange(lightsUpdated);
+  f.add(settings.data, 'lightPointOffsetZ', -1000, 1000).onChange(lightsUpdated);
   f.addColor(settings.data, 'lightPointColor').name('Point color').onChange(lightsUpdated);
   f.add(settings.data, 'lightPointIntensity', 0.001, 10).name('Point intensity').onChange(lightsUpdated);
   f.add(settings.data, 'lightPointDistance', 0, 1000).name('Point distance').onChange(lightsUpdated);
@@ -8701,6 +8710,9 @@ module.exports.create = function( initParams ) {
 
   f = fl.addFolder('Directional light');
   f.addColor(settings.data, 'lightDirectionalColor').name('Dir color').onChange(lightsUpdated);
+  f.add(settings.data, 'lightDirectionalPositionX', -1000, 1000).onChange(lightsUpdated);
+  f.add(settings.data, 'lightDirectionalPositionY', -1000, 1000).onChange(lightsUpdated);
+  f.add(settings.data, 'lightDirectionalPositionZ', -1000, 1000).onChange(lightsUpdated);
   f.add(settings.data, 'lightDirectionalIntensity', 0.001, 10).name('Dir intensity').onChange(lightsUpdated);
   f.add(settings.data, 'lightDirectionalDistance', 0, 1000).name('Dir distance').onChange(lightsUpdated);
   f.add(settings.data, 'lightDirectionalShadows').name('Dir shadows').onChange(lightsUpdated);
@@ -8745,7 +8757,7 @@ module.exports.create = function( initParams ) {
   gui.close();
 
   // HOW THIS SHIT IS SUPPOSED TO WORK ?
-  gui.remember(settings.data);
+  // gui.remember(settings.data);
 
   // Use my own
   if (window.localStorage) { load(); }
@@ -8943,11 +8955,9 @@ settings.data = {
   cameraHeight: 180,
 
 
-  minimap: {
-    type: settings.MINIMAP_ABSOLUTE,
-    rotate: true,
-    zoom: true,
-  },
+  minimapType: settings.MINIMAP_ABSOLUTE,
+  minimapRotate: true,
+  minimapZoom: true,
 
 
   godMode: false,
@@ -9019,11 +9029,9 @@ settings.data = {
    * Point light position from the main entity
    * @type {Object}
    */
-  lightPointOffset: {
-    x:   0,
-    y: 10,
-    z:   0
-  },
+  lightPointOffsetX:   0,
+  lightPointOffsetY: 10,
+  lightPointOffsetZ:   0,
 
   /**
    * Directionnal light color
@@ -9034,11 +9042,9 @@ settings.data = {
    * Directionnal light position
    * @type {Boolean}
    */
-  lightDirectionalPosition: {
-    x: -200,
-    y:  400,
-    z: -200
-  },
+  lightDirectionalPositionX: -200,
+  lightDirectionalPositionY:  400,
+  lightDirectionalPositionZ: -200,
   /**
    * Directionnal light intensity
    * @type {Float}
@@ -11018,7 +11024,7 @@ function GameViewModel (game) {
     self.syncEntities(arena);
 
     // if we use a player centered map
-    if (settings.data.minimap.type == settings.MINIMAP_RELATIVE && arena.entity) {
+    if (settings.data.minimapType == settings.MINIMAP_RELATIVE && arena.entity) {
 
       this.minimapCover('initial');
 
@@ -11026,11 +11032,11 @@ function GameViewModel (game) {
 
       self.updateOrigin(arena, entityPositionPercent);
 
-      if (settings.data.minimap.zoom || settings.data.minimap.rotate) {
+      if (settings.data.minimapZoom || settings.data.minimapRotate) {
         self.updateOrientation(arena);
       }
 
-      if (settings.data.minimap.rotate) {
+      if (settings.data.minimapRotate) {
         self.updateZoom(arena);
       }
 
@@ -11039,7 +11045,7 @@ function GameViewModel (game) {
       self.updateEntitiesRelative(arena, entityPositionPercent);
 
     // if we use an absolute positioned map
-    } else /* if (settings.data.minimap.type == minimap.MINIMAP_ABSOLUTE) */ {
+    } else /* if (settings.data.minimapType == minimap.MINIMAP_ABSOLUTE) */ {
 
       self.minimapCover('cover');
       self.mapOffsetX(0);

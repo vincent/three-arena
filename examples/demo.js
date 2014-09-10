@@ -42,11 +42,11 @@ var objective1 = new Arena.Elements.Nexus({ life: 1000000, color: '#F33' }),
     objective2 = new Arena.Elements.Nexus({ life: 1000000, color: '#3F3' });
 
 objective1.dialog = {
-  
+
 };
 
 arena.addStatic(function(done){
-  
+
   objective1.state.isStatic = true;
   objective1.isBlocking = 5.0;
   objective1.state.team = 0;
@@ -55,7 +55,7 @@ arena.addStatic(function(done){
 });
 
 arena.addStatic(function(done){
-  
+
   objective2.state.isStatic = true;
   objective2.isBlocking = 5.0;
   objective2.state.team = 1;
