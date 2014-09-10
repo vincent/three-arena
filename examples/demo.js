@@ -149,8 +149,9 @@ arena.on('set:terrain', function(){
 // A spawning pool
 var pool = new Arena.Elements.SpawningPool({
   entity: Arena.Characters.Dummy,
-  groupOf: 1,
-  eachGroupInterval: 20 * 1000
+  groupOf: 3,
+  eachInterval: 1000,
+  eachGroupInterval: 40 * 1000
 });
 pool.on('spawnedone', function (character) {
   character.state.team = 1;

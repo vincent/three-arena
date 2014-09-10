@@ -27,7 +27,8 @@
     "tween": "vincent/tween.js",
     "machinejs": "vincent/machinejs",
     "now": "publicclass/now",
-    "EventEmitter": "Wolfy87/EventEmitter"
+    "EventEmitter": "Wolfy87/EventEmitter",
+    "Dat-GUI": "dataarts/dat.gui"
   },
   "subdomain": "three-arena",
   "scripts": {

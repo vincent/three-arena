@@ -5062,7 +5062,6 @@ Arena.prototype._initLights = function(done) {
   this.pointLight.specular = 0xffffff; // new THREE.Color('#050101'); // 0xaaaa22;
   this.scene.add(this.pointLight);
 
-  
   this.directionalLight = new THREE.SpotLight( settings.data.lightDirectionalColor, 1, 800 );
   this.directionalLight.ambient = 0xffffff;
   this.directionalLight.diffuse = 0xffffff;
@@ -6513,7 +6512,7 @@ Arena.prototype.update = function() {
 
   // tick
   start = now();
-  tic.tick(this.delta);
+  tic.tick(this.delta * 1000);
   end = now();
   self._timings.lastDuration_tick = end - start;
 
@@ -8602,11 +8601,35 @@ module.exports.create = function( initParams ) {
   gui.width = 400;
   document.getElementsByTagName('body')[0].appendChild(gui.domElement);
 
-  gui.domElement.addEventListener('click', logSettingsClick);
+  function exportConfig () {
+    var settingsData = JSON.stringify(settings.data, 4);
+    console.log(settingsData);
+  }
 
-  function logSettingsClick(){
-    gui.domElement.removeEventListener('click', logSettingsClick);
-    _gaq.push(['_trackEvent', 'settings', 'open']);
+  if (window.localStorage) {
+    gui.useLocalStorage = true;
+
+    var storageName = 'three-arena-config';
+    var save = window.saveGUI_ = function () {
+      var settingsData = {};
+      for (var key in settings.data) {
+        if (key != 'container') {
+          settingsData[key] = settings.data[key];
+        }
+      }
+      window.localStorage[storageName] = JSON.stringify(settingsData);
+    }
+    var load = function () {
+      var settingsData = window.localStorage[storageName];
+      if (settingsData) {
+        settingsData = JSON.parse(settingsData);
+        for (var key in settingsData) {
+          settings.data[key] = settingsData[key];
+        }
+      }
+    }
+
+    window.addEventListener('unload', save);
   }
 
   var f;
@@ -8655,39 +8678,28 @@ module.exports.create = function( initParams ) {
   f.add(settings.data.minimap, 'rotate');
   f.add(settings.data.minimap, 'zoom');
 
+
+  var fl = gui.addFolder('Lighting');
+
   // FOG
-  f = gui.addFolder('Fog');
+  f = fl.addFolder('Fog');
   f.addColor(settings.data, 'fogColor').name('Color').listen().onChange(fogUpdated);
   f.add(settings.data, 'fogNear', 1, 200).name('Near').listen().onChange(fogUpdated);
   f.add(settings.data, 'fogFar', 1, 2000).name('Far').listen().onChange(fogUpdated);
 
-  /*
-  f = gui.addFolder('Camera');
-  f.add(settings.data, 'cameraType',CAMERA_TYPES).name('Mode').listen().onChange(function(value){
-    settings.data.cameraType = parseInt(value,10);
-    settings.emit('cameraTypeChanged');
-  }.bind(this));
-  f.add(settings.data,'cameraOverlay').name('Overlay').onChange(function(){
-    settings.emit('cameraSettingsChanged');
-  }.bind(this));
-  f.add(settings.data,'cameraFov').min(10).max(100).step(1).name('FOV').onChange(function(){
-    settings.emit('cameraSettingsChanged');
-  }.bind(this));
-  f.add(settings.data,'cameraGrid').min(0).max(1).name('Scanlines').onChange(function(){
-    settings.emit('cameraSettingsChanged');
-  }.bind(this));
-  f.add(exports, 'shortcut','C').name('Log position');
-  */
-
-
-  f = gui.addFolder('Lights');
+  f = fl.addFolder('Ambient light');
   f.addColor(settings.data, 'lightAmbientColor').name('Ambient color').onChange(lightsUpdated);
 
+  f = fl.addFolder('Point light');
+  f.add(settings.data.lightPointOffset, 'x', -10, 100).onChange(lightsUpdated);
+  f.add(settings.data.lightPointOffset, 'y', -10, 100).onChange(lightsUpdated);
+  f.add(settings.data.lightPointOffset, 'z', -10, 100).onChange(lightsUpdated);
   f.addColor(settings.data, 'lightPointColor').name('Point color').onChange(lightsUpdated);
   f.add(settings.data, 'lightPointIntensity', 0.001, 10).name('Point intensity').onChange(lightsUpdated);
   f.add(settings.data, 'lightPointDistance', 0, 1000).name('Point distance').onChange(lightsUpdated);
   f.add(settings.data, 'lightPointAngle', 0, Math.PI * 2).name('Point angle').onChange(lightsUpdated);
 
+  f = fl.addFolder('Directional light');
   f.addColor(settings.data, 'lightDirectionalColor').name('Dir color').onChange(lightsUpdated);
   f.add(settings.data, 'lightDirectionalIntensity', 0.001, 10).name('Dir intensity').onChange(lightsUpdated);
   f.add(settings.data, 'lightDirectionalDistance', 0, 1000).name('Dir distance').onChange(lightsUpdated);
@@ -8731,6 +8743,12 @@ module.exports.create = function( initParams ) {
   }
 
   gui.close();
+
+  // HOW THIS SHIT IS SUPPOSED TO WORK ?
+  gui.remember(settings.data);
+
+  // Use my own
+  if (window.localStorage) { load(); }
 
   return gui;
 };
@@ -8852,7 +8870,7 @@ exports.shortcut = function(label){
 
 /**
  * @exports Settings
- * 
+ *
  */
 
 var EventEmitter = require('events').EventEmitter;
@@ -8885,7 +8903,7 @@ settings.data = {
    * Framerate
    * @type {Number}
    */
-  framerate: 30,
+  framerate: 60,
 
   /**
    * Desired framerate
@@ -8909,7 +8927,7 @@ settings.data = {
    * Aliasing setting
    * @type {Boolean}
    */
-  antialias: true,
+  antialias: false,
 
   /**
    * Camera field of view
@@ -8954,7 +8972,7 @@ settings.data = {
    * @type {Hex}
    */
   fogColor: 0x000000,
-  
+
   /**
    * For near setting
    * @type {Float}
@@ -9002,9 +9020,9 @@ settings.data = {
    * @type {Object}
    */
   lightPointOffset: {
-    x: -50,
-    y:  20,
-    z: 100
+    x:   0,
+    y: 10,
+    z:   0
   },
 
   /**
@@ -9012,6 +9030,15 @@ settings.data = {
    * @type {Hex}
    */
   lightDirectionalColor: 0xffffff,
+  /**
+   * Directionnal light position
+   * @type {Boolean}
+   */
+  lightDirectionalPosition: {
+    x: -200,
+    y:  400,
+    z: -200
+  },
   /**
    * Directionnal light intensity
    * @type {Float}
@@ -9021,7 +9048,7 @@ settings.data = {
    * Directionnal light distance
    * @type {Float}
    */
-  lightDirectionalDistance: 250,
+  lightDirectionalDistance: 500,
   /**
    * Directionnal light shadows
    * @type {Boolean}
