@@ -2231,7 +2231,7 @@ module.exports = AutoSpawn;
 
 /**
  * @exports threearena/elements/autospawn
- * 
+ *
  * @constructor
  */
 function AutoSpawn (options) {
@@ -2289,21 +2289,17 @@ AutoSpawn.prototype.start = function() {
 
 AutoSpawn.prototype.spanwGroup = function() {
 
-  if (! this.arena.paused) {
+  var spawn = _.bind(function(){
+    this.spanwOne();
+  }, this);
 
-    var spawn = _.bind(function(){
-      this.spanwOne();
-    }, this);
-
-    for (var i = 0; i < this.options.groupOf; i++) {
-      setTimeout(spawn, this.options.eachInterval * i);
-    }
-
+  for (var i = 0; i < this.options.groupOf; i++) {
+    this.arena.setTimeout(spawn, this.options.eachInterval * i);
   }
 
   // register next group
   if (this.options.limit > this.spawnCount) {
-    setTimeout(function(){
+    this.arena.setTimeout(function(){
       this.spanwGroup();
     }.bind(this), this.options.eachGroupInterval);
   }
@@ -2312,10 +2308,6 @@ AutoSpawn.prototype.spanwGroup = function() {
 AutoSpawn.prototype.spanwOne = function() {
 
   var self = this;
-
-  if (this.arena.paused) {
-    return;
-  }
 
   this.spawnCount++;
 
@@ -5304,7 +5296,7 @@ Arena.prototype.destroy = function() {
 
 /**
  * Attach a listener for the next entity selection. There can be only one listener.
- * 
+ *
  * @param  {Function} onSelection
  */
 Arena.prototype.waitForEntitySelection = function(onSelection) {
@@ -6508,21 +6500,20 @@ Arena.prototype.update = function() {
   this.frameTime = now();
 
   // Crowd update
-  /* */
   if (self.frameTime - self._lastCrowdUpdate > 0) {
     self._lastCrowdUpdate = self.frameTime;
     self.crowd.update(self);
   }
-  /* */
 
+  // Ugly global update event
   self._timings.lastDuration_taevents = window._ta_events.emit('update', this);
 
-  // update event
+  // Arena update event
   self._timings.lastDuration_updateevent = this.emit('update', this);
 
   // tick
   start = now();
-  // tic.tick(this.delta);
+  tic.tick(this.delta);
   end = now();
   self._timings.lastDuration_tick = end - start;
 
