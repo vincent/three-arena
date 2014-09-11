@@ -9,6 +9,7 @@
     "async": "~0.2.9",
     "debug": "~0.7.4",
     "gp-controls": "0.0.0",
+    "hoodie": "^0.9.7",
     "inherits": "~2.0.1",
     "interact": "0.0.3",
     "knockout": "^3.2.0",
