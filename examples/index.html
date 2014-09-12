@@ -43,12 +43,36 @@
     #deadscreen { display: none; width: 100%; height: 100%; background: url(styles/youaredead.jpg) no-repeat 0 0; background-size: contain; }
 
 #hud-container #view-map {
-border: 1px solid transparent;
-overflow: hidden;
+  border: 1px solid transparent;
+  overflow: hidden;
 }
-#hud-container .map {
--width: 1000px;
--height: 1000px;
+#view-questmenu {
+  background: url(/gamedata/textures/quests/frame.png) no-repeat 0 0;
+  padding: 100px 44px 12px 24px;
+  width: 274px;
+  height: 424px;
+}
+#view-questmenu .text {
+  color: black;
+  height: 140px;
+}
+#view-questmenu ul.quests {
+  margin: 16px 0px;
+  padding: 0 20px;
+}
+#view-questmenu ul.quests li {
+  list-style-image: url(/gamedata/textures/quests/quest-16.png);
+  cursor: pointer;
+  color: black;
+}
+#view-questmenu ul.choices {
+  margin: 16px 0px;
+  padding: 0 20px;
+}
+#view-questmenu ul.choices li {
+  list-style-image: url(/gamedata/textures/quests/choice-16-disabled.png);
+  cursor: pointer;
+  color: black;
 }
     </style>
 
@@ -180,8 +204,8 @@ overflow: hidden;
 
         <div class="view menu" id="view-questmenu" oncontextmenu="return false;">
           <div data-bind="with: model">
-            <div class="text">Hello, stranger</div>
             <div data-bind="ifnot: activeQuestStep">
+              <div class="text">Hello, stranger</div>
               <ul class="quests" data-bind="foreach: quests">
                 <li data-bind="event: { click: $parent.selectQuest }">
                   <span class="questtitle" data-bind="text: title"></span>
@@ -190,7 +214,7 @@ overflow: hidden;
             </div>
             <div data-bind="if: activeQuestStep && activeQuestDialog">
               <div data-bind="with: activeQuestStep()[activeQuestDialog()]">
-                <div data-bind="text: text"></div>
+                <div class="text" data-bind="text: text"></div>
                 <ul class="choices" data-bind="foreach: $parent.questChoices(choices)">
                   <li data-bind="event: { click: $parents[1].selectStepChoice }">
                     <span class="choicetext" data-bind="text: label"></span>
