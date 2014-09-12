@@ -44,6 +44,16 @@ arena.addCharacter(function(done){
   });
 });
 
+arena.addCharacter(function(done){
+  new Arena.Characters.Dummy({
+    name: 'The master',
+    maxSpeed: 15.0,
+    onLoad: function(){
+      done(this);
+    }
+  });
+});
+
 arena.on('set:terrain', function(){
   arena.init(function(arena){
     arena.run();
@@ -53,30 +63,32 @@ arena.on('set:terrain', function(){
 arena.addQuest({
   id: 1,
   title: 'A brave new world',
+  step: 0,
   steps: [
     {'The elder': {
-      dialog1: {
-        text: "Hello stranger,\nI'm Pedro The Elder\nDo you feel ... adventurous ?\n",
-        choices: {
-          'Yes': 'dialog2',
-          'No': 'kthxbye'
-        }
-      },
+      intro: {
+        text: "Hello stranger,<br>I'm Pedro The Elder<br>Do you feel ... adventurous ?",
+        choices: { 'Yes': 'dialog2', 'No': 'kthxbye' }},
       dialog2: {
-        text: "Ho.. I see... but aren't you too young for an adventure ?\n",
-        choices: {
-          'Maybe': 'kthxbye',
-          'No !': function () {
-            alert('Go up north !');
-          }
-        }
-      },
+        text: "I see... but aren't you too young for an adventure ?",
+        choices: { 'Maybe': 'kthxbye', 'No !': 'tothemaster' }}},
+      tothemaster: {
+        text: "Ok young padawan,<br>then you should talk to the master, up there.",
+        choices: { 'I will': 'next', 'No': 'kthxbye' }}},
       kthxbye: {
-        text: "Well... see you then...\n",
-        choices: {
-          'Bye': 'end'
-        }
-      }
+        text: "Well... see you, then...",
+        choices: { 'Bye': 'end' }}
+    }},
+    {'The master': {
+      dialog1: {
+        text: "Hello stranger,<br>I'm Lucio The Master<br>So you feel adventurous, hum ?",
+        choices: { 'Yes': 'dialog2', 'No': 'kthxbye' }},
+      dialog2: {
+        text: "Ho.. I see... but aren't you too young for an adventure ?",
+        choices: { 'Maybe': 'kthxbye', 'No !': function () { alert('Go up north !'); }}},
+      kthxbye: {
+        text: "Well... see you then...",
+        choices: { 'Bye': 'end' }}
     }}
   ]
 });
