@@ -55,19 +55,30 @@ arena.addQuest({
   title: 'A brave new world',
   steps: [
     {'The elder': {
-      dialog1: [
-        ['Hello stranger,',
-         'I\'m Pedro The Elder',
-         'Do you feel adventurous ?'],
-        {
-          'Yes': function () {
+      dialog1: {
+        text: "Hello stranger,\nI'm Pedro The Elder\nDo you feel ... adventurous ?\n",
+        choices: {
+          'Yes': 'dialog2',
+          'No': 'kthxbye'
+        }
+      },
+      dialog2: {
+        text: "Ho.. I see... but aren't you too young for an adventure ?\n",
+        choices: {
+          'Maybe': 'kthxbye',
+          'No !': function () {
             alert('Go up north !');
-          },
-          'No': function () {
-            alert('Ok then, stay here little one.');
           }
         }
-      ]
+      },
+      kthxbye: {
+        text: "Well... see you then...\n",
+        choices: {
+          'Bye': 'end'
+        }
+      }
     }}
   ]
 });
+
+arena.quests.syncAvailableQuests();

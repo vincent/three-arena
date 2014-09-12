@@ -178,6 +178,29 @@ overflow: hidden;
           </ul>
         </div>
 
+        <div class="view menu" id="view-questmenu" oncontextmenu="return false;">
+          <div data-bind="with: model">
+            <div class="text">Hello, stranger</div>
+            <div data-bind="ifnot: activeQuestStep">
+              <ul class="quests" data-bind="foreach: quests">
+                <li data-bind="event: { click: $parent.selectQuest }">
+                  <span class="questtitle" data-bind="text: title"></span>
+                </li>
+              </ul>
+            </div>
+            <div data-bind="if: activeQuestStep && activeQuestDialog">
+              <div data-bind="with: activeQuestStep()[activeQuestDialog()]">
+                <div data-bind="text: text"></div>
+                <ul class="choices" data-bind="foreach: $parent.questChoices(choices)">
+                  <li data-bind="event: { click: $parents[1].selectStepChoice }">
+                    <span class="choicetext" data-bind="text: label"></span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div id="hud-container">
 
           <div class="view front"></div>
@@ -229,30 +252,30 @@ overflow: hidden;
       <!-- SHADER: Glowing effect -->
       <script id="glow_vertexshader" type="x-shader/x-vertex">
       varying vec3 vNormal;
-      void main() 
+      void main()
       {
           vNormal = normalize( normalMatrix * normal );
           gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
       }
       </script>
-      <script id="glow_fragmentshader" type="x-shader/x-vertex"> 
+      <script id="glow_fragmentshader" type="x-shader/x-vertex">
       varying vec3 vNormal;
-      void main() 
+      void main()
       {
-          float intensity = pow( 0.7 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) ), 4.0 ); 
+          float intensity = pow( 0.7 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) ), 4.0 );
           gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * intensity;
       }
       </script>
 
       <script id="waterVertexShader" type="x-shader/x-vertex">
       varying vec2 vUv;
-      void main() { 
+      void main() {
           vUv = uv;
           gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
       }
       </script>
 
-      <script id="waterFragmentShader" type="x-shader/x-vertex"> 
+      <script id="waterFragmentShader" type="x-shader/x-vertex">
       uniform sampler2D baseTexture;
       uniform float baseSpeed;
       uniform sampler2D noiseTexture;
@@ -262,14 +285,14 @@ overflow: hidden;
 
       varying vec2 vUv;
       void main() {
-          vec2 uvTimeShift = vUv + vec2( -0.7, 1.5 ) * time * baseSpeed;  
+          vec2 uvTimeShift = vUv + vec2( -0.7, 1.5 ) * time * baseSpeed;
           vec4 noiseGeneratorTimeShift = texture2D( noiseTexture, uvTimeShift );
           vec2 uvNoiseTimeShift = vUv + noiseScale * vec2( noiseGeneratorTimeShift.r, noiseGeneratorTimeShift.b );
           vec4 baseColor = texture2D( baseTexture, uvNoiseTimeShift );
 
           baseColor.a = alpha;
           gl_FragColor = baseColor;
-      }  
+      }
       </script>
 
       <!-- SHADER: Terrain -->
