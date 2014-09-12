@@ -28,6 +28,7 @@ arena.addCharacter(function(done){
     maxSpeed: 15.0,
     onLoad: function(){
       this.learnSpell(Arena.Spells.Teleport);
+      this.position.set(-5, 0, -5);
       arena.asPlayer(this);
       done(this);
     }
@@ -39,6 +40,7 @@ arena.addCharacter(function(done){
     name: 'The elder',
     maxSpeed: 15.0,
     onLoad: function(){
+      this.position.set(10, 0, -10);
       done(this);
     }
   });
@@ -49,6 +51,7 @@ arena.addCharacter(function(done){
     name: 'The master',
     maxSpeed: 15.0,
     onLoad: function(){
+      this.position.set(-10, 0, 10);
       done(this);
     }
   });
@@ -60,37 +63,37 @@ arena.on('set:terrain', function(){
   });
 });
 
-arena.addQuest({
-  id: 1,
-  title: 'A brave new world',
-  step: 0,
-  steps: [
-    {'The elder': {
-      intro: {
-        text: "Hello stranger,<br>I'm Pedro The Elder<br>Do you feel ... adventurous ?",
-        choices: { 'Yes': 'dialog2', 'No': 'kthxbye' }},
-      dialog2: {
-        text: "I see... but aren't you too young for an adventure ?",
-        choices: { 'Maybe': 'kthxbye', 'No !': 'tothemaster' }}},
-      tothemaster: {
-        text: "Ok young padawan,<br>then you should talk to the master, up there.",
-        choices: { 'I will': 'next', 'No': 'kthxbye' }}},
-      kthxbye: {
-        text: "Well... see you, then...",
-        choices: { 'Bye': 'end' }}
-    }},
-    {'The master': {
-      dialog1: {
-        text: "Hello stranger,<br>I'm Lucio The Master<br>So you feel adventurous, hum ?",
-        choices: { 'Yes': 'dialog2', 'No': 'kthxbye' }},
-      dialog2: {
-        text: "Ho.. I see... but aren't you too young for an adventure ?",
-        choices: { 'Maybe': 'kthxbye', 'No !': function () { alert('Go up north !'); }}},
-      kthxbye: {
-        text: "Well... see you then...",
-        choices: { 'Bye': 'end' }}
-    }}
-  ]
-});
-
-arena.quests.syncAvailableQuests();
+setTimeout(function(){
+  arena.addQuest({
+    id: 1,
+    title: 'A brave new world',
+    step: 0,
+    steps: [
+      {'The elder': {
+        intro: {
+          text: "Hello stranger,<br>I'm Pedro The Elder<br>Do you feel ... adventurous ?",
+          choices: { 'Yes': 'dialog2', 'No': 'kthxbye' }},
+        dialog2: {
+          text: "I see... but aren't you too young for an adventure ?",
+          choices: { 'Maybe': 'kthxbye', 'No !': 'tothemaster' }},
+        tothemaster: {
+          text: "Ok young padawan,<br>then you should talk to the master, up there.",
+          choices: { 'I will': 'next', 'No': 'kthxbye' }},
+        kthxbye: {
+          text: "Well... see you, then...",
+          choices: { 'Bye': 'end' }}
+      }},
+      {'The master': {
+        dialog1: {
+          text: "Hello stranger,<br>I'm Lucio The Master<br>So you feel adventurous, hum ?",
+          choices: { 'Yes': 'dialog2', 'No': 'kthxbye' }},
+        dialog2: {
+          text: "Ho.. I see... but aren't you too young for an adventure ?",
+          choices: { 'Maybe': 'kthxbye', 'No !': function () { alert('Go up north !'); }}},
+        kthxbye: {
+          text: "Well... see you then...",
+          choices: { 'Bye': 'end' }}
+      }}
+    ]
+  });
+}, 3000);

@@ -8699,6 +8699,7 @@ module.exports = {
   Tween: Tween
 };
 },{}],62:[function(require,module,exports){
+'use strict';
 
 var _ = require('lodash');
 var Hoodie = require('hoodie');
@@ -8720,9 +8721,16 @@ function Quests (arena) {
     this.sprites = {};
     this.updateSprites();
 
+    /* * /
     this.store.on('add:quest', function(object) {
-        object._meta = self.involvedEntities(object.quest);
-        console.log('new quest', object)
+        object._givers = self.involvedEntities(object.quest);
+        console.log('new quest', object);
+    });
+    /* */
+
+    // when store changes, update available quests
+    this.store.on('change', function () {
+        self.syncAvailableQuests();
     });
 
 }
@@ -8753,6 +8761,10 @@ Quests.prototype.updateSprites = function() {
 
 //////////
 
+Quests.prototype.add = function(quest) {
+    this.store.add('quest', quest);
+};
+
 Quests.prototype.entities = function() {
     return this.arena.entities.map(function(e){
         if (! e.isDead()) return e.state.name;
@@ -8760,8 +8772,12 @@ Quests.prototype.entities = function() {
 };
 
 Quests.prototype.involvedEntities = function(quest) {
+
+    return Object.keys(quest.steps[quest.step]);
+
+    /*
     var involved = { starts:[], related:[], ends:[], all:[] };
-    for (var i = 0; i < quest.steps.length; i++) {
+    for (var i = quest.step; i < quest.steps.length; i++) {
         for (var npc in quest.steps[i]) {
             if (i === quest.steps.length - 1) {
                 involved.ends.push(npc);
@@ -8774,28 +8790,29 @@ Quests.prototype.involvedEntities = function(quest) {
         }
     }
     return involved;
+    */
 };
 
+/* * /
 Quests.prototype.canBeStartedBy = function(quest, entity) {
     for (var npc in quest.steps[0])
         if (npc == entity.state.name)
             return true;
     return false;
 };
+/* */
 
 //////////
 
-Quests.prototype.add = function(quest) {
-    this.store.add('quest', quest);
+Quests.prototype.step = function(quest) {
+    this.store.update('quest', quest.id, { step: quest.step+1 });
 };
 
 Quests.prototype.findRelatedQuests = function() {
     var self = this;
     var entities = this.entities();
     return this.store.findAll(function(quest){
-        quest._meta = quest._meta || self.involvedEntities(quest);
-        return _.intersection(quest._meta.starts, entities).length > 0 ||
-                  _.intersection(quest._meta.ends, entities).length > 0;
+        return _.intersection(self.involvedEntities(quest), entities).length > 0;
     });
 };
 
@@ -8803,6 +8820,10 @@ Quests.prototype.clearQuests = function() {
     this.arena.entities.forEach(function (entity) {
         entity._quests = entity._quests || [];
         entity._quests.length = 0;
+        if (entity.questMark) {
+            entity.arena.scene2.remove(entity.questMark);
+            entity.questMark = null; // should be enough to be GCed
+        }
     });
 };
 
@@ -8819,23 +8840,15 @@ Quests.prototype.syncAvailableQuests = function() {
 
 Quests.prototype.syncQuest = function(quest) {
     var self = this, questEntities;
-    quest._meta = quest._meta || self.involvedEntities(quest);
-    // mark starters
-    for (var i = 0; i < quest._meta.starts.length; i++) {
-        questEntities = self.arena.findAllEntitiesByName(quest._meta.starts[i])
+    quest._givers = quest._givers || self.involvedEntities(quest);
+
+    for (var i = 0; i < quest._givers.length; i++) {
+        questEntities = self.arena.findAllEntitiesByName(quest._givers[i]);
         for (var j = 0; j < questEntities.length; j++) {
             questEntities[j]._quests.push(quest);
-            self.markEntity(questEntities[j], Quests.START);
+            self.markEntity(questEntities[j], quest.step === quest.steps.length - 1 ? Quests.END : Quests.START);
         }
-    };
-    // mark enders
-    for (var i = 0; i < quest._meta.ends.length; i++) {
-        questEntities = self.arena.findAllEntitiesByName(quest._meta.ends[i])
-        for (var j = 0; j < questEntities.length; j++) {
-            questEntities[j]._quests.push(quest);
-            self.markEntity(questEntities[j], Quests.END);
-        }
-    };
+    }
 };
 
 Quests.prototype.markEntity = function(entity, questMarkType) {
@@ -8854,17 +8867,18 @@ Quests.prototype.markEntity = function(entity, questMarkType) {
     };
 
     // update function
-    var updateQuestMark = function(game){
+    var updateQuestMark = function (game) {
+        if (entity.questMark) {
+            // .. always above its character
+            entity.questMark.position.set(
+                entity.position.x,
+                entity.position.y + entity.boundingBox.max.y * 3,
+                entity.position.z
+            );
 
-        // .. always above its character
-        entity.questMark.position.set(
-            entity.position.x,
-            entity.position.y + entity.boundingBox.max.y * 3,
-            entity.position.z
-        );
-
-        // .. always face camera
-        entity.questMark.rotation.y = self.arena.camera.rotation.y;
+            // .. always face camera
+            entity.questMark.rotation.y = self.arena.camera.rotation.y;
+        }
     };
 
     updateQuestMark.listenerTag = 'entity ' + entity.constructor.name + '#' + entity.id + ' quest mark update';
@@ -11461,6 +11475,7 @@ function QuestDialogViewModel (quests, questGiver) {
     this.questGiverName = ko.observable(questGiver.state.name);
     this.quests = ko.observable(quests);
 
+    this.activeQuest = ko.observable(null);
     this.activeQuestStep = ko.observable(null);
     this.activeQuestDialog = ko.observable(null);
 
@@ -11476,10 +11491,11 @@ function QuestDialogViewModel (quests, questGiver) {
                 then: consequence
             };
         });
-    }
+    };
 
     this.selectQuest = function (item) {
-        var step = item.steps[0][self.questGiverName()];
+        self.activeQuest(item);
+        var step = item.steps[item.step][self.questGiverName()];
         self.activeQuestStep(step);
         var dialog = Object.keys(step)[0];
         self.activeQuestDialog(dialog);
@@ -11496,8 +11512,13 @@ function QuestDialogViewModel (quests, questGiver) {
         // string specified
         } else if (_.isString(item.then)) {
 
+            // jump to the next step
+            if (item.then === 'next') {
+                questGiver.arena.quests.step(self.activeQuest());
+                questGiver.emit('deselected');
+
             // this is the end..
-            if (item.then == 'end') {
+            } else if (item.then === 'end') {
                 questGiver.emit('deselected');
 
             // assume scenario follow-up
@@ -11505,7 +11526,7 @@ function QuestDialogViewModel (quests, questGiver) {
                 self.activeQuestDialog(item.then);
             }
         }
-    }
+    };
 }
 
 },{"knockout":132,"lodash":133}],85:[function(require,module,exports){
