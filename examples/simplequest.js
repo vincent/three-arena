@@ -88,8 +88,18 @@ setTimeout(function(){
           text: "Hello stranger,<br>I'm Lucio The Master<br>So you feel adventurous, hum ?",
           choices: { 'Yes': 'dialog2', 'No': 'kthxbye' }},
         dialog2: {
-          text: "Ho.. I see... but aren't you too young for an adventure ?",
-          choices: { 'Maybe': 'kthxbye', 'No !': function () { alert('Go up north !'); }}},
+          text: "Ho.. and do you really feel healthy enough ?",
+          choices: { 'Maybe': 'kthxbye', 'No !': function () {
+            return arena.entity.state.life > 50 ? 'tothemoon' : 'nothealthy';
+          }}},
+        nothealthy: {
+          text: "Well... I don't think so...",
+          choices: { 'Bye': 'end' }},
+        tothemoon: {
+          text: "Okay! To the moon !",
+          choices: { 'Go !': function () {
+            arena.entity.learnSpell(Arena.Spells.Heal);
+          } }},
         kthxbye: {
           text: "Well... see you then...",
           choices: { 'Bye': 'end' }}

@@ -8715,7 +8715,7 @@ function Quests (arena) {
 
     this.arena = arena;
 
-    hoodie = hoodie || new Hoodie();
+    hoodie = hoodie || new Hoodie('http://localhost:6001');
     this.store = hoodie.store;
 
     this.sprites = {};
