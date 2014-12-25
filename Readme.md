@@ -57,7 +57,7 @@ Some examples here [three-arena.com/examples](http://three-arena.com/examples)
 
 Or run ```npm install && npm start``` from the project root.
 
-<pre class="prettyprint lang-js">
+```js
   new Arena({
     container: 'game-container', // the container DOM ID
 
@@ -94,7 +94,7 @@ Or run ```npm install && npm start``` from the project root.
     });
     
   });
-</pre>
+```
 
 Show me the code
 ===
