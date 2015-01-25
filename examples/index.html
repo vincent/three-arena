@@ -42,38 +42,38 @@
     #myModal iframe { width: 100%; border: none; }
     #deadscreen { display: none; width: 100%; height: 100%; background: url(styles/youaredead.jpg) no-repeat 0 0; background-size: contain; }
 
-#hud-container #view-map {
-  border: 1px solid transparent;
-  overflow: hidden;
-}
-#view-questmenu {
-  background: url(/gamedata/textures/quests/frame.png) no-repeat 0 0;
-  padding: 100px 44px 12px 24px;
-  width: 274px;
-  height: 424px;
-}
-#view-questmenu .text {
-  color: black;
-  height: 140px;
-}
-#view-questmenu ul.quests {
-  margin: 16px 0px;
-  padding: 0 20px;
-}
-#view-questmenu ul.quests li {
-  list-style-image: url(/gamedata/textures/quests/quest-16.png);
-  cursor: pointer;
-  color: black;
-}
-#view-questmenu ul.choices {
-  margin: 16px 0px;
-  padding: 0 20px;
-}
-#view-questmenu ul.choices li {
-  list-style-image: url(/gamedata/textures/quests/choice-16-disabled.png);
-  cursor: pointer;
-  color: black;
-}
+    #hud-container #view-map {
+      border: 1px solid transparent;
+      overflow: hidden;
+    }
+    #view-questmenu {
+      background: url(/gamedata/textures/quests/frame.png) no-repeat 0 0;
+      padding: 100px 44px 12px 24px;
+      width: 274px;
+      height: 424px;
+    }
+    #view-questmenu .text {
+      color: black;
+      height: 140px;
+    }
+    #view-questmenu ul.quests {
+      margin: 16px 0px;
+      padding: 0 20px;
+    }
+    #view-questmenu ul.quests li {
+      list-style-image: url(/gamedata/textures/quests/quest-16.png);
+      cursor: pointer;
+      color: black;
+    }
+    #view-questmenu ul.choices {
+      margin: 16px 0px;
+      padding: 0 20px;
+    }
+    #view-questmenu ul.choices li {
+      list-style-image: url(/gamedata/textures/quests/choice-16-disabled.png);
+      cursor: pointer;
+      color: black;
+    }
     </style>
 
   </head>
@@ -381,6 +381,8 @@
 
     <script type="text/javascript" src="/vendor/m.guerrero/SkeletonHelper.js"></script>
     <script type="text/javascript" src="/vendor/m.guerrero/BlendCharacter.js"></script>
+
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
 
     <script type="text/javascript" src="/build/arena.build.js"></script>
 
