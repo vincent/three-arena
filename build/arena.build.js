@@ -177,11 +177,11 @@ var Utils = require('./utils');
 
 module.exports = Character;
 
-/**
+/** 
  * A module representing a character.
- *
+ * 
  * @exports Character
- *
+ * 
  * @constructor
  */
 function Character (options) {
@@ -229,7 +229,7 @@ Character.prototype.update = function(game) {
 Character.prototype.moveAlong = function(linepoints, options) {
 
   var self = this;
-
+  
   options = _.merge({
     append: false,
     speed: this.state.speed,
@@ -305,15 +305,15 @@ module.exports = ZeroZeroSeven;
 
 /**
  * @exports threearena/character/007
- *
+ * 
  * @constructor
- *
+ * 
  * @param {Object} options options
  * @param {object=} options.name Character name
  * @param {object=} options.image Path to character portrait
  * @param {object=} options.life Character Base life
  * @param {object=} options.mana Character Base mana
- *
+ * 
  * @extends {module:threearena/entity}
  */
 function ZeroZeroSeven ( options ) {
@@ -499,7 +499,7 @@ module.exports = Ghost;
 
 /**
  * @exports threearena/character/ghost
- *
+ * 
  * @constructor
  */
 function Ghost ( options ) {
@@ -528,7 +528,7 @@ function Ghost ( options ) {
       materials[i].morphTargets = true;
       materials[i].skinning = true;
     }
-
+    
     var material = new THREE.MeshFaceMaterial( materials );
     self.character = new THREE.SkinnedMesh( geometry, material );
     // self.character.scale.set(10,10,10);
@@ -589,7 +589,7 @@ module.exports = Human;
 
 /**
  * @exports threearena/character/human
- *
+ * 
  * @constructor
  */
 function Human ( options ) {
@@ -617,7 +617,7 @@ function Human ( options ) {
     for (var i = 0; i < materials.length; i++) {
       materials[i].morphTargets = true;
     }
-
+        
     var material = new THREE.MeshFaceMaterial( materials );
     self.character = new THREE.Mesh( geometry, material );
     self.character.scale.set(10,10,10);
@@ -665,7 +665,7 @@ function Marine (options) {
   Character.apply( this, [ options ]);
 
   self.blendMesh = new THREE.BlendCharacter();
-
+  
   self.blendMesh.load('/gamedata/sandbox/marine.js', function(){
     self.blendMesh.rotation.y = Math.PI * -135 / 180;
     self.blendMesh.scale.set(0.09, 0.09, 0.09);
@@ -681,7 +681,7 @@ function Marine (options) {
     self.blendMesh.update(delta);
     THREE.AnimationHandler.update(delta);
   };
-
+  
   self.character.setAnimation = function(anim) {
 
     if (self.currentAnimation !== anim) {
@@ -715,7 +715,7 @@ module.exports = Monsterdog;
 
 /**
  * @exports threearena/character/monsterdog
- *
+ * 
  * @constructor
  */
 function Monsterdog ( options ) {
@@ -916,7 +916,7 @@ module.exports = Ratamahatta;
 
 /**
  * @exports threearena/character/ratamahatta
- *
+ * 
  * @constructor
  */
 function Ratamahatta ( options ) {
@@ -1050,7 +1050,7 @@ module.exports = Zombie;
 
 /**
  * @exports threearena/character/zombie
- *
+ * 
  * @constructor
  */
 function Zombie ( options ) {
@@ -1199,7 +1199,7 @@ module.exports = AttackCircle;
 
 /**
  * @exports threearena/controls/attackcircle
- *
+ * 
  * @constructor
  */
 function AttackCircle ( radius ) {
@@ -1246,7 +1246,7 @@ module.exports = DestinationMarker;
 
 /**
  * @exports threearena/spell/destinationmarker
- *
+ * 
  * @constructor
  */
 function DestinationMarker(options) {
@@ -1298,7 +1298,7 @@ module.exports = DotaControls;
 
 /**
  * @exports threearena/controls/dota
- *
+ * 
  * @constructor
  */
 function DotaControls ( object, domElement, options ) {
@@ -1648,7 +1648,7 @@ module.exports = ZoneSelector;
 
 /**
  * @exports threearena/controls/zoneselector
- *
+ * 
  * @constructor
  */
 function ZoneSelector(arena, options) {
@@ -1827,7 +1827,7 @@ module.exports = Crowd;
 
 /**
  * @exports Crowd
- *
+ * 
  * @constructor
  */
 function Crowd (game) {
@@ -1887,13 +1887,13 @@ function Crowd (game) {
 }
 
 Crowd.prototype.attachRouteDebug = function(entity) {
-
+  
   if (!  entity._crowd_current_route_geometry) {
     entity._crowd_current_route_geometry = new THREE.Geometry();
     entity._crowd_current_route_geometry.vertices.push(this._originVector);
     entity._crowd_current_route_geometry.vertices.push(this._originVector.clone()); // need a new one
 
-    // WHY a new one ??
+    // WHY a new one ?? 
     var _route_material = new THREE.LineBasicMaterial({
       color: 0xff0000,
       transparent: true,
@@ -1931,7 +1931,7 @@ Crowd.prototype.addAgent = function(entity, options, destination, follow, callba
 
     function onEntityDestination(destination) {
       entity._crowd_following = null;
-      // dont call the worker for a minor change
+      // dont call the worker for a minor change 
       if (! entity._crowd_destination ||
         destination.position.distanceTo(entity._crowd_destination.position) > settings.data.crowdMinDestinationChange)
       {
@@ -1949,7 +1949,7 @@ Crowd.prototype.addAgent = function(entity, options, destination, follow, callba
 
     function onEntityFollow(following) {
       entity._crowd_destination = null;
-      // dont call the worker for a minor change
+      // dont call the worker for a minor change 
       if (!entity._crowd_following || entity._crowd_following !== following ||
         following.position.distanceTo(entity._crowd_following.position) > settings.data.crowdMinDestinationChange)
       {
@@ -2128,7 +2128,7 @@ Crowd.prototype._checkAgents = function(entity, idx) {
   // update dirty follow
   // TODO: also use a _dirtyMove flag ?
   if (entity._crowd_following) {
-    // dont call the worker for a minor change
+    // dont call the worker for a minor change 
     if (entity._crowd_following_last_position.distanceTo(entity._crowd_following.position) > 2.0 * settings.data.crowdMinDestinationChange)
     {
       this.game.pathfinder.crowdRequestMoveTarget(idx, entity._crowd_following.position);
@@ -2500,7 +2500,7 @@ Collectible.prototype.isNearEnough = function(object) {
 /**
  * Collect function
  * @param  {Entity}   entity   Entity who collect things
- * @param  {Function} callback Callback, called with two arguments : error, and eventData
+ * @param  {Function} callback Callback, called with two arguments : error, and eventData 
  */
 Collectible.prototype.collectedBy = function(entity, callback) {
 
@@ -2583,7 +2583,7 @@ Collectible.prototype.removeWorker = function (entity) {
 /**
  * Collect function
  * @param  {Entity}   entity   Entity who collect things
- * @param  {Function} callback Callback, called with two arguments : error, and eventData
+ * @param  {Function} callback Callback, called with two arguments : error, and eventData 
  */
 Collectible.prototype.collectedBy = function(entity, callback) {
 
@@ -2739,13 +2739,13 @@ module.exports = Grass;
 
 /**
  * @exports threearena/elements/grass
- *
+ * 
  * @constructor
  */
 function Grass (options) {
 
   var self = this;
-
+  
   THREE.Object3D.apply(this);
 
   // self.position.y = 0;
@@ -2803,10 +2803,10 @@ Grass.prototype.generateTextureBase = function () {
     context.fill();
 
   }
-
+  
   context.globalAlpha = 0.075;
   context.globalCompositeOperation = 'lighter';
-
+  
   return canvas;
 };
 
@@ -2834,9 +2834,9 @@ Grass.prototype.update = function(arena) {
     mesh.position.x = Math.sin( timestep * 2 ) * i * i * 0.01;
     mesh.position.z = Math.cos( timestep * 3 ) * i * i * 0.01;
     // mesh.material.map.needsUpdate = true;
-    //
+    // 
     // mesh.position.i = i;
-
+    
     // console.log('%o, %o, %o', mesh.position.x, mesh.position.y, mesh.position.z);
   }
 };
@@ -2852,7 +2852,7 @@ module.exports = InteractiveObject;
 
 /**
  * @exports threearena/elements/interactiveobject
- *
+ * 
  * @constructor
  */
 function InteractiveObject (options) {
@@ -3127,13 +3127,13 @@ module.exports = Spikes;
 
 /**
  * @exports threearena/elements/spikes
- *
+ * 
  * @constructor
  */
 function Spikes (options) {
 
   var self = this;
-
+  
   THREE.Object3D.apply(this);
 
   options = options || {};
@@ -3154,7 +3154,7 @@ function Spikes (options) {
 
   var loader = new THREE.JSONLoader();
   loader.load('/gamedata/models/spikes/spikes.js', function ( geometry ) {
-
+    
     self.mesh = new THREE.Mesh( geometry, material );
     self.mesh.morphTargetInfluences[0] = 1.1;
     self.mesh.position.y = -1;
@@ -3174,7 +3174,7 @@ inherits(Spikes, THREE.Object3D);
 Spikes.prototype.spikeOn = function() {
 
   var self = this;
-
+  
   return new TWEEN.Tween({ distance: 1.0 })
     .to({ distance: -1.0 }, 100)
     .onUpdate(function(){
@@ -3453,7 +3453,7 @@ function DefenseTower ( x, y, z, options ) {
     self.aura = Particles.Aura( 'point', self.options.fireIntensity, self.options.orbTexture, null );
     self.aura.particleCloud.position.set( x, y+28, z );
     self.add( self.aura.particleCloud );
-
+    
     var lantern = loaded.scene.children[ 0 ];
     lantern.castShadow = true;
     lantern.rotation.x = -90 * Math.PI / 180;
@@ -3466,7 +3466,7 @@ function DefenseTower ( x, y, z, options ) {
 
     if (self.options.start) {
       self.aura.start();
-
+      
       window._ta_events.on('update', selfUpdate);
     }
   });
@@ -3508,7 +3508,7 @@ DefenseTower.prototype.fireTo = function(target) {
   if (this._firing || ! target instanceof Entity) { return; }
 
   this._firing = true;
-
+  
   var startPosition = this.position.clone().setY(35);
   var vectorPosition = target.position.clone().add(startPosition).divideScalar(2).setY(28 + 0);
 
@@ -3546,7 +3546,7 @@ DefenseTower.prototype.fireTo = function(target) {
         self.remove(cloud.particleCloud);
       }, 1000 );
     })
-
+    
     .onComplete(function(){
       window._ta_events.removeListener('update', cloudUpdate);
 
@@ -3561,7 +3561,7 @@ DefenseTower.prototype.fireTo = function(target) {
       });
       target.hit(spell);
     })
-
+    
     .onUpdate(function(){
       // get the position data half way along the path
       var pathPosition = line.getPoint(this.distance);
@@ -3654,7 +3654,7 @@ function Water (options) {
   THREE.Object3D.apply(this);
 
   var waterNormals = new THREE.ImageUtils.loadTexture('/gamedata/textures/waternormals.jpg');
-  waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
+  waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping; 
 
   this.material = waterMaterial;
 
@@ -4666,43 +4666,43 @@ function SpellTexts (game, options) {
 (function (process){
 'use strict';
 
-var debug = require('debug')('arena');
+var debug              = require('debug')('arena');
 
-var settings = require('./settings');
-var settingsGUI = require('./settings-gui');
+var settings           = require('./settings');
+var settingsGUI        = require('./settings-gui');
 
-var now = require('now');
-var _ = require('lodash');
-var tic = require('tic')();
-var async = require('async');
-var TWEEN = require('tween');
-var Stats = require('../vendor/stats');
-var detector = require('../vendor/detector');
-var inherits = require('inherits');
-var EventEmitter = require('EventEmitter');
-var interact = process.browser ? require('interact') : null;
-// var requestAnimationFrame = require('request-animation-frame').requestAnimationFrame;
+var now                = require('now');
+var _                  = require('lodash');
+var tic                = require('tic')();
+var async              = require('async');
+var TWEEN              = require('tween');
+var Stats              = require('../vendor/stats');
+var detector           = require('../vendor/detector');
+var inherits           = require('inherits');
+var EventEmitter       = require('EventEmitter');
+var interact           = process.browser ? require('interact') : null;
+// var raf             = require('request-animation-frame').requestAnimationFrame;
 
-var Machine = require('machinejs');
+var Machine            = require('machinejs');
 
 
-var HUD = require('./hud');
-var Crowd = require('./crowd');
-var Utils = require('./utils');
-var Entity = require('./entity');
-var LifeBar = require('./elements/slifebar');
-var DestinationMarker = require('./controls/destinationmarker');
-var Terrain = require('./elements/terrain');
-var InteractiveObject = require('./elements/interactiveobject');
-var PathFinding = require('recastjs/lib/recast.withworker');
-var CameraControls = require('./controls/dota');
-var SpellTexts = require('./hud/spelltexts');
-var Collectible = require('./elements/collectible');
-var MouseControls = require('./input/mouse');
+var HUD                = require('./hud');
+var Crowd              = require('./crowd');
+var Utils              = require('./utils');
+var Entity             = require('./entity');
+var LifeBar            = require('./elements/slifebar');
+var DestinationMarker  = require('./controls/destinationmarker');
+var Terrain            = require('./elements/terrain');
+var InteractiveObject  = require('./elements/interactiveobject');
+var PathFinding        = require('recastjs/lib/recast.withworker');
+var CameraControls     = require('./controls/dota');
+var SpellTexts         = require('./hud/spelltexts');
+var Collectible        = require('./elements/collectible');
+var MouseControls      = require('./input/mouse');
 // var GamepadControls = require('./input/gamepad');
-var ZoneSelector = require('./controls/zoneselector');
-var Quests = require('./quests');
-var Network = require('./network');
+var ZoneSelector       = require('./controls/zoneselector');
+var Quests             = require('./quests');
+var Network            = require('./network');
 
 
 module.exports = Arena;
@@ -6614,7 +6614,7 @@ Arena.prototype.syncEntityPosition = function() {
     p.toJSON = function () {
       return { x:p.x, y:p.y, z:p.z };
     }
-    this.network.send('position', p, this.entity.state.name);
+    this.network.send('move', p, this.entity.state.name);
   }
 };
 
@@ -7278,7 +7278,7 @@ function Inventory (entity) {
 
 /**
  * Add something in the inventory
- *
+ * 
  * @param  {Object} data The object data { kind: "Stuff", amount: "123" }
  *
  * @triggers 'entity:collect'
@@ -7293,7 +7293,7 @@ Inventory.prototype.push = function(data) {
 
 /**
  * Get amount of a given kind
- *
+ * 
  * @param  {String} kind
  */
 Inventory.prototype.has = function(kind) {
@@ -7363,30 +7363,30 @@ THREE.ShaderLib['water'] = {
 
         'varying vec4 mirrorCoord;',
         'varying vec3 worldPosition;',
-
+        
         'float getHeight(in vec2 uv)',
         '{',
         '   vec2 uv0 = uv / (103.0 * noiseScale) + vec2(time / 17.0, time / 29.0);',
         '   vec2 uv1 = uv / (107.0 * noiseScale) - vec2(time / -19.0, time / 31.0);',
         '   vec2 uv2 = uv / (vec2(8907.0, 9803.0) * noiseScale) + vec2(time / 101.0, time /  097.0);',
         '   vec2 uv3 = uv / (vec2(1091.0, 1027.0) * noiseScale) - vec2(time / 109.0, time / -113.0);',
-
+        
         '   float v0 = texture2D(normalSampler, uv0).y;',
         '   float v1 = texture2D(normalSampler, uv1).y;',
         '   float v2 = texture2D(normalSampler, uv2).y;',
         '   float v3 = texture2D(normalSampler, uv3).y;',
-
+        
         '   return v0 * 103.0 + v1 * 107.0 + v2 * 9000.0 + v3 * 1000.0 + 20000.0;',
         '}',
-
+        
         'void main()',
         '{',
         '   mirrorCoord = modelMatrix * vec4(position, 1.0);',
         '   worldPosition = mirrorCoord.xyz;',
-
+        
         '   mirrorCoord = textureMatrix * mirrorCoord;',
         '   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
-
+        
         /*' if(betaVersion > 0)', // This is just a really beta way to add movement on vertices, totally wrong, but fast to implement
         '   {',
         '       gl_Position.y += getHeight(worldPosition.xz) * 0.008;',
@@ -7394,7 +7394,7 @@ THREE.ShaderLib['water'] = {
         '}'
     ].join('\n'),
 
-    fragmentShader: [
+    fragmentShader: [       
         'uniform sampler2D mirrorSampler;',
         'uniform float alpha;',
         'uniform float time;',
@@ -7408,7 +7408,7 @@ THREE.ShaderLib['water'] = {
 
         'varying vec4 mirrorCoord;',
         'varying vec3 worldPosition;',
-
+        
         'void sunLight(const vec3 surfaceNormal, const vec3 eyeDirection, in float shiny, in float spec, in float diffuse, inout vec3 diffuseColor, inout vec3 specularColor)',
         '{',
         '   vec3 reflection = normalize(reflect(-sunDirection, surfaceNormal));',
@@ -7416,7 +7416,7 @@ THREE.ShaderLib['water'] = {
         '   specularColor += pow(direction, shiny) * sunColor * spec;',
         '   diffuseColor += max(dot(sunDirection, surfaceNormal), 0.0) * sunColor * diffuse;',
         '}',
-
+        
         'vec3 getNoise(in vec2 uv)',
         '{',
         '   vec2 uv0 = uv / (103.0 * noiseScale) + vec2(time / 17.0, time / 29.0);',
@@ -7429,7 +7429,7 @@ THREE.ShaderLib['water'] = {
         '       (texture2D(normalSampler, uv3));',
         '   return noise.xzy * 0.5 - 1.0;',
         '}',
-
+        
         'void main()',
         '{',
         '   vec3 surfaceNormal = (getNoise(worldPosition.xz));',
@@ -7440,7 +7440,7 @@ THREE.ShaderLib['water'] = {
         '   vec3 worldToEye = eye - worldPosition;',
         '   vec3 eyeDirection = normalize(worldToEye);',
         '   sunLight(surfaceNormal, eyeDirection, 100.0, 2.0, 0.5, diffuseLight, specularLight);',
-
+        
         '   float distance = length(worldToEye);',
 
         '   vec2 distortion = surfaceNormal.xz * distortionScale * sqrt(distance) * 0.07;',
@@ -7461,7 +7461,7 @@ THREE.ShaderLib['water'] = {
 };
 
 THREE.Water = function (renderer, camera, scene, options) {
-
+    
     THREE.Object3D.call(this);
     this.name = 'water_' + this.id;
 
@@ -7473,9 +7473,9 @@ THREE.Water = function (renderer, camera, scene, options) {
     };
 
     options = options || {};
-
+    
     this.matrixNeedsUpdate = true;
-
+    
     var width = optionalParameter(options.textureWidth, 512);
     var height = optionalParameter(options.textureHeight, 512);
     this.clipBias = optionalParameter(options.clipBias, 0.0);
@@ -7489,7 +7489,7 @@ THREE.Water = function (renderer, camera, scene, options) {
     this.distortionScale = optionalParameter(options.distortionScale, 20.0);
     this.noiseScale = optionalParameter(options.noiseScale, 1.0);
     this.betaVersion = optionalParameter(options.betaVersion, 0);
-
+    
     this.renderer = renderer;
     this.scene = scene;
     this.mirrorPlane = new THREE.Plane();
@@ -7499,7 +7499,7 @@ THREE.Water = function (renderer, camera, scene, options) {
     this.rotationMatrix = new THREE.Matrix4();
     this.lookAtPosition = new THREE.Vector3(0, 0, -1);
     this.clipPlane = new THREE.Vector4();
-
+    
     if (camera instanceof THREE.PerspectiveCamera)
         this.camera = camera;
     else  {
@@ -7510,16 +7510,16 @@ THREE.Water = function (renderer, camera, scene, options) {
     this.textureMatrix = new THREE.Matrix4();
 
     this.mirrorCamera = this.camera.clone();
-
+    
     this.texture = new THREE.WebGLRenderTarget(width, height);
     this.tempTexture = new THREE.WebGLRenderTarget(width, height);
-
+    
     var mirrorShader = THREE.ShaderLib["water"];
     var mirrorUniforms = THREE.UniformsUtils.clone(mirrorShader.uniforms);
 
-    this.material = new THREE.ShaderMaterial({
-        fragmentShader: mirrorShader.fragmentShader,
-        vertexShader: mirrorShader.vertexShader,
+    this.material = new THREE.ShaderMaterial({ 
+        fragmentShader: mirrorShader.fragmentShader, 
+        vertexShader: mirrorShader.vertexShader, 
         uniforms: mirrorUniforms,
         transparent: true
     });
@@ -7535,10 +7535,10 @@ THREE.Water = function (renderer, camera, scene, options) {
     this.material.uniforms.distortionScale.value = this.distortionScale;
     this.material.uniforms.noiseScale.value = this.noiseScale;
     this.material.uniforms.betaVersion.value = this.betaVersion;
-
+    
     this.material.uniforms.eye.value = this.eye;
-
-    if (!isPowerOfTwo(width) || !isPowerOfTwo(height))
+    
+    if (!isPowerOfTwo(width) || !isPowerOfTwo(height)) 
     {
         this.texture.generateMipmaps = false;
         this.tempTexture.generateMipmaps = false;
@@ -7650,7 +7650,7 @@ THREE.Water.prototype.updateTextureMatrix = function () {
     projectionMatrix.elements[6] = c.y;
     projectionMatrix.elements[10] = c.z + 1.0 - this.clipBias;
     projectionMatrix.elements[14] = c.w;
-
+    
     var worldCoordinates = new THREE.Vector3();
     worldCoordinates.setFromMatrixPosition(this.camera.matrixWorld);
     this.eye = worldCoordinates;
@@ -7792,11 +7792,11 @@ function ParticleCloud ( length, texture, light, options ) {
 
     this.particles.vertices.push( new THREE.Vector3( 1, 1, 1 ) );
     this.pool.add( i );
-
+  
   }
 
   this.attributes = {
-
+    
     size:  { type: 'f', value: [] },
     pcolor: { type: 'c', value: [] }
 
@@ -7883,7 +7883,7 @@ ParticleCloud.prototype.onParticleCreated = function( p ) {
 
   if ( target ) {
     p.target.position = position;
-
+  
     this.hue += 0.001 * this.delta;
     if ( this.hue > 1 ) { this.hue -= 1; }
 
@@ -7908,10 +7908,10 @@ ParticleCloud.prototype.onParticleCreated = function( p ) {
     // this.values_color[ target ].setHSL( this.hue, 0.6, 0.1 );
     // this.values_color[ target ].multiplyScalar( this.colorHSL );
     // this.values_color[ target ].set('#ffffff');
-
+    
 
     this.values_size[ target ] += 0.003 * this.delta;
-
+    
     if (this.light) {
       this.light.color.setHSL( this.hue, 0.8, 0.5 );
     }
@@ -8014,7 +8014,7 @@ function Aura ( geometry, particulesCount, texture, light ) {
 // varying: used to communicate data from vertex shader to fragment shader
 // uniform: data that is the same for each particle (such as texture)
 
-particleVertexShader =
+particleVertexShader = 
 [
 "attribute vec3  customColor;",
 "attribute float customOpacity;",
@@ -8029,7 +8029,7 @@ particleVertexShader =
     "vColor = vec4( customColor, customOpacity );", //     set color associated to vertex; use later in fragment shader.
   "else",             // false
     "vColor = vec4(0.0, 0.0, 0.0, 0.0);",     //     make particle invisible.
-
+    
   "vAngle = customAngle;",
 
   "vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );",
@@ -8041,15 +8041,15 @@ particleVertexShader =
 particleFragmentShader =
 [
 "uniform sampler2D texture;",
-"varying vec4 vColor;",
-"varying float vAngle;",
-"void main()",
+"varying vec4 vColor;",   
+"varying float vAngle;",   
+"void main()", 
 "{",
   "gl_FragColor = vColor;",
-
+  
   "float c = cos(vAngle);",
   "float s = sin(vAngle);",
-  "vec2 rotatedUV = vec2(c * (gl_PointCoord.x - 0.5) + s * (gl_PointCoord.y - 0.5) + 0.5,",
+  "vec2 rotatedUV = vec2(c * (gl_PointCoord.x - 0.5) + s * (gl_PointCoord.y - 0.5) + 0.5,", 
                         "c * (gl_PointCoord.y - 0.5) - s * (gl_PointCoord.x - 0.5) + 0.5);",  // rotate UV coordinates to rotate texture
       "vec4 rotatedTexture = texture2D( texture,  rotatedUV );",
   "gl_FragColor = gl_FragColor * rotatedTexture;",    // sets an otherwise white particle texture to desired color
@@ -8072,7 +8072,7 @@ Tween.prototype.lerp = function(t)
 {
   var i = 0;
   var n = this.times.length;
-  while (i < n && t > this.times[i])
+  while (i < n && t > this.times[i])  
     i++;
   if (i == 0) return this.values[0];
   if (i == n) return this.values[n-1];
@@ -8098,43 +8098,43 @@ function Particle()
   this.angle             = 0;
   this.angleVelocity     = 0; // degrees per second
   this.angleAcceleration = 0; // degrees per second, per second
-
+  
   this.size = 16.0;
 
   this.color   = new THREE.Color();
   this.opacity = 1.0;
-
+      
   this.age   = 0;
-  this.alive = 0; // use float instead of boolean for shader purposes
+  this.alive = 0; // use float instead of boolean for shader purposes 
 }
 
 Particle.prototype.update = function(dt)
 {
   this.position.add( this.velocity.clone().multiplyScalar(dt) );
   this.velocity.add( this.acceleration.clone().multiplyScalar(dt) );
-
+  
   // convert from degrees to radians: 0.01745329251 = Math.PI/180
   this.angle         += this.angleVelocity     * 0.01745329251 * dt;
   this.angleVelocity += this.angleAcceleration * 0.01745329251 * dt;
 
   this.age += dt;
-
+  
   // if the tween for a given attribute is nonempty,
   //  then use it to update the attribute's value
 
   if ( this.sizeTween.times.length > 0 )
     this.size = this.sizeTween.lerp( this.age );
-
+        
   if ( this.colorTween.times.length > 0 )
   {
     var colorHSL = this.colorTween.lerp( this.age );
     this.color = new THREE.Color().setHSL( colorHSL.x, colorHSL.y, colorHSL.z );
   }
-
+  
   if ( this.opacityTween.times.length > 0 )
     this.opacity = this.opacityTween.lerp( this.age );
 }
-
+  
 ///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////
@@ -8148,43 +8148,43 @@ function ParticleEngine()
   /////////////////////////
   // PARTICLE PROPERTIES //
   /////////////////////////
-
-  this.positionStyle = Type.CUBE;
+  
+  this.positionStyle = Type.CUBE;   
   this.positionBase   = new THREE.Vector3();
   // cube shape data
   this.positionSpread = new THREE.Vector3();
   // sphere shape data
   this.positionRadius = 0; // distance from base at which particles start
-
-  this.velocityStyle = Type.CUBE;
+  
+  this.velocityStyle = Type.CUBE; 
   // cube movement data
   this.velocityBase       = new THREE.Vector3();
-  this.velocitySpread     = new THREE.Vector3();
+  this.velocitySpread     = new THREE.Vector3(); 
   // sphere movement data
   //   direction vector calculated using initial position
   this.speedBase   = 0;
   this.speedSpread = 0;
-
+  
   this.accelerationBase   = new THREE.Vector3();
-  this.accelerationSpread = new THREE.Vector3();
-
+  this.accelerationSpread = new THREE.Vector3();  
+  
   this.angleBase               = 0;
   this.angleSpread             = 0;
   this.angleVelocityBase       = 0;
   this.angleVelocitySpread     = 0;
   this.angleAccelerationBase   = 0;
   this.angleAccelerationSpread = 0;
-
+  
   this.sizeBase   = 0.0;
   this.sizeSpread = 0.0;
   this.sizeTween  = new Tween();
-
+      
   // store colors in HSL format in a THREE.Vector3 object
   // http://en.wikipedia.org/wiki/HSL_and_HSV
-  this.colorBase   = new THREE.Vector3(0.0, 1.0, 0.5);
+  this.colorBase   = new THREE.Vector3(0.0, 1.0, 0.5); 
   this.colorSpread = new THREE.Vector3(0.0, 0.0, 0.0);
   this.colorTween  = new Tween();
-
+  
   this.opacityBase   = 1.0;
   this.opacitySpread = 0.0;
   this.opacityTween  = new Tween();
@@ -8194,31 +8194,31 @@ function ParticleEngine()
   this.particleArray = [];
   this.particlesPerSecond = 100;
   this.particleDeathAge = 1.0;
-
+  
   ////////////////////////
   // EMITTER PROPERTIES //
   ////////////////////////
-
+  
   this.emitterAge      = 0.0;
   this.emitterAlive    = true;
   this.emitterDeathAge = 60; // time (seconds) at which to stop creating particles.
-
+  
   // How many particles could be active at any time?
   this.particleCount = this.particlesPerSecond * Math.min( this.particleDeathAge, this.emitterDeathAge );
 
   //////////////
   // THREE.JS //
   //////////////
-
+  
   this.particleGeometry = new THREE.Geometry();
   this.particleTexture  = null;
-  this.particleMaterial = new THREE.ShaderMaterial(
+  this.particleMaterial = new THREE.ShaderMaterial( 
   {
-    uniforms:
+    uniforms: 
     {
       texture:   { type: "t", value: this.particleTexture },
     },
-    attributes:
+    attributes:     
     {
       customVisible:  { type: 'f',  value: [] },
       customAngle:  { type: 'f',  value: [] },
@@ -8228,44 +8228,44 @@ function ParticleEngine()
     },
     vertexShader:   particleVertexShader,
     fragmentShader: particleFragmentShader,
-    transparent: true, // alphaTest: 0.5,  // if having transparency issues, try including: alphaTest: 0.5,
+    transparent: true, // alphaTest: 0.5,  // if having transparency issues, try including: alphaTest: 0.5, 
     blending: THREE.NormalBlending, depthTest: true,
-
+    
   });
   this.particleMesh = new THREE.Mesh();
 }
-
+  
 ParticleEngine.prototype.setValues = function( parameters )
 {
   if ( parameters === undefined ) return;
-
+  
   // clear any previous tweens that might exist
   this.sizeTween    = new Tween();
   this.colorTween   = new Tween();
   this.opacityTween = new Tween();
-
-  for ( var key in parameters )
+  
+  for ( var key in parameters ) 
     this[ key ] = parameters[ key ];
-
+  
   // attach tweens to particles
   Particle.prototype.sizeTween    = this.sizeTween;
   Particle.prototype.colorTween   = this.colorTween;
-  Particle.prototype.opacityTween = this.opacityTween;
-
+  Particle.prototype.opacityTween = this.opacityTween;  
+  
   // calculate/set derived particle engine values
   this.particleArray = [];
   this.emitterAge      = 0.0;
   this.emitterAlive    = true;
   this.particleCount = this.particlesPerSecond * Math.min( this.particleDeathAge, this.emitterDeathAge );
-
+  
   this.particleGeometry = new THREE.Geometry();
-  this.particleMaterial = new THREE.ShaderMaterial(
+  this.particleMaterial = new THREE.ShaderMaterial( 
   {
-    uniforms:
+    uniforms: 
     {
       texture:   { type: "t", value: this.particleTexture },
     },
-    attributes:
+    attributes:     
     {
       customVisible:  { type: 'f',  value: [] },
       customAngle:  { type: 'f',  value: [] },
@@ -8275,12 +8275,12 @@ ParticleEngine.prototype.setValues = function( parameters )
     },
     vertexShader:   particleVertexShader,
     fragmentShader: particleFragmentShader,
-    transparent: true,  alphaTest: 0.5, // if having transparency issues, try including: alphaTest: 0.5,
+    transparent: true,  alphaTest: 0.5, // if having transparency issues, try including: alphaTest: 0.5, 
     blending: THREE.NormalBlending, depthTest: true
   });
   this.particleMesh = new THREE.ParticleSystem();
 }
-
+  
 // helper functions for randomization
 ParticleEngine.prototype.randomValue = function(base, spread)
 {
@@ -8298,7 +8298,7 @@ ParticleEngine.prototype.createParticle = function()
   var particle = new Particle();
 
   if (this.positionStyle == Type.CUBE)
-    particle.position = this.randomVector3( this.positionBase, this.positionSpread );
+    particle.position = this.randomVector3( this.positionBase, this.positionSpread ); 
   if (this.positionStyle == Type.SPHERE)
   {
     var z = 2 * Math.random() - 1;
@@ -8307,10 +8307,10 @@ ParticleEngine.prototype.createParticle = function()
     var vec3 = new THREE.Vector3( r * Math.cos(t), r * Math.sin(t), z );
     particle.position = new THREE.Vector3().addVectors( this.positionBase, vec3.multiplyScalar( this.positionRadius ) );
   }
-
+    
   if ( this.velocityStyle == Type.CUBE )
   {
-    particle.velocity     = this.randomVector3( this.velocityBase,     this.velocitySpread );
+    particle.velocity     = this.randomVector3( this.velocityBase,     this.velocitySpread ); 
   }
   if ( this.velocityStyle == Type.SPHERE )
   {
@@ -8318,8 +8318,8 @@ ParticleEngine.prototype.createParticle = function()
     var speed     = this.randomValue( this.speedBase, this.speedSpread );
     particle.velocity  = direction.normalize().multiplyScalar( speed );
   }
-
-  particle.acceleration = this.randomVector3( this.accelerationBase, this.accelerationSpread );
+  
+  particle.acceleration = this.randomVector3( this.accelerationBase, this.accelerationSpread ); 
 
   particle.angle             = this.randomValue( this.angleBase,             this.angleSpread );
   particle.angleVelocity     = this.randomValue( this.angleVelocityBase,     this.angleVelocitySpread );
@@ -8329,12 +8329,12 @@ ParticleEngine.prototype.createParticle = function()
 
   var color = this.randomVector3( this.colorBase, this.colorSpread );
   particle.color = new THREE.Color().setHSL( color.x, color.y, color.z );
-
+  
   particle.opacity = this.randomValue( this.opacityBase, this.opacitySpread );
 
   particle.age   = 0;
   particle.alive = 0; // particles initialize as inactive
-
+  
   return particle;
 }
 
@@ -8352,11 +8352,11 @@ ParticleEngine.prototype.initialize = function()
     this.particleMaterial.attributes.customSize.value[i]    = this.particleArray[i].size;
     this.particleMaterial.attributes.customAngle.value[i]   = this.particleArray[i].angle;
   }
-
+  
   this.particleMaterial.blending = this.blendStyle;
-  if ( this.blendStyle != THREE.NormalBlending)
+  if ( this.blendStyle != THREE.NormalBlending) 
     this.particleMaterial.depthTest = false;
-
+  
   this.particleMesh = new THREE.ParticleSystem( this.particleGeometry, this.particleMaterial );
   this.particleMesh.dynamic = true;
   this.particleMesh.sortParticles = true;
@@ -8365,7 +8365,7 @@ ParticleEngine.prototype.initialize = function()
 ParticleEngine.prototype.update = function(dt)
 {
   var recycleIndices = [];
-
+  
   // update particle data
   for (var i = 0; i < this.particleCount; i++)
   {
@@ -8375,7 +8375,7 @@ ParticleEngine.prototype.update = function(dt)
 
       // check if particle should expire
       // could also use: death by size<0 or alpha<0.
-      if ( this.particleArray[i].age > this.particleDeathAge )
+      if ( this.particleArray[i].age > this.particleDeathAge ) 
       {
         this.particleArray[i].alive = 0.0;
         recycleIndices.push(i);
@@ -8386,7 +8386,7 @@ ParticleEngine.prototype.update = function(dt)
       this.particleMaterial.attributes.customOpacity.value[i] = this.particleArray[i].opacity;
       this.particleMaterial.attributes.customSize.value[i]    = this.particleArray[i].size;
       this.particleMaterial.attributes.customAngle.value[i]   = this.particleArray[i].angle;
-    }
+    }   
   }
 
   // check if particle emitter is still running
@@ -8398,11 +8398,11 @@ ParticleEngine.prototype.update = function(dt)
     // determine indices of particles to activate
     var startIndex = Math.round( this.particlesPerSecond * (this.emitterAge +  0) );
     var   endIndex = Math.round( this.particlesPerSecond * (this.emitterAge + dt) );
-    if  ( endIndex > this.particleCount )
-        endIndex = this.particleCount;
-
+    if  ( endIndex > this.particleCount ) 
+        endIndex = this.particleCount; 
+        
     for (var i = startIndex; i < endIndex; i++)
-      this.particleArray[i].alive = 1.0;
+      this.particleArray[i].alive = 1.0;    
   }
 
   // if any particles have died while the emitter is still running, we imediately recycle them
@@ -8435,9 +8435,9 @@ ParticleEngine.prototype.destroy = function()
 * @author Lee Stemkoski   http://www.adelphi.edu/~stemkoski/
 */
 
-/*
+/* 
   Particle Engine options:
-
+  
   positionBase   : new THREE.Vector3(),
   positionStyle : Type.CUBE or Type.SPHERE,
 
@@ -8446,22 +8446,22 @@ ParticleEngine.prototype.destroy = function()
 
   // for Type.SPHERE
   positionRadius  : 10,
-
+  
   velocityStyle : Type.CUBE or Type.SPHERE,
 
   // for Type.CUBE
   velocityBase       : new THREE.Vector3(),
-  velocitySpread     : new THREE.Vector3(),
+  velocitySpread     : new THREE.Vector3(), 
 
   // for Type.SPHERE
   speedBase   : 20,
   speedSpread : 10,
-
+    
   accelerationBase   : new THREE.Vector3(),
   accelerationSpread : new THREE.Vector3(),
-
+    
   particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/star.png' ),
-
+    
   // rotation of image used for particles
   angleBase               : 0,
   angleSpread             : 0,
@@ -8469,15 +8469,15 @@ ParticleEngine.prototype.destroy = function()
   angleVelocitySpread     : 0,
   angleAccelerationBase   : 0,
   angleAccelerationSpread : 0,
-
-  // size, color, opacity
+    
+  // size, color, opacity 
   //   for static  values, use base/spread
   //   for dynamic values, use Tween
   //   (non-empty Tween takes precedence)
   sizeBase   : 20.0,
   sizeSpread : 5.0,
   sizeTween  : new Tween( [0, 1], [1, 20] ),
-
+      
   // colors stored in Vector3 in H,S,L format
   colorBase   : new THREE.Vector3(0.0, 1.0, 0.5),
   colorSpread : new THREE.Vector3(0,0,0),
@@ -8486,47 +8486,47 @@ ParticleEngine.prototype.destroy = function()
   opacityBase   : 1,
   opacitySpread : 0,
   opacityTween  : new Tween( [2, 3], [1, 0] ),
-
+  
   blendStyle    : THREE.NormalBlending (default), THREE.AdditiveBlending
 
   particlesPerSecond : 200,
-  particleDeathAge   : 2.0,
-  emitterDeathAge    : 60
+  particleDeathAge   : 2.0,   
+  emitterDeathAge    : 60 
 */
 
 Examples =
 {
 
-
+  
   // (1) build GUI for easy effects access.
   // (2) write ParticleEngineExamples.js
-
+  
   // Not just any fountain -- a RAINBOW STAR FOUNTAIN of AWESOMENESS
   fountain :
   {
     positionStyle    : Type.CUBE,
     positionBase     : new THREE.Vector3( 0,  5, 0 ),
     positionSpread   : new THREE.Vector3( 10, 0, 10 ),
-
+    
     velocityStyle    : Type.CUBE,
     velocityBase     : new THREE.Vector3( 0,  160, 0 ),
-    velocitySpread   : new THREE.Vector3( 100, 20, 100 ),
+    velocitySpread   : new THREE.Vector3( 100, 20, 100 ), 
 
     accelerationBase : new THREE.Vector3( 0, -100, 0 ),
-
+    
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/star.png' ),
 
     angleBase               : 0,
     angleSpread             : 180,
     angleVelocityBase       : 0,
     angleVelocitySpread     : 360 * 4,
-
+    
     sizeTween    : new Tween( [0, 1], [1, 20] ),
     opacityTween : new Tween( [2, 3], [1, 0] ),
     colorTween   : new Tween( [0.5, 2], [ new THREE.Vector3(0,1,0.5), new THREE.Vector3(0.8, 1, 0.5) ] ),
 
     particlesPerSecond : 200,
-    particleDeathAge   : 3.0,
+    particleDeathAge   : 3.0,   
     emitterDeathAge    : 60
   },
 
@@ -8535,7 +8535,7 @@ Examples =
     positionStyle  : Type.SPHERE,
     positionBase   : new THREE.Vector3( 0, 0, 0 ),
     positionRadius : 0.2,
-
+        
     velocityStyle : Type.SPHERE,
     speedBase     : 0,
     speedSpread   : 2,
@@ -8544,19 +8544,19 @@ Examples =
     angleSpread             : 720,
     angleVelocityBase       : 0,
     angleVelocitySpread     : 720,
-
+    
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/smokeparticle.png' ),
 
     sizeTween    : new Tween( [0, 0.1], [1, 15] ),
     opacityTween : new Tween( [0.7, 1], [1, 0] ),
     colorBase    : new THREE.Vector3(0.02, 1, 0.4),
-    blendStyle   : THREE.AdditiveBlending,
-
+    blendStyle   : THREE.AdditiveBlending,  
+    
     particlesPerSecond : 100,
-    particleDeathAge   : 1.5,
+    particleDeathAge   : 1.5,   
     emitterDeathAge    : 60
   },
-
+  
   smoke :
   {
     positionStyle    : Type.CUBE,
@@ -8565,35 +8565,35 @@ Examples =
 
     velocityStyle    : Type.CUBE,
     velocityBase     : new THREE.Vector3( 0, 150, 0 ),
-    velocitySpread   : new THREE.Vector3( 80, 50, 80 ),
+    velocitySpread   : new THREE.Vector3( 80, 50, 80 ), 
     accelerationBase : new THREE.Vector3( 0,-10,0 ),
-
+    
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/smokeparticle.png'),
 
     angleBase               : 0,
     angleSpread             : 720,
     angleVelocityBase       : 0,
     angleVelocitySpread     : 720,
-
+    
     sizeTween    : new Tween( [0, 1], [32, 128] ),
     opacityTween : new Tween( [0.8, 2], [0.5, 0] ),
     colorTween   : new Tween( [0.4, 1], [ new THREE.Vector3(0,0,0.2), new THREE.Vector3(0, 0, 0.5) ] ),
 
     particlesPerSecond : 200,
-    particleDeathAge   : 2.0,
+    particleDeathAge   : 2.0,   
     emitterDeathAge    : 60
   },
-
+  
   clouds :
   {
     positionStyle  : Type.CUBE,
     positionBase   : new THREE.Vector3( -100, 100,  0 ),
     positionSpread : new THREE.Vector3(    0,  50, 60 ),
-
+    
     velocityStyle  : Type.CUBE,
     velocityBase   : new THREE.Vector3( 40, 0, 0 ),
-    velocitySpread : new THREE.Vector3( 20, 0, 0 ),
-
+    velocitySpread : new THREE.Vector3( 20, 0, 0 ), 
+    
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/smokeparticle.png'),
 
     sizeBase     : 80.0,
@@ -8602,37 +8602,37 @@ Examples =
     opacityTween : new Tween([0,1,4,5],[0,1,1,0]),
 
     particlesPerSecond : 50,
-    particleDeathAge   : 10.0,
+    particleDeathAge   : 10.0,    
     emitterDeathAge    : 60
   },
-
+    
   snow :
   {
     positionStyle    : Type.CUBE,
     positionBase     : new THREE.Vector3( 0, 200, 0 ),
     positionSpread   : new THREE.Vector3( 500, 0, 500 ),
-
+    
     velocityStyle    : Type.CUBE,
     velocityBase     : new THREE.Vector3( 0, -60, 0 ),
-    velocitySpread   : new THREE.Vector3( 50, 20, 50 ),
+    velocitySpread   : new THREE.Vector3( 50, 20, 50 ), 
     accelerationBase : new THREE.Vector3( 0, -10,0 ),
-
+    
     angleBase               : 0,
     angleSpread             : 720,
     angleVelocityBase       :  0,
     angleVelocitySpread     : 60,
-
+    
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/snowflake.png' ),
-
+      
     sizeTween    : new Tween( [0, 0.25], [1, 10] ),
     colorBase   : new THREE.Vector3(0.66, 1.0, 0.9), // H,S,L
     opacityTween : new Tween( [2, 3], [0.8, 0] ),
 
     particlesPerSecond : 200,
-    particleDeathAge   : 4.0,
+    particleDeathAge   : 4.0,   
     emitterDeathAge    : 60
   },
-
+  
   rain :
   {
     positionStyle    : Type.CUBE,
@@ -8641,9 +8641,9 @@ Examples =
 
     velocityStyle    : Type.CUBE,
     velocityBase     : new THREE.Vector3( 0, -400, 0 ),
-    velocitySpread   : new THREE.Vector3( 10, 50, 10 ),
+    velocitySpread   : new THREE.Vector3( 10, 50, 10 ), 
     accelerationBase : new THREE.Vector3( 0, -10,0 ),
-
+    
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/raindrop2flip.png' ),
 
     sizeBase    : 8.0,
@@ -8653,10 +8653,10 @@ Examples =
     opacityBase : 0.6,
 
     particlesPerSecond : 1000,
-    particleDeathAge   : 1.0,
+    particleDeathAge   : 1.0,   
     emitterDeathAge    : 60
   },
-
+    
   starfield :
   {
     positionStyle    : Type.CUBE,
@@ -8665,23 +8665,23 @@ Examples =
 
     velocityStyle    : Type.CUBE,
     velocityBase     : new THREE.Vector3( 0, 0, 0 ),
-    velocitySpread   : new THREE.Vector3( 0.5, 0.5, 0.5 ),
-
+    velocitySpread   : new THREE.Vector3( 0.5, 0.5, 0.5 ), 
+    
     angleBase               : 0,
     angleSpread             : 720,
     angleVelocityBase       : 0,
     angleVelocitySpread     : 4,
 
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/spikey.png' ),
-
+    
     sizeBase    : 10.0,
-    sizeSpread  : 2.0,
+    sizeSpread  : 2.0,        
     colorBase   : new THREE.Vector3(0.15, 1.0, 0.9), // H,S,L
     colorSpread : new THREE.Vector3(0.00, 0.0, 0.2),
     opacityBase : 1,
 
     particlesPerSecond : 20000,
-    particleDeathAge   : 60.0,
+    particleDeathAge   : 60.0,    
     emitterDeathAge    : 0.1
   },
 
@@ -8693,22 +8693,22 @@ Examples =
 
     velocityStyle  : Type.CUBE,
     velocityBase   : new THREE.Vector3( 0, 0, 0 ),
-    velocitySpread : new THREE.Vector3( 60, 20, 60 ),
-
+    velocitySpread : new THREE.Vector3( 60, 20, 60 ), 
+    
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/spark.png' ),
 
     sizeBase   : 30.0,
     sizeSpread : 2.0,
     opacityTween : new Tween([0.0, 1.0, 1.1, 2.0, 2.1, 3.0, 3.1, 4.0, 4.1, 5.0, 5.1, 6.0, 6.1],
-                             [0.2, 0.2, 1.0, 1.0, 0.2, 0.2, 1.0, 1.0, 0.2, 0.2, 1.0, 1.0, 0.2] ),
+                             [0.2, 0.2, 1.0, 1.0, 0.2, 0.2, 1.0, 1.0, 0.2, 0.2, 1.0, 1.0, 0.2] ),       
     colorBase   : new THREE.Vector3(0.30, 1.0, 0.6), // H,S,L
     colorSpread : new THREE.Vector3(0.3, 0.0, 0.0),
 
     particlesPerSecond : 20,
-    particleDeathAge   : 6.1,
+    particleDeathAge   : 6.1,   
     emitterDeathAge    : 600
   },
-
+  
   leafs :
   {
     positionStyle  : Type.CUBE,
@@ -8717,27 +8717,27 @@ Examples =
 
     velocityStyle  : Type.CUBE,
     velocityBase   : new THREE.Vector3( 0, 1, 0 ),
-    velocitySpread : new THREE.Vector3( 60, 20, 60 ),
+    velocitySpread : new THREE.Vector3( 60, 20, 60 ), 
 
     angleBase               : 10,
     angleSpread             : 720,
     angleVelocityBase       : 30,
     angleVelocitySpread     : 0,
-
+    
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/custom/leafs.png' ),
 
     sizeBase   : 30.0,
     sizeSpread : 2.0,
     opacityTween : new Tween([0.0, 1.0, 1.1, 2.0, 2.1, 3.0, 3.1, 4.0, 4.1, 5.0, 5.1, 6.0, 6.1],
-                             [0.2, 0.2, 1.0, 1.0, 0.2, 0.2, 1.0, 1.0, 0.2, 0.2, 1.0, 1.0, 0.2] ),
+                             [0.2, 0.2, 1.0, 1.0, 0.2, 0.2, 1.0, 1.0, 0.2, 0.2, 1.0, 1.0, 0.2] ),       
     colorBase   : new THREE.Vector3(0.30, 1.0, 0.6), // H,S,L
     colorSpread : new THREE.Vector3(0.3, 0.0, 0.0),
 
     particlesPerSecond : 100,
-    particleDeathAge   : 6.1,
+    particleDeathAge   : 6.1,   
     emitterDeathAge    : 60
   },
-
+  
   startunnel :
   {
     positionStyle  : Type.CUBE,
@@ -8746,23 +8746,23 @@ Examples =
 
     velocityStyle  : Type.CUBE,
     velocityBase   : new THREE.Vector3( 0, 100, 200 ),
-    velocitySpread : new THREE.Vector3( 40, 40, 80 ),
-
+    velocitySpread : new THREE.Vector3( 40, 40, 80 ), 
+    
     angleBase               : 0,
     angleSpread             : 720,
     angleVelocityBase       : 10,
     angleVelocitySpread     : 0,
-
+    
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/spikey.png' ),
 
     sizeBase    : 4.0,
-    sizeSpread  : 2.0,
+    sizeSpread  : 2.0,        
     colorBase   : new THREE.Vector3(0.15, 1.0, 0.8), // H,S,L
     opacityBase : 1,
     blendStyle  : THREE.AdditiveBlending,
 
     particlesPerSecond : 500,
-    particleDeathAge   : 4.0,
+    particleDeathAge   : 4.0,   
     emitterDeathAge    : 60
   },
 
@@ -8771,22 +8771,22 @@ Examples =
     positionStyle  : Type.SPHERE,
     positionBase   : new THREE.Vector3( 0, 100, 0 ),
     positionRadius : 10,
-
+    
     velocityStyle  : Type.SPHERE,
     speedBase      : 90,
     speedSpread    : 10,
-
+    
     accelerationBase : new THREE.Vector3( 0, -80, 0 ),
-
+    
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/spark.png' ),
-
+    
     sizeTween    : new Tween( [0.5, 0.7, 1.3], [5, 40, 1] ),
     opacityTween : new Tween( [0.2, 0.7, 2.5], [0.75, 1, 0] ),
     colorTween   : new Tween( [0.4, 0.8, 1.0], [ new THREE.Vector3(0,1,1), new THREE.Vector3(0,1,0.6), new THREE.Vector3(0.8, 1, 0.6) ] ),
-    blendStyle   : THREE.AdditiveBlending,
-
+    blendStyle   : THREE.AdditiveBlending,  
+    
     particlesPerSecond : 3000,
-    particleDeathAge   : 2.5,
+    particleDeathAge   : 2.5,   
     emitterDeathAge    : 0.2
   },
 
@@ -8795,23 +8795,23 @@ Examples =
     positionStyle  : Type.SPHERE,
     positionBase   : new THREE.Vector3( 0, 50, 0 ),
     positionRadius : 2,
-
+    
     velocityStyle  : Type.CUBE,
     velocityBase   : new THREE.Vector3(0,100,0),
     velocitySpread : new THREE.Vector3(20,0,20),
-
+    
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/smokeparticle.png' ),
-
+    
     sizeTween    : new Tween( [0, 0.3, 1.2], [20, 150, 1] ),
     opacityTween : new Tween( [0.9, 1.5], [1, 0] ),
     colorTween   : new Tween( [0.5, 1.0], [ new THREE.Vector3(0.02, 1, 0.5), new THREE.Vector3(0.05, 1, 0) ] ),
-    blendStyle : THREE.AdditiveBlending,
-
+    blendStyle : THREE.AdditiveBlending,  
+    
     particlesPerSecond : 60,
-    particleDeathAge   : 1.5,
+    particleDeathAge   : 1.5,   
     emitterDeathAge    : 60
   }
-
+  
 }
 
 
@@ -10015,11 +10015,11 @@ module.exports = Spell;
 
 /**
  * A castable spell
- *
+ * 
  * @exports Spell
- *
+ * 
  * @constructor
- *
+ * 
  * @param {Object} options
  */
 function Spell ( options ) {
@@ -10059,11 +10059,11 @@ inherits(Spell, EventEmitter);
 
 /**
  * Return `true` if this spell cast by source can hit target
- *
+ * 
  * @param  {Entity} source         The caster entity
  * @param  {Entity} target         The target entity
  * @param  {Number} toleranceRatio acceptable distance ratio
- * @return {Boolean}               `true` if this spell can hit the specified target
+ * @return {Boolean}               `true` if this spell can hit the specified target      
  */
 Spell.prototype.canHit = function (source, target, toleranceRatio) {
 
@@ -10074,7 +10074,7 @@ Spell.prototype.canHit = function (source, target, toleranceRatio) {
 
 /**
  * Start the spell against the specified target
- *
+ * 
  * @param  {Entity} source    The caster entity
  * @param  {Entity=} target   The target entity
  */
@@ -10091,7 +10091,7 @@ Spell.prototype.prepare = function() {
 
 /**
  * Start the spell cooldown
- *
+ * 
  * @param  {Entity} source    The caster entity
  * @param  {Entity=} target   The target entity
  */
@@ -10101,7 +10101,7 @@ Spell.prototype.startCooldown = function (source) {
       start = Date.now();
 
   self.ccd = self.cooldown;
-
+  
   var updateCD = function(){
     var now = Date.now();
 
@@ -10169,7 +10169,7 @@ function Bite (options) {
   });
 
   this.sound = new Sound(['/gamedata/sounds/' + options.name + '.mp3'], 200.0, 1);
-
+  
   window._ta_events.on('update', function(game){
     if (self.source) {
       self.sound.update.call(self.source, game.camera); // called with character as "this"
@@ -10275,7 +10275,7 @@ function FireBullet (options) {
     name: 'firebullet',
 
     isMelee: false,
-
+    
     magicLifeDamage: 20,
 
     maxRange: 50.0,
@@ -10643,7 +10643,7 @@ function PlaceObject (options) {
   }, options);
 
   this.sound = new Sound(['/gamedata/sounds/' + options.name + '.mp3'], 200.0, 1);
-
+  
   window._ta_events.on('update', function(game){
     if (self.source) {
       self.sound.update.call(self.source, game.camera); // called with character as "this"
@@ -10668,11 +10668,11 @@ PlaceObject.prototype.prepare = function() {
 
 /**
  * Return `true` if this spell cast by source can hit target
- *
+ * 
  * @param  {Entity} source         The caster entity
  * @param  {Entity} target         The target entity
  * @param  {Number} toleranceRatio acceptable distance ratio
- * @return {Boolean}               `true` if this spell can hit the specified target
+ * @return {Boolean}               `true` if this spell can hit the specified target      
  */
 PlaceObject.prototype.canHit = function (source, target, toleranceRatio) {
   toleranceRatio = toleranceRatio || 1;
@@ -10779,7 +10779,7 @@ function Teleport (options) {
   });
 
   this.sound = new Sound(['/gamedata/sounds/' + options.name + '.mp3'], 200.0, 1);
-
+  
   window._ta_events.on('update', function(game){
     if (self.source) {
       self.sound.update.call(self.source, game.camera); // called with character as "this"
@@ -10797,11 +10797,11 @@ Teleport.prototype.name = 'Teleport';
 
 /**
  * Return `true` if this spell cast by source can hit target
- *
+ * 
  * @param  {Entity} source         The caster entity
  * @param  {Entity} target         The target entity
  * @param  {Number} toleranceRatio acceptable distance ratio
- * @return {Boolean}               `true` if this spell can hit the specified target
+ * @return {Boolean}               `true` if this spell can hit the specified target      
  */
 Teleport.prototype.canHit = function (source, target, toleranceRatio) {
 
@@ -10850,7 +10850,7 @@ Teleport.prototype.start = function(source, target) {
 
     tweenOpacity.start();
     tweenCamera.start();
-
+    
   });
 };
 
@@ -11019,7 +11019,7 @@ module.exports = {
   // }
 
   meshFromVertices: function (vertices, mat_options) {
-
+      
     var object = new THREE.Object3D();
     var materials = [ new THREE.MeshBasicMaterial(mat_options) ];
 
@@ -11157,7 +11157,7 @@ function DialogViewModel (dialog) {
     self[k] = ko.observable(v); // .extend({notify: 'always'});
   });
 
-  ////////////////////////////////
+  ////////////////////////////////     
 
   this.update = function(values) { /// FIXME !!!!
     _.each(values, function(v, k) {
@@ -11202,7 +11202,7 @@ function EntityViewModel (entity, game) {
     return 'n/a';
   }, this);
 
-  ////////////////////////////////
+  ////////////////////////////////     
   this.update = function(values) { /// FIXME !!!!
     _.each(entity.state, function(v, k) {
       if (typeof self[k] !== 'undefined') {
@@ -11537,7 +11537,7 @@ function InteractiveViewModel (interactive) {
     self[k] = ko.observable(v); // .extend({notify: 'always'});
   });
 
-  ////////////////////////////////
+  ////////////////////////////////     
 
   this.update = function(values) { /// FIXME !!!!
     _.each(values, function(v, k) {
@@ -11605,11 +11605,11 @@ function QuestDialogViewModel (quests, questGiver) {
             var then = item.then(questGiver.arena, questGiver);
             questGiver.emit('deselected');
 
-            this.processStep(step, then);
+            self.processStep(step, then);
 
         // string specified
         } else if (_.isString(item.then)) {
-            this.processStep(step, item.then);
+            self.processStep(step, item.then);
         }
     };
 
@@ -14782,7 +14782,7 @@ function hoodieId (hoodie) {
 
   function setId(newId) {
     id = newId;
-
+    
     config.set('_hoodieId', newId);
   }
 
@@ -14877,10 +14877,10 @@ module.exports = hoodieOpen;
 // When hoodie.remote is continuously syncing (default),
 // it will continuously  synchronize with local store,
 // otherwise sync, pull or push can be called manually
-//
+// 
 // Note that hoodieRemote must be initialized before the
 // API is available:
-//
+// 
 //     hoodieRemote(hoodie);
 //     hoodie.remote.init();
 //
@@ -18920,7 +18920,7 @@ proto.constructTextHtml = function(data) {
   }
 
   div = div || document.createElement('div')
-  div.innerHTML = data
+  div.innerHTML = data 
 
   return [].slice.call(div.childNodes)
 }
@@ -19099,7 +19099,7 @@ function fullscreen(el) {
     el.msExitFullscreen ||
     el.oExitFullScreen ||
     el.oExitFullscreen).call(el)
-  }
+  } 
 
   function fullscreenelement() {
     return 0 ||
@@ -19146,7 +19146,7 @@ function pointer(el) {
     , rel = el.removeEventListener || el.detachEvent
     , doc = el.ownerDocument
     , body = doc.body
-    , rpl = shim(el)
+    , rpl = shim(el) 
     , out = {dx: 0, dy: 0, dt: 0}
     , ee = new EE
     , stream = null
@@ -19262,7 +19262,7 @@ function pointer(el) {
       ev.mozMovementX || ev.msMovementX ||
       ev.oMovementX || 0
 
-    out.dy =
+    out.dy = 
       ev.movementY || ev.webkitMovementY ||
       ev.mozMovementY || ev.msMovementY ||
       ev.oMovementY || 0
@@ -31752,7 +31752,7 @@ EventEmitter.prototype.emit = function (type) {
 
   // remove events that run only once
   if (this._listeners[type].once) this.remove(type);
-
+  
   return this;
 };
 
@@ -31827,7 +31827,7 @@ var Recast = function (worker_url, onWorkerReady) {
                 onWorkerReady(recast);
             }
         });
-
+    
     } else if (ENVIRONMENT_IS_NODE) {
         var child_process = require('child_process');
         this.worker = child_process.fork(worker_url);
@@ -31847,7 +31847,7 @@ var Recast = function (worker_url, onWorkerReady) {
             }
             if (message.vent) {
                 recast.vent.emit(message.type, message.data);
-            }
+            } 
         });
 
         if (typeof onWorkerReady === 'function') {
@@ -31928,7 +31928,7 @@ Recast.prototype.findNearestPoly = function (sx, sy, sz, dx, dy, dz, callback_id
 Recast.prototype.queryPolygons = function (sx, sy, sz, dx, dy, dz, maxPolys, callback_id) {
     if (typeof callback_id === 'undefined') {
         callback_id = maxPolys;
-        maxPolys    = 1000;
+        maxPolys    = 1000; 
     }
     callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
     this.worker.postMessage({type: 'queryPolygons', data: { position: {x:sx,y:sy,z:sz}, extend:{x:dx,y:dy,z:dz}, maxPolys:maxPolys }, callback: callback_id });
@@ -32807,7 +32807,7 @@ Socket.prototype.emit = function(ev){
 
   var args = toArray(arguments);
   var parserType = parser.EVENT; // default
-  // if (hasBin(args)) { parserType = parser.BINARY_EVENT; } // binary
+  if (hasBin(args)) { parserType = parser.BINARY_EVENT; } // binary
   var packet = { type: parserType, data: args };
 
   // event ack callback
@@ -34497,7 +34497,7 @@ JSONPPolling.prototype.doPoll = function () {
   this.script = script;
 
   var isUAgecko = 'undefined' != typeof navigator && /gecko/i.test(navigator.userAgent);
-
+  
   if (isUAgecko) {
     setTimeout(function () {
       var iframe = document.createElement('iframe');
