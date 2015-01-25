@@ -3412,6 +3412,7 @@ var TWEEN = require('tween');
 var Spell = require('../spell');
 var Entity = require('../entity');
 var Particles = require('../particles/cloud');
+var stemkoski = require('../particles/stemkoski_ParticleEngine');
 
 module.exports = DefenseTower;
 
@@ -3454,9 +3455,11 @@ function DefenseTower ( x, y, z, options ) {
   var loader = new THREE.ColladaLoader();
   loader.load( '/gamedata/models/lantern/lantern.dae', function ( loaded ) {
 
-    self.aura = Particles.Aura( 'point', self.options.fireIntensity, self.options.orbTexture, null );
-    self.aura.particleCloud.position.set( x, y+28, z );
-    self.add( self.aura.particleCloud );
+    self.aura = new stemkoski.ParticleEngine();
+    self.aura.setValues(stemkoski.Examples.fireball);
+
+    self.add(self.aura.particleMesh);
+    self.aura.particleMesh.position.set( x, y+28, z );
 
     var lantern = loaded.scene.children[ 0 ];
     lantern.castShadow = true;
@@ -3469,7 +3472,7 @@ function DefenseTower ( x, y, z, options ) {
     var selfUpdate = self.update.bind(self);
 
     if (self.options.start) {
-      self.aura.start();
+      self.aura.initialize();
 
       window._ta_events.on('update', selfUpdate);
     }
@@ -3519,12 +3522,14 @@ DefenseTower.prototype.fireTo = function(target) {
   var self = this;
 
   var line = new THREE.SplineCurve3([ startPosition, vectorPosition, target.position ]);
-  var cloud = new Particles.ParticleCloud( 10000, self.options.fireTexture, null, {
-    // colorHSL: .5
-  });
+
+  var aura = new stemkoski.ParticleEngine();
+  aura.setValues(stemkoski.Examples.fireball);
+  aura.initialize();
+
   var cloudUpdate = function(game){
-    cloud.update(game.delta);
-  }.bind(cloud);
+    aura.update(game.delta);
+  };
 
   var tween = new TWEEN.Tween({ distance: 0 })
 
@@ -3535,8 +3540,7 @@ DefenseTower.prototype.fireTo = function(target) {
     .onStart(function(){
       window._ta_events.on('update', cloudUpdate);
 
-      self.add(cloud.particleCloud);
-      cloud.start();
+      self.add(aura.particleMesh);
 
       setTimeout(function(){
         self._firing = false;
@@ -3547,15 +3551,14 @@ DefenseTower.prototype.fireTo = function(target) {
         if (tween) { tween.stop(); }
         window._ta_events.removeListener('update', cloudUpdate);
 
-        self.remove(cloud.particleCloud);
+        self.remove(aura.particleMesh);
       }, 1000 );
     })
 
     .onComplete(function(){
       window._ta_events.removeListener('update', cloudUpdate);
 
-      self.remove(cloud.particleCloud);
-      cloud.stop();
+      self.remove(aura.particleMesh);
 
       var spell = new Spell({
         name: 'firebullet',
@@ -3571,17 +3574,13 @@ DefenseTower.prototype.fireTo = function(target) {
       var pathPosition = line.getPoint(this.distance);
 
       // move to that position
-      cloud.particleCloud.position.set(pathPosition.x * 0.9, pathPosition.y * 0.9, pathPosition.z * 0.9);
-      // cloud.emitterpos.set(pathPosition.x * 0.01, pathPosition.y * 0.01, pathPosition.z * 0.01);
-
-      // cloud.emitterpos.set(pathPosition.x, pathPosition.y, pathPosition.z);
-
-      cloud.particleCloud.updateMatrix();
+      aura.particleMesh.position.set(pathPosition.x * 0.9, pathPosition.y * 0.9, pathPosition.z * 0.9);
+      aura.particleMesh.updateMatrix();
     })
     .start();
 };
 
-},{"../entity":50,"../particles/cloud":62,"../spell":70,"inherits":126,"lodash":137,"tween":189}],48:[function(require,module,exports){
+},{"../entity":50,"../particles/cloud":62,"../particles/stemkoski_ParticleEngine":63,"../spell":70,"inherits":126,"lodash":137,"tween":189}],48:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -8490,6 +8489,10 @@ ParticleEngine.prototype.destroy = function()
 {
     this.particleMesh.parent.remove( this.particleMesh );
 }
+ParticleEngine.prototype.stop = function()
+{
+    this.emitterAlive = false;
+}
 ///////////////////////////////////////////////////////////////////////////////
 
 
@@ -10373,7 +10376,7 @@ function FireBullet (options) {
     name: 'firebullet',
 
     isMelee: false,
-    
+
     magicLifeDamage: 20,
 
     maxRange: 50.0,
