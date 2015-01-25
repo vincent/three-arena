@@ -28,6 +28,7 @@ arena.addCharacter(function(done){
     maxSpeed: 15.0,
     onLoad: function(){
       this.learnSpell(Arena.Spells.Teleport);
+      this.learnSpell(Arena.Spells.FireAura);
       this.position.set(-5, 0, -5);
       arena.asPlayer(this);
       done(this);

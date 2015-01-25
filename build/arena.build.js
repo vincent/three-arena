@@ -18,7 +18,7 @@ function d(enabled){
   }
 }
 
-},{"./lib/index.js":55,"debug":88}],2:[function(require,module,exports){
+},{"./lib/index.js":56,"debug":91}],2:[function(require,module,exports){
 module.exports = {
   Controlled: require('./controlled'),
   Collector: require('./collector'),
@@ -293,7 +293,7 @@ Character.prototype.moveAlong = function(linepoints, options) {
 
 Character.prototype.constructor = Character;
 
-},{"./entity":50,"./utils":80,"debug":88,"inherits":123,"lodash":134}],13:[function(require,module,exports){
+},{"./entity":50,"./utils":83,"debug":91,"inherits":126,"lodash":137}],13:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -410,7 +410,7 @@ function ZeroZeroSeven ( options ) {
 
 inherits(ZeroZeroSeven, Character);
 
-},{"../character":12,"inherits":123,"lodash":134}],14:[function(require,module,exports){
+},{"../character":12,"inherits":126,"lodash":137}],14:[function(require,module,exports){
 module.exports = {
   Dummy: require('./dummy'),
   OO7: require('./007'),
@@ -474,7 +474,7 @@ inherits(Dummy, Character);
 Dummy.prototype.setCharacter = function(object) {
 
   this.character = object;
-
+  this.character.root = this.character;
   this.character.meshBody = this.character;
 
   this.character.position.y = 2.5;
@@ -487,7 +487,7 @@ Dummy.prototype.setCharacter = function(object) {
 };
 
 
-},{"../character":12,"inherits":123,"lodash":134}],16:[function(require,module,exports){
+},{"../character":12,"inherits":126,"lodash":137}],16:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -577,7 +577,7 @@ Ghost.prototype.update = function(arena) {
   this.character.update(arena.delta);
 };
 
-},{"../character":12,"inherits":123,"lodash":134}],17:[function(require,module,exports){
+},{"../character":12,"inherits":126,"lodash":137}],17:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -628,7 +628,7 @@ function Human ( options ) {
 
 inherits(Human, Character);
 
-},{"../character":12,"inherits":123,"lodash":134}],18:[function(require,module,exports){
+},{"../character":12,"inherits":126,"lodash":137}],18:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -703,7 +703,7 @@ function Marine (options) {
 inherits(Marine, Character);
 
 
-},{"../character":12,"inherits":123,"lodash":134}],19:[function(require,module,exports){
+},{"../character":12,"inherits":126,"lodash":137}],19:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -784,7 +784,7 @@ function Monsterdog ( options ) {
 
 inherits(Monsterdog, Character);
 
-},{"../character":12,"inherits":123,"lodash":134}],20:[function(require,module,exports){
+},{"../character":12,"inherits":126,"lodash":137}],20:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -904,7 +904,7 @@ function Ogro ( options ) {
 inherits(Ogro, Character);
 
 
-},{"../character":12,"inherits":123,"lodash":134}],21:[function(require,module,exports){
+},{"../character":12,"inherits":126,"lodash":137}],21:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -980,7 +980,7 @@ function Ratamahatta ( options ) {
 
 inherits(Ratamahatta, Character);
 
-},{"../character":12,"inherits":123,"lodash":134}],22:[function(require,module,exports){
+},{"../character":12,"inherits":126,"lodash":137}],22:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1038,7 +1038,7 @@ function SCV (options) {
 inherits(SCV, Character);
 
 
-},{"../character":12,"inherits":123,"lodash":134}],23:[function(require,module,exports){
+},{"../character":12,"inherits":126,"lodash":137}],23:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1124,7 +1124,7 @@ function Zombie ( options ) {
 
 inherits(Zombie, Character);
 
-},{"../character":12,"inherits":123,"lodash":134}],24:[function(require,module,exports){
+},{"../character":12,"inherits":126,"lodash":137}],24:[function(require,module,exports){
 var settings = require('../settings');
 
 module.exports = function (arena) {
@@ -1190,7 +1190,7 @@ function attachName (arena, entity) {
     settings.on('entityNamesChanged', entityNamesChanged);
 }
 
-},{"../settings":65}],25:[function(require,module,exports){
+},{"../settings":66}],25:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -1235,7 +1235,7 @@ AttackCircle.prototype.place = function ( object ) {
   return position;
 };
 
-},{"inherits":123}],26:[function(require,module,exports){
+},{"inherits":126}],26:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -1289,7 +1289,7 @@ DestinationMarker.prototype.animate = function () {
 };
 
 
-},{"../shaders/lightbolt":68,"inherits":123}],27:[function(require,module,exports){
+},{"../shaders/lightbolt":69,"inherits":126}],27:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1638,7 +1638,7 @@ DotaControls.prototype.getContainerDimensions = function() {
 
 
 
-},{"lodash":134}],28:[function(require,module,exports){
+},{"lodash":137}],28:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1704,7 +1704,7 @@ ZoneSelector.prototype.emit = function (event, data) {
 };
 
 
-},{"inherits":123,"lodash":134}],29:[function(require,module,exports){
+},{"inherits":126,"lodash":137}],29:[function(require,module,exports){
 
 var utils = require('../utils');
 var Entity;
@@ -1813,7 +1813,7 @@ CoverSystem.prototype.nearestHidingPositionFrom = function(fromTarget, near, max
     return best;
 };
 
-},{"../entity":50,"../utils":80}],30:[function(require,module,exports){
+},{"../entity":50,"../utils":83}],30:[function(require,module,exports){
 'use strict';
 
 var debug = require('debug')('crowd');
@@ -1827,7 +1827,7 @@ module.exports = Crowd;
 
 /**
  * @exports Crowd
- * 
+ *
  * @constructor
  */
 function Crowd (game) {
@@ -1887,13 +1887,13 @@ function Crowd (game) {
 }
 
 Crowd.prototype.attachRouteDebug = function(entity) {
-  
+
   if (!  entity._crowd_current_route_geometry) {
     entity._crowd_current_route_geometry = new THREE.Geometry();
     entity._crowd_current_route_geometry.vertices.push(this._originVector);
     entity._crowd_current_route_geometry.vertices.push(this._originVector.clone()); // need a new one
 
-    // WHY a new one ?? 
+    // WHY a new one ??
     var _route_material = new THREE.LineBasicMaterial({
       color: 0xff0000,
       transparent: true,
@@ -1931,7 +1931,7 @@ Crowd.prototype.addAgent = function(entity, options, destination, follow, callba
 
     function onEntityDestination(destination) {
       entity._crowd_following = null;
-      // dont call the worker for a minor change 
+      // dont call the worker for a minor change
       if (! entity._crowd_destination ||
         destination.position.distanceTo(entity._crowd_destination.position) > settings.data.crowdMinDestinationChange)
       {
@@ -1949,7 +1949,7 @@ Crowd.prototype.addAgent = function(entity, options, destination, follow, callba
 
     function onEntityFollow(following) {
       entity._crowd_destination = null;
-      // dont call the worker for a minor change 
+      // dont call the worker for a minor change
       if (!entity._crowd_following || entity._crowd_following !== following ||
         following.position.distanceTo(entity._crowd_following.position) > settings.data.crowdMinDestinationChange)
       {
@@ -2059,7 +2059,9 @@ Crowd.prototype.teleport = function(entity, newPosition, callback) {
 
       var options = entity._crowd_options;
       // need to copy because nearestPosition is pooled
-      options.position.copy({ x:posx, y:posy, z:posz });
+      options.position.x = posx;
+      options.position.y = posy;
+      options.position.z = posz;
 
       var following = null; // entity._crowd_following;
       var destination = null; // entity._crowd_destination;
@@ -2128,7 +2130,7 @@ Crowd.prototype._checkAgents = function(entity, idx) {
   // update dirty follow
   // TODO: also use a _dirtyMove flag ?
   if (entity._crowd_following) {
-    // dont call the worker for a minor change 
+    // dont call the worker for a minor change
     if (entity._crowd_following_last_position.distanceTo(entity._crowd_following.position) > 2.0 * settings.data.crowdMinDestinationChange)
     {
       this.game.pathfinder.crowdRequestMoveTarget(idx, entity._crowd_following.position);
@@ -2263,14 +2265,16 @@ function crowdOptions(options) {
   });
 
   // double check positions
-  options.position.x = options.position.x || 0;
-  options.position.y = options.position.y || 0;
-  options.position.z = options.position.z || 0;
+  options.position = {
+    x: options.position.x || 0,
+    y: options.position.y || 0,
+    z: options.position.z || 0
+  }
 
   return options;
 }
 
-},{"./settings":65,"async":87,"debug":88,"lodash":134,"now":136}],31:[function(require,module,exports){
+},{"./settings":66,"async":90,"debug":91,"lodash":137,"now":139}],31:[function(require,module,exports){
 module.exports = {
   SpawningPool: require('./autospawn'),
   DefenseTower: require('./tower'),
@@ -2387,7 +2391,7 @@ AutoSpawn.prototype.spanwOne = function() {
 };
 
 
-},{"inherits":123,"lodash":134}],33:[function(require,module,exports){
+},{"inherits":126,"lodash":137}],33:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2448,7 +2452,7 @@ Checkpoint.prototype.update = function(arena) {
     }
   }
 };
-},{"../shaders/lightbolt":68,"inherits":123,"lodash":134}],34:[function(require,module,exports){
+},{"../shaders/lightbolt":69,"inherits":126,"lodash":137}],34:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2523,7 +2527,7 @@ Collectible.prototype.collectedBy = function(entity, callback) {
 };
 
 
-},{"inherits":123,"lodash":134}],35:[function(require,module,exports){
+},{"inherits":126,"lodash":137}],35:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2612,7 +2616,7 @@ Collectible.prototype.collectedBy = function(entity, callback) {
 };
 
 
-},{"inherits":123,"lodash":134}],36:[function(require,module,exports){
+},{"inherits":126,"lodash":137}],36:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2648,7 +2652,7 @@ function CommandCenter (options) {
 }
 
 inherits(CommandCenter, Entity);
-},{"../entity":50,"inherits":123}],37:[function(require,module,exports){
+},{"../entity":50,"inherits":126}],37:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2730,7 +2734,7 @@ Flies.prototype.update = function(game) {
     this.points.vertices[i].set(point.x, point.y, point.z);
   }
 };
-},{"inherits":123}],38:[function(require,module,exports){
+},{"inherits":126}],38:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2841,7 +2845,7 @@ Grass.prototype.update = function(arena) {
   }
 };
 
-},{"inherits":123}],39:[function(require,module,exports){
+},{"inherits":126}],39:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2900,7 +2904,7 @@ InteractiveObject.prototype.isNearEnough = function(object) {
   return this.position.distanceTo(object.position) <= 20;
 };
 
-},{"../utils":80,"inherits":123}],40:[function(require,module,exports){
+},{"../utils":83,"inherits":126}],40:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2941,7 +2945,7 @@ function Mineral (options) {
 
 inherits(Mineral, Collectible);
 
-},{"./collectible":35,"inherits":123,"lodash":134}],41:[function(require,module,exports){
+},{"./collectible":35,"inherits":126,"lodash":137}],41:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2982,7 +2986,7 @@ function Nexus (options) {
 
 inherits(Nexus, Entity);
 
-},{"../entity":50,"inherits":123}],42:[function(require,module,exports){
+},{"../entity":50,"inherits":126}],42:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -3016,7 +3020,7 @@ function Shop (options) {
 }
 
 inherits(Shop, InteractiveObject);
-},{"./interactiveobject":39,"inherits":123}],43:[function(require,module,exports){
+},{"./interactiveobject":39,"inherits":126}],43:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3069,7 +3073,7 @@ LifeBar.prototype.update = function(delta) {
 };
 
 
-},{"../shaders/lifebar":67,"inherits":123,"lodash":134}],44:[function(require,module,exports){
+},{"../shaders/lifebar":68,"inherits":126,"lodash":137}],44:[function(require,module,exports){
 'use strict';
 
 module.exports = Sound;
@@ -3221,7 +3225,7 @@ Spikes.prototype.update = function(arena) {
   }
 };
 
-},{"../spell":69,"inherits":123,"tween":186}],46:[function(require,module,exports){
+},{"../spell":70,"inherits":126,"tween":189}],46:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3398,7 +3402,7 @@ inherits(Terrain, THREE.Object3D);
 
 
 
-},{"./water":48,"inherits":123,"lodash":134}],47:[function(require,module,exports){
+},{"./water":48,"inherits":126,"lodash":137}],47:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3453,7 +3457,7 @@ function DefenseTower ( x, y, z, options ) {
     self.aura = Particles.Aura( 'point', self.options.fireIntensity, self.options.orbTexture, null );
     self.aura.particleCloud.position.set( x, y+28, z );
     self.add( self.aura.particleCloud );
-    
+
     var lantern = loaded.scene.children[ 0 ];
     lantern.castShadow = true;
     lantern.rotation.x = -90 * Math.PI / 180;
@@ -3466,7 +3470,7 @@ function DefenseTower ( x, y, z, options ) {
 
     if (self.options.start) {
       self.aura.start();
-      
+
       window._ta_events.on('update', selfUpdate);
     }
   });
@@ -3508,7 +3512,7 @@ DefenseTower.prototype.fireTo = function(target) {
   if (this._firing || ! target instanceof Entity) { return; }
 
   this._firing = true;
-  
+
   var startPosition = this.position.clone().setY(35);
   var vectorPosition = target.position.clone().add(startPosition).divideScalar(2).setY(28 + 0);
 
@@ -3546,7 +3550,7 @@ DefenseTower.prototype.fireTo = function(target) {
         self.remove(cloud.particleCloud);
       }, 1000 );
     })
-    
+
     .onComplete(function(){
       window._ta_events.removeListener('update', cloudUpdate);
 
@@ -3561,7 +3565,7 @@ DefenseTower.prototype.fireTo = function(target) {
       });
       target.hit(spell);
     })
-    
+
     .onUpdate(function(){
       // get the position data half way along the path
       var pathPosition = line.getPoint(this.distance);
@@ -3577,7 +3581,7 @@ DefenseTower.prototype.fireTo = function(target) {
     .start();
 };
 
-},{"../entity":50,"../particles/cloud":61,"../spell":69,"inherits":123,"lodash":134,"tween":186}],48:[function(require,module,exports){
+},{"../entity":50,"../particles/cloud":62,"../spell":70,"inherits":126,"lodash":137,"tween":189}],48:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3636,7 +3640,7 @@ Water.prototype.update = function(game) {
 };
 
 
-},{"inherits":123,"lodash":134}],49:[function(require,module,exports){
+},{"inherits":126,"lodash":137}],49:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3687,7 +3691,7 @@ Water.prototype.update = function(game) {
 };
 
 
-},{"../materials/water":59,"inherits":123,"lodash":134}],50:[function(require,module,exports){
+},{"../materials/water":60,"inherits":126,"lodash":137}],50:[function(require,module,exports){
 'use strict';
 
 var now = require('now');
@@ -3704,6 +3708,7 @@ var Inventory = require('./inventory');
 var Steering = require('./ai/steering');
 var TargetSystem = require('./target-system');
 var CoverSystem = require('./cover-system');
+var LearnEffect = require('./spell/flatlearn');
 
 module.exports = Entity;
 
@@ -4244,6 +4249,11 @@ Entity.prototype.learnSpell = function(SpellClass, args) {
 
   this.state.spells.push(spell);
 
+  if (this.game) { // only when entity is on the board
+    var learnEffect = new LearnEffect();
+    learnEffect.start(this, this);
+  }
+
   this.emit('changed', this);
 };
 
@@ -4345,12 +4355,69 @@ Entity.prototype.hit = function(spell) {
   }
 };
 
-},{"./ai/steering":9,"./controls/attackcircle":25,"./cover-system":29,"./elements/slifebar":43,"./inventory":57,"./log":58,"./settings":65,"./target-system":79,"debug":88,"inherits":123,"lodash":134,"now":136}],51:[function(require,module,exports){
+},{"./ai/steering":9,"./controls/attackcircle":25,"./cover-system":29,"./elements/slifebar":43,"./inventory":58,"./log":59,"./settings":66,"./spell/flatlearn":76,"./target-system":82,"debug":91,"inherits":126,"lodash":137,"now":139}],51:[function(require,module,exports){
+'use strict';
+
+module.exports = Spiral;
+
+/**
+ * @exports threearena/geometries/spiral
+ */
+function Spiral (radiusTop, radiusBottom, height, radialSegments, heightSegments, yOffset) {
+
+    this.vertices = [];
+
+    radiusTop       = radiusTop !== undefined ? radiusTop : 8;
+    radiusBottom    = radiusBottom !== undefined ? radiusBottom : 8;
+    height          = height !== undefined ? height : 10;
+    yOffset         = yOffset ||  0;
+
+    radialSegments  = radialSegments || 16;
+    heightSegments  = heightSegments || 10;
+
+    var thetaStart  = 0;
+    var thetaLength = 2 * Math.PI;
+
+    var x, y, vertices = [];
+
+    for ( y = 0; y <= heightSegments; y ++ ) {
+
+        var verticesRow = [];
+        var uvsRow = [];
+
+        var v = y / heightSegments;
+        var radius = v * ( radiusBottom - radiusTop ) + radiusTop;
+
+        for ( x = 0; x < radialSegments; x ++ ) {
+
+            var u = x / radialSegments;
+
+            var vertex = new THREE.Vector3();
+            vertex.x = radius * Math.sin( u * thetaLength + thetaStart );
+            vertex.y = yOffset + (v * height);
+            vertex.z = radius * Math.cos( u * thetaLength + thetaStart );
+
+            this.vertices.push( vertex );
+
+            verticesRow.push( this.vertices.length - 1 );
+
+        }
+
+        vertices.push( verticesRow );
+
+    }
+
+    var spline = new THREE.SplineCurve3(this.vertices);
+
+    return spline;
+}
+
+},{}],52:[function(require,module,exports){
 module.exports = {
   GameHud: require('./ingame'),
   Sidemenu: require('./sidemenu')
 };
-},{"./ingame":52,"./sidemenu":53}],52:[function(require,module,exports){
+},{"./ingame":53,"./sidemenu":54}],53:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -4517,7 +4584,7 @@ GameHud.prototype.startInteraction = function(object) {
 };
 
 
-},{"../elements/interactiveobject":39,"../entity":50,"../views/dialogview":81,"../views/entityview":82,"../views/gameview":83,"../views/interactiveview":84,"../views/questdialogview":85,"knockout":133,"lodash":134}],53:[function(require,module,exports){
+},{"../elements/interactiveobject":39,"../entity":50,"../views/dialogview":84,"../views/entityview":85,"../views/gameview":86,"../views/interactiveview":87,"../views/questdialogview":88,"knockout":136,"lodash":137}],54:[function(require,module,exports){
 'use strict';
 
 module.exports = Sidemenu;
@@ -4551,7 +4618,7 @@ Sidemenu.prototype.isOpen = function () {
   // return this.root.classList.contains( 'fadeInLeft' );
 };
 
-},{}],54:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -4662,7 +4729,7 @@ function SpellTexts (game, options) {
   };
 }
 
-},{"lodash":134,"tween":186}],55:[function(require,module,exports){
+},{"lodash":137,"tween":189}],56:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -6978,7 +7045,7 @@ Arena.stemkoski = require('./particles/stemkoski_ParticleEngine');
 
 
 }).call(this,require('_process'))
-},{"../vendor/detector":187,"../vendor/stats":188,"./ai/behaviours/all":2,"./character/all":14,"./components/entity-name":24,"./controls/destinationmarker":26,"./controls/dota":27,"./controls/zoneselector":28,"./crowd":30,"./elements/all":31,"./elements/collectible":35,"./elements/interactiveobject":39,"./elements/slifebar":43,"./elements/terrain":46,"./entity":50,"./hud":51,"./hud/spelltexts":54,"./input/mouse":56,"./network":60,"./particles/stemkoski_ParticleEngine":62,"./quests":63,"./settings":65,"./settings-gui":64,"./spell/all":70,"./utils":80,"EventEmitter":86,"_process":197,"async":87,"debug":88,"inherits":123,"interact":124,"lodash":134,"machinejs":135,"now":136,"recastjs/lib/recast.withworker":137,"tic":185,"tween":186}],56:[function(require,module,exports){
+},{"../vendor/detector":190,"../vendor/stats":191,"./ai/behaviours/all":2,"./character/all":14,"./components/entity-name":24,"./controls/destinationmarker":26,"./controls/dota":27,"./controls/zoneselector":28,"./crowd":30,"./elements/all":31,"./elements/collectible":35,"./elements/interactiveobject":39,"./elements/slifebar":43,"./elements/terrain":46,"./entity":50,"./hud":52,"./hud/spelltexts":55,"./input/mouse":57,"./network":61,"./particles/stemkoski_ParticleEngine":63,"./quests":64,"./settings":66,"./settings-gui":65,"./spell/all":71,"./utils":83,"EventEmitter":89,"_process":200,"async":90,"debug":91,"inherits":126,"interact":127,"lodash":137,"machinejs":138,"now":139,"recastjs/lib/recast.withworker":140,"tic":188,"tween":189}],57:[function(require,module,exports){
 'use strict';
 
 var debug = require('debug')('controls:mouse');
@@ -7255,7 +7322,7 @@ MouseControl.prototype._onDocumentMouseMove = function(event) {
 
   this.arena.updateSelectionCoords(event.clientX, event.clientY);
 };
-},{"../elements/collectible":35,"../elements/interactiveobject":39,"../elements/terrain":46,"../entity":50,"../settings":65,"../utils":80,"debug":88}],57:[function(require,module,exports){
+},{"../elements/collectible":35,"../elements/interactiveobject":39,"../elements/terrain":46,"../entity":50,"../settings":66,"../utils":83,"debug":91}],58:[function(require,module,exports){
 'use strict';
 
 module.exports = Inventory;
@@ -7308,7 +7375,7 @@ Inventory.prototype.has = function(kind) {
 
   return amount;
 };
-},{}],58:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 'use strict';
 
 module.exports = Log;
@@ -7328,7 +7395,7 @@ Log.SYS_INFO  = 'SYS_INFO';
 Log.SYS_ERROR = 'SYS_ERROR';
 Log.COMBAT    = 'COMBAT';
 
-},{}],59:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 /**
  * @author jbouny / https://github.com/jbouny
  *
@@ -7686,7 +7753,7 @@ THREE.Water.prototype.renderTemp = function () {
     }
 
 };
-},{}],60:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 
 var inherits = require('inherits');
 var socket = require('socket.io-client');
@@ -7735,7 +7802,7 @@ Network.prototype.send = function(type, data) {
 };
 
 
-},{"EventEmitter":86,"inherits":123,"socket.io-client":138}],61:[function(require,module,exports){
+},{"EventEmitter":89,"inherits":126,"socket.io-client":141}],62:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -7998,7 +8065,7 @@ function Aura ( geometry, particulesCount, texture, light ) {
   return cloud;
 }
 
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 /**
 * @author Lee Stemkoski   http://www.adelphi.edu/~stemkoski/
 */
@@ -8014,7 +8081,7 @@ function Aura ( geometry, particulesCount, texture, light ) {
 // varying: used to communicate data from vertex shader to fragment shader
 // uniform: data that is the same for each particle (such as texture)
 
-particleVertexShader = 
+particleVertexShader =
 [
 "attribute vec3  customColor;",
 "attribute float customOpacity;",
@@ -8029,7 +8096,7 @@ particleVertexShader =
     "vColor = vec4( customColor, customOpacity );", //     set color associated to vertex; use later in fragment shader.
   "else",             // false
     "vColor = vec4(0.0, 0.0, 0.0, 0.0);",     //     make particle invisible.
-    
+
   "vAngle = customAngle;",
 
   "vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );",
@@ -8041,15 +8108,15 @@ particleVertexShader =
 particleFragmentShader =
 [
 "uniform sampler2D texture;",
-"varying vec4 vColor;",   
-"varying float vAngle;",   
-"void main()", 
+"varying vec4 vColor;",
+"varying float vAngle;",
+"void main()",
 "{",
   "gl_FragColor = vColor;",
-  
+
   "float c = cos(vAngle);",
   "float s = sin(vAngle);",
-  "vec2 rotatedUV = vec2(c * (gl_PointCoord.x - 0.5) + s * (gl_PointCoord.y - 0.5) + 0.5,", 
+  "vec2 rotatedUV = vec2(c * (gl_PointCoord.x - 0.5) + s * (gl_PointCoord.y - 0.5) + 0.5,",
                         "c * (gl_PointCoord.y - 0.5) - s * (gl_PointCoord.x - 0.5) + 0.5);",  // rotate UV coordinates to rotate texture
       "vec4 rotatedTexture = texture2D( texture,  rotatedUV );",
   "gl_FragColor = gl_FragColor * rotatedTexture;",    // sets an otherwise white particle texture to desired color
@@ -8072,7 +8139,7 @@ Tween.prototype.lerp = function(t)
 {
   var i = 0;
   var n = this.times.length;
-  while (i < n && t > this.times[i])  
+  while (i < n && t > this.times[i])
     i++;
   if (i == 0) return this.values[0];
   if (i == n) return this.values[n-1];
@@ -8098,43 +8165,43 @@ function Particle()
   this.angle             = 0;
   this.angleVelocity     = 0; // degrees per second
   this.angleAcceleration = 0; // degrees per second, per second
-  
+
   this.size = 16.0;
 
   this.color   = new THREE.Color();
   this.opacity = 1.0;
-      
+
   this.age   = 0;
-  this.alive = 0; // use float instead of boolean for shader purposes 
+  this.alive = 0; // use float instead of boolean for shader purposes
 }
 
 Particle.prototype.update = function(dt)
 {
   this.position.add( this.velocity.clone().multiplyScalar(dt) );
   this.velocity.add( this.acceleration.clone().multiplyScalar(dt) );
-  
+
   // convert from degrees to radians: 0.01745329251 = Math.PI/180
   this.angle         += this.angleVelocity     * 0.01745329251 * dt;
   this.angleVelocity += this.angleAcceleration * 0.01745329251 * dt;
 
   this.age += dt;
-  
+
   // if the tween for a given attribute is nonempty,
   //  then use it to update the attribute's value
 
   if ( this.sizeTween.times.length > 0 )
     this.size = this.sizeTween.lerp( this.age );
-        
+
   if ( this.colorTween.times.length > 0 )
   {
     var colorHSL = this.colorTween.lerp( this.age );
     this.color = new THREE.Color().setHSL( colorHSL.x, colorHSL.y, colorHSL.z );
   }
-  
+
   if ( this.opacityTween.times.length > 0 )
     this.opacity = this.opacityTween.lerp( this.age );
 }
-  
+
 ///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////
@@ -8148,43 +8215,43 @@ function ParticleEngine()
   /////////////////////////
   // PARTICLE PROPERTIES //
   /////////////////////////
-  
-  this.positionStyle = Type.CUBE;   
+
+  this.positionStyle = Type.CUBE;
   this.positionBase   = new THREE.Vector3();
   // cube shape data
   this.positionSpread = new THREE.Vector3();
   // sphere shape data
   this.positionRadius = 0; // distance from base at which particles start
-  
-  this.velocityStyle = Type.CUBE; 
+
+  this.velocityStyle = Type.CUBE;
   // cube movement data
   this.velocityBase       = new THREE.Vector3();
-  this.velocitySpread     = new THREE.Vector3(); 
+  this.velocitySpread     = new THREE.Vector3();
   // sphere movement data
   //   direction vector calculated using initial position
   this.speedBase   = 0;
   this.speedSpread = 0;
-  
+
   this.accelerationBase   = new THREE.Vector3();
-  this.accelerationSpread = new THREE.Vector3();  
-  
+  this.accelerationSpread = new THREE.Vector3();
+
   this.angleBase               = 0;
   this.angleSpread             = 0;
   this.angleVelocityBase       = 0;
   this.angleVelocitySpread     = 0;
   this.angleAccelerationBase   = 0;
   this.angleAccelerationSpread = 0;
-  
+
   this.sizeBase   = 0.0;
   this.sizeSpread = 0.0;
   this.sizeTween  = new Tween();
-      
+
   // store colors in HSL format in a THREE.Vector3 object
   // http://en.wikipedia.org/wiki/HSL_and_HSV
-  this.colorBase   = new THREE.Vector3(0.0, 1.0, 0.5); 
+  this.colorBase   = new THREE.Vector3(0.0, 1.0, 0.5);
   this.colorSpread = new THREE.Vector3(0.0, 0.0, 0.0);
   this.colorTween  = new Tween();
-  
+
   this.opacityBase   = 1.0;
   this.opacitySpread = 0.0;
   this.opacityTween  = new Tween();
@@ -8194,31 +8261,31 @@ function ParticleEngine()
   this.particleArray = [];
   this.particlesPerSecond = 100;
   this.particleDeathAge = 1.0;
-  
+
   ////////////////////////
   // EMITTER PROPERTIES //
   ////////////////////////
-  
+
   this.emitterAge      = 0.0;
   this.emitterAlive    = true;
   this.emitterDeathAge = 60; // time (seconds) at which to stop creating particles.
-  
+
   // How many particles could be active at any time?
   this.particleCount = this.particlesPerSecond * Math.min( this.particleDeathAge, this.emitterDeathAge );
 
   //////////////
   // THREE.JS //
   //////////////
-  
+
   this.particleGeometry = new THREE.Geometry();
   this.particleTexture  = null;
-  this.particleMaterial = new THREE.ShaderMaterial( 
+  this.particleMaterial = new THREE.ShaderMaterial(
   {
-    uniforms: 
+    uniforms:
     {
       texture:   { type: "t", value: this.particleTexture },
     },
-    attributes:     
+    attributes:
     {
       customVisible:  { type: 'f',  value: [] },
       customAngle:  { type: 'f',  value: [] },
@@ -8228,44 +8295,44 @@ function ParticleEngine()
     },
     vertexShader:   particleVertexShader,
     fragmentShader: particleFragmentShader,
-    transparent: true, // alphaTest: 0.5,  // if having transparency issues, try including: alphaTest: 0.5, 
+    transparent: true, // alphaTest: 0.5,  // if having transparency issues, try including: alphaTest: 0.5,
     blending: THREE.NormalBlending, depthTest: true,
-    
+
   });
   this.particleMesh = new THREE.Mesh();
 }
-  
+
 ParticleEngine.prototype.setValues = function( parameters )
 {
   if ( parameters === undefined ) return;
-  
+
   // clear any previous tweens that might exist
   this.sizeTween    = new Tween();
   this.colorTween   = new Tween();
   this.opacityTween = new Tween();
-  
-  for ( var key in parameters ) 
+
+  for ( var key in parameters )
     this[ key ] = parameters[ key ];
-  
+
   // attach tweens to particles
   Particle.prototype.sizeTween    = this.sizeTween;
   Particle.prototype.colorTween   = this.colorTween;
-  Particle.prototype.opacityTween = this.opacityTween;  
-  
+  Particle.prototype.opacityTween = this.opacityTween;
+
   // calculate/set derived particle engine values
   this.particleArray = [];
   this.emitterAge      = 0.0;
   this.emitterAlive    = true;
   this.particleCount = this.particlesPerSecond * Math.min( this.particleDeathAge, this.emitterDeathAge );
-  
+
   this.particleGeometry = new THREE.Geometry();
-  this.particleMaterial = new THREE.ShaderMaterial( 
+  this.particleMaterial = new THREE.ShaderMaterial(
   {
-    uniforms: 
+    uniforms:
     {
       texture:   { type: "t", value: this.particleTexture },
     },
-    attributes:     
+    attributes:
     {
       customVisible:  { type: 'f',  value: [] },
       customAngle:  { type: 'f',  value: [] },
@@ -8275,12 +8342,12 @@ ParticleEngine.prototype.setValues = function( parameters )
     },
     vertexShader:   particleVertexShader,
     fragmentShader: particleFragmentShader,
-    transparent: true,  alphaTest: 0.5, // if having transparency issues, try including: alphaTest: 0.5, 
+    transparent: true,  alphaTest: 0.5, // if having transparency issues, try including: alphaTest: 0.5,
     blending: THREE.NormalBlending, depthTest: true
   });
   this.particleMesh = new THREE.ParticleSystem();
 }
-  
+
 // helper functions for randomization
 ParticleEngine.prototype.randomValue = function(base, spread)
 {
@@ -8298,7 +8365,7 @@ ParticleEngine.prototype.createParticle = function()
   var particle = new Particle();
 
   if (this.positionStyle == Type.CUBE)
-    particle.position = this.randomVector3( this.positionBase, this.positionSpread ); 
+    particle.position = this.randomVector3( this.positionBase, this.positionSpread );
   if (this.positionStyle == Type.SPHERE)
   {
     var z = 2 * Math.random() - 1;
@@ -8307,10 +8374,10 @@ ParticleEngine.prototype.createParticle = function()
     var vec3 = new THREE.Vector3( r * Math.cos(t), r * Math.sin(t), z );
     particle.position = new THREE.Vector3().addVectors( this.positionBase, vec3.multiplyScalar( this.positionRadius ) );
   }
-    
+
   if ( this.velocityStyle == Type.CUBE )
   {
-    particle.velocity     = this.randomVector3( this.velocityBase,     this.velocitySpread ); 
+    particle.velocity     = this.randomVector3( this.velocityBase,     this.velocitySpread );
   }
   if ( this.velocityStyle == Type.SPHERE )
   {
@@ -8318,8 +8385,8 @@ ParticleEngine.prototype.createParticle = function()
     var speed     = this.randomValue( this.speedBase, this.speedSpread );
     particle.velocity  = direction.normalize().multiplyScalar( speed );
   }
-  
-  particle.acceleration = this.randomVector3( this.accelerationBase, this.accelerationSpread ); 
+
+  particle.acceleration = this.randomVector3( this.accelerationBase, this.accelerationSpread );
 
   particle.angle             = this.randomValue( this.angleBase,             this.angleSpread );
   particle.angleVelocity     = this.randomValue( this.angleVelocityBase,     this.angleVelocitySpread );
@@ -8329,12 +8396,12 @@ ParticleEngine.prototype.createParticle = function()
 
   var color = this.randomVector3( this.colorBase, this.colorSpread );
   particle.color = new THREE.Color().setHSL( color.x, color.y, color.z );
-  
+
   particle.opacity = this.randomValue( this.opacityBase, this.opacitySpread );
 
   particle.age   = 0;
   particle.alive = 0; // particles initialize as inactive
-  
+
   return particle;
 }
 
@@ -8352,11 +8419,11 @@ ParticleEngine.prototype.initialize = function()
     this.particleMaterial.attributes.customSize.value[i]    = this.particleArray[i].size;
     this.particleMaterial.attributes.customAngle.value[i]   = this.particleArray[i].angle;
   }
-  
+
   this.particleMaterial.blending = this.blendStyle;
-  if ( this.blendStyle != THREE.NormalBlending) 
+  if ( this.blendStyle != THREE.NormalBlending)
     this.particleMaterial.depthTest = false;
-  
+
   this.particleMesh = new THREE.ParticleSystem( this.particleGeometry, this.particleMaterial );
   this.particleMesh.dynamic = true;
   this.particleMesh.sortParticles = true;
@@ -8365,7 +8432,7 @@ ParticleEngine.prototype.initialize = function()
 ParticleEngine.prototype.update = function(dt)
 {
   var recycleIndices = [];
-  
+
   // update particle data
   for (var i = 0; i < this.particleCount; i++)
   {
@@ -8375,7 +8442,7 @@ ParticleEngine.prototype.update = function(dt)
 
       // check if particle should expire
       // could also use: death by size<0 or alpha<0.
-      if ( this.particleArray[i].age > this.particleDeathAge ) 
+      if ( this.particleArray[i].age > this.particleDeathAge )
       {
         this.particleArray[i].alive = 0.0;
         recycleIndices.push(i);
@@ -8386,7 +8453,7 @@ ParticleEngine.prototype.update = function(dt)
       this.particleMaterial.attributes.customOpacity.value[i] = this.particleArray[i].opacity;
       this.particleMaterial.attributes.customSize.value[i]    = this.particleArray[i].size;
       this.particleMaterial.attributes.customAngle.value[i]   = this.particleArray[i].angle;
-    }   
+    }
   }
 
   // check if particle emitter is still running
@@ -8398,11 +8465,11 @@ ParticleEngine.prototype.update = function(dt)
     // determine indices of particles to activate
     var startIndex = Math.round( this.particlesPerSecond * (this.emitterAge +  0) );
     var   endIndex = Math.round( this.particlesPerSecond * (this.emitterAge + dt) );
-    if  ( endIndex > this.particleCount ) 
-        endIndex = this.particleCount; 
-        
+    if  ( endIndex > this.particleCount )
+        endIndex = this.particleCount;
+
     for (var i = startIndex; i < endIndex; i++)
-      this.particleArray[i].alive = 1.0;    
+      this.particleArray[i].alive = 1.0;
   }
 
   // if any particles have died while the emitter is still running, we imediately recycle them
@@ -8435,9 +8502,9 @@ ParticleEngine.prototype.destroy = function()
 * @author Lee Stemkoski   http://www.adelphi.edu/~stemkoski/
 */
 
-/* 
+/*
   Particle Engine options:
-  
+
   positionBase   : new THREE.Vector3(),
   positionStyle : Type.CUBE or Type.SPHERE,
 
@@ -8446,22 +8513,22 @@ ParticleEngine.prototype.destroy = function()
 
   // for Type.SPHERE
   positionRadius  : 10,
-  
+
   velocityStyle : Type.CUBE or Type.SPHERE,
 
   // for Type.CUBE
   velocityBase       : new THREE.Vector3(),
-  velocitySpread     : new THREE.Vector3(), 
+  velocitySpread     : new THREE.Vector3(),
 
   // for Type.SPHERE
   speedBase   : 20,
   speedSpread : 10,
-    
+
   accelerationBase   : new THREE.Vector3(),
   accelerationSpread : new THREE.Vector3(),
-    
+
   particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/star.png' ),
-    
+
   // rotation of image used for particles
   angleBase               : 0,
   angleSpread             : 0,
@@ -8469,15 +8536,15 @@ ParticleEngine.prototype.destroy = function()
   angleVelocitySpread     : 0,
   angleAccelerationBase   : 0,
   angleAccelerationSpread : 0,
-    
-  // size, color, opacity 
+
+  // size, color, opacity
   //   for static  values, use base/spread
   //   for dynamic values, use Tween
   //   (non-empty Tween takes precedence)
   sizeBase   : 20.0,
   sizeSpread : 5.0,
   sizeTween  : new Tween( [0, 1], [1, 20] ),
-      
+
   // colors stored in Vector3 in H,S,L format
   colorBase   : new THREE.Vector3(0.0, 1.0, 0.5),
   colorSpread : new THREE.Vector3(0,0,0),
@@ -8486,47 +8553,47 @@ ParticleEngine.prototype.destroy = function()
   opacityBase   : 1,
   opacitySpread : 0,
   opacityTween  : new Tween( [2, 3], [1, 0] ),
-  
+
   blendStyle    : THREE.NormalBlending (default), THREE.AdditiveBlending
 
   particlesPerSecond : 200,
-  particleDeathAge   : 2.0,   
-  emitterDeathAge    : 60 
+  particleDeathAge   : 2.0,
+  emitterDeathAge    : 60
 */
 
 Examples =
 {
 
-  
+
   // (1) build GUI for easy effects access.
   // (2) write ParticleEngineExamples.js
-  
+
   // Not just any fountain -- a RAINBOW STAR FOUNTAIN of AWESOMENESS
   fountain :
   {
     positionStyle    : Type.CUBE,
     positionBase     : new THREE.Vector3( 0,  5, 0 ),
     positionSpread   : new THREE.Vector3( 10, 0, 10 ),
-    
+
     velocityStyle    : Type.CUBE,
     velocityBase     : new THREE.Vector3( 0,  160, 0 ),
-    velocitySpread   : new THREE.Vector3( 100, 20, 100 ), 
+    velocitySpread   : new THREE.Vector3( 100, 20, 100 ),
 
     accelerationBase : new THREE.Vector3( 0, -100, 0 ),
-    
+
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/star.png' ),
 
     angleBase               : 0,
     angleSpread             : 180,
     angleVelocityBase       : 0,
     angleVelocitySpread     : 360 * 4,
-    
+
     sizeTween    : new Tween( [0, 1], [1, 20] ),
     opacityTween : new Tween( [2, 3], [1, 0] ),
     colorTween   : new Tween( [0.5, 2], [ new THREE.Vector3(0,1,0.5), new THREE.Vector3(0.8, 1, 0.5) ] ),
 
     particlesPerSecond : 200,
-    particleDeathAge   : 3.0,   
+    particleDeathAge   : 3.0,
     emitterDeathAge    : 60
   },
 
@@ -8535,7 +8602,7 @@ Examples =
     positionStyle  : Type.SPHERE,
     positionBase   : new THREE.Vector3( 0, 0, 0 ),
     positionRadius : 0.2,
-        
+
     velocityStyle : Type.SPHERE,
     speedBase     : 0,
     speedSpread   : 2,
@@ -8544,19 +8611,48 @@ Examples =
     angleSpread             : 720,
     angleVelocityBase       : 0,
     angleVelocitySpread     : 720,
-    
+
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/smokeparticle.png' ),
 
     sizeTween    : new Tween( [0, 0.1], [1, 15] ),
     opacityTween : new Tween( [0.7, 1], [1, 0] ),
     colorBase    : new THREE.Vector3(0.02, 1, 0.4),
-    blendStyle   : THREE.AdditiveBlending,  
-    
+    blendStyle   : THREE.AdditiveBlending,
+
     particlesPerSecond : 100,
-    particleDeathAge   : 1.5,   
+    particleDeathAge   : 1.5,
     emitterDeathAge    : 60
   },
-  
+
+  flame :
+  {
+    positionStyle  : Type.SPHERE,
+    positionBase   : new THREE.Vector3( 0, 0, 0 ),
+    positionRadius : 0.2,
+
+    velocityStyle : Type.SPHERE,
+    speedBase     : 0,
+    speedSpread   : 2,
+
+    positionSpread   : new THREE.Vector3( 10, 0, 0 ),
+
+    angleBase               : 0,
+    angleSpread             : 720,
+    angleVelocityBase       : 0,
+    angleVelocitySpread     : 720,
+
+    particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/smokeparticle.png' ),
+
+    sizeTween    : new Tween( [0, 0.1], [1, 15] ),
+    opacityTween : new Tween( [0.7, 1], [1, 0] ),
+    colorBase    : new THREE.Vector3(0.02, 1, 0.4),
+    blendStyle   : THREE.AdditiveBlending,
+
+    particlesPerSecond : 20,
+    particleDeathAge   : 61,
+    emitterDeathAge    : 1600
+  },
+
   smoke :
   {
     positionStyle    : Type.CUBE,
@@ -8565,35 +8661,35 @@ Examples =
 
     velocityStyle    : Type.CUBE,
     velocityBase     : new THREE.Vector3( 0, 150, 0 ),
-    velocitySpread   : new THREE.Vector3( 80, 50, 80 ), 
+    velocitySpread   : new THREE.Vector3( 80, 50, 80 ),
     accelerationBase : new THREE.Vector3( 0,-10,0 ),
-    
+
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/smokeparticle.png'),
 
     angleBase               : 0,
     angleSpread             : 720,
     angleVelocityBase       : 0,
     angleVelocitySpread     : 720,
-    
+
     sizeTween    : new Tween( [0, 1], [32, 128] ),
     opacityTween : new Tween( [0.8, 2], [0.5, 0] ),
     colorTween   : new Tween( [0.4, 1], [ new THREE.Vector3(0,0,0.2), new THREE.Vector3(0, 0, 0.5) ] ),
 
     particlesPerSecond : 200,
-    particleDeathAge   : 2.0,   
+    particleDeathAge   : 2.0,
     emitterDeathAge    : 60
   },
-  
+
   clouds :
   {
     positionStyle  : Type.CUBE,
     positionBase   : new THREE.Vector3( -100, 100,  0 ),
     positionSpread : new THREE.Vector3(    0,  50, 60 ),
-    
+
     velocityStyle  : Type.CUBE,
     velocityBase   : new THREE.Vector3( 40, 0, 0 ),
-    velocitySpread : new THREE.Vector3( 20, 0, 0 ), 
-    
+    velocitySpread : new THREE.Vector3( 20, 0, 0 ),
+
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/smokeparticle.png'),
 
     sizeBase     : 80.0,
@@ -8602,37 +8698,37 @@ Examples =
     opacityTween : new Tween([0,1,4,5],[0,1,1,0]),
 
     particlesPerSecond : 50,
-    particleDeathAge   : 10.0,    
+    particleDeathAge   : 10.0,
     emitterDeathAge    : 60
   },
-    
+
   snow :
   {
     positionStyle    : Type.CUBE,
     positionBase     : new THREE.Vector3( 0, 200, 0 ),
     positionSpread   : new THREE.Vector3( 500, 0, 500 ),
-    
+
     velocityStyle    : Type.CUBE,
     velocityBase     : new THREE.Vector3( 0, -60, 0 ),
-    velocitySpread   : new THREE.Vector3( 50, 20, 50 ), 
+    velocitySpread   : new THREE.Vector3( 50, 20, 50 ),
     accelerationBase : new THREE.Vector3( 0, -10,0 ),
-    
+
     angleBase               : 0,
     angleSpread             : 720,
     angleVelocityBase       :  0,
     angleVelocitySpread     : 60,
-    
+
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/snowflake.png' ),
-      
+
     sizeTween    : new Tween( [0, 0.25], [1, 10] ),
     colorBase   : new THREE.Vector3(0.66, 1.0, 0.9), // H,S,L
     opacityTween : new Tween( [2, 3], [0.8, 0] ),
 
     particlesPerSecond : 200,
-    particleDeathAge   : 4.0,   
+    particleDeathAge   : 4.0,
     emitterDeathAge    : 60
   },
-  
+
   rain :
   {
     positionStyle    : Type.CUBE,
@@ -8641,9 +8737,9 @@ Examples =
 
     velocityStyle    : Type.CUBE,
     velocityBase     : new THREE.Vector3( 0, -400, 0 ),
-    velocitySpread   : new THREE.Vector3( 10, 50, 10 ), 
+    velocitySpread   : new THREE.Vector3( 10, 50, 10 ),
     accelerationBase : new THREE.Vector3( 0, -10,0 ),
-    
+
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/raindrop2flip.png' ),
 
     sizeBase    : 8.0,
@@ -8653,10 +8749,10 @@ Examples =
     opacityBase : 0.6,
 
     particlesPerSecond : 1000,
-    particleDeathAge   : 1.0,   
+    particleDeathAge   : 1.0,
     emitterDeathAge    : 60
   },
-    
+
   starfield :
   {
     positionStyle    : Type.CUBE,
@@ -8665,23 +8761,23 @@ Examples =
 
     velocityStyle    : Type.CUBE,
     velocityBase     : new THREE.Vector3( 0, 0, 0 ),
-    velocitySpread   : new THREE.Vector3( 0.5, 0.5, 0.5 ), 
-    
+    velocitySpread   : new THREE.Vector3( 0.5, 0.5, 0.5 ),
+
     angleBase               : 0,
     angleSpread             : 720,
     angleVelocityBase       : 0,
     angleVelocitySpread     : 4,
 
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/spikey.png' ),
-    
+
     sizeBase    : 10.0,
-    sizeSpread  : 2.0,        
+    sizeSpread  : 2.0,
     colorBase   : new THREE.Vector3(0.15, 1.0, 0.9), // H,S,L
     colorSpread : new THREE.Vector3(0.00, 0.0, 0.2),
     opacityBase : 1,
 
     particlesPerSecond : 20000,
-    particleDeathAge   : 60.0,    
+    particleDeathAge   : 60.0,
     emitterDeathAge    : 0.1
   },
 
@@ -8693,22 +8789,22 @@ Examples =
 
     velocityStyle  : Type.CUBE,
     velocityBase   : new THREE.Vector3( 0, 0, 0 ),
-    velocitySpread : new THREE.Vector3( 60, 20, 60 ), 
-    
+    velocitySpread : new THREE.Vector3( 60, 20, 60 ),
+
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/spark.png' ),
 
     sizeBase   : 30.0,
     sizeSpread : 2.0,
     opacityTween : new Tween([0.0, 1.0, 1.1, 2.0, 2.1, 3.0, 3.1, 4.0, 4.1, 5.0, 5.1, 6.0, 6.1],
-                             [0.2, 0.2, 1.0, 1.0, 0.2, 0.2, 1.0, 1.0, 0.2, 0.2, 1.0, 1.0, 0.2] ),       
+                             [0.2, 0.2, 1.0, 1.0, 0.2, 0.2, 1.0, 1.0, 0.2, 0.2, 1.0, 1.0, 0.2] ),
     colorBase   : new THREE.Vector3(0.30, 1.0, 0.6), // H,S,L
     colorSpread : new THREE.Vector3(0.3, 0.0, 0.0),
 
     particlesPerSecond : 20,
-    particleDeathAge   : 6.1,   
+    particleDeathAge   : 6.1,
     emitterDeathAge    : 600
   },
-  
+
   leafs :
   {
     positionStyle  : Type.CUBE,
@@ -8717,27 +8813,27 @@ Examples =
 
     velocityStyle  : Type.CUBE,
     velocityBase   : new THREE.Vector3( 0, 1, 0 ),
-    velocitySpread : new THREE.Vector3( 60, 20, 60 ), 
+    velocitySpread : new THREE.Vector3( 60, 20, 60 ),
 
     angleBase               : 10,
     angleSpread             : 720,
     angleVelocityBase       : 30,
     angleVelocitySpread     : 0,
-    
+
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/custom/leafs.png' ),
 
     sizeBase   : 30.0,
     sizeSpread : 2.0,
     opacityTween : new Tween([0.0, 1.0, 1.1, 2.0, 2.1, 3.0, 3.1, 4.0, 4.1, 5.0, 5.1, 6.0, 6.1],
-                             [0.2, 0.2, 1.0, 1.0, 0.2, 0.2, 1.0, 1.0, 0.2, 0.2, 1.0, 1.0, 0.2] ),       
+                             [0.2, 0.2, 1.0, 1.0, 0.2, 0.2, 1.0, 1.0, 0.2, 0.2, 1.0, 1.0, 0.2] ),
     colorBase   : new THREE.Vector3(0.30, 1.0, 0.6), // H,S,L
     colorSpread : new THREE.Vector3(0.3, 0.0, 0.0),
 
     particlesPerSecond : 100,
-    particleDeathAge   : 6.1,   
+    particleDeathAge   : 6.1,
     emitterDeathAge    : 60
   },
-  
+
   startunnel :
   {
     positionStyle  : Type.CUBE,
@@ -8746,23 +8842,23 @@ Examples =
 
     velocityStyle  : Type.CUBE,
     velocityBase   : new THREE.Vector3( 0, 100, 200 ),
-    velocitySpread : new THREE.Vector3( 40, 40, 80 ), 
-    
+    velocitySpread : new THREE.Vector3( 40, 40, 80 ),
+
     angleBase               : 0,
     angleSpread             : 720,
     angleVelocityBase       : 10,
     angleVelocitySpread     : 0,
-    
+
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/spikey.png' ),
 
     sizeBase    : 4.0,
-    sizeSpread  : 2.0,        
+    sizeSpread  : 2.0,
     colorBase   : new THREE.Vector3(0.15, 1.0, 0.8), // H,S,L
     opacityBase : 1,
     blendStyle  : THREE.AdditiveBlending,
 
     particlesPerSecond : 500,
-    particleDeathAge   : 4.0,   
+    particleDeathAge   : 4.0,
     emitterDeathAge    : 60
   },
 
@@ -8771,22 +8867,22 @@ Examples =
     positionStyle  : Type.SPHERE,
     positionBase   : new THREE.Vector3( 0, 100, 0 ),
     positionRadius : 10,
-    
+
     velocityStyle  : Type.SPHERE,
     speedBase      : 90,
     speedSpread    : 10,
-    
+
     accelerationBase : new THREE.Vector3( 0, -80, 0 ),
-    
+
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/spark.png' ),
-    
+
     sizeTween    : new Tween( [0.5, 0.7, 1.3], [5, 40, 1] ),
     opacityTween : new Tween( [0.2, 0.7, 2.5], [0.75, 1, 0] ),
     colorTween   : new Tween( [0.4, 0.8, 1.0], [ new THREE.Vector3(0,1,1), new THREE.Vector3(0,1,0.6), new THREE.Vector3(0.8, 1, 0.6) ] ),
-    blendStyle   : THREE.AdditiveBlending,  
-    
+    blendStyle   : THREE.AdditiveBlending,
+
     particlesPerSecond : 3000,
-    particleDeathAge   : 2.5,   
+    particleDeathAge   : 2.5,
     emitterDeathAge    : 0.2
   },
 
@@ -8795,23 +8891,23 @@ Examples =
     positionStyle  : Type.SPHERE,
     positionBase   : new THREE.Vector3( 0, 50, 0 ),
     positionRadius : 2,
-    
+
     velocityStyle  : Type.CUBE,
     velocityBase   : new THREE.Vector3(0,100,0),
     velocitySpread : new THREE.Vector3(20,0,20),
-    
+
     particleTexture : THREE.ImageUtils.loadTexture( '/gamedata/textures/smokeparticle.png' ),
-    
+
     sizeTween    : new Tween( [0, 0.3, 1.2], [20, 150, 1] ),
     opacityTween : new Tween( [0.9, 1.5], [1, 0] ),
     colorTween   : new Tween( [0.5, 1.0], [ new THREE.Vector3(0.02, 1, 0.5), new THREE.Vector3(0.05, 1, 0) ] ),
-    blendStyle : THREE.AdditiveBlending,  
-    
+    blendStyle : THREE.AdditiveBlending,
+
     particlesPerSecond : 60,
-    particleDeathAge   : 1.5,   
+    particleDeathAge   : 1.5,
     emitterDeathAge    : 60
   }
-  
+
 }
 
 
@@ -8821,7 +8917,7 @@ module.exports = {
   Type: Type,
   Tween: Tween
 };
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -8986,7 +9082,7 @@ Quests.prototype.markEntity = function(entity, questMarkType) {
     settings.on('entityQuestMarkChanged', entityQuestMarkChanged);
 };
 
-},{"../settings":65,"hoodie":90,"lodash":134}],64:[function(require,module,exports){
+},{"../settings":66,"hoodie":93,"lodash":137}],65:[function(require,module,exports){
 'use strict';
 
 /* global dat: true, _gaq: true */
@@ -9287,7 +9383,7 @@ exports.shortcut = function(label){
 };
 
 
-},{"./settings":65}],65:[function(require,module,exports){
+},{"./settings":66}],66:[function(require,module,exports){
 'use strict';
 
 /**
@@ -9558,7 +9654,7 @@ settings.data = {
 
 
 
-},{"events":194}],66:[function(require,module,exports){
+},{"events":197}],67:[function(require,module,exports){
 module.exports = [
 
 '//',
@@ -9742,7 +9838,7 @@ module.exports = [
 ].join("\n");
 
 
-},{}],67:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 'use strict';
 
 var TWEEN = require('tween');
@@ -9885,7 +9981,7 @@ LifebarShaderMaterial.prototype.setMana = function(value) {
 };
 
 
-},{"inherits":123,"tween":186}],68:[function(require,module,exports){
+},{"inherits":126,"tween":189}],69:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -10002,7 +10098,7 @@ function LightboltShaderMaterial (strands) {
 
 inherits(LightboltShaderMaterial, THREE.ShaderMaterial);
 
-},{"./ashima/classicnoise3D.glsl":66,"inherits":123}],69:[function(require,module,exports){
+},{"./ashima/classicnoise3D.glsl":67,"inherits":126}],70:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10127,7 +10223,7 @@ Spell.prototype.startCooldown = function (source) {
   setTimeout(updateCD, 50);
 };
 
-},{"EventEmitter":86,"debug":88,"inherits":123,"lodash":134}],70:[function(require,module,exports){
+},{"EventEmitter":89,"debug":91,"inherits":126,"lodash":137}],71:[function(require,module,exports){
 module.exports = {
   Bite: require('./bite'),
   FireAura: require('./fireaura'),
@@ -10136,10 +10232,12 @@ module.exports = {
   Lightbolt: require('./lightbolt'),
   Heal: require('./heal'),
   Teleport: require('./teleport'),
-  PlaceObject: require('./placeobject')
+  PlaceObject: require('./placeobject'),
+  Learn: require('./learn'),
+  FlatLearn: require('./flatlearn')
 };
 
-},{"./bite":71,"./fireaura":72,"./firebullet":73,"./flatfireaura":74,"./heal":75,"./lightbolt":76,"./placeobject":77,"./teleport":78}],71:[function(require,module,exports){
+},{"./bite":72,"./fireaura":73,"./firebullet":74,"./flatfireaura":75,"./flatlearn":76,"./heal":77,"./learn":78,"./lightbolt":79,"./placeobject":80,"./teleport":81}],72:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10197,7 +10295,7 @@ Bite.prototype.start = function(source, target) {
   target.hit(this);
 };
 
-},{"../elements/sound":44,"../spell":69,"inherits":123,"lodash":134}],72:[function(require,module,exports){
+},{"../elements/sound":44,"../spell":70,"inherits":126,"lodash":137}],73:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10247,7 +10345,7 @@ FireAura.prototype.start = function (caster, target) {
   }, 5000);
 };
 
-},{"../particles/cloud":61,"../spell":69,"inherits":123,"lodash":134}],73:[function(require,module,exports){
+},{"../particles/cloud":62,"../spell":70,"inherits":126,"lodash":137}],74:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -10340,7 +10438,7 @@ FireBullet.prototype.start = function (caster, target) {
     .start();
 };
 
-},{"../elements/sound":44,"../particles/cloud":61,"../particles/stemkoski_ParticleEngine":62,"../spell":69,"../utils":80,"inherits":123,"lodash":134,"tween":186}],74:[function(require,module,exports){
+},{"../elements/sound":44,"../particles/cloud":62,"../particles/stemkoski_ParticleEngine":63,"../spell":70,"../utils":83,"inherits":126,"lodash":137,"tween":189}],75:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10398,7 +10496,84 @@ FlatFireAura.prototype.start = function (caster, target) {
   }, 5000);
 };
 
-},{"../spell":69,"inherits":123,"lodash":134}],75:[function(require,module,exports){
+},{"../spell":70,"inherits":126,"lodash":137}],76:[function(require,module,exports){
+'use strict';
+
+var _ = require('lodash');
+var inherits = require('inherits');
+
+var Spell = require('../spell');
+
+module.exports = FlatFireAura;
+
+/**
+ * @exports threearena/spell/flatfireaura
+ */
+function FlatFireAura (options) {
+
+  options = _.merge({}, options, {
+    name: 'flatlearn'
+  });
+
+  Spell.apply(this, [ options ]);
+
+  var texture = THREE.ImageUtils.loadTexture( '/gamedata/textures/summoning_circles/circle4.bold.png' );
+  texture.needsUpdate = true;
+
+  var geometry = new THREE.PlaneGeometry(10, 10, 1, 1);
+  var material = new THREE.MeshBasicMaterial({
+    blending: THREE.AdditiveBlending,
+    transparent: true,
+    color: 0xF7FA25,
+    opacity: 0.9,
+    map: texture
+  });
+
+  this.aura1 = new THREE.Mesh( geometry, material );
+  this.aura2 = new THREE.Mesh( geometry, material );
+  this.aura3 = new THREE.Mesh( geometry, material );
+  this.aura4 = new THREE.Mesh( geometry, material );
+
+  this.aura1.rotation.x = - Math.PI / 2;
+  this.aura2.rotation.x = - Math.PI / 2;
+  this.aura3.rotation.x = - Math.PI / 2;
+  this.aura4.rotation.x = - Math.PI / 2;
+}
+
+inherits(FlatFireAura, Spell);
+
+FlatFireAura.prototype.name = 'fireaura';
+
+FlatFireAura.prototype.start = function (caster, target) {
+
+  var self = this;
+
+  var update = function(game){
+    self.aura1.position.y += 0.6 * Math.sin(self.aura2.position.y * 0.3);
+    self.aura2.position.y += 0.6 * Math.cos(self.aura1.position.y * 0.3);
+    self.aura3.position.y += 0.6 * Math.sin(self.aura4.position.y * 0.3);
+    self.aura4.position.y += 0.6 * Math.cos(self.aura3.position.y * 0.3);
+
+    self.aura1.material.opacity -= 0.01;
+  };
+
+  caster.game.on('update', update);
+
+  caster.add(self.aura1);
+  caster.add(self.aura2);
+  caster.add(self.aura3);
+  caster.add(self.aura4);
+
+  setTimeout(function(){
+    caster.remove(self.aura1);
+    caster.remove(self.aura2);
+    caster.remove(self.aura3);
+    caster.remove(self.aura4);
+    caster.game.removeListener('update', update);
+  }, 2000);
+};
+
+},{"../spell":70,"inherits":126,"lodash":137}],77:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -10498,7 +10673,99 @@ Heal.prototype.start = function (caster, target) {
     .start();
 };
 
-},{"../elements/sound":44,"../particles/cloud":61,"../particles/stemkoski_ParticleEngine":62,"../spell":69,"../utils":80,"inherits":123,"lodash":134,"tween":186}],76:[function(require,module,exports){
+},{"../elements/sound":44,"../particles/cloud":62,"../particles/stemkoski_ParticleEngine":63,"../spell":70,"../utils":83,"inherits":126,"lodash":137,"tween":189}],78:[function(require,module,exports){
+'use strict';
+
+var inherits  = require('inherits');
+
+var _         = require('lodash');
+var TWEEN     = require('tween');
+var inherits  = require('inherits');
+
+var Spell     = require('../spell');
+var Utils     = require('../utils');
+var Particles = require('../particles/cloud');
+var Sound     = require('../elements/sound');
+var Spiral    = require('../geometries/spiral');
+
+var stemkoski = require('../particles/stemkoski_ParticleEngine');
+
+module.exports = Learn;
+
+/**
+ * @exports threearena/spell/learn
+ */
+function Learn (options) {
+
+  options = _.merge({}, options, {
+
+    name: 'learn',
+
+    isMelee: false,
+
+    magicLifeDamage: 0,
+
+    maxRange: 1.0,
+
+    level: 1,
+
+    needsTarget: true
+  });
+
+  Spell.apply(this, [ options ]);
+
+  this.line = new Spiral(5, 0.1);
+
+  this.aura = new stemkoski.ParticleEngine();
+  this.aura.setValues(stemkoski.Examples.flame);
+
+  this.sound = new Sound(['/gamedata/sounds/' + options.name + '.mp3'], 5.0, 50);
+  // window._ta_events.on('update', function(game){ self.sound.update(game.camera); });
+}
+
+inherits(Learn, Spell);
+
+Learn.prototype.name = 'learn';
+
+Learn.prototype.start = function (caster, target) {
+
+  var self = this;
+
+  if (! target) {
+    console.warn('This spell needs a target');
+    return;
+  }
+
+  this.sound.play();
+
+  this.aura.initialize();
+  this.aura.particleMesh.position.copy(caster.position);
+  // this.aura.particleMesh.position.y += 1;
+
+  var updateCloud = function(game){
+
+    this.update(game.delta);
+
+  }.bind(this.aura);
+
+  new TWEEN.Tween({ distance: 0 })
+    .to({ distance: 1 }, 1000)
+    .onStart(function(){
+      caster.game.on('update', updateCloud);
+      caster.add(self.aura.particleMesh);
+    })
+    .onUpdate(function(){
+      // console.log('particleMesh at', self.line.getPoint(this.distance));
+      self.aura.particleMesh.position.copy(self.line.getPoint(this.distance));
+    })
+    .onComplete(function(){
+      caster.remove(self.aura.particleMesh);
+      caster.game.removeListener('update', updateCloud);
+    })
+    .start();
+};
+
+},{"../elements/sound":44,"../geometries/spiral":51,"../particles/cloud":62,"../particles/stemkoski_ParticleEngine":63,"../spell":70,"../utils":83,"inherits":126,"lodash":137,"tween":189}],79:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10604,7 +10871,7 @@ Lightbolt.prototype.start = function (caster, target) {
   })
   .start();
 };
-},{"../shaders/lightbolt":68,"../spell":69,"inherits":123,"lodash":134,"tween":186}],77:[function(require,module,exports){
+},{"../shaders/lightbolt":69,"../spell":70,"inherits":126,"lodash":137,"tween":189}],80:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10745,7 +11012,7 @@ PlaceObject.prototype.updateZoneSelector = function(source, arena) {
 
 
 
-},{"../elements/sound":44,"../settings":65,"../spell":69,"inherits":123,"lodash":134,"tween":186}],78:[function(require,module,exports){
+},{"../elements/sound":44,"../settings":66,"../spell":70,"inherits":126,"lodash":137,"tween":189}],81:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10862,7 +11129,7 @@ Teleport.prototype.updateZoneSelector = function(source, arena) {
   }
 };
 
-},{"../elements/sound":44,"../settings":65,"../spell":69,"inherits":123,"lodash":134,"tween":186}],79:[function(require,module,exports){
+},{"../elements/sound":44,"../settings":66,"../spell":70,"inherits":126,"lodash":137,"tween":189}],82:[function(require,module,exports){
 module.exports = TargetSystem;
 
 function TargetSystem (arena, entity) {
@@ -10948,7 +11215,7 @@ TargetSystem.prototype.bestSpellForTarget = function(entity) {
 };
 
 
-},{}],80:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -11138,7 +11405,7 @@ module.exports = {
 
 };
 
-},{"lodash":134,"tween":186}],81:[function(require,module,exports){
+},{"lodash":137,"tween":189}],84:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -11173,7 +11440,7 @@ function DialogViewModel (dialog) {
 
   dialog.on('changed', this.update.bind(this));
 }
-},{"knockout":133,"lodash":134}],82:[function(require,module,exports){
+},{"knockout":136,"lodash":137}],85:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -11263,7 +11530,7 @@ function EntityViewModel (entity, game) {
 
   entity.on('changed', this.update.bind(this));
 }
-},{"../entity":50,"../utils":80,"knockout":133,"lodash":134}],83:[function(require,module,exports){
+},{"../entity":50,"../utils":83,"knockout":136,"lodash":137}],86:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -11518,7 +11785,7 @@ GameViewModel.prototype.onMapClick = function(gameview, event) {
 GameViewModel.prototype.onCharacterHover = function(event) {
 };
 
-},{"../settings":65,"knockout":133,"lodash":134}],84:[function(require,module,exports){
+},{"../settings":66,"knockout":136,"lodash":137}],87:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -11553,7 +11820,7 @@ function InteractiveViewModel (interactive) {
 
   interactive.on('changed', this.update.bind(this));
 }
-},{"knockout":133,"lodash":134}],85:[function(require,module,exports){
+},{"knockout":136,"lodash":137}],88:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -11630,7 +11897,7 @@ function QuestDialogViewModel (quests, questGiver) {
     };
 }
 
-},{"knockout":133,"lodash":134}],86:[function(require,module,exports){
+},{"knockout":136,"lodash":137}],89:[function(require,module,exports){
 /*!
  * EventEmitter v4.2.8 - git.io/ee
  * Oliver Caldwell
@@ -12104,7 +12371,7 @@ function QuestDialogViewModel (quests, questGiver) {
 	}
 }.call(this));
 
-},{}],87:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 (function (process){
 /*global setImmediate: false, setTimeout: false, console: false */
 (function () {
@@ -13066,7 +13333,7 @@ function QuestDialogViewModel (quests, questGiver) {
 }());
 
 }).call(this,require('_process'))
-},{"_process":197}],88:[function(require,module,exports){
+},{"_process":200}],91:[function(require,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -13205,7 +13472,7 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],89:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 var hasOwn = Object.prototype.hasOwnProperty;
 var toString = Object.prototype.toString;
 
@@ -13285,7 +13552,7 @@ module.exports = function extend() {
 	return target;
 };
 
-},{}],90:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 (function (global){
 // Hoodie Core
 // -------------
@@ -13453,7 +13720,7 @@ function applyExtensions(hoodie) {
 module.exports = Hoodie;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./hoodie/account":91,"./hoodie/connection":92,"./hoodie/id":93,"./hoodie/open":94,"./hoodie/remote":95,"./hoodie/request":96,"./hoodie/store":97,"./hoodie/task":98,"./lib":104,"./lib/events":103,"./utils":114}],91:[function(require,module,exports){
+},{"./hoodie/account":94,"./hoodie/connection":95,"./hoodie/id":96,"./hoodie/open":97,"./hoodie/remote":98,"./hoodie/request":99,"./hoodie/store":100,"./hoodie/task":101,"./lib":107,"./lib/events":106,"./utils":117}],94:[function(require,module,exports){
 (function (global){
 // Hoodie.Account
 // ================
@@ -14660,7 +14927,7 @@ function hoodieAccount(hoodie) {
 module.exports = hoodieAccount;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../lib/events":103,"../utils/config":111,"../utils/generate_id":112,"../utils/promise/defer":116,"../utils/promise/reject":119,"../utils/promise/reject_with":120,"../utils/promise/resolve":121,"../utils/promise/resolve_with":122,"extend":89}],92:[function(require,module,exports){
+},{"../lib/events":106,"../utils/config":114,"../utils/generate_id":115,"../utils/promise/defer":119,"../utils/promise/reject":122,"../utils/promise/reject_with":123,"../utils/promise/resolve":124,"../utils/promise/resolve_with":125,"extend":92}],95:[function(require,module,exports){
 (function (global){
 // hoodie.checkConnection() & hoodie.isConnected()
 // =================================================
@@ -14761,7 +15028,7 @@ function hoodieConnection(hoodie) {
 module.exports = hoodieConnection;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../utils/promise/reject":119,"../utils/promise/resolve":121}],93:[function(require,module,exports){
+},{"../utils/promise/reject":122,"../utils/promise/resolve":124}],96:[function(require,module,exports){
 // hoodie.id
 // =========
 
@@ -14834,7 +15101,7 @@ function hoodieId (hoodie) {
 
 module.exports = hoodieId;
 
-},{"../utils/config":111,"../utils/generate_id":112}],94:[function(require,module,exports){
+},{"../utils/config":114,"../utils/generate_id":115}],97:[function(require,module,exports){
 // Open stores
 // -------------
 
@@ -14865,7 +15132,7 @@ function hoodieOpen(hoodie) {
 
 module.exports = hoodieOpen;
 
-},{"../lib/store/remote":107,"extend":89}],95:[function(require,module,exports){
+},{"../lib/store/remote":110,"extend":92}],98:[function(require,module,exports){
 // AccountRemote
 // ===============
 
@@ -15026,7 +15293,7 @@ function hoodieRemoteFactory(hoodie) {
 
 module.exports = hoodieRemoteFactory;
 
-},{"../utils/config":111,"../utils/promise/reject_with":120}],96:[function(require,module,exports){
+},{"../utils/config":114,"../utils/promise/reject_with":123}],99:[function(require,module,exports){
 //
 // hoodie.request
 // ================
@@ -15182,7 +15449,7 @@ function hoodieRequest(hoodie) {
 
 module.exports = hoodieRequest;
 
-},{"../utils/hoodiefy_request_error_name":113,"../utils/promise/reject_with":120,"extend":89}],97:[function(require,module,exports){
+},{"../utils/hoodiefy_request_error_name":116,"../utils/promise/reject_with":123,"extend":92}],100:[function(require,module,exports){
 (function (global){
 // LocalStore
 // ============
@@ -16145,7 +16412,7 @@ function hoodieStore (hoodie) {
 module.exports = hoodieStore;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../lib/error/object_id":101,"../lib/error/object_type":102,"../lib/store/api":105,"../utils/generate_id":112,"../utils/local_storage_wrapper":115,"../utils/promise/defer":116,"../utils/promise/reject_with":120,"../utils/promise/resolve_with":122,"extend":89}],98:[function(require,module,exports){
+},{"../lib/error/object_id":104,"../lib/error/object_type":105,"../lib/store/api":108,"../utils/generate_id":115,"../utils/local_storage_wrapper":118,"../utils/promise/defer":119,"../utils/promise/reject_with":123,"../utils/promise/resolve_with":125,"extend":92}],101:[function(require,module,exports){
 // Tasks
 // ============
 
@@ -16455,7 +16722,7 @@ function hoodieTask(hoodie) {
 
 module.exports = hoodieTask;
 
-},{"../lib/error/error":99,"../lib/events":103,"../lib/task/scoped":110,"../utils/promise/defer":116,"extend":89}],99:[function(require,module,exports){
+},{"../lib/error/error":102,"../lib/events":106,"../lib/task/scoped":113,"../utils/promise/defer":119,"extend":92}],102:[function(require,module,exports){
 // Hoodie Error
 // -------------
 
@@ -16521,14 +16788,14 @@ HoodieError.prototype.constructor = HoodieError;
 module.exports = HoodieError;
 
 
-},{"extend":89}],100:[function(require,module,exports){
+},{"extend":92}],103:[function(require,module,exports){
 module.exports = {
   error: require('./error'),
   objectId: require('./object_id'),
   objectType: require('./object_type')
 };
 
-},{"./error":99,"./object_id":101,"./object_type":102}],101:[function(require,module,exports){
+},{"./error":102,"./object_id":104,"./object_type":105}],104:[function(require,module,exports){
 // Hoodie Invalid Type Or Id Error
 // -------------------------------
 
@@ -16555,7 +16822,7 @@ HoodieObjectIdError.prototype.rules = 'Lowercase letters, numbers and dashes all
 
 module.exports = HoodieObjectIdError;
 
-},{"./error":99}],102:[function(require,module,exports){
+},{"./error":102}],105:[function(require,module,exports){
 // Hoodie Invalid Type Or Id Error
 // -------------------------------
 
@@ -16589,7 +16856,7 @@ HoodieObjectTypeError.prototype.rules = 'lowercase letters, numbers and dashes a
 
 module.exports = HoodieObjectTypeError;
 
-},{"./error":99}],103:[function(require,module,exports){
+},{"./error":102}],106:[function(require,module,exports){
 // Events
 // ========
 //
@@ -16753,7 +17020,7 @@ function hoodieEvents(hoodie, options) {
 
 module.exports = hoodieEvents;
 
-},{}],104:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 module.exports = {
   error: require('./error'),
   events: require('./events'),
@@ -16761,7 +17028,7 @@ module.exports = {
   task: require('./task')
 };
 
-},{"./error":100,"./events":103,"./store":106,"./task":109}],105:[function(require,module,exports){
+},{"./error":103,"./events":106,"./store":109,"./task":112}],108:[function(require,module,exports){
 // Store
 // ============
 
@@ -17199,14 +17466,14 @@ function hoodieStoreApi(hoodie, options) {
 
 module.exports = hoodieStoreApi;
 
-},{"../../utils/promise/defer":116,"../../utils/promise/is_promise":118,"../../utils/promise/reject_with":120,"../../utils/promise/resolve_with":122,"../error/error":99,"../error/object_id":101,"../error/object_type":102,"../events":103,"./scoped":108,"extend":89}],106:[function(require,module,exports){
+},{"../../utils/promise/defer":119,"../../utils/promise/is_promise":121,"../../utils/promise/reject_with":123,"../../utils/promise/resolve_with":125,"../error/error":102,"../error/object_id":104,"../error/object_type":105,"../events":106,"./scoped":111,"extend":92}],109:[function(require,module,exports){
 module.exports = {
   api: require('./api'),
   remote: require('./remote'),
   scoped: require('./scoped')
 };
 
-},{"./api":105,"./remote":107,"./scoped":108}],107:[function(require,module,exports){
+},{"./api":108,"./remote":110,"./scoped":111}],110:[function(require,module,exports){
 (function (global){
 // Remote
 // ========
@@ -18002,7 +18269,7 @@ function hoodieRemoteStore(hoodie, options) {
 module.exports = hoodieRemoteStore;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../utils/generate_id":112,"../../utils/promise/resolve_with":122,"./api":105,"extend":89}],108:[function(require,module,exports){
+},{"../../utils/generate_id":115,"../../utils/promise/resolve_with":125,"./api":108,"extend":92}],111:[function(require,module,exports){
 // scoped Store
 // ============
 
@@ -18115,12 +18382,12 @@ function hoodieScopedStoreApi(hoodie, storeApi, options) {
 
 module.exports = hoodieScopedStoreApi;
 
-},{"../events":103}],109:[function(require,module,exports){
+},{"../events":106}],112:[function(require,module,exports){
 module.exports = {
   scoped: require('./scoped')
 };
 
-},{"./scoped":110}],110:[function(require,module,exports){
+},{"./scoped":113}],113:[function(require,module,exports){
 // scoped Store
 // ============
 
@@ -18197,7 +18464,7 @@ function hoodieScopedTask(hoodie, taskApi, options) {
 
 module.exports = hoodieScopedTask;
 
-},{"../events":103}],111:[function(require,module,exports){
+},{"../events":106}],114:[function(require,module,exports){
 // Hoodie Config API
 // ===================
 
@@ -18267,7 +18534,7 @@ init();
 module.exports = config;
 
 
-},{"../utils/local_storage_wrapper":115,"extend":89}],112:[function(require,module,exports){
+},{"../utils/local_storage_wrapper":118,"extend":92}],115:[function(require,module,exports){
 var chars, i, radix;
 
 // uuids consist of numbers and lowercase letters only.
@@ -18298,7 +18565,7 @@ function generateId (length) {
 
 module.exports = generateId;
 
-},{}],113:[function(require,module,exports){
+},{}],116:[function(require,module,exports){
 var findLettersToUpperCase = /(^\w|_\w)/g;
 
 function hoodiefyRequestErrorName (name) {
@@ -18310,7 +18577,7 @@ function hoodiefyRequestErrorName (name) {
 }
 
 module.exports = hoodiefyRequestErrorName;
-},{}],114:[function(require,module,exports){
+},{}],117:[function(require,module,exports){
 module.exports = {
   config: require('./config'),
   generateId: require('./generate_id'),
@@ -18319,7 +18586,7 @@ module.exports = {
 };
 
 
-},{"./config":111,"./generate_id":112,"./local_storage_wrapper":115,"./promise":117}],115:[function(require,module,exports){
+},{"./config":114,"./generate_id":115,"./local_storage_wrapper":118,"./promise":120}],118:[function(require,module,exports){
 (function (global){
 // public API
 var store = {};
@@ -18434,11 +18701,11 @@ init();
 module.exports = store;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],116:[function(require,module,exports){
+},{}],119:[function(require,module,exports){
 (function (global){
 module.exports = global.jQuery.Deferred;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],117:[function(require,module,exports){
+},{}],120:[function(require,module,exports){
 module.exports = {
   defer: require('./defer'),
   isPromise: require('./is_promise'),
@@ -18448,7 +18715,7 @@ module.exports = {
   resolve: require('./resolve'),
 };
 
-},{"./defer":116,"./is_promise":118,"./reject":119,"./reject_with":120,"./resolve":121,"./resolve_with":122}],118:[function(require,module,exports){
+},{"./defer":119,"./is_promise":121,"./reject":122,"./reject_with":123,"./resolve":124,"./resolve_with":125}],121:[function(require,module,exports){
 // returns true if passed object is a promise (but not a deferred),
 // otherwise false.
 function isPromise(object) {
@@ -18458,7 +18725,7 @@ function isPromise(object) {
 }
 
 module.exports = isPromise;
-},{}],119:[function(require,module,exports){
+},{}],122:[function(require,module,exports){
 var defer = require('./defer');
 //
 function reject() {
@@ -18466,7 +18733,7 @@ function reject() {
 }
 
 module.exports = reject;
-},{"./defer":116}],120:[function(require,module,exports){
+},{"./defer":119}],123:[function(require,module,exports){
 var getDefer = require('./defer');
 var HoodieError = require('../../lib/error/error');
 
@@ -18478,7 +18745,7 @@ function rejectWith(errorProperties) {
 
 module.exports = rejectWith;
 
-},{"../../lib/error/error":99,"./defer":116}],121:[function(require,module,exports){
+},{"../../lib/error/error":102,"./defer":119}],124:[function(require,module,exports){
 var defer = require('./defer');
 //
 function resolve() {
@@ -18486,7 +18753,7 @@ function resolve() {
 }
 
 module.exports = resolve;
-},{"./defer":116}],122:[function(require,module,exports){
+},{"./defer":119}],125:[function(require,module,exports){
 var getDefer = require('./defer');
 
 //
@@ -18497,7 +18764,7 @@ function resolveWith() {
 
 module.exports = resolveWith;
 
-},{"./defer":116}],123:[function(require,module,exports){
+},{"./defer":119}],126:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -18522,7 +18789,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],124:[function(require,module,exports){
+},{}],127:[function(require,module,exports){
 var lock = require('pointer-lock')
   , drag = require('drag-stream')
   , full = require('fullscreen')
@@ -18629,7 +18896,7 @@ function usedrag(el) {
   return ee
 }
 
-},{"drag-stream":125,"events":194,"fullscreen":131,"pointer-lock":132,"stream":209}],125:[function(require,module,exports){
+},{"drag-stream":128,"events":197,"fullscreen":134,"pointer-lock":135,"stream":212}],128:[function(require,module,exports){
 module.exports = dragstream
 
 var Stream = require('stream')
@@ -18697,10 +18964,10 @@ function dragstream(el) {
   }
 }
 
-},{"domnode-dom":126,"stream":209,"through":130}],126:[function(require,module,exports){
+},{"domnode-dom":129,"stream":212,"through":133}],129:[function(require,module,exports){
 module.exports = require('./lib/index')
 
-},{"./lib/index":127}],127:[function(require,module,exports){
+},{"./lib/index":130}],130:[function(require,module,exports){
 var WriteStream = require('./writable')
   , ReadStream = require('./readable')
   , DOMStream = {}
@@ -18738,7 +19005,7 @@ DOMStream.createEventStream = function(el, type, preventDefault) {
 module.exports = DOMStream
 
 
-},{"./readable":128,"./writable":129}],128:[function(require,module,exports){
+},{"./readable":131,"./writable":132}],131:[function(require,module,exports){
 module.exports = DOMStream
 
 var Stream = require('stream').Stream
@@ -18849,7 +19116,7 @@ function valueFromElement(el) {
   return el.value
 }
 
-},{"stream":209}],129:[function(require,module,exports){
+},{"stream":212}],132:[function(require,module,exports){
 module.exports = DOMStream
 
 var Stream = require('stream').Stream
@@ -18931,7 +19198,7 @@ proto.constructTextPlain = function(data) {
   return [textNode]
 }
 
-},{"stream":209}],130:[function(require,module,exports){
+},{"stream":212}],133:[function(require,module,exports){
 (function (process){
 var Stream = require('stream')
 
@@ -19038,7 +19305,7 @@ function through (write, end) {
 
 
 }).call(this,require('_process'))
-},{"_process":197,"stream":209}],131:[function(require,module,exports){
+},{"_process":200,"stream":212}],134:[function(require,module,exports){
 module.exports = fullscreen
 fullscreen.available = available
 
@@ -19129,7 +19396,7 @@ function shim(el) {
     el.oRequestFullScreen)
 }
 
-},{"events":194}],132:[function(require,module,exports){
+},{"events":197}],135:[function(require,module,exports){
 module.exports = pointer
 
 pointer.available = available
@@ -19293,7 +19560,7 @@ function shim(el) {
     null
 }
 
-},{"events":194,"stream":209}],133:[function(require,module,exports){
+},{"events":197,"stream":212}],136:[function(require,module,exports){
 /*!
  * Knockout JavaScript library v3.2.0
  * (c) Steven Sanderson - http://knockoutjs.com/
@@ -24594,7 +24861,7 @@ ko.exportSymbol('nativeTemplateEngine', ko.nativeTemplateEngine);
 }());
 })();
 
-},{}],134:[function(require,module,exports){
+},{}],137:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -31383,7 +31650,7 @@ ko.exportSymbol('nativeTemplateEngine', ko.nativeTemplateEngine);
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],135:[function(require,module,exports){
+},{}],138:[function(require,module,exports){
 /*
   Machine.js
   by mary rose cook
@@ -31659,7 +31926,7 @@ ko.exportSymbol('nativeTemplateEngine', ko.nativeTemplateEngine);
 })();
 
 
-},{}],136:[function(require,module,exports){
+},{}],139:[function(require,module,exports){
 
 module.exports = (function() {
   return typeof window != 'undefined' && window.performance
@@ -31672,7 +31939,7 @@ module.exports = (function() {
     : Date.now || function(){ return +new Date() };
 })()
 
-},{}],137:[function(require,module,exports){
+},{}],140:[function(require,module,exports){
 (function (process){
 /*jshint onevar: false, indent:4, strict:false */
 /*global setImmediate: false, setTimeout: false, console: false, module: true, process: true, define: true, require: true */
@@ -32048,11 +32315,11 @@ else {
 }
 
 }).call(this,require('_process'))
-},{"_process":197,"child_process":189}],138:[function(require,module,exports){
+},{"_process":200,"child_process":192}],141:[function(require,module,exports){
 
 module.exports = require('./lib/');
 
-},{"./lib/":139}],139:[function(require,module,exports){
+},{"./lib/":142}],142:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -32141,7 +32408,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":140,"./socket":142,"./url":143,"debug":88,"socket.io-parser":180}],140:[function(require,module,exports){
+},{"./manager":143,"./socket":145,"./url":146,"debug":91,"socket.io-parser":183}],143:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -32646,7 +32913,7 @@ Manager.prototype.onreconnect = function(){
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":141,"./socket":142,"./url":143,"backo2":144,"component-bind":145,"component-emitter":146,"debug":88,"engine.io-client":147,"indexof":176,"object-component":177,"socket.io-parser":180}],141:[function(require,module,exports){
+},{"./on":144,"./socket":145,"./url":146,"backo2":147,"component-bind":148,"component-emitter":149,"debug":91,"engine.io-client":150,"indexof":179,"object-component":180,"socket.io-parser":183}],144:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -32672,7 +32939,7 @@ function on(obj, ev, fn) {
   };
 }
 
-},{}],142:[function(require,module,exports){
+},{}],145:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -33059,7 +33326,7 @@ Socket.prototype.disconnect = function(){
   return this;
 };
 
-},{"./on":141,"component-bind":145,"component-emitter":146,"debug":88,"has-binary":174,"socket.io-parser":180,"to-array":184}],143:[function(require,module,exports){
+},{"./on":144,"component-bind":148,"component-emitter":149,"debug":91,"has-binary":177,"socket.io-parser":183,"to-array":187}],146:[function(require,module,exports){
 (function (global){
 
 /**
@@ -33136,7 +33403,7 @@ function url(uri, loc){
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"debug":88,"parseuri":178}],144:[function(require,module,exports){
+},{"debug":91,"parseuri":181}],147:[function(require,module,exports){
 
 /**
  * Expose `Backoff`.
@@ -33223,7 +33490,7 @@ Backoff.prototype.setJitter = function(jitter){
 };
 
 
-},{}],145:[function(require,module,exports){
+},{}],148:[function(require,module,exports){
 /**
  * Slice reference.
  */
@@ -33248,7 +33515,7 @@ module.exports = function(obj, fn){
   }
 };
 
-},{}],146:[function(require,module,exports){
+},{}],149:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -33414,11 +33681,11 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],147:[function(require,module,exports){
+},{}],150:[function(require,module,exports){
 
 module.exports =  require('./lib/');
 
-},{"./lib/":148}],148:[function(require,module,exports){
+},{"./lib/":151}],151:[function(require,module,exports){
 
 module.exports = require('./socket');
 
@@ -33430,7 +33697,7 @@ module.exports = require('./socket');
  */
 module.exports.parser = require('engine.io-parser');
 
-},{"./socket":149,"engine.io-parser":161}],149:[function(require,module,exports){
+},{"./socket":152,"engine.io-parser":164}],152:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -34139,7 +34406,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./transport":150,"./transports":151,"component-emitter":146,"debug":158,"engine.io-parser":161,"indexof":176,"parsejson":170,"parseqs":171,"parseuri":172}],150:[function(require,module,exports){
+},{"./transport":153,"./transports":154,"component-emitter":149,"debug":161,"engine.io-parser":164,"indexof":179,"parsejson":173,"parseqs":174,"parseuri":175}],153:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -34300,7 +34567,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"component-emitter":146,"engine.io-parser":161}],151:[function(require,module,exports){
+},{"component-emitter":149,"engine.io-parser":164}],154:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies
@@ -34357,7 +34624,7 @@ function polling(opts){
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling-jsonp":152,"./polling-xhr":153,"./websocket":155,"xmlhttprequest":156}],152:[function(require,module,exports){
+},{"./polling-jsonp":155,"./polling-xhr":156,"./websocket":158,"xmlhttprequest":159}],155:[function(require,module,exports){
 (function (global){
 
 /**
@@ -34594,7 +34861,7 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":154,"component-inherit":157}],153:[function(require,module,exports){
+},{"./polling":157,"component-inherit":160}],156:[function(require,module,exports){
 (function (global){
 /**
  * Module requirements.
@@ -34982,7 +35249,7 @@ function unloadHandler() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":154,"component-emitter":146,"component-inherit":157,"debug":158,"xmlhttprequest":156}],154:[function(require,module,exports){
+},{"./polling":157,"component-emitter":149,"component-inherit":160,"debug":161,"xmlhttprequest":159}],157:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -35229,7 +35496,7 @@ Polling.prototype.uri = function(){
   return schema + '://' + this.hostname + port + this.path + query;
 };
 
-},{"../transport":150,"component-inherit":157,"debug":158,"engine.io-parser":161,"parseqs":171,"xmlhttprequest":156}],155:[function(require,module,exports){
+},{"../transport":153,"component-inherit":160,"debug":161,"engine.io-parser":164,"parseqs":174,"xmlhttprequest":159}],158:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -35469,7 +35736,7 @@ WS.prototype.check = function(){
   return !!WebSocket && !('__initialize' in WebSocket && this.name === WS.prototype.name);
 };
 
-},{"../transport":150,"component-inherit":157,"debug":158,"engine.io-parser":161,"parseqs":171,"ws":173}],156:[function(require,module,exports){
+},{"../transport":153,"component-inherit":160,"debug":161,"engine.io-parser":164,"parseqs":174,"ws":176}],159:[function(require,module,exports){
 // browser shim for xmlhttprequest module
 var hasCORS = require('has-cors');
 
@@ -35507,7 +35774,7 @@ module.exports = function(opts) {
   }
 }
 
-},{"has-cors":168}],157:[function(require,module,exports){
+},{"has-cors":171}],160:[function(require,module,exports){
 
 module.exports = function(a, b){
   var fn = function(){};
@@ -35515,7 +35782,7 @@ module.exports = function(a, b){
   a.prototype = new fn;
   a.prototype.constructor = a;
 };
-},{}],158:[function(require,module,exports){
+},{}],161:[function(require,module,exports){
 
 /**
  * This is the web browser implementation of `debug()`.
@@ -35664,7 +35931,7 @@ function load() {
 
 exports.enable(load());
 
-},{"./debug":159}],159:[function(require,module,exports){
+},{"./debug":162}],162:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -35863,7 +36130,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":160}],160:[function(require,module,exports){
+},{"ms":163}],163:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -35976,7 +36243,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],161:[function(require,module,exports){
+},{}],164:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -36574,7 +36841,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./keys":162,"after":163,"arraybuffer.slice":164,"base64-arraybuffer":165,"blob":166,"has-binary":174,"utf8":167}],162:[function(require,module,exports){
+},{"./keys":165,"after":166,"arraybuffer.slice":167,"base64-arraybuffer":168,"blob":169,"has-binary":177,"utf8":170}],165:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -36595,7 +36862,7 @@ module.exports = Object.keys || function keys (obj){
   return arr;
 };
 
-},{}],163:[function(require,module,exports){
+},{}],166:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {
@@ -36625,7 +36892,7 @@ function after(count, callback, err_cb) {
 
 function noop() {}
 
-},{}],164:[function(require,module,exports){
+},{}],167:[function(require,module,exports){
 /**
  * An abstraction for slicing an arraybuffer even when
  * ArrayBuffer.prototype.slice is not supported
@@ -36656,7 +36923,7 @@ module.exports = function(arraybuffer, start, end) {
   return result.buffer;
 };
 
-},{}],165:[function(require,module,exports){
+},{}],168:[function(require,module,exports){
 /*
  * base64-arraybuffer
  * https://github.com/niklasvh/base64-arraybuffer
@@ -36717,7 +36984,7 @@ module.exports = function(arraybuffer, start, end) {
   };
 })("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
 
-},{}],166:[function(require,module,exports){
+},{}],169:[function(require,module,exports){
 (function (global){
 /**
  * Create a blob builder even when vendor prefixes exist
@@ -36770,7 +37037,7 @@ module.exports = (function() {
 })();
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],167:[function(require,module,exports){
+},{}],170:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/utf8js v2.0.0 by @mathias */
 ;(function(root) {
@@ -37013,7 +37280,7 @@ module.exports = (function() {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],168:[function(require,module,exports){
+},{}],171:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -37038,7 +37305,7 @@ try {
   module.exports = false;
 }
 
-},{"global":169}],169:[function(require,module,exports){
+},{"global":172}],172:[function(require,module,exports){
 
 /**
  * Returns `this`. Execute this without a "context" (i.e. without it being
@@ -37048,7 +37315,7 @@ try {
 
 module.exports = (function () { return this; })();
 
-},{}],170:[function(require,module,exports){
+},{}],173:[function(require,module,exports){
 (function (global){
 /**
  * JSON parse.
@@ -37083,7 +37350,7 @@ module.exports = function parsejson(data) {
   }
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],171:[function(require,module,exports){
+},{}],174:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -37122,7 +37389,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],172:[function(require,module,exports){
+},{}],175:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -37163,7 +37430,7 @@ module.exports = function parseuri(str) {
     return uri;
 };
 
-},{}],173:[function(require,module,exports){
+},{}],176:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -37208,7 +37475,7 @@ function ws(uri, protocols, opts) {
 
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
-},{}],174:[function(require,module,exports){
+},{}],177:[function(require,module,exports){
 (function (global){
 
 /*
@@ -37270,12 +37537,12 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":175}],175:[function(require,module,exports){
+},{"isarray":178}],178:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],176:[function(require,module,exports){
+},{}],179:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -37286,7 +37553,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],177:[function(require,module,exports){
+},{}],180:[function(require,module,exports){
 
 /**
  * HOP ref.
@@ -37371,7 +37638,7 @@ exports.length = function(obj){
 exports.isEmpty = function(obj){
   return 0 == exports.length(obj);
 };
-},{}],178:[function(require,module,exports){
+},{}],181:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -37398,7 +37665,7 @@ module.exports = function parseuri(str) {
   return uri;
 };
 
-},{}],179:[function(require,module,exports){
+},{}],182:[function(require,module,exports){
 (function (global){
 /*global Blob,File*/
 
@@ -37543,7 +37810,7 @@ exports.removeBlobs = function(data, callback) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./is-buffer":181,"isarray":182}],180:[function(require,module,exports){
+},{"./is-buffer":184,"isarray":185}],183:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -37941,7 +38208,7 @@ function error(data){
   };
 }
 
-},{"./binary":179,"./is-buffer":181,"component-emitter":146,"debug":88,"isarray":182,"json3":183}],181:[function(require,module,exports){
+},{"./binary":182,"./is-buffer":184,"component-emitter":149,"debug":91,"isarray":185,"json3":186}],184:[function(require,module,exports){
 (function (global){
 
 module.exports = isBuf;
@@ -37958,9 +38225,9 @@ function isBuf(obj) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],182:[function(require,module,exports){
-arguments[4][175][0].apply(exports,arguments)
-},{"dup":175}],183:[function(require,module,exports){
+},{}],185:[function(require,module,exports){
+arguments[4][178][0].apply(exports,arguments)
+},{"dup":178}],186:[function(require,module,exports){
 /*! JSON v3.2.6 | http://bestiejs.github.io/json3 | Copyright 2012-2013, Kit Cambridge | http://kit.mit-license.org */
 ;(function (window) {
   // Convenience aliases.
@@ -38823,7 +39090,7 @@ arguments[4][175][0].apply(exports,arguments)
   }
 }(this));
 
-},{}],184:[function(require,module,exports){
+},{}],187:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
@@ -38838,7 +39105,7 @@ function toArray(list, index) {
     return array
 }
 
-},{}],185:[function(require,module,exports){
+},{}],188:[function(require,module,exports){
 /*
  * tic
  * https://github.com/shama/tic
@@ -38885,7 +39152,7 @@ Tic.prototype.tick = function(dt) {
   });
 };
 
-},{}],186:[function(require,module,exports){
+},{}],189:[function(require,module,exports){
 /**
  * Tween.js - Licensed under the MIT license
  * https://github.com/sole/tween.js
@@ -39643,7 +39910,7 @@ TWEEN.Interpolation = {
 };
 
 module.exports=TWEEN;
-},{}],187:[function(require,module,exports){
+},{}],190:[function(require,module,exports){
 /**
  * @author alteredq / http://alteredqualia.com/
  * @author mr.doob / http://mrdoob.com/
@@ -39704,7 +39971,7 @@ module.exports = function() {
   };
 }
 
-},{}],188:[function(require,module,exports){
+},{}],191:[function(require,module,exports){
 /**
  * @author mrdoob / http://mrdoob.com/
  */
@@ -39850,9 +40117,9 @@ var Stats = function () {
 };
 
 module.exports = Stats
-},{}],189:[function(require,module,exports){
+},{}],192:[function(require,module,exports){
 
-},{}],190:[function(require,module,exports){
+},{}],193:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -41172,7 +41439,7 @@ function decodeUtf8Char (str) {
   }
 }
 
-},{"base64-js":191,"ieee754":192,"is-array":193}],191:[function(require,module,exports){
+},{"base64-js":194,"ieee754":195,"is-array":196}],194:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -41294,7 +41561,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],192:[function(require,module,exports){
+},{}],195:[function(require,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -41380,7 +41647,7 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],193:[function(require,module,exports){
+},{}],196:[function(require,module,exports){
 
 /**
  * isArray
@@ -41415,7 +41682,7 @@ module.exports = isArray || function (val) {
   return !! val && '[object Array]' == str.call(val);
 };
 
-},{}],194:[function(require,module,exports){
+},{}],197:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -41718,11 +41985,11 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],195:[function(require,module,exports){
-arguments[4][123][0].apply(exports,arguments)
-},{"dup":123}],196:[function(require,module,exports){
-arguments[4][175][0].apply(exports,arguments)
-},{"dup":175}],197:[function(require,module,exports){
+},{}],198:[function(require,module,exports){
+arguments[4][126][0].apply(exports,arguments)
+},{"dup":126}],199:[function(require,module,exports){
+arguments[4][178][0].apply(exports,arguments)
+},{"dup":178}],200:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -41810,10 +42077,10 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],198:[function(require,module,exports){
+},{}],201:[function(require,module,exports){
 module.exports = require("./lib/_stream_duplex.js")
 
-},{"./lib/_stream_duplex.js":199}],199:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":202}],202:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -41906,7 +42173,7 @@ function forEach (xs, f) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_readable":201,"./_stream_writable":203,"_process":197,"core-util-is":204,"inherits":195}],200:[function(require,module,exports){
+},{"./_stream_readable":204,"./_stream_writable":206,"_process":200,"core-util-is":207,"inherits":198}],203:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -41954,7 +42221,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./_stream_transform":202,"core-util-is":204,"inherits":195}],201:[function(require,module,exports){
+},{"./_stream_transform":205,"core-util-is":207,"inherits":198}],204:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -42940,7 +43207,7 @@ function indexOf (xs, x) {
 }
 
 }).call(this,require('_process'))
-},{"_process":197,"buffer":190,"core-util-is":204,"events":194,"inherits":195,"isarray":196,"stream":209,"string_decoder/":210}],202:[function(require,module,exports){
+},{"_process":200,"buffer":193,"core-util-is":207,"events":197,"inherits":198,"isarray":199,"stream":212,"string_decoder/":213}],205:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -43152,7 +43419,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./_stream_duplex":199,"core-util-is":204,"inherits":195}],203:[function(require,module,exports){
+},{"./_stream_duplex":202,"core-util-is":207,"inherits":198}],206:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -43542,7 +43809,7 @@ function endWritable(stream, state, cb) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_duplex":199,"_process":197,"buffer":190,"core-util-is":204,"inherits":195,"stream":209}],204:[function(require,module,exports){
+},{"./_stream_duplex":202,"_process":200,"buffer":193,"core-util-is":207,"inherits":198,"stream":212}],207:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -43652,10 +43919,10 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 }).call(this,require("buffer").Buffer)
-},{"buffer":190}],205:[function(require,module,exports){
+},{"buffer":193}],208:[function(require,module,exports){
 module.exports = require("./lib/_stream_passthrough.js")
 
-},{"./lib/_stream_passthrough.js":200}],206:[function(require,module,exports){
+},{"./lib/_stream_passthrough.js":203}],209:[function(require,module,exports){
 var Stream = require('stream'); // hack to fix a circular dependency issue when used with browserify
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = Stream;
@@ -43665,13 +43932,13 @@ exports.Duplex = require('./lib/_stream_duplex.js');
 exports.Transform = require('./lib/_stream_transform.js');
 exports.PassThrough = require('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":199,"./lib/_stream_passthrough.js":200,"./lib/_stream_readable.js":201,"./lib/_stream_transform.js":202,"./lib/_stream_writable.js":203,"stream":209}],207:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":202,"./lib/_stream_passthrough.js":203,"./lib/_stream_readable.js":204,"./lib/_stream_transform.js":205,"./lib/_stream_writable.js":206,"stream":212}],210:[function(require,module,exports){
 module.exports = require("./lib/_stream_transform.js")
 
-},{"./lib/_stream_transform.js":202}],208:[function(require,module,exports){
+},{"./lib/_stream_transform.js":205}],211:[function(require,module,exports){
 module.exports = require("./lib/_stream_writable.js")
 
-},{"./lib/_stream_writable.js":203}],209:[function(require,module,exports){
+},{"./lib/_stream_writable.js":206}],212:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -43800,7 +44067,7 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":194,"inherits":195,"readable-stream/duplex.js":198,"readable-stream/passthrough.js":205,"readable-stream/readable.js":206,"readable-stream/transform.js":207,"readable-stream/writable.js":208}],210:[function(require,module,exports){
+},{"events":197,"inherits":198,"readable-stream/duplex.js":201,"readable-stream/passthrough.js":208,"readable-stream/readable.js":209,"readable-stream/transform.js":210,"readable-stream/writable.js":211}],213:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -44023,4 +44290,4 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":190}]},{},[1]);
+},{"buffer":193}]},{},[1]);
