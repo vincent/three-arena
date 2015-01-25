@@ -24,7 +24,7 @@ arena.setTerrain('/gamedata/maps/simplest/flat.obj', {
 
 arena.addCharacter(function(done){
   new Arena.Characters.Dummy({
-    name: 'The young',
+    name: prompt('What is your name, stranger ?'),
     maxSpeed: 15.0,
     onLoad: function(){
       this.learnSpell(Arena.Spells.Teleport);
