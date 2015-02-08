@@ -293,7 +293,7 @@ Character.prototype.moveAlong = function(linepoints, options) {
 
 Character.prototype.constructor = Character;
 
-},{"./entity":54,"./utils":86,"debug":94,"inherits":129,"lodash":140}],13:[function(require,module,exports){
+},{"./entity":55,"./utils":86,"debug":94,"inherits":129,"lodash":140}],13:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1147,7 +1147,9 @@ module.exports = function (arena) {
 }
 
 
-},{"../controls/destinationmarker":30,"../settings":69}],25:[function(require,module,exports){
+},{"../controls/destinationmarker":31,"../settings":69}],25:[function(require,module,exports){
+var _ = require('lodash');
+
 var settings = require('../settings');
 
 module.exports = function (arena) {
@@ -1209,7 +1211,7 @@ function attachHelpers (arena, entity) {
   arena.intersectObjects.push(entity.bboxHelper);
 }
 
-},{"../settings":69}],26:[function(require,module,exports){
+},{"../settings":69,"lodash":140}],26:[function(require,module,exports){
 var settings = require('../settings');
 
 module.exports = function (arena) {
@@ -1343,24 +1345,137 @@ function Network (arena) {
     arena.syncNetworkPlayersPositions(playersPositions);
   });
 
+  function send (type, data) {
+    this.io.emit.apply(this.io, Array.prototype.slice.call(arguments));
+  }
 
   function syncEntityPosition() {
     if (arena.entity) {
-      var p = arena.entity.position;
-      network.send('move', { x:p.x, y:p.y, z:p.z }, arena.entity.state.name)
+      var p = arena.entity.position
+      send('move', { x:p.x, y:p.y, z:p.z }, arena.entity.state.name)
     }
   }
 
   arena.on('update', _.throttle(syncEntityPosition, 200));
 }
 
-Network.prototype.send = function(type, data) {
-
-  this.io.emit.apply(this.io, Array.prototype.slice.call(arguments));
-};
-
 
 },{"../settings":69,"EventEmitter":92,"lodash":140,"socket.io-client":144}],29:[function(require,module,exports){
+'use strict';
+
+var _ = require('lodash');
+var TWEEN = require('tween');
+
+module.exports = SpellTexts;
+
+function SpellTexts (arena, _options) {
+
+  var root = arena.settings.container;
+
+  var options = _.merge({
+    font:   'helvetiker',
+    style:  'normal',
+    weight: 'normal',
+  }, _options);
+
+
+  function _bindEntity (entity) {
+    entity.on('hit', _showHit);
+  };
+
+  function _showHit (eventData) {
+
+    var textGeom = new THREE.TextGeometry( ''+eventData.totalLifeDamage, {
+      size: Math.sqrt(eventData.totalLifeDamage),
+      height: 1,
+      curveSegments: 3,
+      font: options.font,
+      weight: options.weight,
+      style: options.style,
+      bevelThickness: 0,
+      bevelSize: 0,
+      bevelEnabled: false,
+      material: 0,
+      extrudeMaterial: 1
+    });
+
+    var hitMaterial = new THREE.MeshBasicMaterial({
+      shading: THREE.AdditiveBlending,
+      transparent: true,
+      depthWrite: false,
+      depthTest: false,
+      color: 0xff0000,
+      opacity: 1
+    });
+    var textMesh = new THREE.Mesh(textGeom, hitMaterial);
+
+    _tween(textMesh, eventData);
+  };
+
+  function _showHeal (eventData) {
+
+    var textGeom = new THREE.TextGeometry(eventData.totalLifeDamage, {
+      size: Math.max(Math.sqrt(eventData.totalLifeDamage), 1),
+      height: 1,
+      curveSegments: 1,
+      font: options.font,
+      weight: options.weight,
+      style: options.style,
+      bevelThickness: 0,
+      bevelSize: 0,
+      bevelEnabled: false,
+      material: 0,
+      extrudeMaterial: 0
+    });
+
+    var healMaterial = new THREE.MeshBasicMaterial({
+      transparent: true,
+      depthWrite: false,
+      depthTest: false,
+      color: 0x00ff00,
+      opacity: 1
+    });
+
+    var textMesh = new THREE.Mesh(textGeom, healMaterial);
+
+    _tween(textMesh, eventData);
+  };
+
+  function _tween (mesh, eventData) {
+
+    eventData.spell.target.add(mesh);
+
+    mesh.position.z = -2;
+    mesh.position.y = 10;
+
+    return new TWEEN.Tween({ y: 10, opacity: 1, scale: 0.2 })
+
+      .to({ y: 20, opacity: 0, scale: 2 }, 1000)
+
+      .easing( TWEEN.Easing.Quadratic.InOut)
+
+      .onComplete(function(){
+        eventData.spell.target.remove(mesh);
+      })
+
+      .onUpdate(function(){
+
+        // adjust position, opacity & size
+        mesh.position.y = this.y;
+        mesh.material.opacity = this.opacity;
+        mesh.scale.set(this.scale, this.scale, this.scale);
+
+        // always face camera
+        mesh.rotation.y = arena.camera.rotation.y - eventData.spell.target.rotation.y;
+      })
+
+      .start();
+  };
+
+  arena.on('added:entity', _bindEntity);
+}
+
+},{"lodash":140,"tween":192}],30:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -1405,7 +1520,7 @@ AttackCircle.prototype.place = function ( object ) {
   return position;
 };
 
-},{"inherits":129}],30:[function(require,module,exports){
+},{"inherits":129}],31:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -1459,7 +1574,7 @@ DestinationMarker.prototype.animate = function () {
 };
 
 
-},{"../shaders/lightbolt":72,"inherits":129}],31:[function(require,module,exports){
+},{"../shaders/lightbolt":72,"inherits":129}],32:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1808,7 +1923,7 @@ DotaControls.prototype.getContainerDimensions = function() {
 
 
 
-},{"lodash":140}],32:[function(require,module,exports){
+},{"lodash":140}],33:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1874,7 +1989,7 @@ ZoneSelector.prototype.emit = function (event, data) {
 };
 
 
-},{"inherits":129,"lodash":140}],33:[function(require,module,exports){
+},{"inherits":129,"lodash":140}],34:[function(require,module,exports){
 
 var utils = require('../utils');
 var Entity;
@@ -1983,7 +2098,7 @@ CoverSystem.prototype.nearestHidingPositionFrom = function(fromTarget, near, max
     return best;
 };
 
-},{"../entity":54,"../utils":86}],34:[function(require,module,exports){
+},{"../entity":55,"../utils":86}],35:[function(require,module,exports){
 'use strict';
 
 var debug = require('debug')('crowd');
@@ -2444,7 +2559,7 @@ function crowdOptions(options) {
   return options;
 }
 
-},{"./settings":69,"async":93,"debug":94,"lodash":140,"now":142}],35:[function(require,module,exports){
+},{"./settings":69,"async":93,"debug":94,"lodash":140,"now":142}],36:[function(require,module,exports){
 module.exports = {
   SpawningPool: require('./autospawn'),
   DefenseTower: require('./tower'),
@@ -2461,7 +2576,7 @@ module.exports = {
   Water: require('./water2')
 };
 
-},{"./autospawn":36,"./checkpoint":37,"./chest":38,"./collectible":39,"./commandcenter":40,"./flies":41,"./grass":42,"./mineral":44,"./nexus":45,"./shop":46,"./spikes":49,"./tower":51,"./water2":53}],36:[function(require,module,exports){
+},{"./autospawn":37,"./checkpoint":38,"./chest":39,"./collectible":40,"./commandcenter":41,"./flies":42,"./grass":43,"./mineral":45,"./nexus":46,"./shop":47,"./spikes":50,"./tower":52,"./water2":54}],37:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2561,7 +2676,7 @@ AutoSpawn.prototype.spanwOne = function() {
 };
 
 
-},{"inherits":129,"lodash":140}],37:[function(require,module,exports){
+},{"inherits":129,"lodash":140}],38:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2622,7 +2737,7 @@ Checkpoint.prototype.update = function(arena) {
     }
   }
 };
-},{"../shaders/lightbolt":72,"inherits":129,"lodash":140}],38:[function(require,module,exports){
+},{"../shaders/lightbolt":72,"inherits":129,"lodash":140}],39:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2697,7 +2812,7 @@ Collectible.prototype.collectedBy = function(entity, callback) {
 };
 
 
-},{"inherits":129,"lodash":140}],39:[function(require,module,exports){
+},{"inherits":129,"lodash":140}],40:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2786,7 +2901,7 @@ Collectible.prototype.collectedBy = function(entity, callback) {
 };
 
 
-},{"inherits":129,"lodash":140}],40:[function(require,module,exports){
+},{"inherits":129,"lodash":140}],41:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2822,7 +2937,7 @@ function CommandCenter (options) {
 }
 
 inherits(CommandCenter, Entity);
-},{"../entity":54,"inherits":129}],41:[function(require,module,exports){
+},{"../entity":55,"inherits":129}],42:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2904,7 +3019,7 @@ Flies.prototype.update = function(game) {
     this.points.vertices[i].set(point.x, point.y, point.z);
   }
 };
-},{"inherits":129}],42:[function(require,module,exports){
+},{"inherits":129}],43:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -3015,7 +3130,7 @@ Grass.prototype.update = function(arena) {
   }
 };
 
-},{"inherits":129}],43:[function(require,module,exports){
+},{"inherits":129}],44:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -3074,7 +3189,7 @@ InteractiveObject.prototype.isNearEnough = function(object) {
   return this.position.distanceTo(object.position) <= 20;
 };
 
-},{"../utils":86,"inherits":129}],44:[function(require,module,exports){
+},{"../utils":86,"inherits":129}],45:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3115,7 +3230,7 @@ function Mineral (options) {
 
 inherits(Mineral, Collectible);
 
-},{"./collectible":39,"inherits":129,"lodash":140}],45:[function(require,module,exports){
+},{"./collectible":40,"inherits":129,"lodash":140}],46:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -3156,7 +3271,7 @@ function Nexus (options) {
 
 inherits(Nexus, Entity);
 
-},{"../entity":54,"inherits":129}],46:[function(require,module,exports){
+},{"../entity":55,"inherits":129}],47:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -3190,7 +3305,7 @@ function Shop (options) {
 }
 
 inherits(Shop, InteractiveObject);
-},{"./interactiveobject":43,"inherits":129}],47:[function(require,module,exports){
+},{"./interactiveobject":44,"inherits":129}],48:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3243,7 +3358,7 @@ LifeBar.prototype.update = function(delta) {
 };
 
 
-},{"../shaders/lifebar":71,"inherits":129,"lodash":140}],48:[function(require,module,exports){
+},{"../shaders/lifebar":71,"inherits":129,"lodash":140}],49:[function(require,module,exports){
 'use strict';
 
 module.exports = Sound;
@@ -3288,7 +3403,7 @@ function Sound ( sources, radius, volume ) {
   };
 
 }
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -3395,7 +3510,7 @@ Spikes.prototype.update = function(arena) {
   }
 };
 
-},{"../spell":73,"inherits":129,"tween":192}],50:[function(require,module,exports){
+},{"../spell":73,"inherits":129,"tween":192}],51:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3572,7 +3687,7 @@ inherits(Terrain, THREE.Object3D);
 
 
 
-},{"./water":52,"inherits":129,"lodash":140}],51:[function(require,module,exports){
+},{"./water":53,"inherits":129,"lodash":140}],52:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3750,7 +3865,7 @@ DefenseTower.prototype.fireTo = function(target) {
     .start();
 };
 
-},{"../entity":54,"../particles/cloud":65,"../particles/stemkoski_ParticleEngine":66,"../spell":73,"inherits":129,"lodash":140,"tween":192}],52:[function(require,module,exports){
+},{"../entity":55,"../particles/cloud":65,"../particles/stemkoski_ParticleEngine":66,"../spell":73,"inherits":129,"lodash":140,"tween":192}],53:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3809,7 +3924,7 @@ Water.prototype.update = function(game) {
 };
 
 
-},{"inherits":129,"lodash":140}],53:[function(require,module,exports){
+},{"inherits":129,"lodash":140}],54:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3860,7 +3975,7 @@ Water.prototype.update = function(game) {
 };
 
 
-},{"../materials/water":64,"inherits":129,"lodash":140}],54:[function(require,module,exports){
+},{"../materials/water":64,"inherits":129,"lodash":140}],55:[function(require,module,exports){
 'use strict';
 
 var now = require('now');
@@ -4412,6 +4527,7 @@ Entity.prototype.learnSpell = function(SpellClass, args) {
   }
 
   this.state.spells.push(spell);
+  debug('%o learnt spell %o', this, SpellClass);
 
   if (this.game) { // only when entity is on the board
     var learnEffect = new LearnEffect();
@@ -4420,6 +4536,34 @@ Entity.prototype.learnSpell = function(SpellClass, args) {
 
   this.emit('changed', this);
 };
+
+/**
+ * Unlearn a spell.
+ * @param  {Spell} SpellClass spell class
+ * @return {Boolean} True if unlearnt
+ */
+Entity.prototype.unlearnSpell = function(SpellClass) {
+  for (var i = 0; i < this.state.spells.length; i++) {
+    if (this.state.spells[i] instanceof SpellClass) {
+      this.state.spells = this.state.spells.slice(i)
+      debug('%o unlearnt spell %o', this, SpellClass);
+      this.emit('changed', this);
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Returns True if entity knows that spell.
+ * @param  {Spell} SpellClass spell class
+ * @return {Boolean} True if known
+ */
+Entity.prototype.knowsSpell = function(SpellClass) {
+  return _.find(this.state.spells, function (spell) {
+    return spell instanceof SpellClass;
+  })
+}
 
 /**
  * Cast a spell
@@ -4519,7 +4663,7 @@ Entity.prototype.hit = function(spell) {
   }
 };
 
-},{"./ai/steering":9,"./controls/attackcircle":29,"./cover-system":33,"./elements/slifebar":47,"./inventory":62,"./log":63,"./settings":69,"./spell/flatlearn":79,"./target-system":85,"debug":94,"inherits":129,"lodash":140,"now":142}],55:[function(require,module,exports){
+},{"./ai/steering":9,"./controls/attackcircle":30,"./cover-system":34,"./elements/slifebar":48,"./inventory":62,"./log":63,"./settings":69,"./spell/flatlearn":79,"./target-system":85,"debug":94,"inherits":129,"lodash":140,"now":142}],56:[function(require,module,exports){
 'use strict';
 
 module.exports = Spiral;
@@ -4576,12 +4720,12 @@ function Spiral (radiusTop, radiusBottom, height, radialSegments, heightSegments
     return spline;
 }
 
-},{}],56:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 module.exports = {
   GameHud: require('./ingame'),
   Sidemenu: require('./sidemenu')
 };
-},{"./ingame":57,"./sidemenu":58}],57:[function(require,module,exports){
+},{"./ingame":58,"./sidemenu":59}],58:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -4748,7 +4892,7 @@ GameHud.prototype.startInteraction = function(object) {
 };
 
 
-},{"../elements/interactiveobject":43,"../entity":54,"../views/dialogview":87,"../views/entityview":88,"../views/gameview":89,"../views/interactiveview":90,"../views/questdialogview":91,"knockout":139,"lodash":140}],58:[function(require,module,exports){
+},{"../elements/interactiveobject":44,"../entity":55,"../views/dialogview":87,"../views/entityview":88,"../views/gameview":89,"../views/interactiveview":90,"../views/questdialogview":91,"knockout":139,"lodash":140}],59:[function(require,module,exports){
 'use strict';
 
 module.exports = Sidemenu;
@@ -4782,118 +4926,7 @@ Sidemenu.prototype.isOpen = function () {
   // return this.root.classList.contains( 'fadeInLeft' );
 };
 
-},{}],59:[function(require,module,exports){
-'use strict';
-
-var _ = require('lodash');
-var TWEEN = require('tween');
-
-module.exports = SpellTexts;
-
-function SpellTexts (game, options) {
-
-  var self = this;
-
-  this.options = _.merge({
-    font: 'helvetiker',
-    weight: 'normal',
-    style: 'normal',
-  }, options);
-
-  self.root = game.settings.container;
-
-  self._bindEntity = function (entity) {
-    entity.on('hit', self._showHit);
-  };
-
-  game.on('added:entity', self._bindEntity);
-
-  self._showHit = function (eventData) {
-
-    var textGeom = new THREE.TextGeometry( ''+eventData.totalLifeDamage, {
-      size: Math.sqrt(eventData.totalLifeDamage),
-      height: 1,
-      curveSegments: 3,
-      font: self.options.font,
-      weight: self.options.weight,
-      style: self.options.style,
-      bevelThickness: 0,
-      bevelSize: 0,
-      bevelEnabled: false,
-      material: 0,
-      extrudeMaterial: 1
-    });
-
-    var hitMaterial = new THREE.MeshBasicMaterial({
-      shading: THREE.AdditiveBlending,
-      transparent: true,
-      depthWrite: false,
-      depthTest: false,
-      color: 0xff0000,
-      opacity: 1
-    });
-    var textMesh = new THREE.Mesh(textGeom, hitMaterial);
-
-    self._tween(textMesh, eventData);
-  };
-
-  self._showHeal = function (eventData) {
-
-    var textGeom = new THREE.TextGeometry(eventData.totalLifeDamage, {
-      size: Math.max(Math.sqrt(eventData.totalLifeDamage), 1),
-      height: 1,
-      curveSegments: 1,
-      font: self.options.font,
-      weight: self.options.weight,
-      style: self.options.style,
-      bevelThickness: 0,
-      bevelSize: 0,
-      bevelEnabled: false,
-      material: 0,
-      extrudeMaterial: 0
-    });
-
-    var healMaterial = new THREE.MeshBasicMaterial({
-      transparent: true,
-      depthWrite: false,
-      depthTest: false,
-      color: 0x00ff00,
-      opacity: 1
-    });
-
-    var textMesh = new THREE.Mesh(textGeom, healMaterial);
-
-    self._tween(textMesh, eventData);
-  };
-
-  self._tween = function (mesh, eventData) {
-
-    eventData.spell.target.add(mesh);
-
-    mesh.position.z = -2;
-    mesh.position.y = 10;
-
-    return new TWEEN.Tween({ y: 10, opacity: 1, scale: 0.2 })
-      .to({ y: 20, opacity: 0, scale: 2 }, 1000)
-      .easing( TWEEN.Easing.Quadratic.InOut)
-      .onComplete(function(){
-        eventData.spell.target.remove(mesh);
-      })
-      .onUpdate(function(){
-        // console.log(this);
-        // adjust position, opacity & size
-        mesh.position.y = this.y;
-        mesh.material.opacity = this.opacity;
-        mesh.scale.set(this.scale, this.scale, this.scale);
-
-        // always face camera
-        mesh.rotation.y = eventData.spell.target.game.camera.rotation.y - eventData.spell.target.rotation.y;
-      })
-      .start();
-  };
-}
-
-},{"lodash":140,"tween":192}],60:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -4926,7 +4959,6 @@ var Terrain            = require('./elements/terrain');
 var InteractiveObject  = require('./elements/interactiveobject');
 var PathFinding        = require('recastjs/lib/recast.withworker');
 var CameraControls     = require('./controls/dota');
-var SpellTexts         = require('./hud/spelltexts');
 var Collectible        = require('./elements/collectible');
 var MouseControls      = require('./input/mouse');
 // var GamepadControls = require('./input/gamepad');
@@ -4986,7 +5018,6 @@ function Arena (overrideSettings) {
    * @type {Object}
    */
   this.settings = settings.data;
-
 
   //////////
 
@@ -5079,8 +5110,6 @@ function Arena (overrideSettings) {
   this.hud = new HUD.GameHud('hud-container');
   this.hud.attachGame(this);
 
-  this.spelltexts = new SpellTexts(this);
-
   this.quests = new Quests(this);
 
   //////////
@@ -5117,7 +5146,7 @@ function Arena (overrideSettings) {
    * The dat.GUI instance
    * @type {dat.GUI}
    */
-  this.gui = settingsGUI.create({ });
+  this.gui = settingsGUI(this);
 
   //////////
 
@@ -5142,6 +5171,7 @@ function Arena (overrideSettings) {
   this.use(require('./components/entity-lifebar'));
   this.use(require('./components/entity-helpers'));
   this.use(require('./components/destination-marker'));
+  this.use(require('./components/spelltexts'));
   this.use(require('./components/network'));
 
 };
@@ -6214,13 +6244,6 @@ Arena.prototype._prepareEntity = function(entity) {
     self.entities.push(entity);
   }
 
-  // add GUI controls
-  settingsGUI.addEntityControls(entity);
-  // remove on death
-  entity.on('death', function(){
-    settingsGUI.removeEntityControls(entity);
-  });
-
   // setup its behaviour
   if (entity.behaviour) {
     entity.behaviour = self.machine.generateTree(entity.behaviour, entity, entity.states);
@@ -7117,7 +7140,7 @@ Arena.stemkoski = require('./particles/stemkoski_ParticleEngine');
 
 
 }).call(this,require('_process'))
-},{"../vendor/detector":193,"../vendor/stats":194,"./ai/behaviours/all":2,"./character/all":14,"./components/destination-marker":24,"./components/entity-helpers":25,"./components/entity-lifebar":26,"./components/entity-name":27,"./components/network":28,"./controls/dota":31,"./controls/zoneselector":32,"./crowd":34,"./elements/all":35,"./elements/collectible":39,"./elements/interactiveobject":43,"./elements/slifebar":47,"./elements/terrain":50,"./entity":54,"./hud":56,"./hud/spelltexts":59,"./input/mouse":61,"./particles/stemkoski_ParticleEngine":66,"./quests":67,"./settings":69,"./settings-gui":68,"./spell/all":74,"./utils":86,"EventEmitter":92,"_process":203,"async":93,"debug":94,"inherits":129,"interact":130,"lodash":140,"machinejs":141,"now":142,"recastjs/lib/recast.withworker":143,"tic":191,"tween":192}],61:[function(require,module,exports){
+},{"../vendor/detector":193,"../vendor/stats":194,"./ai/behaviours/all":2,"./character/all":14,"./components/destination-marker":24,"./components/entity-helpers":25,"./components/entity-lifebar":26,"./components/entity-name":27,"./components/network":28,"./components/spelltexts":29,"./controls/dota":32,"./controls/zoneselector":33,"./crowd":35,"./elements/all":36,"./elements/collectible":40,"./elements/interactiveobject":44,"./elements/slifebar":48,"./elements/terrain":51,"./entity":55,"./hud":57,"./input/mouse":61,"./particles/stemkoski_ParticleEngine":66,"./quests":67,"./settings":69,"./settings-gui":68,"./spell/all":74,"./utils":86,"EventEmitter":92,"_process":203,"async":93,"debug":94,"inherits":129,"interact":130,"lodash":140,"machinejs":141,"now":142,"recastjs/lib/recast.withworker":143,"tic":191,"tween":192}],61:[function(require,module,exports){
 'use strict';
 
 var debug = require('debug')('controls:mouse');
@@ -7393,7 +7416,7 @@ MouseControl.prototype._onDocumentMouseMove = function(event) {
 
   this.arena.updateSelectionCoords(event.clientX, event.clientY);
 };
-},{"../elements/collectible":39,"../elements/interactiveobject":43,"../elements/terrain":50,"../entity":54,"../settings":69,"../utils":86,"debug":94}],62:[function(require,module,exports){
+},{"../elements/collectible":40,"../elements/interactiveobject":44,"../elements/terrain":51,"../entity":55,"../settings":69,"../utils":86,"debug":94}],62:[function(require,module,exports){
 'use strict';
 
 module.exports = Inventory;
@@ -9122,12 +9145,30 @@ var settings = require('./settings');
 
 var gui, crowd, allCrowd;
 
+module.exports = SettingsGUI;
+
+function SettingsGUI (arena, options) {
+
+  arena.on('added:entity', function(entity) {
+    // add GUI controls
+    SettingsGUI.addEntityControls(entity);
+    // remove on death
+    entity.on('death', function(){
+      SettingsGUI.removeEntityControls(entity);
+    });
+  });
+
+  return SettingsGUI.create(options)
+}
+
 /**
  * Create a GUI
  *
  * @return {dat.GUI}  The dat.GUI object
  */
-module.exports.create = function( initParams ) {
+SettingsGUI.create = function(initParams) {
+
+  initParams = initParams || {};
 
   if (! settings.enableGUI) { return false; }
 
@@ -9303,7 +9344,7 @@ function entityFolderName(entity) {
  * Add an entity's controls to the current GUI
  * @param {Entity} entity The entity to report changes
  */
-module.exports.addEntityControls = function( entity ) {
+SettingsGUI.addEntityControls = function( entity ) {
 
   if (! gui || ! crowd) { return false; }
 
@@ -9318,24 +9359,44 @@ module.exports.addEntityControls = function( entity ) {
     fs.add(entity.steerings.behaviours, steerings[i]);
   };
 
-  f.add(entity.position, 'x').name('X').listen();
-  f.add(entity.position, 'y').name('Y').listen();
-  f.add(entity.position, 'z').name('Z').listen();
+  var fsb = f.addFolder('Basics');
+  fsb.add(entity.position, 'x').name('X').listen();
+  fsb.add(entity.position, 'y').name('Y').listen();
+  fsb.add(entity.position, 'z').name('Z').listen();
 
-  f.add(entity.state, 'life', 1, 200).name('Life').listen().onChange(entityUpdated);
-  f.add(entity.state, 'mana', 1, 200).name('Mana').listen().onChange(entityUpdated);
-  f.add(entity.state, 'height', 1, 200).name('Height').listen().onChange(entityUpdated);
-  f.add(entity.state, 'radius', 1, 200).name('Radius').listen().onChange(entityUpdated);
-  f.add(entity.state, 'maxAcceleration', 1, 200).name('maxAcceleration').listen().onChange(entityUpdated);
-  f.add(entity.state, 'maxSpeed', 1, 200).name('maxSpeed').listen().onChange(entityUpdated);
+  fsb.add(entity.state, 'life', 1, 200).name('Life').listen().onChange(entityUpdated);
+  fsb.add(entity.state, 'mana', 1, 200).name('Mana').listen().onChange(entityUpdated);
+  fsb.add(entity.state, 'height', 1, 200).name('Height').listen().onChange(entityUpdated);
+  fsb.add(entity.state, 'radius', 1, 200).name('Radius').listen().onChange(entityUpdated);
+  fsb.add(entity.state, 'maxAcceleration', 1, 200).name('maxAcceleration').listen().onChange(entityUpdated);
+  fsb.add(entity.state, 'maxSpeed', 1, 200).name('maxSpeed').listen().onChange(entityUpdated);
 
   if (entity.behaviour && entity.behaviour.identifier) {
     // too greedy
-    // f.add(entity.behaviour, 'identifier').name('State').listen();
+    // fsb.add(entity.behaviour, 'identifier').name('State').listen();
   }
 
   if (entity.character && entity.character.rotation) {
-    f.add(entity.character.rotation, 'y', 0, 2 * Math.PI).name('Rotation Y');
+    fsb.add(entity.character.rotation, 'y', 0, 2 * Math.PI).name('Rotation Y');
+  }
+
+  var fsp = f.addFolder('Spells');
+  for (var Spell in Arena.Spells) {
+    (function (Spell) {
+      var item, SpellClass = Arena.Spells[Spell]
+      var toggle = function () {
+        if (! entity.knowsSpell(SpellClass)) {
+          entity.learnSpell(SpellClass)
+          item.name('Unlearn spell ' + Spell);
+        } else {
+          entity.unlearnSpell(SpellClass)
+          item.name('Learn spell ' + Spell);
+        }
+      }
+      item = fsp.add({ toggle:toggle }, 'toggle').name(
+        (entity.knowsSpell(SpellClass) ? 'Unlearn' : 'Learn') + ' spell ' + Spell
+      )
+    })(Spell);
   }
 
   function entityUpdated() {
@@ -9349,7 +9410,7 @@ module.exports.addEntityControls = function( entity ) {
  * Remove an entity's controls from the current GUI
  * @param {Entity} entity The entity to remove
  */
-module.exports.removeEntityControls = function( entity ) {
+SettingsGUI.removeEntityControls = function( entity ) {
 
   if (! gui || ! crowd) { return false; }
 
@@ -10321,7 +10382,7 @@ Bite.prototype.start = function(source, target) {
   target.hit(this);
 };
 
-},{"../elements/sound":48,"../spell":73,"inherits":129,"lodash":140}],76:[function(require,module,exports){
+},{"../elements/sound":49,"../spell":73,"inherits":129,"lodash":140}],76:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10464,7 +10525,7 @@ FireBullet.prototype.start = function (caster, target) {
     .start();
 };
 
-},{"../elements/sound":48,"../particles/cloud":65,"../particles/stemkoski_ParticleEngine":66,"../spell":73,"../utils":86,"inherits":129,"lodash":140,"tween":192}],78:[function(require,module,exports){
+},{"../elements/sound":49,"../particles/cloud":65,"../particles/stemkoski_ParticleEngine":66,"../spell":73,"../utils":86,"inherits":129,"lodash":140,"tween":192}],78:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10699,7 +10760,7 @@ Heal.prototype.start = function (caster, target) {
     .start();
 };
 
-},{"../elements/sound":48,"../particles/cloud":65,"../particles/stemkoski_ParticleEngine":66,"../spell":73,"../utils":86,"inherits":129,"lodash":140,"tween":192}],81:[function(require,module,exports){
+},{"../elements/sound":49,"../particles/cloud":65,"../particles/stemkoski_ParticleEngine":66,"../spell":73,"../utils":86,"inherits":129,"lodash":140,"tween":192}],81:[function(require,module,exports){
 'use strict';
 
 var inherits  = require('inherits');
@@ -10791,7 +10852,7 @@ Learn.prototype.start = function (caster, target) {
     .start();
 };
 
-},{"../elements/sound":48,"../geometries/spiral":55,"../particles/cloud":65,"../particles/stemkoski_ParticleEngine":66,"../spell":73,"../utils":86,"inherits":129,"lodash":140,"tween":192}],82:[function(require,module,exports){
+},{"../elements/sound":49,"../geometries/spiral":56,"../particles/cloud":65,"../particles/stemkoski_ParticleEngine":66,"../spell":73,"../utils":86,"inherits":129,"lodash":140,"tween":192}],82:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -11038,7 +11099,7 @@ PlaceObject.prototype.updateZoneSelector = function(source, arena) {
 
 
 
-},{"../elements/sound":48,"../settings":69,"../spell":73,"inherits":129,"lodash":140,"tween":192}],84:[function(require,module,exports){
+},{"../elements/sound":49,"../settings":69,"../spell":73,"inherits":129,"lodash":140,"tween":192}],84:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -11155,7 +11216,7 @@ Teleport.prototype.updateZoneSelector = function(source, arena) {
   }
 };
 
-},{"../elements/sound":48,"../settings":69,"../spell":73,"inherits":129,"lodash":140,"tween":192}],85:[function(require,module,exports){
+},{"../elements/sound":49,"../settings":69,"../spell":73,"inherits":129,"lodash":140,"tween":192}],85:[function(require,module,exports){
 module.exports = TargetSystem;
 
 function TargetSystem (arena, entity) {
@@ -11556,7 +11617,7 @@ function EntityViewModel (entity, game) {
 
   entity.on('changed', this.update.bind(this));
 }
-},{"../entity":54,"../utils":86,"knockout":139,"lodash":140}],89:[function(require,module,exports){
+},{"../entity":55,"../utils":86,"knockout":139,"lodash":140}],89:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
