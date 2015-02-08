@@ -6138,7 +6138,10 @@ Arena.prototype.computeNavigationMesh = function(callback) {
   if (! self.navigationMesh) {
     // get the navmesh vertices
     self.pathfinder.getNavMeshVertices(
-      Utils.gcb(function(vertices) {
+      self.pathfinder.cb(function(vertices) {
+
+        vertices = _.map(vertices, function (v) { return new THREE.Vector3(v.x, v.y, v.z); });
+
         // build the mesh
         self.navigationMesh = Utils.meshFromVertices(vertices, {
           color: 0xffffff,
@@ -6474,7 +6477,7 @@ Arena.prototype.addCharacter = function(builder) {
       self.groundObject(object);
     }
 
-    // Attach a life/mana bar above the entity
+    // Prepare the entity, attach lifebar, helpers, etc..
     self._prepareEntity(object);
 
     // On scene !
@@ -7132,10 +7135,10 @@ if (window) { window.Arena = Arena; }
 
 Arena.Behaviours = require('./ai/behaviours/all');
 Arena.Characters = require('./character/all');
-Arena.Elements = require('./elements/all');
-Arena.Spells = require('./spell/all');
+Arena.Elements   = require('./elements/all');
+Arena.Spells     = require('./spell/all');
 
-Arena.stemkoski = require('./particles/stemkoski_ParticleEngine');
+Arena.stemkoski  = require('./particles/stemkoski_ParticleEngine');
 
 
 
@@ -32159,7 +32162,7 @@ var Recast = function (worker_url, onWorkerReady) {
                 worker.onmessage = null;
                 onReady(worker);
             };
-            worker.postMessage({});
+            worker.postMessage();
             return worker;
         };
 

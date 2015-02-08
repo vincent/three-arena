@@ -57,7 +57,7 @@ bool m_monotonePartitioning = 0;
 
 float m_edgeMaxLen = 50.0f;  // , 50.0f, 1.0f);
 float m_edgeMaxError = 1.0f;  // , 3.0f, 0.1f);
-float m_vertsPerPoly = 3.0f;  // , 12.0f, 1.0f);		
+float m_vertsPerPoly = 3.0f;  // , 12.0f, 1.0f);
 
 float m_detailSampleDist = 0.0f;  // , 16.0f, 1.0f);
 float m_detailSampleMaxError = 8.0f;  // , 16.0f, 1.0f);
@@ -67,7 +67,7 @@ rcHeightfield* m_solid;
 rcCompactHeightfield* m_chf;
 rcContourSet* m_cset;
 rcPolyMesh* m_pmesh;
-rcConfig m_cfg;	
+rcConfig m_cfg;
 rcPolyMeshDetail* m_dmesh;
 
 /// Tool types.
@@ -162,7 +162,7 @@ void debugConfig()
 
 	printf(" m_edgeMaxLen=%f \n", m_edgeMaxLen);
 	printf(" m_edgeMaxError=%f \n", m_edgeMaxError);
-	printf(" m_vertsPerPoly=%f \n", m_vertsPerPoly);		
+	printf(" m_vertsPerPoly=%f \n", m_vertsPerPoly);
 
 	printf(" m_detailSampleDist=%f \n", m_detailSampleDist);
 	printf(" m_detailSampleMaxError=%f \n", m_detailSampleMaxError);
@@ -209,7 +209,7 @@ void emscripten_debugger()
 void cleanup()
 {
 	printf("cleanup \n");
-	
+
 	delete [] m_triareas;
 	m_triareas = 0;
 	rcFreeHeightField(m_solid);
@@ -256,7 +256,7 @@ void getNavMeshVertices(std::string callback){
 	for (int i = 0; i < m_pmesh->npolys; ++i)
 	{
 		if (m_pmesh->areas[i] == SAMPLE_POLYAREA_GROUND)
-        {
+		{
 			const unsigned short* p = &m_pmesh->polys[i*nvp*2];
 
 			unsigned short vi[3];
@@ -352,7 +352,7 @@ void getNavHeightfieldRegions(std::string callback)
 			const float fx = m_chf->bmin[0] + x*cs;
 			const float fz = m_chf->bmin[2] + y*cs;
 			const rcCompactCell& c = m_chf->cells[x+y*m_chf->width];
-			
+
 			for (unsigned i = c.index, ni = c.index+c.count; i < ni; ++i)
 			{
 				const rcCompactSpan& s = m_chf->spans[i];
@@ -370,7 +370,7 @@ void getNavHeightfieldRegions(std::string callback)
 			}
 		}
 	}
-	
+
 	sprintf(buff, "%s(__tmp_recastjs_data);", callback.c_str());
 	emscripten_run_script(buff);
 
@@ -418,7 +418,7 @@ void findNearestPoly(float cx, float cy, float cz,
 
 				sprintf(buff, "__tmp_recastjs_data.push({x:%f, y:%f, z:%f});", v[0], v[1], v[2]);
 				emscripten_run_script(buff);
-			}	
+			}
 		}
 	}
 
@@ -559,7 +559,7 @@ void findPath(float startPosX, float startPosY, float startPosZ,
 					emscripten_run_script(buff);
 				} else {
 					sprintf(buff, "ignore %f, %f, %f", v[0], v[1], v[2]);
-					emscripten_log(buff);					
+					emscripten_log(buff);
 				}
 			}
 		}
@@ -581,7 +581,7 @@ void set_regionMinSize(float val){			m_regionMinSize = val;			}
 void set_regionMergeSize(float val){		m_regionMergeSize = val;		}
 void set_edgeMaxLen(float val){				m_edgeMaxLen = val;				}
 void set_edgeMaxError(float val){			m_edgeMaxError = val;			}
-void set_vertsPerPoly(float val){			m_vertsPerPoly = val;			}		
+void set_vertsPerPoly(float val){			m_vertsPerPoly = val;			}
 void set_detailSampleDist(float val){		m_detailSampleDist = val;		}
 void set_detailSampleMaxError(float val){	m_detailSampleMaxError = val;	}
 void set_monotonePartitioning(int val){		m_monotonePartitioning = !!val;	}
@@ -599,7 +599,7 @@ bool initWithFile(std::string filename)
 	if (!m_geom || !m_geom->loadMesh(m_ctx, filename.c_str()))
 	{
 		printf("cannot load OBJ file \n");
-		return false;		
+		return false;
 	}
 	return true;
 }
@@ -613,7 +613,7 @@ bool initWithFileContent(std::string contents)
 	if (!m_geom || !m_geom->loadMeshFromContents(m_ctx, contents.c_str()))
 	{
 		printf("cannot load OBJ contents \n");
-		return false;		
+		return false;
 	}
 	return true;
 }
@@ -626,10 +626,10 @@ bool initCrowd(const int maxAgents, const float maxAgentRadius)
 }
 
 struct agentUserData {
-    int idx;
+	int idx;
 };
 
-void updateCrowdAgentParameters(const int idx, float posX, float posY, float posZ, float radius, float height, 
+void updateCrowdAgentParameters(const int idx, float posX, float posY, float posZ, float radius, float height,
 																float maxAcceleration, float maxSpeed, unsigned char updateFlags, float separationWeight)
 {
 	dtCrowdAgentParams ap;
@@ -640,7 +640,7 @@ void updateCrowdAgentParameters(const int idx, float posX, float posY, float pos
 	ap.maxSpeed = maxSpeed;
 	ap.collisionQueryRange = ap.radius * 12.0f;
 	ap.pathOptimizationRange = ap.radius * 300.0f;
-	ap.updateFlags = 0; 
+	ap.updateFlags = 0;
 	// if (m_toolParams.m_anticipateTurns)
 	// 	ap.updateFlags |= DT_CROWD_ANTICIPATE_TURNS;
 	// if (m_toolParams.m_optimizeVis)
@@ -660,7 +660,7 @@ void updateCrowdAgentParameters(const int idx, float posX, float posY, float pos
 	m_crowd->updateAgentParameters(idx, &ap);
 }
 
-int addCrowdAgent(float posX, float posY, float posZ, float radius, float height, 
+int addCrowdAgent(float posX, float posY, float posZ, float radius, float height,
 									float maxAcceleration, float maxSpeed, unsigned char updateFlags, float separationWeight)
 {
 	dtCrowdAgentParams ap;
@@ -671,7 +671,7 @@ int addCrowdAgent(float posX, float posY, float posZ, float radius, float height
 	ap.maxSpeed = maxSpeed;
 	ap.collisionQueryRange = ap.radius * 12.0f;
 	ap.pathOptimizationRange = ap.radius * 300.0f;
-	ap.updateFlags = 0; 
+	ap.updateFlags = 0;
 	// if (m_toolParams.m_anticipateTurns)
 	// 	ap.updateFlags |= DT_CROWD_ANTICIPATE_TURNS;
 	// if (m_toolParams.m_optimizeVis)
@@ -691,8 +691,8 @@ int addCrowdAgent(float posX, float posY, float posZ, float radius, float height
 
 	// agentUserData data;
 	// memset(&data, 0, sizeof(data));
- 	// data.idx = 99;
- 	// ap.userData = (void *) &data;
+	// data.idx = 99;
+	// ap.userData = (void *) &data;
 
 	ap.userData = (void *)idx; /* FIXME: doesnt fucking work ://// */
 	/* So we do this ?? */
@@ -741,7 +741,7 @@ bool crowdRequestMoveTarget(int agentIdx, float posX, float posY, float posZ)
 		// emscripten_run_script("debug('MoveTarget adjusted');");
 	}
 
-	m_crowd->requestMoveTarget(agentIdx, m_targetRef, m_targetPos);	
+	m_crowd->requestMoveTarget(agentIdx, m_targetRef, m_targetPos);
 
 	return true;
 }
@@ -781,16 +781,16 @@ struct dtCrowdAgent
 
 	/// The local boundary data for the agent.
 	dtLocalBoundary boundary;
-	
+
 	/// Time since the agent's path corridor was optimized.
 	float topologyOptTime;
-	
+
 	/// The known neighbors of the agent.
 	dtCrowdNeighbour neis[DT_CROWDAGENT_MAX_NEIGHBOURS];
 
 	/// The number of neighbors.
 	int nneis;
-	
+
 	/// The desired speed.
 	float desiredSpeed;
 
@@ -814,7 +814,7 @@ struct dtCrowdAgent
 
 	/// The number of corners.
 	int ncorners;
-	
+
 	unsigned char targetState;			///< State of the movement request.
 	dtPolyRef targetRef;				///< Target polyref of the movement request.
 	float targetPos[3];					///< Target position of the movement request (or velocity in case of DT_CROWDAGENT_TARGET_VELOCITY).
@@ -867,7 +867,7 @@ bool build()
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Input mesh is not specified.");
 		return false;
 	}
-	
+
 	cleanup();
 
 	const float* bmin = m_geom->getMeshBoundsMin();
@@ -876,11 +876,11 @@ bool build()
 	const int nverts = m_geom->getMesh()->getVertCount();
 	const int* tris = m_geom->getMesh()->getTris();
 	const int ntris = m_geom->getMesh()->getTriCount();
-	
+
 	//
 	// Step 1. Initialize build config.
 	//
-	
+
 	// Init build configuration from GUI
 	memset(&m_cfg, 0, sizeof(m_cfg));
 	m_cfg.cs = m_cellSize;
@@ -896,7 +896,7 @@ bool build()
 	m_cfg.maxVertsPerPoly = (int)m_vertsPerPoly;
 	m_cfg.detailSampleDist = m_detailSampleDist < 0.9f ? 0 : m_cellSize * m_detailSampleDist;
 	m_cfg.detailSampleMaxError = m_cellHeight * m_detailSampleMaxError;
-	
+
 	// Set the area where the navigation will be build.
 	// Here the bounds of the input mesh are used, but the
 	// area could be specified by an user defined box, etc.
@@ -909,19 +909,19 @@ bool build()
 
 	printf("resetTimers \n");
 
-	// Start the build process.	
+	// Start the build process.
 	//m_ctx->startTimer(RC_TIMER_TOTAL);
-	
+
 	m_ctx->log(RC_LOG_PROGRESS, "Building navigation:");
 	m_ctx->log(RC_LOG_PROGRESS, " - %d x %d cells", m_cfg.width, m_cfg.height);
 	m_ctx->log(RC_LOG_PROGRESS, " - %.1fK verts, %.1fK tris", nverts/1000.0f, ntris/1000.0f);
-	
+
 	printf("Building navigation \n");
 
 	//
 	// Step 2. Rasterize input polygon soup.
 	//
-	
+
 	// Allocate voxel heightfield where we rasterize our input data to.
 	m_solid = rcAllocHeightfield();
 	if (!m_solid)
@@ -936,7 +936,7 @@ bool build()
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not create solid heightfield.");
 		return false;
 	}
-	
+
 	printf("Heightfield polygon soup \n");
 
 	// Allocate array that can hold triangle area types.
@@ -948,7 +948,7 @@ bool build()
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Out of memory 'm_triareas' (%d).", ntris);
 		return false;
 	}
-	
+
 	// Find triangles which are walkable based on their slope and rasterize them.
 	// If your input data is multiple meshes, you can transform them here, calculate
 	// the are type for each of the meshes and rasterize them.
@@ -963,11 +963,11 @@ bool build()
 		delete [] m_triareas;
 		m_triareas = 0;
 	}
-	
+
 	//
 	// Step 3. Filter walkables surfaces.
 	//
-	
+
 	// Once all geoemtry is rasterized, we do initial pass of filtering to
 	// remove unwanted overhangs caused by the conservative rasterization
 	// as well as filter spans where the character cannot possibly stand.
@@ -976,7 +976,7 @@ bool build()
 	rcFilterWalkableLowHeightSpans(m_ctx, m_cfg.walkableHeight, *m_solid);
 
 	printf("filters \n");
-	
+
 	//
 	// Step 4. Partition walkable surface to simple regions.
 	//
@@ -995,13 +995,13 @@ bool build()
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not build compact data.");
 		return false;
 	}
-	
+
 	if (!m_keepInterResults)
 	{
 		rcFreeHeightField(m_solid);
 		m_solid = 0;
 	}
-		
+
 	// Erode the walkable area by agent radius.
 	if (!rcErodeWalkableArea(m_ctx, m_cfg.walkableRadius, *m_chf))
 	{
@@ -1013,7 +1013,7 @@ bool build()
 	const ConvexVolume* vols = m_geom->getConvexVolumes();
 	for (int i  = 0; i < m_geom->getConvexVolumeCount(); ++i)
 		rcMarkConvexPolyArea(m_ctx, vols[i].verts, vols[i].nverts, vols[i].hmin, vols[i].hmax, (unsigned char)vols[i].area, *m_chf);
-	
+
 	if (m_monotonePartitioning)
 	{
 		// Partition the walkable surface into simple regions without holes.
@@ -1046,7 +1046,7 @@ bool build()
 	//
 	// Step 5. Trace and simplify region contours.
 	//
-	
+
 	// Create contours.
 	m_cset = rcAllocContourSet();
 	if (!m_cset)
@@ -1059,13 +1059,13 @@ bool build()
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not create contours.");
 		return false;
 	}
-	
+
 	printf("Trace and simplify region contours: %u conts (maxSimplificationError= %f, maxEdgeLen= %u)\n", m_cset->nconts, m_cfg.maxSimplificationError, m_cfg.maxEdgeLen);
 
 	//
 	// Step 6. Build polygons mesh from contours.
 	//
-	
+
 	// Build polygon navmesh from the contours.
 	m_pmesh = rcAllocPolyMesh();
 	if (!m_pmesh)
@@ -1078,13 +1078,13 @@ bool build()
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not triangulate contours.");
 		return false;
 	}
-	
+
 	printf("Build polygons mesh from contours. \n");
 
 	//
 	// Step 7. Create detail mesh which allows to access approximate height on each polygon.
 	//
-	
+
 	m_dmesh = rcAllocPolyMeshDetail();
 	if (!m_dmesh)
 	{
@@ -1110,11 +1110,11 @@ bool build()
 
 	// At this point the navigation mesh data is ready, you can access it from m_pmesh.
 	// See duDebugDrawPolyMesh or dtCreateNavMeshData as examples how to access the data.
-	
+
 	//
 	// (Optional) Step 8. Create Detour data from Recast poly mesh.
 	//
-	
+
 	// The GUI may allow more max points per polygon than Detour can handle.
 	// Only build the detour navmesh if we do not exceed the limit.
 	if (m_cfg.maxVertsPerPoly <= DT_VERTS_PER_POLYGON)
@@ -1133,7 +1133,7 @@ bool build()
 
 			if (m_pmesh->areas[i] == RC_WALKABLE_AREA)
 				m_pmesh->areas[i] = SAMPLE_POLYAREA_GROUND;
-				
+
 			if (m_pmesh->areas[i] == SAMPLE_POLYAREA_GROUND ||
 				m_pmesh->areas[i] == SAMPLE_POLYAREA_GRASS ||
 				m_pmesh->areas[i] == SAMPLE_POLYAREA_ROAD)
@@ -1183,13 +1183,13 @@ bool build()
 
 		// printf("dtNavMeshCreateParams %p \n", params);
 		debugConfig();
-		
+
 		if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
 		{
 			m_ctx->log(RC_LOG_ERROR, "Could not build Detour navmesh.");
 			return false;
 		}
-		
+
 		printf("Built Detour navdata. %p \n", navData);
 
 		m_navMesh = dtAllocNavMesh();
@@ -1203,7 +1203,7 @@ bool build()
 		printf("Created Detour navmesh. %p \n", m_navMesh);
 
 		dtStatus status;
-		
+
 		status = m_navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA);
 		if (dtStatusFailed(status))
 		{
@@ -1212,7 +1212,7 @@ bool build()
 			m_ctx->log(RC_LOG_ERROR, "Could not init Detour navmesh");
 			return false;
 		}
-		
+
 		printf("Init Detour navmesh. %p \n", navData);
 
 		m_navQuery = dtAllocNavMeshQuery();
@@ -1234,7 +1234,7 @@ bool build()
 	}
 
 	printf("m_navMesh=%p \n", m_navMesh);
-	
+
 	printf("m_navQuery=%p \n", m_navQuery);
 
 	//m_ctx->stopTimer(RC_TIMER_TOTAL);
@@ -1242,7 +1242,7 @@ bool build()
 	// Show performance stats.
 	//duLogBuildTimes(*m_ctx, m_ctx->getAccumulatedTime(RC_TIMER_TOTAL));
 	//m_ctx->log(RC_LOG_PROGRESS, ">> Polymesh: %d vertices  %d polygons", m_pmesh->nverts, m_pmesh->npolys);
-	
+
 	//m_totalBuildTimeMs = m_ctx->getAccumulatedTime(RC_TIMER_TOTAL)/1000.0f;
 
 	return true;
@@ -1275,14 +1275,14 @@ EMSCRIPTEN_BINDINGS(my_module) {
 	function("setPolyUnwalkable", &setPolyUnwalkable);
 	function("getRandomPoint", &getRandomPoint);
 
-  function("initCrowd", &initCrowd);
-  function("addCrowdAgent", &addCrowdAgent);
-  function("updateCrowdAgentParameters", &updateCrowdAgentParameters);
-  function("removeCrowdAgent", &removeCrowdAgent);
-  function("crowdRequestMoveTarget", &crowdRequestMoveTarget);
-  function("crowdUpdate", &crowdUpdate);
-  function("crowdGetActiveAgents", &crowdGetActiveAgents);
-  function("requestMoveVelocity", &requestMoveVelocity);
+	function("initCrowd", &initCrowd);
+	function("addCrowdAgent", &addCrowdAgent);
+	function("updateCrowdAgentParameters", &updateCrowdAgentParameters);
+	function("removeCrowdAgent", &removeCrowdAgent);
+	function("crowdRequestMoveTarget", &crowdRequestMoveTarget);
+	function("crowdUpdate", &crowdUpdate);
+	function("crowdGetActiveAgents", &crowdGetActiveAgents);
+	function("requestMoveVelocity", &requestMoveVelocity);
 
 
 	function("set_cellSize", &set_cellSize);
