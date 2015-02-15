@@ -93,7 +93,7 @@ arena.addInteractive(shop);
 
 
 // Some flies
-arena.on('set:terrain', function(){
+0 && arena.on('set:terrain', function(){
 
   arena.addStatic(function (done) {
     var flies = new Arena.Elements.Flies(10);
