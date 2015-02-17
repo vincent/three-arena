@@ -1662,23 +1662,6 @@ module.exports = function (arena) {
           THREE.ShaderChunk[ 'linear_to_gamma_fragment' ],
           THREE.ShaderChunk[ 'fog_fragment' ],
 
-
-          // DEBUUGGGGGG
-          // 'gl_FragColor = vec4( vec3( 1.0 ), 1.0 );',
-          // 'gl_FragColor = gl_FragColor * texture2D( tDiffuse1, uRepeatBase );',
-          // 'gl_FragColor = texture2D( tDiffuse1, vec2( 0.5, 0.5 ));',
-          // 'gl_FragColor = texture2D( tDiffuse1, uvOverlay );',
-          // 'gl_FragColor = texture2D( tDiffuse1, vec2( 0.5, 0.5 ));',
-
-
-          'vec4 texelColor = texture2D( tDiffuse1, vUv );',
-          '#ifdef GAMMA_INPUT',
-          '    texelColor.xyz *= texelColor.xyz;',
-          '#endif',
-          'gl_FragColor = gl_FragColor * texelColor;',
-
-          /////
-
         '}'
 
       ].join('\n'),
@@ -1756,26 +1739,37 @@ module.exports = function (arena) {
 
 
 
+    var uniforms = {
+      'map'           : { type: 't',  value: arena.ground.material.map },
+      'mapSize'       : { type: 'f',  value: box.x },
 
+      'entities'      : { type: 'fv', value: fowMap.entities },
+      'entitiesCount' : { type: 'i',  value: fowMap.entitiesCount },
+
+      'diffuse'       : { type: 'fv', value: [ 1, 1, 1 ] },
+      'opacity'       : { type: 'f',  value: 1 },
+    };
 
     // // material
     var minmaterial = new THREE.ShaderMaterial({
 
-      uniforms: {
-        'map'      : { type: 't',  value: arena.ground.material.map },
-        'fow'      : { type: 't',  value: fowtexture },
-        'diffuse'  : { type: 'fv', value: [ 1, 1, 1 ] },
-        'opacity'  : { type: 'f',  value: 1 },
-      },
+      uniforms: uniforms,
 
       fragmentShader: [
 
         '#define GAMMA_INPUT',
         '#define GAMMA_OUTPUT',
 
+        '#define MAX_ENTITIES 10',
+
+        'uniform vec3 entities[ 512 ];',
+        'uniform int entitiesCount;',
+        'uniform float mapSize;',
+
+        'varying vec4 worldPosition;',
+
         'varying vec2 vUv;',
         'uniform sampler2D map;',
-        'uniform sampler2D fow;',
         'uniform vec3 diffuse;',
         'uniform float opacity;',
 
@@ -1783,7 +1777,6 @@ module.exports = function (arena) {
         '    gl_FragColor = vec4( diffuse, 0.0 );',
 
         '    vec4 texelColor = texture2D( map, vUv );',
-        '    vec4 texelAlpha = texture2D( fow, vUv );',
 
         '    #ifdef GAMMA_INPUT',
         '        texelColor.xyz *= texelColor.xyz;',
@@ -1795,14 +1788,31 @@ module.exports = function (arena) {
         '        gl_FragColor.xyz = sqrt( gl_FragColor.xyz );',
         '    #endif',
 
-        '    gl_FragColor = gl_FragColor * texelAlpha;',
-        // '    gl_FragColor.a = texelAlpha.a;',
+        '    vec4 minAlpha = vec4( 0.1 );',
+        '    vec4 maxAlpha = vec4( 1.0 );',
+
+        '    gl_FragColor = gl_FragColor * minAlpha;',
+        '    vec4 minFragColor = gl_FragColor;',
+
+        '    vec4 position = worldPosition;', //FIXME !!!!
+
+        '    for (int i = 0; i <= MAX_ENTITIES; ++i) {',
+        '        if (i <= int(entitiesCount)) {',
+        '            float dist = smoothstep(1.0, 4.0, 50.0 / distance( position.xyz, entities[i].xyz ) ) * 10.0;',
+        '            gl_FragColor = max( gl_FragColor, max( minFragColor, minFragColor * dist ) );',
+        '        }',
+        '    }',
+
+        // '    float dist = smoothstep(1.0, 4.0, 20.0 / distance( position.xyz, entities[0].xyz ) ) * 10.0;',
+        // '    gl_FragColor = max( minFragColor, gl_FragColor * dist );',
+
       '}'
       ].join('\n'),
 
       vertexShader: [
 
       'varying vec2 vUv;',
+      'varying vec4 worldPosition;',
       'uniform vec4 offsetRepeat;',
 
       'void main() {',
@@ -1810,7 +1820,7 @@ module.exports = function (arena) {
       // '    vUv = uv * offsetRepeat.zw + offsetRepeat.xy;',
       '    vUv = uv;',
 
-      '    vec4 worldPosition = modelMatrix * vec4( position, 1.0 );',
+      '    worldPosition = modelMatrix * vec4( position, 1.0 );',
 
       '    vec3 objectNormal = normal;',
 
@@ -1829,95 +1839,6 @@ module.exports = function (arena) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /* * /
-    material = new THREE.MeshBasicMaterial({
-      map: fowtexture,
-      ambient: 0xaaaaaa,
-      specular: 0x000000,
-      shininess: 0,
-      shading: THREE.FlatShading,
-      polygonOffset: true
-    });
-    /* */
-
-
-
-
-
-
-
-
-
-
-
-    /* * /
-    var terrainShader = THREE.ShaderTerrain['terrain'];
-
-    var uniformsTerrain = THREE.UniformsUtils.clone( terrainShader.uniforms );
-
-    // uniformsTerrain['tNormal'].value = grass;
-    // uniformsTerrain['uNormalScale'].value = 3.5;
-
-    // uniformsTerrain['tDisplacement'].value = heightMap;
-
-    uniformsTerrain['tDiffuse1'].value = arena.ground.material.map;
-    // uniformsTerrain['tDiffuse2'].value = grass;
-    // uniformsTerrain['tSpecular'].value = grass;
-    // uniformsTerrain['tDetail'].value = grass;
-
-    uniformsTerrain['enableDiffuse1'].value = true;
-    uniformsTerrain['enableDiffuse2'].value = false;
-    uniformsTerrain['enableSpecular'].value = false;
-
-    uniformsTerrain['diffuse'].value.setHex( 0x00ff00 );
-    uniformsTerrain['specular'].value.setHex( 0x00ff00 );
-    uniformsTerrain['ambient'].value.setHex( 0x00ff00 );
-
-    uniformsTerrain['shininess'].value = 30;
-
-    uniformsTerrain['uDisplacementScale'].value = 1;
-
-    uniformsTerrain['uRepeatOverlay'].value.set( 6, 6 );
-
-    material = new THREE.ShaderMaterial({
-      uniforms: uniformsTerrain,
-      overdraw: true,
-      // lights:   true,
-      // fog:      true
-    });
-    /* */
-
-
-
-
-
-
-
-
-
-
-
-
     arena.ground.traverse(function (child) {
       if (child instanceof THREE.Mesh) {
         child.material = minmaterial;
@@ -1930,11 +1851,15 @@ module.exports = function (arena) {
 
       fowMap.render(
         _.map(arena.entities, function (e) {
-          return arena.inTerrainDatum(e.position);
+          return e.position;
         })
       );
 
-      fowtexture.needsUpdate = true;
+      // fowtexture.needsUpdate = true;
+
+      uniforms.entities.needsUpdate = true;
+      uniforms.entitiesCount.value = fowMap.entitiesCount;
+      uniforms.entitiesCount.needsUpdate = true;
 
     });
 
@@ -3190,10 +3115,6 @@ Crowd.prototype._updateAgents = function(agents){
 
   this.updateDuration = now() - this.updateTime;
 
-  if (this.updateDuration > 30) {
-    return;
-  }
-
   for (var a = 0; a < agents.length; a++) {
     this._updateAgent(agents[a]);
   }
@@ -3229,7 +3150,7 @@ function crowdOptions(options) {
     x: options.position.x || 0,
     y: options.position.y || 0,
     z: options.position.z || 0
-  }
+  };
 
   return options;
 }
@@ -12007,6 +11928,9 @@ module.exports = FogOfWarMap;
 
 function FogOfWarMap (width, height) {
 
+    this.entities = new Float32Array(3 * 100);
+    this.entitiesCount = 0;
+
     // create canvas
     this.canvas = document.createElement( 'canvas' );
 
@@ -12015,13 +11939,12 @@ function FogOfWarMap (width, height) {
 
     // get context
     this.context = this.canvas.getContext('2d');
-
     this.background();
 }
 
 FogOfWarMap.prototype.background = function() {
 
-    this.context.fillStyle = 'rgba( 100, 100, 100, 0.3 )';
+    this.context.fillStyle = 'rgba( 0, 0, 0, 0 )';
     // this.context.fillStyle = 'rgba(255, 255, 255, 255 )';
     this.context.fillRect( 0, 0, this.canvas.width, this.canvas.height );
 };
@@ -12030,10 +11953,23 @@ FogOfWarMap.prototype.render = function(locations) {
 
     // return;
 
-    for (var i = locations.length - 1; i >= 0; i--) {
+    this.entitiesCount = locations.length;
+
+    var index   = -1;
+
+    for (var i = 0; i < locations.length; i++) {
 
         var loc = locations[i];
-        var radius = 10;
+        var radius = 10.0;
+
+        // set entity location
+        this.entities[++index] = loc.x;
+        this.entities[++index] = loc.y;
+        this.entities[++index] = loc.z;
+        // this.entities[++index] = radius;
+
+        // transform in texture coordinates
+        // loc = arena.inTerrainDatum(loc);
 
         this.context.beginPath();
         this.context.arc(loc.x, loc.z, radius, 0, 2 * Math.PI, true);
