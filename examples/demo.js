@@ -112,7 +112,7 @@ arena.on('set:terrain', function(){
   // Another character
   arena.addCharacter(function(done){
     var hero = new Arena.Characters.OO7({
-      name: prompt('What is your name'),
+      name: Arena.Account.username(),
       maxSpeed: 20.0,
       onLoad: function(){
         var character = this;

@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "async": "~0.2.9",
+    "cookies-js": "^1.2.1",
     "debug": "~0.7.4",
     "express": "^4.11.2",
     "gp-controls": "0.0.0",

@@ -18,13 +18,40 @@ function d(enabled){
   }
 }
 
-},{"./lib/index.js":61,"debug":96}],2:[function(require,module,exports){
+},{"./lib/index.js":64,"debug":100}],2:[function(require,module,exports){
+'use strict';
+
+var cookies = require('cookies-js');
+var dict    = require('./character/dictionnaries/elvish');
+
+module.exports = {
+
+    username: function () {
+
+        var username = cookies.get('username');
+
+        if (! username) {
+
+            username = prompt('What is your name ?');
+
+            if (username.trim().length === 0) {
+                username = dict[~~(Math.random() * dict.length)];
+            }
+
+            cookies.set('username', username);
+        }
+
+        return username;
+    }
+};
+
+},{"./character/dictionnaries/elvish":16,"cookies-js":99}],3:[function(require,module,exports){
 module.exports = {
   Controlled: require('./controlled'),
   Collector: require('./collector'),
   Minion: require('./minion')
 };
-},{"./collector":3,"./controlled":4,"./minion":5}],3:[function(require,module,exports){
+},{"./collector":4,"./controlled":5,"./minion":6}],4:[function(require,module,exports){
 module.exports = {
   identifier: 'idle',
   strategy: 'sequential',
@@ -36,7 +63,7 @@ module.exports = {
   ]
 };
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 module.exports = {
   identifier: 'idle',
   strategy: 'prioritised',
@@ -46,7 +73,7 @@ module.exports = {
   ]
 };
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 module.exports = {
   identifier: 'nothing',
   strategy: 'prioritised',
@@ -59,19 +86,19 @@ module.exports = {
   ]
 };
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 module.exports = function (arena, entity, target, deceleration) {
 
     return target.position;
 };
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 module.exports = function (arena, entity, target) {
 
     return entity.position.clone()
                                     .sub(target.position)
                                     .multiplyScalar(entity.state.maxSpeed / 10);
 };
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var flee = require('./flee');
 
 module.exports = function (arena, entity, target) {
@@ -87,7 +114,7 @@ module.exports = function (arena, entity, target) {
         return hidingSpot;
     }
 };
-},{"./flee":7}],9:[function(require,module,exports){
+},{"./flee":8}],10:[function(require,module,exports){
 module.exports = {
     seek:       require('./seek'),
     flee:         require('./flee'),
@@ -133,12 +160,12 @@ Machine.prototype.off = function(behaviour) {
 };
 
 module.exports.machine = Machine;
-},{"./arrive":6,"./flee":7,"./hide":8,"./seek":10,"./wander":11}],10:[function(require,module,exports){
+},{"./arrive":7,"./flee":8,"./hide":9,"./seek":11,"./wander":12}],11:[function(require,module,exports){
 module.exports = function (arena, entity, target) {
 
     return target.position;
 };
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 var randomP1 = new THREE.Vector3();
 var randomP2 = new THREE.Vector3();
 
@@ -165,7 +192,7 @@ module.exports = function (arena, entity) {
 
     return wanderTargetWorld;
 };
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -293,7 +320,7 @@ Character.prototype.moveAlong = function(linepoints, options) {
 
 Character.prototype.constructor = Character;
 
-},{"./entity":56,"./utils":88,"debug":96,"inherits":131,"lodash":142}],13:[function(require,module,exports){
+},{"./entity":59,"./utils":91,"debug":100,"inherits":135,"lodash":146}],14:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -410,7 +437,7 @@ function ZeroZeroSeven ( options ) {
 
 inherits(ZeroZeroSeven, Character);
 
-},{"../character":12,"inherits":131,"lodash":142}],14:[function(require,module,exports){
+},{"../character":13,"inherits":135,"lodash":146}],15:[function(require,module,exports){
 module.exports = {
   Dummy: require('./dummy'),
   OO7: require('./007'),
@@ -423,7 +450,383 @@ module.exports = {
   Zombie: require('./zombie'),
   Marine: require('./marine')
 };
-},{"./007":13,"./dummy":15,"./ghost":16,"./human":17,"./marine":18,"./monsterdog":19,"./ogro":20,"./ratamahatta":21,"./scv":22,"./zombie":23}],15:[function(require,module,exports){
+},{"./007":14,"./dummy":17,"./ghost":18,"./human":19,"./marine":20,"./monsterdog":21,"./ogro":22,"./ratamahatta":23,"./scv":24,"./zombie":25}],16:[function(require,module,exports){
+module.exports = [
+  'Sindarin',
+  'Quenya',
+  'Arthon',
+  'Arto',
+  'Glassada',
+  'Alassëatya',
+  'Adarlae',
+  'Atarrimbo',
+  'Adan',
+  'Atan',
+  'Arnos',
+  'Aranossë',
+  'Bainor',
+  'Vanyo',
+  'Argalad',
+  'Aracala',
+  'Firverior',
+  'Firyavaryar',
+  'Elbeth',
+  'Eldaquetta',
+  'Elvellon',
+  'Eldandil',
+  'Melui',
+  'Melima',
+  'Míreth',
+  'Mírië',
+  'Mudor',
+  'Moiar',
+  'Meleth',
+  'Meldë',
+  'Firieth',
+  'Firyë',
+  'Balan',
+  'Vala',
+  'Eruant',
+  'Eruanna',
+  'Melui',
+  'Melima',
+  'Loth',
+  'Lótë',
+  'Pelior',
+  'Palyar',
+  'Thangannas',
+  'Anwaverio',
+  'Raweru',
+  'Ráeru',
+  'Balthoron',
+  'Valisorno',
+  'Galadlant',
+  'Aldalatin',
+  'Baledhel',
+  'Valaquendë',
+  'Arvellas',
+  'Arapoldorë',
+  'Beleg',
+  'Melehta',
+  'Gwend',
+  'Vendë',
+  'Edel',
+  'Ettelëa',
+  'Malufinnel',
+  'Malwafindë',
+  'Raenion',
+  'Raicion',
+  'Aran',
+  'Mastar',
+  'Lendis',
+  'Lendanis',
+  'Baineth',
+  'Vanyë',
+  'Galu',
+  'Amanya',
+  'Haradion',
+  'Hyarmenion',
+  'Groveren',
+  'Canyamorco',
+  'Túrthogor',
+  'Túretultar',
+  'Iomar',
+  'Yavemar',
+  'Lavassir',
+  'Lamassir',
+  'Môr',
+  'Morë',
+  'Nimmeth',
+  'Ninquië',
+  'Baineth',
+  'Vanyë',
+  'Lannian',
+  'Latinyanda',
+  'Rhoveleg',
+  'Altahröa',
+  'Amondos',
+  'Orotussa',
+  'Magol',
+  'Macil',
+  'Ernil',
+  'Condo',
+  'Fladaith',
+  'Helmatehta',
+  'Aron',
+  'Aráto',
+  'Areth',
+  'Arátë',
+  'Ereg',
+  'Ercassë',
+  'Haleth',
+  'Artë',
+  'Fladeithnor',
+  'Helmatehtandor',
+  'Sîr',
+  'Sirya',
+  'Gobel',
+  'Osto',
+  'Pellavan',
+  'Pandalaman',
+  'Puigeth',
+  'Poicë',
+  'Hû',
+  'Huo',
+  'Rovain',
+  'Anvanya',
+  'Beren',
+  'Canya',
+  'Bundraeg',
+  'Raicamundo',
+  'Hilneth',
+  'Nessahil',
+  'Rínnaneth',
+  'Rínamal',
+  'Alag',
+  'Hórë',
+  'Meleth',
+  'Meldë',
+  'Dîr',
+  'Nér',
+  'Dîs',
+  'Nís',
+  'Lainos',
+  'Lérosto',
+  'Sandis',
+  'Ranganis',
+  'Dîs',
+  'Nís',
+  'Dîs',
+  'Nís',
+  'Tirith',
+  'Tiris',
+  'Rilorfir',
+  'Siloratan',
+  'Laws',
+  'Loxë',
+  'Pe-chened',
+  'Cenielóra',
+  'Melethron',
+  'Melindo',
+  'Menel',
+  'Dagor',
+  'Nehtar',
+  'Amarth',
+  'Amarto',
+  'Gond',
+  'Ondo',
+  'Milui',
+  'Nilda',
+  'Muin',
+  'Melda',
+  'Dîr',
+  'Nér',
+  'Farad',
+  'Roimë',
+  'Taluharn',
+  'Lárasarnë',
+  'Muineth',
+  'Meldë',
+  'Melethril',
+  'Melissë',
+  'Muineth',
+  'Meldë',
+  'Ladechad',
+  'Caumanandë',
+  'Minas',
+  'Minassë',
+  'Tuigalen',
+  'Laicatuima',
+  'Galu',
+  'Amanya',
+  'Galwechil',
+  'Almahil',
+  'Cinthossien',
+  'Cinsosiel',
+  'Glân',
+  'Calima',
+  'Glân',
+  'Calima',
+  'Harn',
+  'Harna',
+  'Harneth',
+  'Harnë',
+  'Ceven',
+  'Cemen',
+  'Cevenost',
+  'Cemenosto',
+  'Maeben',
+  'Mussequen',
+  'Aglar',
+  'Alcar',
+  'Pinnathrad',
+  'Quíllango',
+  'Pinnost',
+  'Quínosto',
+  'Eruvarn',
+  'Eruvarnë',
+  'Athaeben',
+  'Asëaquen',
+  'Thollim',
+  'Calimacar',
+  'Iûl',
+  'Yúla',
+  'Hû',
+  'Huo',
+  'Gwend',
+  'Vendë',
+  'Iúlost',
+  'Yúlosto',
+  'Húher',
+  'Huondil',
+  'Berembeth',
+  'Canyaquetta',
+  'Aennen',
+  'Ainanen',
+  'Craban',
+  'Carco',
+  'Miraear',
+  'Ëarmírë',
+  'Amon',
+  'Ambo',
+  'Rom',
+  'Róma',
+  'Bunthent',
+  'Sennamunda',
+  'Gond',
+  'Ondo',
+  'Crabanathrad',
+  'Corcolango',
+  'Heledh',
+  'Hyellë',
+  'Milui',
+  'Asëa',
+  'Hîr',
+  'Heru',
+  'Eirien',
+  'Lótë',
+  'Mellon',
+  'Nildë',
+  'Imlad',
+  'Nandë',
+  'Lô',
+  'Ulundë',
+  'Herdir',
+  'Heru',
+  'Imlad',
+  'Nandë',
+  'Eruvadhor',
+  'Erunáma',
+  'Rílas',
+  'Rielassë',
+  'Arassost',
+  'Lamanosto',
+  'Muineth',
+  'Meldë',
+  'Melher',
+  'Meldandil',
+  'Muin',
+  'Melda',
+  'Minuial',
+  'Ára',
+  'Pí',
+  'Arod',
+  'Arata',
+  'Dail',
+  'Lelya',
+  'Naergon',
+  'Nairë',
+  'Oroderu',
+  'Oreru',
+  'Gweithir',
+  'Lietar',
+  'Amarth',
+  'Ambar',
+  'Bâl',
+  'Valaina',
+  'Maed',
+  'Maitë',
+  'Bâl',
+  'Valaina',
+  'Hirveren',
+  'Canyatar',
+  'Bâl',
+  'Valaina',
+  'Hiramar',
+  'Tarambar',
+  'Hiril',
+  'Heri',
+  'Alagos',
+  'Raumo',
+  'Ant',
+  'Anna',
+  'Eruant',
+  'Eruanna',
+  'Morhir',
+  'Morisirya',
+  'Cugu',
+  'Cucua',
+  'Amlug',
+  'Lócë',
+  'Caun',
+  'Condo',
+  'Bruiharn',
+  'Hundondo',
+  'Tordhuinen',
+  'Altaluim',
+  'Arphen',
+  'Arquen',
+  'Aloth',
+  'Alohta',
+  'Alverior',
+  'Alavaryar',
+  'Althirn',
+  'Alatir',
+  'Alher',
+  'Alandil',
+  'Írui',
+  'Írima',
+  'Erugalad',
+  'Erucala',
+  'Eru',
+  'Erueg',
+  'Eruincë',
+  'Eruest',
+  'Eruvanda',
+  'Arvuin',
+  'Aramoina',
+  'Thôl',
+  'Carma',
+  'Aludug',
+  'Alwatiuca',
+  'Pannaran',
+  'Ilutar',
+  'Coth',
+  'Cotto',
+  'Pant',
+  'Ilu',
+  'Uidor',
+  'Oiotar',
+  'Uichiril',
+  'Oiotári',
+  'Tinu',
+  'Elen',
+  'Tinu',
+  'Elen',
+  'Arod',
+  'Arata',
+  'Alonnen',
+  'Alontaina',
+  'Alhiniath',
+  'Alamenta',
+  'Cuin',
+  'Cuina',
+  'Írui',
+  'Írima',
+  'Athae',
+  'Asëa '
+];
+},{}],17:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -487,7 +890,7 @@ Dummy.prototype.setCharacter = function(object) {
 };
 
 
-},{"../character":12,"inherits":131,"lodash":142}],16:[function(require,module,exports){
+},{"../character":13,"inherits":135,"lodash":146}],18:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -577,7 +980,7 @@ Ghost.prototype.update = function(arena) {
   this.character.update(arena.delta);
 };
 
-},{"../character":12,"inherits":131,"lodash":142}],17:[function(require,module,exports){
+},{"../character":13,"inherits":135,"lodash":146}],19:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -628,7 +1031,7 @@ function Human ( options ) {
 
 inherits(Human, Character);
 
-},{"../character":12,"inherits":131,"lodash":142}],18:[function(require,module,exports){
+},{"../character":13,"inherits":135,"lodash":146}],20:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -703,7 +1106,7 @@ function Marine (options) {
 inherits(Marine, Character);
 
 
-},{"../character":12,"inherits":131,"lodash":142}],19:[function(require,module,exports){
+},{"../character":13,"inherits":135,"lodash":146}],21:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -784,7 +1187,7 @@ function Monsterdog ( options ) {
 
 inherits(Monsterdog, Character);
 
-},{"../character":12,"inherits":131,"lodash":142}],20:[function(require,module,exports){
+},{"../character":13,"inherits":135,"lodash":146}],22:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -904,7 +1307,7 @@ function Ogro ( options ) {
 inherits(Ogro, Character);
 
 
-},{"../character":12,"inherits":131,"lodash":142}],21:[function(require,module,exports){
+},{"../character":13,"inherits":135,"lodash":146}],23:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -980,7 +1383,7 @@ function Ratamahatta ( options ) {
 
 inherits(Ratamahatta, Character);
 
-},{"../character":12,"inherits":131,"lodash":142}],22:[function(require,module,exports){
+},{"../character":13,"inherits":135,"lodash":146}],24:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1038,7 +1441,7 @@ function SCV (options) {
 inherits(SCV, Character);
 
 
-},{"../character":12,"inherits":131,"lodash":142}],23:[function(require,module,exports){
+},{"../character":13,"inherits":135,"lodash":146}],25:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1124,7 +1527,7 @@ function Zombie ( options ) {
 
 inherits(Zombie, Character);
 
-},{"../character":12,"inherits":131,"lodash":142}],24:[function(require,module,exports){
+},{"../character":13,"inherits":135,"lodash":146}],26:[function(require,module,exports){
 'use strict'
 
 var settings = require('../settings')
@@ -1149,7 +1552,7 @@ module.exports = function (arena) {
 }
 
 
-},{"../controls/destinationmarker":32,"../settings":70}],25:[function(require,module,exports){
+},{"../controls/destinationmarker":35,"../settings":73}],27:[function(require,module,exports){
 'use strict'
 
 var _ = require('lodash');
@@ -1215,7 +1618,7 @@ function attachHelpers (arena, entity) {
   arena.intersectObjects.push(entity.bboxHelper);
 }
 
-},{"../settings":70,"lodash":142}],26:[function(require,module,exports){
+},{"../settings":73,"lodash":146}],28:[function(require,module,exports){
 'use strict';
 
 module.exports = function (arena) {
@@ -1259,7 +1662,7 @@ function attachLifebar (arena, entity) {
   arena.on('update', updateLifebar);
 }
 
-},{}],27:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 'use strict'
 
 var settings = require('../settings');
@@ -1327,50 +1730,62 @@ function attachName (arena, entity) {
   settings.on('entityNamesChanged', entityNamesChanged);
 }
 
-},{"../settings":70}],28:[function(require,module,exports){
+},{"../settings":73}],30:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
 
 var FowMap = require('../textures/fog-of-war');
 
-function nearestPow2 (aSize) {
-  return Math.pow(2, Math.round(Math.log(aSize) / Math.log(2)));
-}
+module.exports = function (arena) {
 
+  arena.on('set:terrain', function () {
+
+    var worldBBox = arena.ground.boundingBoxNormalized.max;
+
+    var fowMap   = new FowMap(worldBBox.x, worldBBox.z);
+
+    arena.settings.container.appendChild(fowMap.canvas);
+
+    fowMap.canvas.style.position = 'absolute';
+    fowMap.canvas.style.right  = '0';
+    fowMap.canvas.style.top    = '100px';
+
+    arena.on('update', function () {
+      fowMap.render(
+        _.map(arena.entities, function (e) {
+          return arena.inTerrainDatum(e.position);
+        })
+      );
+    });
+
+  });
+
+};
+
+
+},{"../textures/fog-of-war":90,"lodash":146}],31:[function(require,module,exports){
+'use strict';
+
+var _ = require('lodash');
 
 module.exports = function (arena) {
 
   arena.on('set:terrain', function () {
 
-    var box  = arena.ground.boundingBoxNormalized.max;
-    var size = nearestPow2(Math.max(box.x, box.y));
+    var entities  = new Float32Array(3 * 100);
 
-    var fowMap = new FowMap(size, size);
+    var worldBBox   = arena.ground.boundingBoxNormalized.max;
+    var gridDiviser = 10;
+    var gridSize    = {
+      width:  Math.ceil(worldBBox.x / gridDiviser),
+      height: Math.ceil(worldBBox.z / gridDiviser)
+    };
 
-
-    document.getElementsByTagName('body')[0].appendChild(fowMap.canvas);
-    fowMap.canvas.style.position = 'absolute';
-    fowMap.canvas.style.right = '0';
-    fowMap.canvas.style.top = '100px';
-
-
-    // texture
-    var fowtexture = new THREE.Texture(fowMap.canvas);
-    // texture.wrapS = fowtexture.wrapT = THREE.RepeatWrapping;
-    fowtexture.mapping = THREE.UVMapping;
-    // fowtexture.repeat.set(1, 1);
-    // fowtexture.wrapS = THREE.ClampToEdgeWrapping;
-    // fowtexture.wrapT = THREE.ClampToEdgeWrapping;
-    fowtexture.magFilter = THREE.NearestFilter;
-    fowtexture.minFilter = THREE.NearestFilter;
-    // fowtexture.needsUpdate = true; // important
-
-    var grass = THREE.ImageUtils.loadTexture('/gamedata/textures/grass.jpg');
-    grass.mapping = THREE.UVMapping;
-    grass.wrapS = grass.wrapT = THREE.RepeatWrapping;
-    grass.repeat.set(100, 100);
-    grass.needsUpdate = true; // important
+    var teamVisited = {
+      0: new Int32Array(gridSize.width * gridSize.height * 4),
+      1: new Int32Array(gridSize.width * gridSize.height * 4)
+    };
 
     // // material
     var material = new THREE.ShaderMaterial({
@@ -1388,8 +1803,8 @@ module.exports = function (arena) {
         'enableSpecular'    : { type: 'i', value: 0 },
         'enableReflection'  : { type: 'i', value: 0 },
 
-        'tDiffuse1'         : { type: 't', value: grass },
-        'tDiffuse2'         : { type: 't', value: grass },
+        'tDiffuse1'         : { type: 't', value: null },
+        'tDiffuse2'         : { type: 't', value: null },
         'tDiffuse3'         : { type: 't', value: null },
         'tDetail'           : { type: 't', value: null },
         'tNormal'           : { type: 't', value: null },
@@ -1741,11 +2156,12 @@ module.exports = function (arena) {
 
     var uniforms = {
       'map'           : { type: 't',  value: arena.ground.material.map },
-      'mapSize'       : { type: 'f',  value: box.x },
-
-      'entities'      : { type: 'fv', value: fowMap.entities },
-      'entitiesCount' : { type: 'i',  value: fowMap.entitiesCount },
-
+      'entities'      : { type: 'fv', value: entities },
+      'entitiesCount' : { type: 'i',  value: arena.entities.length },
+      'gridSize'      : { type: 'v2', value: new THREE.Vector2( gridSize.width, gridSize.height ) },
+      'gridDiviser'   : { type: 'f',  value: gridDiviser },
+      'visitedByTeam1': { type: 't',  value: new THREE.DataTexture(teamVisited[0], gridSize.width, gridSize.height, THREE.RGBAFormat, THREE.UnsignedIntType, THREE.UVMapping, THREE.ClampToEdgeWrapping, THREE.ClampToEdgeWrapping, THREE.NearestFilter, THREE.NearestFilter, 2) },
+      'visitedByTeam2': { type: 't',  value: new THREE.DataTexture(teamVisited[1], gridSize.width, gridSize.height, THREE.RGBAFormat, THREE.UnsignedIntType, THREE.UVMapping, THREE.ClampToEdgeWrapping, THREE.ClampToEdgeWrapping, THREE.NearestFilter, THREE.NearestFilter, 2) },
       'diffuse'       : { type: 'fv', value: [ 1, 1, 1 ] },
       'opacity'       : { type: 'f',  value: 1 },
     };
@@ -1764,12 +2180,17 @@ module.exports = function (arena) {
 
         'uniform vec3 entities[ 512 ];',
         'uniform int entitiesCount;',
-        'uniform float mapSize;',
+
+        'uniform vec2 gridSize;',
+        'uniform float gridDiviser;',
+        'uniform sampler2D visitedByTeam1;',
+        'uniform sampler2D visitedByTeam2;',
 
         'varying vec4 worldPosition;',
 
         'varying vec2 vUv;',
         'uniform sampler2D map;',
+
         'uniform vec3 diffuse;',
         'uniform float opacity;',
 
@@ -1789,13 +2210,20 @@ module.exports = function (arena) {
         '    #endif',
 
         '    vec4 minAlpha = vec4( 0.1 );',
+        '    vec4 visAlpha = vec4( 0.6 );',
         '    vec4 maxAlpha = vec4( 1.0 );',
 
-        '    gl_FragColor = gl_FragColor * minAlpha;',
-        '    vec4 minFragColor = gl_FragColor;',
+        '    vec4 visitedFragColor = gl_FragColor * visAlpha;',
+        '    vec4 minFragColor     = gl_FragColor * minAlpha;',
+
+        // by default, set to darkest (unvisited)
+        '    gl_FragColor          = minFragColor;',
+
 
         '    vec4 position = worldPosition;', //FIXME !!!!
 
+
+        // color at entities' proximity
         '    for (int i = 0; i <= MAX_ENTITIES; ++i) {',
         '        if (i <= int(entitiesCount)) {',
         '            float dist = smoothstep(1.0, 4.0, 50.0 / distance( position.xyz, entities[i].xyz ) ) * 10.0;',
@@ -1803,8 +2231,11 @@ module.exports = function (arena) {
         '        }',
         '    }',
 
-        // '    float dist = smoothstep(1.0, 4.0, 20.0 / distance( position.xyz, entities[0].xyz ) ) * 10.0;',
-        // '    gl_FragColor = max( minFragColor, gl_FragColor * dist );',
+
+        // color at visited grid cells
+        '    vec4 cell = texture2D( visitedByTeam1, vUv );',
+        '    gl_FragColor = max( gl_FragColor, cell * visitedFragColor );',
+
 
       '}'
       ].join('\n'),
@@ -1838,7 +2269,6 @@ module.exports = function (arena) {
     });
 
 
-
     arena.ground.traverse(function (child) {
       if (child instanceof THREE.Mesh) {
         child.material = minmaterial;
@@ -1849,18 +2279,35 @@ module.exports = function (arena) {
 
     arena.on('update', function () {
 
-      fowMap.render(
-        _.map(arena.entities, function (e) {
-          return e.position;
-        })
-      );
+      _.each(arena.entities, function (e, i) {
 
-      // fowtexture.needsUpdate = true;
+        // update each entities current position
+        var j = i * 3;
+        entities[j  ] = e.position.x;
+        entities[j+1] = e.position.y;
+        entities[j+2] = e.position.z;
 
-      uniforms.entities.needsUpdate = true;
-      uniforms.entitiesCount.value = fowMap.entitiesCount;
-      uniforms.entitiesCount.needsUpdate = true;
+        // update visited cells
+        var loc = arena.inTerrainDatum(e.position);
+        var x = Math.round(loc.x / gridSize.width);
+        var y = Math.round(loc.z / gridSize.width);
+        var index = 4 * x + y;
+        // console.log('mark cell', index, ' '+x+';'+y, 'as visited');
+        teamVisited[e.state.team][index]   = 1;
+        teamVisited[e.state.team][index+1] = 1;
+        teamVisited[e.state.team][index+2] = 1;
+        teamVisited[e.state.team][index+3] = 1;
 
+      });
+
+      // update entities count
+      uniforms.entitiesCount.value = arena.entities.length;
+
+      // update shader
+      uniforms.visitedByTeam1.needsUpdate = true;
+      uniforms.visitedByTeam2.needsUpdate = true;
+      uniforms.entitiesCount.needsUpdate  = true;
+      uniforms.entities.needsUpdate       = true;
     });
 
   });
@@ -1868,7 +2315,7 @@ module.exports = function (arena) {
 };
 
 
-},{"../textures/fog-of-war":87,"lodash":142}],29:[function(require,module,exports){
+},{"lodash":146}],32:[function(require,module,exports){
 'use strict';
 
 var TrackballControls = require('three.trackball');
@@ -1957,7 +2404,7 @@ module.exports = function (arena) {
 };
 
 
-},{"../settings":70,"three.trackball":146}],30:[function(require,module,exports){
+},{"../settings":73,"three.trackball":150}],33:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1966,8 +2413,6 @@ var TWEEN = require('tween');
 module.exports = SpellTexts;
 
 function SpellTexts (arena, _options) {
-
-  var root = arena.settings.container;
 
   var options = _.merge({
     font:   'helvetiker',
@@ -1978,7 +2423,7 @@ function SpellTexts (arena, _options) {
 
   function _bindEntity (entity) {
     entity.on('hit', _showHit);
-  };
+  }
 
   function _showHit (eventData) {
 
@@ -2007,7 +2452,7 @@ function SpellTexts (arena, _options) {
     var textMesh = new THREE.Mesh(textGeom, hitMaterial);
 
     _tween(textMesh, eventData);
-  };
+  }
 
   function _showHeal (eventData) {
 
@@ -2072,7 +2517,7 @@ function SpellTexts (arena, _options) {
   arena.on('added:entity', _bindEntity);
 }
 
-},{"lodash":142,"tween":148}],31:[function(require,module,exports){
+},{"lodash":146,"tween":152}],34:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2117,7 +2562,7 @@ AttackCircle.prototype.place = function ( object ) {
   return position;
 };
 
-},{"inherits":131}],32:[function(require,module,exports){
+},{"inherits":135}],35:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2171,7 +2616,7 @@ DestinationMarker.prototype.animate = function () {
 };
 
 
-},{"../shaders/lightbolt":73,"inherits":131}],33:[function(require,module,exports){
+},{"../shaders/lightbolt":76,"inherits":135}],36:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2520,7 +2965,7 @@ DotaControls.prototype.getContainerDimensions = function() {
 
 
 
-},{"lodash":142}],34:[function(require,module,exports){
+},{"lodash":146}],37:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2586,7 +3031,7 @@ ZoneSelector.prototype.emit = function (event, data) {
 };
 
 
-},{"inherits":131,"lodash":142}],35:[function(require,module,exports){
+},{"inherits":135,"lodash":146}],38:[function(require,module,exports){
 
 var utils = require('../utils');
 var Entity;
@@ -2695,7 +3140,7 @@ CoverSystem.prototype.nearestHidingPositionFrom = function(fromTarget, near, max
     return best;
 };
 
-},{"../entity":56,"../utils":88}],36:[function(require,module,exports){
+},{"../entity":59,"../utils":91}],39:[function(require,module,exports){
 'use strict';
 
 var debug = require('debug')('crowd');
@@ -3155,7 +3600,7 @@ function crowdOptions(options) {
   return options;
 }
 
-},{"./settings":70,"async":95,"debug":96,"lodash":142,"now":144}],37:[function(require,module,exports){
+},{"./settings":73,"async":98,"debug":100,"lodash":146,"now":148}],40:[function(require,module,exports){
 module.exports = {
   SpawningPool: require('./autospawn'),
   DefenseTower: require('./tower'),
@@ -3172,7 +3617,7 @@ module.exports = {
   Water: require('./water2')
 };
 
-},{"./autospawn":38,"./checkpoint":39,"./chest":40,"./collectible":41,"./commandcenter":42,"./flies":43,"./grass":44,"./mineral":46,"./nexus":47,"./shop":48,"./spikes":51,"./tower":53,"./water2":55}],38:[function(require,module,exports){
+},{"./autospawn":41,"./checkpoint":42,"./chest":43,"./collectible":44,"./commandcenter":45,"./flies":46,"./grass":47,"./mineral":49,"./nexus":50,"./shop":51,"./spikes":54,"./tower":56,"./water2":58}],41:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3272,7 +3717,7 @@ AutoSpawn.prototype.spanwOne = function() {
 };
 
 
-},{"inherits":131,"lodash":142}],39:[function(require,module,exports){
+},{"inherits":135,"lodash":146}],42:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3333,7 +3778,7 @@ Checkpoint.prototype.update = function(arena) {
     }
   }
 };
-},{"../shaders/lightbolt":73,"inherits":131,"lodash":142}],40:[function(require,module,exports){
+},{"../shaders/lightbolt":76,"inherits":135,"lodash":146}],43:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3408,7 +3853,7 @@ Collectible.prototype.collectedBy = function(entity, callback) {
 };
 
 
-},{"inherits":131,"lodash":142}],41:[function(require,module,exports){
+},{"inherits":135,"lodash":146}],44:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3497,7 +3942,7 @@ Collectible.prototype.collectedBy = function(entity, callback) {
 };
 
 
-},{"inherits":131,"lodash":142}],42:[function(require,module,exports){
+},{"inherits":135,"lodash":146}],45:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -3533,7 +3978,7 @@ function CommandCenter (options) {
 }
 
 inherits(CommandCenter, Entity);
-},{"../entity":56,"inherits":131}],43:[function(require,module,exports){
+},{"../entity":59,"inherits":135}],46:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -3615,7 +4060,7 @@ Flies.prototype.update = function(game) {
     this.points.vertices[i].set(point.x, point.y, point.z);
   }
 };
-},{"inherits":131}],44:[function(require,module,exports){
+},{"inherits":135}],47:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -3726,7 +4171,7 @@ Grass.prototype.update = function(arena) {
   }
 };
 
-},{"inherits":131}],45:[function(require,module,exports){
+},{"inherits":135}],48:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -3785,7 +4230,7 @@ InteractiveObject.prototype.isNearEnough = function(object) {
   return this.position.distanceTo(object.position) <= 20;
 };
 
-},{"../utils":88,"inherits":131}],46:[function(require,module,exports){
+},{"../utils":91,"inherits":135}],49:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3826,7 +4271,7 @@ function Mineral (options) {
 
 inherits(Mineral, Collectible);
 
-},{"./collectible":41,"inherits":131,"lodash":142}],47:[function(require,module,exports){
+},{"./collectible":44,"inherits":135,"lodash":146}],50:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -3867,7 +4312,7 @@ function Nexus (options) {
 
 inherits(Nexus, Entity);
 
-},{"../entity":56,"inherits":131}],48:[function(require,module,exports){
+},{"../entity":59,"inherits":135}],51:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -3901,7 +4346,7 @@ function Shop (options) {
 }
 
 inherits(Shop, InteractiveObject);
-},{"./interactiveobject":45,"inherits":131}],49:[function(require,module,exports){
+},{"./interactiveobject":48,"inherits":135}],52:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3954,7 +4399,7 @@ LifeBar.prototype.update = function(delta) {
 };
 
 
-},{"../shaders/lifebar":72,"inherits":131,"lodash":142}],50:[function(require,module,exports){
+},{"../shaders/lifebar":75,"inherits":135,"lodash":146}],53:[function(require,module,exports){
 'use strict';
 
 module.exports = Sound;
@@ -3999,7 +4444,7 @@ function Sound ( sources, radius, volume ) {
   };
 
 }
-},{}],51:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -4106,7 +4551,7 @@ Spikes.prototype.update = function(arena) {
   }
 };
 
-},{"../spell":74,"inherits":131,"tween":148}],52:[function(require,module,exports){
+},{"../spell":77,"inherits":135,"tween":152}],55:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -4285,7 +4730,7 @@ inherits(Terrain, THREE.Object3D);
 
 
 
-},{"./water":54,"inherits":131,"lodash":142}],53:[function(require,module,exports){
+},{"./water":57,"inherits":135,"lodash":146}],56:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -4463,7 +4908,7 @@ DefenseTower.prototype.fireTo = function(target) {
     .start();
 };
 
-},{"../entity":56,"../particles/cloud":66,"../particles/stemkoski_ParticleEngine":67,"../spell":74,"inherits":131,"lodash":142,"tween":148}],54:[function(require,module,exports){
+},{"../entity":59,"../particles/cloud":69,"../particles/stemkoski_ParticleEngine":70,"../spell":77,"inherits":135,"lodash":146,"tween":152}],57:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -4522,7 +4967,7 @@ Water.prototype.update = function(game) {
 };
 
 
-},{"inherits":131,"lodash":142}],55:[function(require,module,exports){
+},{"inherits":135,"lodash":146}],58:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -4573,7 +5018,7 @@ Water.prototype.update = function(game) {
 };
 
 
-},{"../materials/water":65,"inherits":131,"lodash":142}],56:[function(require,module,exports){
+},{"../materials/water":68,"inherits":135,"lodash":146}],59:[function(require,module,exports){
 'use strict';
 
 var now = require('now');
@@ -5261,7 +5706,7 @@ Entity.prototype.hit = function(spell) {
   }
 };
 
-},{"./ai/steering":9,"./controls/attackcircle":31,"./cover-system":35,"./elements/slifebar":49,"./inventory":63,"./log":64,"./settings":70,"./spell/flatlearn":80,"./target-system":86,"debug":96,"inherits":131,"lodash":142,"now":144}],57:[function(require,module,exports){
+},{"./ai/steering":10,"./controls/attackcircle":34,"./cover-system":38,"./elements/slifebar":52,"./inventory":66,"./log":67,"./settings":73,"./spell/flatlearn":83,"./target-system":89,"debug":100,"inherits":135,"lodash":146,"now":148}],60:[function(require,module,exports){
 'use strict';
 
 module.exports = Spiral;
@@ -5318,12 +5763,12 @@ function Spiral (radiusTop, radiusBottom, height, radialSegments, heightSegments
     return spline;
 }
 
-},{}],58:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 module.exports = {
   GameHud: require('./ingame'),
   Sidemenu: require('./sidemenu')
 };
-},{"./ingame":59,"./sidemenu":60}],59:[function(require,module,exports){
+},{"./ingame":62,"./sidemenu":63}],62:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -5490,7 +5935,7 @@ GameHud.prototype.startInteraction = function(object) {
 };
 
 
-},{"../elements/interactiveobject":45,"../entity":56,"../views/dialogview":89,"../views/entityview":90,"../views/gameview":91,"../views/interactiveview":92,"../views/questdialogview":93,"knockout":141,"lodash":142}],60:[function(require,module,exports){
+},{"../elements/interactiveobject":48,"../entity":59,"../views/dialogview":92,"../views/entityview":93,"../views/gameview":94,"../views/interactiveview":95,"../views/questdialogview":96,"knockout":145,"lodash":146}],63:[function(require,module,exports){
 'use strict';
 
 module.exports = Sidemenu;
@@ -5524,7 +5969,7 @@ Sidemenu.prototype.isOpen = function () {
   // return this.root.classList.contains( 'fadeInLeft' );
 };
 
-},{}],61:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -5600,6 +6045,9 @@ function Arena (overrideSettings) {
 
   // FIXME
   window._ta_events = new EventEmitter();
+  if (window._ta_events.setMaxListeners) {
+      window._ta_events.setMaxListeners(1000);
+  }
 
   var self = this;
 
@@ -5773,7 +6221,8 @@ function Arena (overrideSettings) {
   this.use(require('./components/spelltexts'));
   // this.use(require('./components/network'));
 
-  this.use(require('./components/fow-map-debug'));
+  this.use(require('./components/fog-of-war'));
+  this.use(require('./components/fog-of-war-debug'));
 
 }
 
@@ -7753,10 +8202,11 @@ Arena.Spells     = require('./spell/all');
 
 Arena.stemkoski  = require('./particles/stemkoski_ParticleEngine');
 
+Arena.Account    = require('./account');
 
 
 }).call(this,require('_process'))
-},{"../vendor/detector":149,"../vendor/stats":150,"./ai/behaviours/all":2,"./character/all":14,"./components/destination-marker":24,"./components/entity-helpers":25,"./components/entity-lifebar":26,"./components/entity-name":27,"./components/fow-map-debug":28,"./components/paused-camera":29,"./components/spelltexts":30,"./controls/dota":33,"./controls/zoneselector":34,"./crowd":36,"./elements/all":37,"./elements/collectible":41,"./elements/interactiveobject":45,"./elements/slifebar":49,"./elements/terrain":52,"./entity":56,"./hud":58,"./input/mouse":62,"./particles/stemkoski_ParticleEngine":67,"./quests":68,"./settings":70,"./settings-gui":69,"./spell/all":75,"./utils":88,"EventEmitter":94,"_process":158,"async":95,"debug":96,"inherits":131,"interact":132,"lodash":142,"machinejs":143,"now":144,"recastjs/lib/recast.withworker":145,"tic":147,"tween":148}],62:[function(require,module,exports){
+},{"../vendor/detector":153,"../vendor/stats":154,"./account":2,"./ai/behaviours/all":3,"./character/all":15,"./components/destination-marker":26,"./components/entity-helpers":27,"./components/entity-lifebar":28,"./components/entity-name":29,"./components/fog-of-war":31,"./components/fog-of-war-debug":30,"./components/paused-camera":32,"./components/spelltexts":33,"./controls/dota":36,"./controls/zoneselector":37,"./crowd":39,"./elements/all":40,"./elements/collectible":44,"./elements/interactiveobject":48,"./elements/slifebar":52,"./elements/terrain":55,"./entity":59,"./hud":61,"./input/mouse":65,"./particles/stemkoski_ParticleEngine":70,"./quests":71,"./settings":73,"./settings-gui":72,"./spell/all":78,"./utils":91,"EventEmitter":97,"_process":162,"async":98,"debug":100,"inherits":135,"interact":136,"lodash":146,"machinejs":147,"now":148,"recastjs/lib/recast.withworker":149,"tic":151,"tween":152}],65:[function(require,module,exports){
 'use strict';
 
 var debug = require('debug')('controls:mouse');
@@ -8033,7 +8483,7 @@ MouseControl.prototype._onDocumentMouseMove = function(event) {
   this.arena.updateSelectionCoords(event.clientX, event.clientY);
 };
 
-},{"../elements/collectible":41,"../elements/interactiveobject":45,"../elements/terrain":52,"../entity":56,"../settings":70,"../utils":88,"debug":96}],63:[function(require,module,exports){
+},{"../elements/collectible":44,"../elements/interactiveobject":48,"../elements/terrain":55,"../entity":59,"../settings":73,"../utils":91,"debug":100}],66:[function(require,module,exports){
 'use strict';
 
 module.exports = Inventory;
@@ -8086,7 +8536,7 @@ Inventory.prototype.has = function(kind) {
 
   return amount;
 };
-},{}],64:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 'use strict';
 
 module.exports = Log;
@@ -8106,7 +8556,7 @@ Log.SYS_INFO  = 'SYS_INFO';
 Log.SYS_ERROR = 'SYS_ERROR';
 Log.COMBAT    = 'COMBAT';
 
-},{}],65:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 /**
  * @author jbouny / https://github.com/jbouny
  *
@@ -8464,7 +8914,7 @@ THREE.Water.prototype.renderTemp = function () {
     }
 
 };
-},{}],66:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -8727,7 +9177,7 @@ function Aura ( geometry, particulesCount, texture, light ) {
   return cloud;
 }
 
-},{}],67:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 /**
 * @author Lee Stemkoski   http://www.adelphi.edu/~stemkoski/
 */
@@ -9583,7 +10033,7 @@ module.exports = {
   Type: Type,
   Tween: Tween
 };
-},{}],68:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -9748,7 +10198,7 @@ Quests.prototype.markEntity = function(entity, questMarkType) {
     settings.on('entityQuestMarkChanged', entityQuestMarkChanged);
 };
 
-},{"../settings":70,"hoodie":98,"lodash":142}],69:[function(require,module,exports){
+},{"../settings":73,"hoodie":102,"lodash":146}],72:[function(require,module,exports){
 'use strict';
 
 /* global dat: true, _gaq: true */
@@ -10087,7 +10537,7 @@ exports.shortcut = function(label){
 };
 
 
-},{"./settings":70}],70:[function(require,module,exports){
+},{"./settings":73}],73:[function(require,module,exports){
 'use strict';
 
 /**
@@ -10358,7 +10808,7 @@ settings.data = {
 
 
 
-},{"events":155}],71:[function(require,module,exports){
+},{"events":159}],74:[function(require,module,exports){
 module.exports = [
 
 '//',
@@ -10542,7 +10992,7 @@ module.exports = [
 ].join("\n");
 
 
-},{}],72:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 'use strict';
 
 var TWEEN = require('tween');
@@ -10685,7 +11135,7 @@ LifebarShaderMaterial.prototype.setMana = function(value) {
 };
 
 
-},{"inherits":131,"tween":148}],73:[function(require,module,exports){
+},{"inherits":135,"tween":152}],76:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -10802,7 +11252,7 @@ function LightboltShaderMaterial (strands) {
 
 inherits(LightboltShaderMaterial, THREE.ShaderMaterial);
 
-},{"./ashima/classicnoise3D.glsl":71,"inherits":131}],74:[function(require,module,exports){
+},{"./ashima/classicnoise3D.glsl":74,"inherits":135}],77:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10927,7 +11377,7 @@ Spell.prototype.startCooldown = function (source) {
   setTimeout(updateCD, 50);
 };
 
-},{"EventEmitter":94,"debug":96,"inherits":131,"lodash":142}],75:[function(require,module,exports){
+},{"EventEmitter":97,"debug":100,"inherits":135,"lodash":146}],78:[function(require,module,exports){
 module.exports = {
   Bite: require('./bite'),
   FireAura: require('./fireaura'),
@@ -10941,7 +11391,7 @@ module.exports = {
   FlatLearn: require('./flatlearn')
 };
 
-},{"./bite":76,"./fireaura":77,"./firebullet":78,"./flatfireaura":79,"./flatlearn":80,"./heal":81,"./learn":82,"./lightbolt":83,"./placeobject":84,"./teleport":85}],76:[function(require,module,exports){
+},{"./bite":79,"./fireaura":80,"./firebullet":81,"./flatfireaura":82,"./flatlearn":83,"./heal":84,"./learn":85,"./lightbolt":86,"./placeobject":87,"./teleport":88}],79:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10999,7 +11449,7 @@ Bite.prototype.start = function(source, target) {
   target.hit(this);
 };
 
-},{"../elements/sound":50,"../spell":74,"inherits":131,"lodash":142}],77:[function(require,module,exports){
+},{"../elements/sound":53,"../spell":77,"inherits":135,"lodash":146}],80:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -11049,7 +11499,7 @@ FireAura.prototype.start = function (caster, target) {
   }, 5000);
 };
 
-},{"../particles/cloud":66,"../spell":74,"inherits":131,"lodash":142}],78:[function(require,module,exports){
+},{"../particles/cloud":69,"../spell":77,"inherits":135,"lodash":146}],81:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -11142,7 +11592,7 @@ FireBullet.prototype.start = function (caster, target) {
     .start();
 };
 
-},{"../elements/sound":50,"../particles/cloud":66,"../particles/stemkoski_ParticleEngine":67,"../spell":74,"../utils":88,"inherits":131,"lodash":142,"tween":148}],79:[function(require,module,exports){
+},{"../elements/sound":53,"../particles/cloud":69,"../particles/stemkoski_ParticleEngine":70,"../spell":77,"../utils":91,"inherits":135,"lodash":146,"tween":152}],82:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -11200,7 +11650,7 @@ FlatFireAura.prototype.start = function (caster, target) {
   }, 5000);
 };
 
-},{"../spell":74,"inherits":131,"lodash":142}],80:[function(require,module,exports){
+},{"../spell":77,"inherits":135,"lodash":146}],83:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -11277,7 +11727,7 @@ FlatFireAura.prototype.start = function (caster, target) {
   }, 2000);
 };
 
-},{"../spell":74,"inherits":131,"lodash":142}],81:[function(require,module,exports){
+},{"../spell":77,"inherits":135,"lodash":146}],84:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -11377,7 +11827,7 @@ Heal.prototype.start = function (caster, target) {
     .start();
 };
 
-},{"../elements/sound":50,"../particles/cloud":66,"../particles/stemkoski_ParticleEngine":67,"../spell":74,"../utils":88,"inherits":131,"lodash":142,"tween":148}],82:[function(require,module,exports){
+},{"../elements/sound":53,"../particles/cloud":69,"../particles/stemkoski_ParticleEngine":70,"../spell":77,"../utils":91,"inherits":135,"lodash":146,"tween":152}],85:[function(require,module,exports){
 'use strict';
 
 var inherits  = require('inherits');
@@ -11469,7 +11919,7 @@ Learn.prototype.start = function (caster, target) {
     .start();
 };
 
-},{"../elements/sound":50,"../geometries/spiral":57,"../particles/cloud":66,"../particles/stemkoski_ParticleEngine":67,"../spell":74,"../utils":88,"inherits":131,"lodash":142,"tween":148}],83:[function(require,module,exports){
+},{"../elements/sound":53,"../geometries/spiral":60,"../particles/cloud":69,"../particles/stemkoski_ParticleEngine":70,"../spell":77,"../utils":91,"inherits":135,"lodash":146,"tween":152}],86:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -11576,7 +12026,7 @@ Lightbolt.prototype.start = function (caster, target) {
   .start();
 };
 
-},{"../shaders/lightbolt":73,"../spell":74,"inherits":131,"lodash":142,"tween":148}],84:[function(require,module,exports){
+},{"../shaders/lightbolt":76,"../spell":77,"inherits":135,"lodash":146,"tween":152}],87:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -11717,7 +12167,7 @@ PlaceObject.prototype.updateZoneSelector = function(source, arena) {
 
 
 
-},{"../elements/sound":50,"../settings":70,"../spell":74,"inherits":131,"lodash":142,"tween":148}],85:[function(require,module,exports){
+},{"../elements/sound":53,"../settings":73,"../spell":77,"inherits":135,"lodash":146,"tween":152}],88:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -11834,7 +12284,7 @@ Teleport.prototype.updateZoneSelector = function(source, arena) {
   }
 };
 
-},{"../elements/sound":50,"../settings":70,"../spell":74,"inherits":131,"lodash":142,"tween":148}],86:[function(require,module,exports){
+},{"../elements/sound":53,"../settings":73,"../spell":77,"inherits":135,"lodash":146,"tween":152}],89:[function(require,module,exports){
 module.exports = TargetSystem;
 
 function TargetSystem (arena, entity) {
@@ -11920,16 +12370,13 @@ TargetSystem.prototype.bestSpellForTarget = function(entity) {
 };
 
 
-},{}],87:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 
 'use strict';
 
 module.exports = FogOfWarMap;
 
 function FogOfWarMap (width, height) {
-
-    this.entities = new Float32Array(3 * 100);
-    this.entitiesCount = 0;
 
     // create canvas
     this.canvas = document.createElement( 'canvas' );
@@ -11953,23 +12400,10 @@ FogOfWarMap.prototype.render = function(locations) {
 
     // return;
 
-    this.entitiesCount = locations.length;
-
-    var index   = -1;
-
     for (var i = 0; i < locations.length; i++) {
 
         var loc = locations[i];
         var radius = 10.0;
-
-        // set entity location
-        this.entities[++index] = loc.x;
-        this.entities[++index] = loc.y;
-        this.entities[++index] = loc.z;
-        // this.entities[++index] = radius;
-
-        // transform in texture coordinates
-        // loc = arena.inTerrainDatum(loc);
 
         this.context.beginPath();
         this.context.arc(loc.x, loc.z, radius, 0, 2 * Math.PI, true);
@@ -11989,7 +12423,7 @@ FogOfWarMap.prototype.render = function(locations) {
     }
 };
 
-},{}],88:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -12179,7 +12613,7 @@ module.exports = {
 
 };
 
-},{"lodash":142,"tween":148}],89:[function(require,module,exports){
+},{"lodash":146,"tween":152}],92:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -12214,7 +12648,7 @@ function DialogViewModel (dialog) {
 
   dialog.on('changed', this.update.bind(this));
 }
-},{"knockout":141,"lodash":142}],90:[function(require,module,exports){
+},{"knockout":145,"lodash":146}],93:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -12304,7 +12738,7 @@ function EntityViewModel (entity, game) {
 
   entity.on('changed', this.update.bind(this));
 }
-},{"../entity":56,"../utils":88,"knockout":141,"lodash":142}],91:[function(require,module,exports){
+},{"../entity":59,"../utils":91,"knockout":145,"lodash":146}],94:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -12559,7 +12993,7 @@ GameViewModel.prototype.onMapClick = function(gameview, event) {
 GameViewModel.prototype.onCharacterHover = function(event) {
 };
 
-},{"../settings":70,"knockout":141,"lodash":142}],92:[function(require,module,exports){
+},{"../settings":73,"knockout":145,"lodash":146}],95:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -12594,7 +13028,7 @@ function InteractiveViewModel (interactive) {
 
   interactive.on('changed', this.update.bind(this));
 }
-},{"knockout":141,"lodash":142}],93:[function(require,module,exports){
+},{"knockout":145,"lodash":146}],96:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -12671,7 +13105,7 @@ function QuestDialogViewModel (quests, questGiver) {
     };
 }
 
-},{"knockout":141,"lodash":142}],94:[function(require,module,exports){
+},{"knockout":145,"lodash":146}],97:[function(require,module,exports){
 /*!
  * EventEmitter v4.2.8 - git.io/ee
  * Oliver Caldwell
@@ -13145,7 +13579,7 @@ function QuestDialogViewModel (quests, questGiver) {
 	}
 }.call(this));
 
-},{}],95:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 (function (process){
 /*global setImmediate: false, setTimeout: false, console: false */
 (function () {
@@ -14107,7 +14541,169 @@ function QuestDialogViewModel (quests, questGiver) {
 }());
 
 }).call(this,require('_process'))
-},{"_process":158}],96:[function(require,module,exports){
+},{"_process":162}],99:[function(require,module,exports){
+/*
+ * Cookies.js - 1.2.1
+ * https://github.com/ScottHamper/Cookies
+ *
+ * This is free and unencumbered software released into the public domain.
+ */
+(function (global, undefined) {
+    'use strict';
+
+    var factory = function (window) {
+        if (typeof window.document !== 'object') {
+            throw new Error('Cookies.js requires a `window` with a `document` object');
+        }
+
+        var Cookies = function (key, value, options) {
+            return arguments.length === 1 ?
+                Cookies.get(key) : Cookies.set(key, value, options);
+        };
+
+        // Allows for setter injection in unit tests
+        Cookies._document = window.document;
+
+        // Used to ensure cookie keys do not collide with
+        // built-in `Object` properties
+        Cookies._cacheKeyPrefix = 'cookey.'; // Hurr hurr, :)
+        
+        Cookies._maxExpireDate = new Date('Fri, 31 Dec 9999 23:59:59 UTC');
+
+        Cookies.defaults = {
+            path: '/',
+            secure: false
+        };
+
+        Cookies.get = function (key) {
+            if (Cookies._cachedDocumentCookie !== Cookies._document.cookie) {
+                Cookies._renewCache();
+            }
+
+            return Cookies._cache[Cookies._cacheKeyPrefix + key];
+        };
+
+        Cookies.set = function (key, value, options) {
+            options = Cookies._getExtendedOptions(options);
+            options.expires = Cookies._getExpiresDate(value === undefined ? -1 : options.expires);
+
+            Cookies._document.cookie = Cookies._generateCookieString(key, value, options);
+
+            return Cookies;
+        };
+
+        Cookies.expire = function (key, options) {
+            return Cookies.set(key, undefined, options);
+        };
+
+        Cookies._getExtendedOptions = function (options) {
+            return {
+                path: options && options.path || Cookies.defaults.path,
+                domain: options && options.domain || Cookies.defaults.domain,
+                expires: options && options.expires || Cookies.defaults.expires,
+                secure: options && options.secure !== undefined ?  options.secure : Cookies.defaults.secure
+            };
+        };
+
+        Cookies._isValidDate = function (date) {
+            return Object.prototype.toString.call(date) === '[object Date]' && !isNaN(date.getTime());
+        };
+
+        Cookies._getExpiresDate = function (expires, now) {
+            now = now || new Date();
+
+            if (typeof expires === 'number') {
+                expires = expires === Infinity ?
+                    Cookies._maxExpireDate : new Date(now.getTime() + expires * 1000);
+            } else if (typeof expires === 'string') {
+                expires = new Date(expires);
+            }
+
+            if (expires && !Cookies._isValidDate(expires)) {
+                throw new Error('`expires` parameter cannot be converted to a valid Date instance');
+            }
+
+            return expires;
+        };
+
+        Cookies._generateCookieString = function (key, value, options) {
+            key = key.replace(/[^#$&+\^`|]/g, encodeURIComponent);
+            key = key.replace(/\(/g, '%28').replace(/\)/g, '%29');
+            value = (value + '').replace(/[^!#$&-+\--:<-\[\]-~]/g, encodeURIComponent);
+            options = options || {};
+
+            var cookieString = key + '=' + value;
+            cookieString += options.path ? ';path=' + options.path : '';
+            cookieString += options.domain ? ';domain=' + options.domain : '';
+            cookieString += options.expires ? ';expires=' + options.expires.toUTCString() : '';
+            cookieString += options.secure ? ';secure' : '';
+
+            return cookieString;
+        };
+
+        Cookies._getCacheFromString = function (documentCookie) {
+            var cookieCache = {};
+            var cookiesArray = documentCookie ? documentCookie.split('; ') : [];
+
+            for (var i = 0; i < cookiesArray.length; i++) {
+                var cookieKvp = Cookies._getKeyValuePairFromCookieString(cookiesArray[i]);
+
+                if (cookieCache[Cookies._cacheKeyPrefix + cookieKvp.key] === undefined) {
+                    cookieCache[Cookies._cacheKeyPrefix + cookieKvp.key] = cookieKvp.value;
+                }
+            }
+
+            return cookieCache;
+        };
+
+        Cookies._getKeyValuePairFromCookieString = function (cookieString) {
+            // "=" is a valid character in a cookie value according to RFC6265, so cannot `split('=')`
+            var separatorIndex = cookieString.indexOf('=');
+
+            // IE omits the "=" when the cookie value is an empty string
+            separatorIndex = separatorIndex < 0 ? cookieString.length : separatorIndex;
+
+            return {
+                key: decodeURIComponent(cookieString.substr(0, separatorIndex)),
+                value: decodeURIComponent(cookieString.substr(separatorIndex + 1))
+            };
+        };
+
+        Cookies._renewCache = function () {
+            Cookies._cache = Cookies._getCacheFromString(Cookies._document.cookie);
+            Cookies._cachedDocumentCookie = Cookies._document.cookie;
+        };
+
+        Cookies._areEnabled = function () {
+            var testKey = 'cookies.js';
+            var areEnabled = Cookies.set(testKey, 1).get(testKey) === '1';
+            Cookies.expire(testKey);
+            return areEnabled;
+        };
+
+        Cookies.enabled = Cookies._areEnabled();
+
+        return Cookies;
+    };
+
+    var cookiesExport = typeof global.document === 'object' ? factory(global) : factory;
+
+    // AMD support
+    if (typeof define === 'function' && define.amd) {
+        define(function () { return cookiesExport; });
+    // CommonJS/Node.js support
+    } else if (typeof exports === 'object') {
+        // Support Node.js specific `module.exports` (which can be a function)
+        if (typeof module === 'object' && typeof module.exports === 'object') {
+            exports = module.exports = cookiesExport;
+        }
+        // But always support CommonJS module 1.1.1 spec (`exports` cannot be a function)
+        exports.Cookies = cookiesExport;
+    } else {
+        global.Cookies = cookiesExport;
+    }
+})(typeof window === 'undefined' ? this : window);
+},{}],100:[function(require,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -14246,7 +14842,7 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],97:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 var hasOwn = Object.prototype.hasOwnProperty;
 var toString = Object.prototype.toString;
 
@@ -14326,7 +14922,7 @@ module.exports = function extend() {
 	return target;
 };
 
-},{}],98:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 (function (global){
 // Hoodie Core
 // -------------
@@ -14494,7 +15090,7 @@ function applyExtensions(hoodie) {
 module.exports = Hoodie;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./hoodie/account":99,"./hoodie/connection":100,"./hoodie/id":101,"./hoodie/open":102,"./hoodie/remote":103,"./hoodie/request":104,"./hoodie/store":105,"./hoodie/task":106,"./lib":112,"./lib/events":111,"./utils":122}],99:[function(require,module,exports){
+},{"./hoodie/account":103,"./hoodie/connection":104,"./hoodie/id":105,"./hoodie/open":106,"./hoodie/remote":107,"./hoodie/request":108,"./hoodie/store":109,"./hoodie/task":110,"./lib":116,"./lib/events":115,"./utils":126}],103:[function(require,module,exports){
 (function (global){
 // Hoodie.Account
 // ================
@@ -15701,7 +16297,7 @@ function hoodieAccount(hoodie) {
 module.exports = hoodieAccount;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../lib/events":111,"../utils/config":119,"../utils/generate_id":120,"../utils/promise/defer":124,"../utils/promise/reject":127,"../utils/promise/reject_with":128,"../utils/promise/resolve":129,"../utils/promise/resolve_with":130,"extend":97}],100:[function(require,module,exports){
+},{"../lib/events":115,"../utils/config":123,"../utils/generate_id":124,"../utils/promise/defer":128,"../utils/promise/reject":131,"../utils/promise/reject_with":132,"../utils/promise/resolve":133,"../utils/promise/resolve_with":134,"extend":101}],104:[function(require,module,exports){
 (function (global){
 // hoodie.checkConnection() & hoodie.isConnected()
 // =================================================
@@ -15802,7 +16398,7 @@ function hoodieConnection(hoodie) {
 module.exports = hoodieConnection;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../utils/promise/reject":127,"../utils/promise/resolve":129}],101:[function(require,module,exports){
+},{"../utils/promise/reject":131,"../utils/promise/resolve":133}],105:[function(require,module,exports){
 // hoodie.id
 // =========
 
@@ -15875,7 +16471,7 @@ function hoodieId (hoodie) {
 
 module.exports = hoodieId;
 
-},{"../utils/config":119,"../utils/generate_id":120}],102:[function(require,module,exports){
+},{"../utils/config":123,"../utils/generate_id":124}],106:[function(require,module,exports){
 // Open stores
 // -------------
 
@@ -15906,7 +16502,7 @@ function hoodieOpen(hoodie) {
 
 module.exports = hoodieOpen;
 
-},{"../lib/store/remote":115,"extend":97}],103:[function(require,module,exports){
+},{"../lib/store/remote":119,"extend":101}],107:[function(require,module,exports){
 // AccountRemote
 // ===============
 
@@ -16067,7 +16663,7 @@ function hoodieRemoteFactory(hoodie) {
 
 module.exports = hoodieRemoteFactory;
 
-},{"../utils/config":119,"../utils/promise/reject_with":128}],104:[function(require,module,exports){
+},{"../utils/config":123,"../utils/promise/reject_with":132}],108:[function(require,module,exports){
 //
 // hoodie.request
 // ================
@@ -16223,7 +16819,7 @@ function hoodieRequest(hoodie) {
 
 module.exports = hoodieRequest;
 
-},{"../utils/hoodiefy_request_error_name":121,"../utils/promise/reject_with":128,"extend":97}],105:[function(require,module,exports){
+},{"../utils/hoodiefy_request_error_name":125,"../utils/promise/reject_with":132,"extend":101}],109:[function(require,module,exports){
 (function (global){
 // LocalStore
 // ============
@@ -17186,7 +17782,7 @@ function hoodieStore (hoodie) {
 module.exports = hoodieStore;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../lib/error/object_id":109,"../lib/error/object_type":110,"../lib/store/api":113,"../utils/generate_id":120,"../utils/local_storage_wrapper":123,"../utils/promise/defer":124,"../utils/promise/reject_with":128,"../utils/promise/resolve_with":130,"extend":97}],106:[function(require,module,exports){
+},{"../lib/error/object_id":113,"../lib/error/object_type":114,"../lib/store/api":117,"../utils/generate_id":124,"../utils/local_storage_wrapper":127,"../utils/promise/defer":128,"../utils/promise/reject_with":132,"../utils/promise/resolve_with":134,"extend":101}],110:[function(require,module,exports){
 // Tasks
 // ============
 
@@ -17496,7 +18092,7 @@ function hoodieTask(hoodie) {
 
 module.exports = hoodieTask;
 
-},{"../lib/error/error":107,"../lib/events":111,"../lib/task/scoped":118,"../utils/promise/defer":124,"extend":97}],107:[function(require,module,exports){
+},{"../lib/error/error":111,"../lib/events":115,"../lib/task/scoped":122,"../utils/promise/defer":128,"extend":101}],111:[function(require,module,exports){
 // Hoodie Error
 // -------------
 
@@ -17562,14 +18158,14 @@ HoodieError.prototype.constructor = HoodieError;
 module.exports = HoodieError;
 
 
-},{"extend":97}],108:[function(require,module,exports){
+},{"extend":101}],112:[function(require,module,exports){
 module.exports = {
   error: require('./error'),
   objectId: require('./object_id'),
   objectType: require('./object_type')
 };
 
-},{"./error":107,"./object_id":109,"./object_type":110}],109:[function(require,module,exports){
+},{"./error":111,"./object_id":113,"./object_type":114}],113:[function(require,module,exports){
 // Hoodie Invalid Type Or Id Error
 // -------------------------------
 
@@ -17596,7 +18192,7 @@ HoodieObjectIdError.prototype.rules = 'Lowercase letters, numbers and dashes all
 
 module.exports = HoodieObjectIdError;
 
-},{"./error":107}],110:[function(require,module,exports){
+},{"./error":111}],114:[function(require,module,exports){
 // Hoodie Invalid Type Or Id Error
 // -------------------------------
 
@@ -17630,7 +18226,7 @@ HoodieObjectTypeError.prototype.rules = 'lowercase letters, numbers and dashes a
 
 module.exports = HoodieObjectTypeError;
 
-},{"./error":107}],111:[function(require,module,exports){
+},{"./error":111}],115:[function(require,module,exports){
 // Events
 // ========
 //
@@ -17794,7 +18390,7 @@ function hoodieEvents(hoodie, options) {
 
 module.exports = hoodieEvents;
 
-},{}],112:[function(require,module,exports){
+},{}],116:[function(require,module,exports){
 module.exports = {
   error: require('./error'),
   events: require('./events'),
@@ -17802,7 +18398,7 @@ module.exports = {
   task: require('./task')
 };
 
-},{"./error":108,"./events":111,"./store":114,"./task":117}],113:[function(require,module,exports){
+},{"./error":112,"./events":115,"./store":118,"./task":121}],117:[function(require,module,exports){
 // Store
 // ============
 
@@ -18240,14 +18836,14 @@ function hoodieStoreApi(hoodie, options) {
 
 module.exports = hoodieStoreApi;
 
-},{"../../utils/promise/defer":124,"../../utils/promise/is_promise":126,"../../utils/promise/reject_with":128,"../../utils/promise/resolve_with":130,"../error/error":107,"../error/object_id":109,"../error/object_type":110,"../events":111,"./scoped":116,"extend":97}],114:[function(require,module,exports){
+},{"../../utils/promise/defer":128,"../../utils/promise/is_promise":130,"../../utils/promise/reject_with":132,"../../utils/promise/resolve_with":134,"../error/error":111,"../error/object_id":113,"../error/object_type":114,"../events":115,"./scoped":120,"extend":101}],118:[function(require,module,exports){
 module.exports = {
   api: require('./api'),
   remote: require('./remote'),
   scoped: require('./scoped')
 };
 
-},{"./api":113,"./remote":115,"./scoped":116}],115:[function(require,module,exports){
+},{"./api":117,"./remote":119,"./scoped":120}],119:[function(require,module,exports){
 (function (global){
 // Remote
 // ========
@@ -19043,7 +19639,7 @@ function hoodieRemoteStore(hoodie, options) {
 module.exports = hoodieRemoteStore;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../utils/generate_id":120,"../../utils/promise/resolve_with":130,"./api":113,"extend":97}],116:[function(require,module,exports){
+},{"../../utils/generate_id":124,"../../utils/promise/resolve_with":134,"./api":117,"extend":101}],120:[function(require,module,exports){
 // scoped Store
 // ============
 
@@ -19156,12 +19752,12 @@ function hoodieScopedStoreApi(hoodie, storeApi, options) {
 
 module.exports = hoodieScopedStoreApi;
 
-},{"../events":111}],117:[function(require,module,exports){
+},{"../events":115}],121:[function(require,module,exports){
 module.exports = {
   scoped: require('./scoped')
 };
 
-},{"./scoped":118}],118:[function(require,module,exports){
+},{"./scoped":122}],122:[function(require,module,exports){
 // scoped Store
 // ============
 
@@ -19238,7 +19834,7 @@ function hoodieScopedTask(hoodie, taskApi, options) {
 
 module.exports = hoodieScopedTask;
 
-},{"../events":111}],119:[function(require,module,exports){
+},{"../events":115}],123:[function(require,module,exports){
 // Hoodie Config API
 // ===================
 
@@ -19308,7 +19904,7 @@ init();
 module.exports = config;
 
 
-},{"../utils/local_storage_wrapper":123,"extend":97}],120:[function(require,module,exports){
+},{"../utils/local_storage_wrapper":127,"extend":101}],124:[function(require,module,exports){
 var chars, i, radix;
 
 // uuids consist of numbers and lowercase letters only.
@@ -19339,7 +19935,7 @@ function generateId (length) {
 
 module.exports = generateId;
 
-},{}],121:[function(require,module,exports){
+},{}],125:[function(require,module,exports){
 var findLettersToUpperCase = /(^\w|_\w)/g;
 
 function hoodiefyRequestErrorName (name) {
@@ -19351,7 +19947,7 @@ function hoodiefyRequestErrorName (name) {
 }
 
 module.exports = hoodiefyRequestErrorName;
-},{}],122:[function(require,module,exports){
+},{}],126:[function(require,module,exports){
 module.exports = {
   config: require('./config'),
   generateId: require('./generate_id'),
@@ -19360,7 +19956,7 @@ module.exports = {
 };
 
 
-},{"./config":119,"./generate_id":120,"./local_storage_wrapper":123,"./promise":125}],123:[function(require,module,exports){
+},{"./config":123,"./generate_id":124,"./local_storage_wrapper":127,"./promise":129}],127:[function(require,module,exports){
 (function (global){
 // public API
 var store = {};
@@ -19475,11 +20071,11 @@ init();
 module.exports = store;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],124:[function(require,module,exports){
+},{}],128:[function(require,module,exports){
 (function (global){
 module.exports = global.jQuery.Deferred;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],125:[function(require,module,exports){
+},{}],129:[function(require,module,exports){
 module.exports = {
   defer: require('./defer'),
   isPromise: require('./is_promise'),
@@ -19489,7 +20085,7 @@ module.exports = {
   resolve: require('./resolve'),
 };
 
-},{"./defer":124,"./is_promise":126,"./reject":127,"./reject_with":128,"./resolve":129,"./resolve_with":130}],126:[function(require,module,exports){
+},{"./defer":128,"./is_promise":130,"./reject":131,"./reject_with":132,"./resolve":133,"./resolve_with":134}],130:[function(require,module,exports){
 // returns true if passed object is a promise (but not a deferred),
 // otherwise false.
 function isPromise(object) {
@@ -19499,7 +20095,7 @@ function isPromise(object) {
 }
 
 module.exports = isPromise;
-},{}],127:[function(require,module,exports){
+},{}],131:[function(require,module,exports){
 var defer = require('./defer');
 //
 function reject() {
@@ -19507,7 +20103,7 @@ function reject() {
 }
 
 module.exports = reject;
-},{"./defer":124}],128:[function(require,module,exports){
+},{"./defer":128}],132:[function(require,module,exports){
 var getDefer = require('./defer');
 var HoodieError = require('../../lib/error/error');
 
@@ -19519,7 +20115,7 @@ function rejectWith(errorProperties) {
 
 module.exports = rejectWith;
 
-},{"../../lib/error/error":107,"./defer":124}],129:[function(require,module,exports){
+},{"../../lib/error/error":111,"./defer":128}],133:[function(require,module,exports){
 var defer = require('./defer');
 //
 function resolve() {
@@ -19527,7 +20123,7 @@ function resolve() {
 }
 
 module.exports = resolve;
-},{"./defer":124}],130:[function(require,module,exports){
+},{"./defer":128}],134:[function(require,module,exports){
 var getDefer = require('./defer');
 
 //
@@ -19538,7 +20134,7 @@ function resolveWith() {
 
 module.exports = resolveWith;
 
-},{"./defer":124}],131:[function(require,module,exports){
+},{"./defer":128}],135:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -19563,7 +20159,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],132:[function(require,module,exports){
+},{}],136:[function(require,module,exports){
 var lock = require('pointer-lock')
   , drag = require('drag-stream')
   , full = require('fullscreen')
@@ -19670,7 +20266,7 @@ function usedrag(el) {
   return ee
 }
 
-},{"drag-stream":133,"events":155,"fullscreen":139,"pointer-lock":140,"stream":171}],133:[function(require,module,exports){
+},{"drag-stream":137,"events":159,"fullscreen":143,"pointer-lock":144,"stream":175}],137:[function(require,module,exports){
 module.exports = dragstream
 
 var Stream = require('stream')
@@ -19738,10 +20334,10 @@ function dragstream(el) {
   }
 }
 
-},{"domnode-dom":134,"stream":171,"through":138}],134:[function(require,module,exports){
+},{"domnode-dom":138,"stream":175,"through":142}],138:[function(require,module,exports){
 module.exports = require('./lib/index')
 
-},{"./lib/index":135}],135:[function(require,module,exports){
+},{"./lib/index":139}],139:[function(require,module,exports){
 var WriteStream = require('./writable')
   , ReadStream = require('./readable')
   , DOMStream = {}
@@ -19779,7 +20375,7 @@ DOMStream.createEventStream = function(el, type, preventDefault) {
 module.exports = DOMStream
 
 
-},{"./readable":136,"./writable":137}],136:[function(require,module,exports){
+},{"./readable":140,"./writable":141}],140:[function(require,module,exports){
 module.exports = DOMStream
 
 var Stream = require('stream').Stream
@@ -19890,7 +20486,7 @@ function valueFromElement(el) {
   return el.value
 }
 
-},{"stream":171}],137:[function(require,module,exports){
+},{"stream":175}],141:[function(require,module,exports){
 module.exports = DOMStream
 
 var Stream = require('stream').Stream
@@ -19972,7 +20568,7 @@ proto.constructTextPlain = function(data) {
   return [textNode]
 }
 
-},{"stream":171}],138:[function(require,module,exports){
+},{"stream":175}],142:[function(require,module,exports){
 (function (process){
 var Stream = require('stream')
 
@@ -20079,7 +20675,7 @@ function through (write, end) {
 
 
 }).call(this,require('_process'))
-},{"_process":158,"stream":171}],139:[function(require,module,exports){
+},{"_process":162,"stream":175}],143:[function(require,module,exports){
 module.exports = fullscreen
 fullscreen.available = available
 
@@ -20170,7 +20766,7 @@ function shim(el) {
     el.oRequestFullScreen)
 }
 
-},{"events":155}],140:[function(require,module,exports){
+},{"events":159}],144:[function(require,module,exports){
 module.exports = pointer
 
 pointer.available = available
@@ -20334,7 +20930,7 @@ function shim(el) {
     null
 }
 
-},{"events":155,"stream":171}],141:[function(require,module,exports){
+},{"events":159,"stream":175}],145:[function(require,module,exports){
 /*!
  * Knockout JavaScript library v3.2.0
  * (c) Steven Sanderson - http://knockoutjs.com/
@@ -25635,7 +26231,7 @@ ko.exportSymbol('nativeTemplateEngine', ko.nativeTemplateEngine);
 }());
 })();
 
-},{}],142:[function(require,module,exports){
+},{}],146:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -32424,7 +33020,7 @@ ko.exportSymbol('nativeTemplateEngine', ko.nativeTemplateEngine);
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],143:[function(require,module,exports){
+},{}],147:[function(require,module,exports){
 /*
   Machine.js
   by mary rose cook
@@ -32700,7 +33296,7 @@ ko.exportSymbol('nativeTemplateEngine', ko.nativeTemplateEngine);
 })();
 
 
-},{}],144:[function(require,module,exports){
+},{}],148:[function(require,module,exports){
 
 module.exports = (function() {
   return typeof window != 'undefined' && window.performance
@@ -32713,7 +33309,7 @@ module.exports = (function() {
     : Date.now || function(){ return +new Date() };
 })()
 
-},{}],145:[function(require,module,exports){
+},{}],149:[function(require,module,exports){
 (function (process){
 /*jshint onevar: false, indent:4, strict:false */
 /*global setImmediate: false, setTimeout: false, console: false, module: true, process: true, define: true, require: true */
@@ -33089,7 +33685,7 @@ else {
 }
 
 }).call(this,require('_process'))
-},{"_process":158,"child_process":151}],146:[function(require,module,exports){
+},{"_process":162,"child_process":155}],150:[function(require,module,exports){
 /**
  * @author Eberhard Graether / http://egraether.com/
  * @author Mark Lundin / http://mark-lundin.com
@@ -33715,7 +34311,7 @@ function preventEvent( event ) { event.preventDefault(); }
 
 Trackball.prototype = Object.create(THREE.EventDispatcher.prototype);
 
-},{}],147:[function(require,module,exports){
+},{}],151:[function(require,module,exports){
 /*
  * tic
  * https://github.com/shama/tic
@@ -33762,7 +34358,7 @@ Tic.prototype.tick = function(dt) {
   });
 };
 
-},{}],148:[function(require,module,exports){
+},{}],152:[function(require,module,exports){
 // tween.js - http://github.com/sole/tween.js
 /**
  * @author sole / http://soledadpenades.com
@@ -34507,7 +35103,7 @@ TWEEN.Interpolation = {
 };
 
 module.exports=TWEEN;
-},{}],149:[function(require,module,exports){
+},{}],153:[function(require,module,exports){
 /**
  * @author alteredq / http://alteredqualia.com/
  * @author mr.doob / http://mrdoob.com/
@@ -34568,7 +35164,7 @@ module.exports = function() {
   };
 }
 
-},{}],150:[function(require,module,exports){
+},{}],154:[function(require,module,exports){
 /**
  * @author mrdoob / http://mrdoob.com/
  */
@@ -34714,9 +35310,9 @@ var Stats = function () {
 };
 
 module.exports = Stats
-},{}],151:[function(require,module,exports){
+},{}],155:[function(require,module,exports){
 
-},{}],152:[function(require,module,exports){
+},{}],156:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -35887,7 +36483,7 @@ function assert (test, message) {
   if (!test) throw new Error(message || 'Failed assertion')
 }
 
-},{"base64-js":153,"ieee754":154}],153:[function(require,module,exports){
+},{"base64-js":157,"ieee754":158}],157:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -36009,7 +36605,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],154:[function(require,module,exports){
+},{}],158:[function(require,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -36095,7 +36691,7 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],155:[function(require,module,exports){
+},{}],159:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -36400,14 +36996,14 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],156:[function(require,module,exports){
-module.exports=require(131)
-},{}],157:[function(require,module,exports){
+},{}],160:[function(require,module,exports){
+module.exports=require(135)
+},{}],161:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],158:[function(require,module,exports){
+},{}],162:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -36472,10 +37068,10 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],159:[function(require,module,exports){
+},{}],163:[function(require,module,exports){
 module.exports = require("./lib/_stream_duplex.js")
 
-},{"./lib/_stream_duplex.js":160}],160:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":164}],164:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -36568,7 +37164,7 @@ function forEach (xs, f) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_readable":162,"./_stream_writable":164,"_process":158,"core-util-is":165,"inherits":156}],161:[function(require,module,exports){
+},{"./_stream_readable":166,"./_stream_writable":168,"_process":162,"core-util-is":169,"inherits":160}],165:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -36616,7 +37212,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./_stream_transform":163,"core-util-is":165,"inherits":156}],162:[function(require,module,exports){
+},{"./_stream_transform":167,"core-util-is":169,"inherits":160}],166:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -37602,7 +38198,7 @@ function indexOf (xs, x) {
 }
 
 }).call(this,require('_process'))
-},{"_process":158,"buffer":152,"core-util-is":165,"events":155,"inherits":156,"isarray":157,"stream":171,"string_decoder/":166}],163:[function(require,module,exports){
+},{"_process":162,"buffer":156,"core-util-is":169,"events":159,"inherits":160,"isarray":161,"stream":175,"string_decoder/":170}],167:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -37814,7 +38410,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./_stream_duplex":160,"core-util-is":165,"inherits":156}],164:[function(require,module,exports){
+},{"./_stream_duplex":164,"core-util-is":169,"inherits":160}],168:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -38204,7 +38800,7 @@ function endWritable(stream, state, cb) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_duplex":160,"_process":158,"buffer":152,"core-util-is":165,"inherits":156,"stream":171}],165:[function(require,module,exports){
+},{"./_stream_duplex":164,"_process":162,"buffer":156,"core-util-is":169,"inherits":160,"stream":175}],169:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -38314,7 +38910,7 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 }).call(this,require("buffer").Buffer)
-},{"buffer":152}],166:[function(require,module,exports){
+},{"buffer":156}],170:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -38537,10 +39133,10 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":152}],167:[function(require,module,exports){
+},{"buffer":156}],171:[function(require,module,exports){
 module.exports = require("./lib/_stream_passthrough.js")
 
-},{"./lib/_stream_passthrough.js":161}],168:[function(require,module,exports){
+},{"./lib/_stream_passthrough.js":165}],172:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Readable = exports;
 exports.Writable = require('./lib/_stream_writable.js');
@@ -38548,13 +39144,13 @@ exports.Duplex = require('./lib/_stream_duplex.js');
 exports.Transform = require('./lib/_stream_transform.js');
 exports.PassThrough = require('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":160,"./lib/_stream_passthrough.js":161,"./lib/_stream_readable.js":162,"./lib/_stream_transform.js":163,"./lib/_stream_writable.js":164}],169:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":164,"./lib/_stream_passthrough.js":165,"./lib/_stream_readable.js":166,"./lib/_stream_transform.js":167,"./lib/_stream_writable.js":168}],173:[function(require,module,exports){
 module.exports = require("./lib/_stream_transform.js")
 
-},{"./lib/_stream_transform.js":163}],170:[function(require,module,exports){
+},{"./lib/_stream_transform.js":167}],174:[function(require,module,exports){
 module.exports = require("./lib/_stream_writable.js")
 
-},{"./lib/_stream_writable.js":164}],171:[function(require,module,exports){
+},{"./lib/_stream_writable.js":168}],175:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -38683,4 +39279,4 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":155,"inherits":156,"readable-stream/duplex.js":159,"readable-stream/passthrough.js":167,"readable-stream/readable.js":168,"readable-stream/transform.js":169,"readable-stream/writable.js":170}]},{},[1]);
+},{"events":159,"inherits":160,"readable-stream/duplex.js":163,"readable-stream/passthrough.js":171,"readable-stream/readable.js":172,"readable-stream/transform.js":173,"readable-stream/writable.js":174}]},{},[1]);
