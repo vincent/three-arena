@@ -1733,26 +1733,37 @@ function attachName (arena, entity) {
 },{"../settings":72}],30:[function(require,module,exports){
 'use strict';
 
-var _       = require('lodash');
+var _ = require('lodash');
 
-module.exports = function (arena) {
+var Entity = require('../entity');
+var InteractiveObject = require('../elements/interactiveobject');
+
+module.exports = function (arena, options) {
 
   arena.on('set:terrain', function () {
 
-    var entities    = new Float32Array(3 * 100);
+    var entities = new Float32Array(3 * 100);
 
-    var gridDiviser = 5;
-    var worldMax    = arena.ground.boundingBoxNormalized.max;
-    // var size        = nearestPow2(Math.max(worldMax.x, worldMax.z) / gridDiviser);
+    options = _.merge({
 
-    var size        = {
+      gridDiviser    : 5,
+      sightDistance  : 60,
+      unvisitedColor : new THREE.Color(0.1, 0.1, 0.1),
+      visitedColor   : new THREE.Color(0.4, 0.4, 0.4),
+      visitedistance : 4
+
+    }, options);
+
+    var worldMax  = arena.ground.boundingBoxNormalized.max;
+
+    var size      = {
       width:  worldMax.x,
       height: worldMax.z
     };
 
-    var gridSize    = {
-      width:  Math.round(size.width  / gridDiviser),
-      height: Math.round(size.height / gridDiviser)
+    var gridSize  = {
+      width:  Math.round(size.width  / options.gridDiviser),
+      height: Math.round(size.height / options.gridDiviser)
     };
 
     var teamVisited = {
@@ -1770,7 +1781,7 @@ module.exports = function (arena) {
       teamVisited[0][i+3] = 255;
     }
 
-    // glitchTexture();
+    var overloadedMaterials = {};
 
     /* // material
     var material = new THREE.ShaderMaterial({
@@ -2122,176 +2133,253 @@ module.exports = function (arena) {
     });
     */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     var textureVisitedByTeam1 = new THREE.DataTexture(teamVisited[0], gridSize.width, gridSize.height, THREE.RGBAFormat, THREE.UnsignedByteType, THREE.UVMapping, THREE.ClampToEdgeWrapping, THREE.ClampToEdgeWrapping, THREE.LinearFilter, THREE.LinearFilter, 1);
     var textureVisitedByTeam2 = new THREE.DataTexture(teamVisited[1], gridSize.width, gridSize.height, THREE.RGBAFormat, THREE.UnsignedByteType, THREE.UVMapping, THREE.ClampToEdgeWrapping, THREE.ClampToEdgeWrapping, THREE.LinearFilter, THREE.LinearFilter, 1);
 
     textureVisitedByTeam1.needsUpdate = true;
     textureVisitedByTeam2.needsUpdate = true;
 
-    // textureVisitedByTeam1.flipY = false;
-    // textureVisitedByTeam2.flipY = false;
+    function overloadMaterial (oldMaterial, shaderOptions) {
+      var uniforms = {
 
-    // textureVisitedByTeam1.generateMipmaps = false;
-    // textureVisitedByTeam2.generateMipmaps = false;
+        'diffuse'         : { type: 'fv', value: [ 1, 1, 1 ] },
+        'map'             : { type: 't',  value: oldMaterial.map },
 
-    var uniforms = {
-      'seeTeam1Vision'  : { type: 'i',  value: true },
-      'seeTeam2Vision'  : { type: 'i',  value: false },
+        'entities'        : { type: 'fv', value: entities },
+        'entitiesCount'   : { type: 'i',  value: arena.entities.length },
 
-      'map'             : { type: 't',  value: arena.ground.material.map },
-      'entities'        : { type: 'fv', value: entities },
-      'entitiesCount'   : { type: 'i',  value: arena.entities.length },
-      'gridSize'        : { type: 'v2', value: new THREE.Vector2( gridSize.width, gridSize.height ) },
-      'gridDiviser'     : { type: 'f',  value: gridDiviser },
-      'visitedByTeam1'  : { type: 't',  value: textureVisitedByTeam1 },
-      'visitedByTeam2'  : { type: 't',  value: textureVisitedByTeam2 },
-      'diffuse'         : { type: 'fv', value: [ 1, 1, 1 ] },
-      'opacity'         : { type: 'f',  value: 1 },
-    };
+        'sightDistance'   : { type: 'f',  value: options.sightDistance },
 
-    // // material
-    var minmaterial = new THREE.ShaderMaterial({
+        'unvisitedColor'  : { type: 'c',  value: options.unvisitedColor },
+        'visitedColor'    : { type: 'c',  value: options.visitedColor   },
 
-      uniforms: uniforms,
+        'seeTeam1Vision'  : { type: 'i',  value: true  },
+        'seeTeam2Vision'  : { type: 'i',  value: false },
 
-      fragmentShader: [
+      };
 
-        '#define GAMMA_INPUT',
-        '#define GAMMA_OUTPUT',
+      if (shaderOptions.showVisited) {
+        uniforms['visitedByTeam1'] = { type: 't',  value: textureVisitedByTeam1  };
+        uniforms['visitedByTeam2'] = { type: 't',  value: textureVisitedByTeam2  };
+      }
 
-        '#define MAX_ENTITIES 10',
+      var mapShaderPart = ! oldMaterial.map ? '' : [
+          '   vec4 texelColor = texture2D( map, vUv );',
 
-        'uniform vec3 entities[ 512 ];',
-        'uniform int entitiesCount;',
+          '   #ifdef GAMMA_INPUT',
+          '       texelColor.xyz *= texelColor.xyz;',
+          '   #endif',
 
-        'uniform int seeTeam1Vision;',
-        'uniform int seeTeam2Vision;',
+          '   gl_FragColor.xyz = gl_FragColor.xyz * texelColor.xyz;',
 
-        'uniform vec2 gridSize;',
-        'uniform float gridDiviser;',
-        'uniform sampler2D visitedByTeam1;',
-        'uniform sampler2D visitedByTeam2;',
+          '   #ifdef GAMMA_OUTPUT',
+          '       gl_FragColor.xyz = sqrt( gl_FragColor.xyz );',
+          '   #endif',
+      ].join('\n');
 
-        'varying vec4 worldPosition;',
+      var proximityShaderPart = ! shaderOptions.showProximity ? '' : [
+          //   color at entities' proximity
+          '    for ( int i = 0; i <= MAX_ENTITIES; ++i ) {',
+          '        if (i > int(entitiesCount)) break;',
+
+          //       check teams
+          '        if ( int(entities[i].y) == 0 && seeTeam1Vision == 0 ) continue;',
+          '        if ( int(entities[i].y) == 1 && seeTeam2Vision == 0 ) continue;',
+
+          '        float dist = smoothstep(1.0, 4.0, sightDistance / distance( worldPosition.xz, entities[i].xz ) ) * 10.0;',
+          '        gl_FragColor = max( gl_FragColor, max( minFragColor, minFragColor * dist ) );',
+          '    }',
+      ].join('\n');
+
+      var visitShaderPart = ! shaderOptions.showVisited ? '' : [
+          '    vec4 visCell;',
+          //   color at visited grid cells (team 1)
+          '    if ( seeTeam1Vision > 0 ) {',
+          '        visCell = texture2D( visitedByTeam1, vUv );',
+          '        gl_FragColor = max( gl_FragColor, visCell * visitedFragColor );',
+          '    }',
+          //   color at visited grid cells (team 2)
+          '    if ( seeTeam2Vision > 0 ) {',
+          '        visCell = texture2D( visitedByTeam2, vUv );',
+          '        gl_FragColor = max( gl_FragColor, visCell * visitedFragColor );',
+          '    }',
+      ].join('\n');
+
+      // // material
+      var material = new THREE.ShaderMaterial({
+
+        uniforms: uniforms,
+
+        fragmentShader: [
+
+          '#define GAMMA_INPUT',
+          '#define GAMMA_OUTPUT',
+          'varying vec2 vUv;',
+
+
+          '#define MAX_ENTITIES 10',
+
+          'varying vec4 worldPosition;',
+
+          'uniform vec3 diffuse;',
+
+          'uniform sampler2D map;',
+
+          'uniform vec3 entities[1024];',
+          'uniform int entitiesCount;',
+
+          'uniform float sightDistance;',
+          'uniform vec3 unvisitedColor;',
+          'uniform vec3 visitedColor;',
+
+          'uniform int seeTeam1Vision;',
+          'uniform int seeTeam2Vision;',
+
+          'uniform sampler2D visitedByTeam1;',
+          'uniform sampler2D visitedByTeam2;',
+
+          'void main() {',
+          '    gl_FragColor = vec4( diffuse, 0.0 );',
+
+          mapShaderPart,
+
+          '    vec4 visitedFragColor = gl_FragColor * vec4( visitedColor, 1.0 );',
+          '    vec4 minFragColor     = gl_FragColor * vec4( unvisitedColor, 1.0 );',
+
+          //   by default, set to darkest (unvisited)
+          '    gl_FragColor          = minFragColor;',
+
+          proximityShaderPart,
+
+          visitShaderPart,
+
+        '}'
+        ].join('\n'),
+
+        vertexShader: [
 
         'varying vec2 vUv;',
-        'uniform sampler2D map;',
-
-        'uniform vec3 diffuse;',
-        'uniform float opacity;',
+        'varying vec4 worldPosition;',
+        'uniform vec4 offsetRepeat;',
 
         'void main() {',
-        '    gl_FragColor = vec4( diffuse, 0.0 );',
 
-        '    vec4 texelColor = texture2D( map, vUv );',
+        // '    vUv = uv * offsetRepeat.zw + offsetRepeat.xy;',
+        '    vUv = uv;',
 
-        '    #ifdef GAMMA_INPUT',
-        '        texelColor.xyz *= texelColor.xyz;',
-        '    #endif',
+        '    worldPosition = modelMatrix * vec4( position, 1.0 );',
 
-        '    gl_FragColor.xyz = gl_FragColor.xyz * texelColor.xyz;',
+        '    vec3 objectNormal = normal;',
 
-        '    #ifdef GAMMA_OUTPUT',
-        '        gl_FragColor.xyz = sqrt( gl_FragColor.xyz );',
-        '    #endif',
+        '    vec3 transformedNormal = normalMatrix * objectNormal;',
+        '    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
 
-        '    vec4 minAlpha = vec4( 0.1 );',
-        '    vec4 visAlpha = vec4( 0.4 );',
-        '    vec4 maxAlpha = vec4( 1.0 );',
+        '    gl_Position = projectionMatrix * mvPosition;',
 
-        '    vec4 visitedFragColor = gl_FragColor * visAlpha;',
-        '    vec4 minFragColor     = gl_FragColor * minAlpha;',
+        '    vec3 worldNormal = mat3( modelMatrix[ 0 ].xyz, modelMatrix[ 1 ].xyz, modelMatrix[ 2 ].xyz ) * objectNormal;',
+        '    worldNormal = normalize( worldNormal );',
+        '    vec3 cameraToVertex = normalize( worldPosition.xyz - cameraPosition );',
 
-        // by default, set to darkest (unvisited)
-        '    gl_FragColor          = minFragColor;',
+        '}'
 
-        // '    vec4 position = worldPosition;',
-        // '    position = position * vec4( 1.0 );',
+        ].join('\n')
+      });
 
-        // color at entities' proximity
-        // '    float maxDistance = length(gridSize.xy / gridDiviser);', // 60.0
-        '    float maxDistance = gridSize.x / gridDiviser;', // 60.0
-        '    for (int i = 0; i <= MAX_ENTITIES; ++i) {',
-        '        if (i <= int(entitiesCount)) {',
-        '            float dist = smoothstep(1.0, 4.0, maxDistance / distance( worldPosition.xyz, entities[i].xyz ) ) * 10.0;',
-        '            gl_FragColor = max( gl_FragColor, max( minFragColor, minFragColor * dist ) );',
-        '        }',
-        '    }',
+      return material;
+    }
 
-        '    vec4 visCell;',
+    function patchObject3D (object, shaderOptions) {
+      var material;
+      object.traverse(function (child) {
+        if (child instanceof THREE.Mesh) {
+          if (overloadedMaterials[child.material.uuid]) {
+            child.material = overloadedMaterials[child.material.uuid];
+            child.material.needsUpdate = true;
+          } else {
+            material = overloadMaterial(child.material, shaderOptions);
+            overloadedMaterials[child.material.uuid] = material;
+            child.material = material;
+            child.material.needsUpdate = true;
+          }
+        }
+      });
+      return material;
+    }
 
-        // color at visited grid cells (team 1)
-        '    if (seeTeam1Vision > 0) {',
-        '        visCell = texture2D( visitedByTeam1, vUv );',
-        '        gl_FragColor = max( gl_FragColor, visCell * visitedFragColor );',
-        '    }',
 
-        // color at visited grid cells (team 2)
-        '    if (seeTeam2Vision > 0) {',
-        '        visCell = texture2D( visitedByTeam2, vUv );',
-        '        gl_FragColor = max( gl_FragColor, visCell * visitedFragColor );',
-        '    }',
+    //  'added:entity'
 
-      '}'
-      ].join('\n'),
-
-      vertexShader: [
-
-      'varying vec2 vUv;',
-      'varying vec4 worldPosition;',
-      'uniform vec4 offsetRepeat;',
-
-      'void main() {',
-
-      // '    vUv = uv * offsetRepeat.zw + offsetRepeat.xy;',
-      '    vUv = uv;',
-
-      '    worldPosition = modelMatrix * vec4( position, 1.0 );',
-
-      '    vec3 objectNormal = normal;',
-
-      '    vec3 transformedNormal = normalMatrix * objectNormal;',
-      '    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
-
-      '    gl_Position = projectionMatrix * mvPosition;',
-
-      '    vec3 worldNormal = mat3( modelMatrix[ 0 ].xyz, modelMatrix[ 1 ].xyz, modelMatrix[ 2 ].xyz ) * objectNormal;',
-      '    worldNormal = normalize( worldNormal );',
-      '    vec3 cameraToVertex = normalize( worldPosition.xyz - cameraPosition );',
-
-      '}'
-
-      ].join('\n')
+    var groundMaterial = patchObject3D(arena.ground, {
+      showProximity: true,
+      showVisited:   true
     });
 
+    var patchedObjects = [  ]
+                          .concat(arena.findAllByClass(InteractiveObject))
+                          // .concat(arena.findAllByClass(Entity))
+                          ;
 
-    arena.ground.traverse(function (child) {
-      if (child instanceof THREE.Mesh) {
-        child.material = minmaterial;
-        child.material.needsUpdate = true;
-      }
+    _.each(patchedObjects, function (o) {
+      patchObject3D(o, {
+        showProximity: true,
+        showVisited:   false
+      });
     });
 
+    function updateFOWs_seeTeam1Vision(value) {
+      _.each(overloadedMaterials, function (m) {
+        if (m.uniforms.seeTeam1Vision) m.uniforms.seeTeam1Vision.value = value;
+      });
+    }
+    function updateFOWs_seeTeam2Vision(value) {
+      _.each(overloadedMaterials, function (m) {
+        if (m.uniforms.seeTeam2Vision) m.uniforms.seeTeam2Vision.value = value;
+      });
+    }
+    function updateFOWs_sightDistance(value) {
+      _.each(overloadedMaterials, function (m) {
+        m.uniforms.sightDistance.value = value;
+      });
+    }
+    function updateFOWs_unvisitedColor(c) {
+      _.each(overloadedMaterials, function (m) {
+        m.uniforms.unvisitedColor.value.r = c;
+        m.uniforms.unvisitedColor.value.g = c;
+        m.uniforms.unvisitedColor.value.b = c;
+      });
+    }
+    function updateFOWs_visitedColor(c) {
+      _.each(overloadedMaterials, function (m) {
+        m.uniforms.visitedColor.value.r = c;
+        m.uniforms.visitedColor.value.g = c;
+        m.uniforms.visitedColor.value.b = c;
+      });
+    }
 
     // gui
-    var f = arena.gui.addFolder('Fog of war');
-    f.add(uniforms.seeTeam1Vision, 'value').name('Team 1 vision').listen();
-    f.add(uniforms.seeTeam2Vision, 'value').name('Team 2 vision').listen();
+    if (arena.gui) {
+
+      var f = arena.gui.addFolder('Fog of war');
+      f.add(groundMaterial.uniforms.seeTeam1Vision, 'value').name('Team 1 vision')
+                                                            .listen()
+                                                            .onChange(updateFOWs_seeTeam1Vision);
+      f.add(groundMaterial.uniforms.seeTeam2Vision, 'value').name('Team 2 vision')
+                                                            .listen()
+                                                            .onChange(updateFOWs_seeTeam2Vision);
+      f.add(groundMaterial.uniforms.sightDistance, 'value', 0, 300).name('Sight distance')
+                                                            .listen()
+                                                            .onChange(updateFOWs_sightDistance);
+      f.add(options, 'visitedistance', Math.round(options.visitedistance / 5), Math.round(options.visitedistance * 10)).name('Visited distance')
+                                                            .listen()
+      f.add({ value: options.unvisitedColor.r }, 'value', 0, 1).name('Unvisited color')
+                                                            .listen()
+                                                            .onChange(updateFOWs_unvisitedColor);
+      f.add({ value: options.visitedColor.r }, 'value', 0, 1).name('Visited color')
+                                                            .listen()
+                                                            .onChange(updateFOWs_visitedColor);
+    }
+
+    arena.on('added:static', patchObject3D);
 
 
     arena.on('update', function () {
@@ -2301,18 +2389,16 @@ module.exports = function (arena) {
         // update each entities current position
         var j = i * 3;
         entities[j  ] = e.position.x;
-        entities[j+1] = e.position.y;
+        entities[j+1] = e.state.team;
         entities[j+2] = e.position.z;
 
         // update visited cells
         var loc = arena.inTerrainDatum(e.position);
-        var x = Math.round(loc.x / gridDiviser);
-        var y = Math.round(loc.z / gridDiviser);
+        var x = Math.round(loc.x / options.gridDiviser);
+        var y = Math.round(loc.z / options.gridDiviser);
 
-        var sightDistance = 3;
-
-        for (var sx = Math.max(0, x-sightDistance); sx < Math.min(gridSize.width, x+sightDistance); sx++) {
-          for (var sy = Math.max(0, y-sightDistance); sy < Math.min(gridSize.width, y+sightDistance); sy++) {
+        for (var sx = Math.max(0, x-options.visitedistance); sx < Math.min(gridSize.width, x+options.visitedistance); sx++) {
+          for (var sy = Math.max(0, y-options.visitedistance); sy < Math.min(gridSize.width, y+options.visitedistance); sy++) {
             var index = 4 * sx + 4 * sy * gridSize.height;
             // console.log('mark cell', index, ' '+sx+';'+sy, 'as visited');
             teamVisited[e.state.team][index]   = 255;
@@ -2324,14 +2410,13 @@ module.exports = function (arena) {
       });
 
       // update entities count
-      uniforms.entitiesCount.value = arena.entities.length;
+      _.each(overloadedMaterials, function (m) {
+        m.uniforms.entitiesCount.value = arena.entities.length;
+      });
 
       // update shader
-      // minmaterial.needsUpdate = true;
-      textureVisitedByTeam1.needsUpdate   = true;
-      textureVisitedByTeam2.needsUpdate   = true;
-      uniforms.entitiesCount.needsUpdate  = true;
-      uniforms.entities.needsUpdate       = true;
+      textureVisitedByTeam1.needsUpdate = true;
+      textureVisitedByTeam2.needsUpdate = true;
 
     });
 
@@ -2344,7 +2429,7 @@ function nearestPow2 (aSize) {
   return Math.pow(2, Math.round(Math.log(aSize) / Math.log(2)));
 }
 
-},{"lodash":144}],31:[function(require,module,exports){
+},{"../elements/interactiveobject":47,"../entity":58,"lodash":144}],31:[function(require,module,exports){
 'use strict';
 
 var TrackballControls = require('three.trackball');
@@ -2386,8 +2471,8 @@ module.exports = function (arena) {
     // controls.zoomSpeed = 1.2;
     // controls.panSpeed = 0.8;
 
+    controls.noRoll = true;
     // controls.noZoom = false;
-    // controls.noPan = false;
 
     // controls.staticMoving = true;
     // controls.dynamicDampingFactor = 0.3;
@@ -8134,11 +8219,28 @@ Arena.prototype.findWithTag = function(tag, from, filter) {
  *
  * @param oneclass class name
  */
-Arena.prototype.findAllWithClass = function(oneclass) {
+Arena.prototype.findAllByClassName = function(oneclass) {
   var found = [];
 
   this.scene.traverse(function (child) {
     if (child.constructor.name === oneclass) {
+      found.push(child);
+    }
+  });
+
+  return found;
+};
+
+/**
+ * Finds all game objects of class oneclass.
+ *
+ * @param oneclass class name
+ */
+Arena.prototype.findAllByClass = function(oneclass) {
+  var found = [];
+
+  this.scene.traverse(function (child) {
+    if (child instanceof oneclass) {
       found.push(child);
     }
   });
@@ -10254,7 +10356,7 @@ function SettingsGUI (arena, options) {
     });
   });
 
-  return SettingsGUI.create(options)
+  return SettingsGUI.create(options);
 }
 
 /**
@@ -12947,7 +13049,8 @@ function GameViewModel (game) {
       self.mapOffsetY(0);
       self.orientation(0);
 
-      self.updateEntitiesAbsolute(arena);
+      // FIXME performance hog
+      // self.updateEntitiesAbsolute(arena);
     }
 
   };
