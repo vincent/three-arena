@@ -1736,7 +1736,7 @@ function attachName (arena, entity) {
 var _ = require('lodash');
 
 var Entity = require('../entity');
-var InteractiveObject = require('../elements/interactiveobject');
+var Shop = require('../elements/shop');
 
 module.exports = function (arena, options) {
 
@@ -2140,6 +2140,12 @@ module.exports = function (arena, options) {
     textureVisitedByTeam2.needsUpdate = true;
 
     function overloadMaterial (oldMaterial, shaderOptions) {
+
+      shaderOptions = shaderOptions || {
+        showProximity: true,
+        showVisited:   false
+      };
+
       var uniforms = {
 
         'diffuse'         : { type: 'fv', value: [ 1, 1, 1 ] },
@@ -2315,25 +2321,24 @@ module.exports = function (arena, options) {
     });
 
     var patchedObjects = [  ]
-                          .concat(arena.findAllByClass(InteractiveObject))
+                          .concat(arena.findAllByClass(Shop))
                           // .concat(arena.findAllByClass(Entity))
                           ;
 
-    _.each(patchedObjects, function (o) {
-      patchObject3D(o, {
-        showProximity: true,
-        showVisited:   false
-      });
-    });
+    _.each(patchedObjects, patchObject3D);
 
     function updateFOWs_seeTeam1Vision(value) {
       _.each(overloadedMaterials, function (m) {
-        if (m.uniforms.seeTeam1Vision) m.uniforms.seeTeam1Vision.value = value;
+        if (m.uniforms.seeTeam1Vision) {
+          m.uniforms.seeTeam1Vision.value = value;
+        }
       });
     }
     function updateFOWs_seeTeam2Vision(value) {
       _.each(overloadedMaterials, function (m) {
-        if (m.uniforms.seeTeam2Vision) m.uniforms.seeTeam2Vision.value = value;
+        if (m.uniforms.seeTeam2Vision) {
+          m.uniforms.seeTeam2Vision.value = value;
+        }
       });
     }
     function updateFOWs_sightDistance(value) {
@@ -2370,7 +2375,7 @@ module.exports = function (arena, options) {
                                                             .listen()
                                                             .onChange(updateFOWs_sightDistance);
       f.add(options, 'visitedistance', Math.round(options.visitedistance / 5), Math.round(options.visitedistance * 10)).name('Visited distance')
-                                                            .listen()
+                                                            .listen();
       f.add({ value: options.unvisitedColor.r }, 'value', 0, 1).name('Unvisited color')
                                                             .listen()
                                                             .onChange(updateFOWs_unvisitedColor);
@@ -2379,7 +2384,7 @@ module.exports = function (arena, options) {
                                                             .onChange(updateFOWs_visitedColor);
     }
 
-    arena.on('added:static', patchObject3D);
+    // arena.on('added:static', patchObject3D);
 
 
     arena.on('update', function () {
@@ -2401,10 +2406,11 @@ module.exports = function (arena, options) {
           for (var sy = Math.max(0, y-options.visitedistance); sy < Math.min(gridSize.width, y+options.visitedistance); sy++) {
             var index = 4 * sx + 4 * sy * gridSize.height;
             // console.log('mark cell', index, ' '+sx+';'+sy, 'as visited');
-            teamVisited[e.state.team][index]   = 255;
-            teamVisited[e.state.team][index+1] = 255;
-            teamVisited[e.state.team][index+2] = 255;
-            teamVisited[e.state.team][index+3] = 255;
+            var teamIndex = e.state.team || 0;
+            teamVisited[teamIndex][index]   = 255;
+            teamVisited[teamIndex][index+1] = 255;
+            teamVisited[teamIndex][index+2] = 255;
+            teamVisited[teamIndex][index+3] = 255;
           }
         }
       });
@@ -2429,7 +2435,7 @@ function nearestPow2 (aSize) {
   return Math.pow(2, Math.round(Math.log(aSize) / Math.log(2)));
 }
 
-},{"../elements/interactiveobject":47,"../entity":58,"lodash":144}],31:[function(require,module,exports){
+},{"../elements/shop":50,"../entity":58,"lodash":144}],31:[function(require,module,exports){
 'use strict';
 
 var TrackballControls = require('three.trackball');
@@ -3585,6 +3591,11 @@ Crowd.prototype._updateAgent = function(agent){
   // var agent = agents[i];
   var idx = agent.idx;
   var entity = this.agents[idx];
+
+  if (! entity) {
+    // console.warning('missing entity ?!');
+    return;
+  }
 
   if (entity._crowd_idx && (entity._crowd_dirty || ! agent.active || entity.isDead())) {
     this.removeAgent(entity);
@@ -8254,7 +8265,7 @@ Arena.prototype.findAllByClass = function(oneclass) {
  * @param tag tag name
  */
 Arena.prototype.findWithClass = function(oneclass, from, filter) {
-  var found = this.findAllWithClass(oneclass),
+  var found = this.findAllByClassName(oneclass),
       distance = Number.MAX_VALUE,
       nearest = null;
   for (var i = 0; i < found.length; i++) {
