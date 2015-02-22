@@ -6275,6 +6275,8 @@ function Arena (overrideSettings) {
    * @type {Array}
    */
   this.intersectObjects = [];
+  this.raycasterVector = new THREE.Vector2();
+  this.raycaster       = new THREE.Raycaster();
 
   /**
    * The state machine enine
@@ -6902,29 +6904,27 @@ Arena.prototype.raycast = function( event, objects ) {
 
   objects = objects || this.intersectObjects;
 
-  if (! this._raycasterVector) {
-    this._raycasterVector = new THREE.Vector3();
-  }
-
   var dims = this.getContainerDimensions();
 
-  this._raycasterVector.set(
-     (event.layerX / dims.width) * 2 - 1,
-    -(event.layerY / dims.height) * 2 + 1,
-    this.camera.near
+  this.raycasterVector.set(
+     (event.layerX / dims.width ) * 2 - 1,
+    -(event.layerY / dims.height) * 2 + 1
   );
 
-  if (! this._projector) {
-    this._projector = new THREE.Projector();
-  }
+  // this._projector.unprojectVector(this.raycasterVector, this.camera);
+  // this.raycasterVector.unproject(this.camera);
 
-  // this._projector.unprojectVector(this._raycasterVector, this.camera);
-  this._raycasterVector.unproject(this.camera);
+  /* * /
+  this.raycaster = new THREE.Raycaster(this.camera.position,
+  this.raycasterVector.sub(this.camera.position).normalize());
+  /* */
 
-  this._raycaster = new THREE.Raycaster(this.camera.position,
-  this._raycasterVector.sub(this.camera.position).normalize());
+  /* */
+  this.raycaster.setFromCamera(this.raycasterVector, this.camera);
+  /* */
 
-  var intersects = this._raycaster.intersectObjects(objects, true); // recursive
+
+  var intersects = this.raycaster.intersectObjects(objects, true); // recursive
 
   return intersects;
 };
@@ -7228,7 +7228,10 @@ Arena.prototype.setTerrain = function(file, options) {
   }, options, {
     onLoad: function(terrain) {
       self.ground = terrain;
-      self.intersectObjects = self.intersectObjects.concat(self.ground.children[0].children);
+
+      // this mean the more complex the ground is, the longer it takes to compute click-to-move :/
+      // self.intersectObjects = self.intersectObjects.concat(self.ground.children[0].children);
+
       self.scene.add(self.ground);
 
       // ground bounding box
@@ -7287,6 +7290,8 @@ Arena.prototype.setTerrain = function(file, options) {
 
             }
 
+            self.computeNavigationMesh();
+
             self.pathfinder.initCrowd(100, 1.0);
 
             debug('terrain ready');
@@ -7341,7 +7346,26 @@ Arena.prototype.computeNavigationMesh = function(callback) {
           transparent: true,
           opacity: 0.8
         });
-        self.scene.add(self.navigationMesh);
+
+        self.navigationMesh.traverse(function(o){
+          o.isNavigationMesh = true;
+
+          if (o instanceof THREE.Mesh) nmv += o.geometry.vertices.length;
+        });
+
+        var nmv = 0, gv = 0;
+        self.ground.traverse(function(o){
+          if (o instanceof THREE.Mesh && o.geometry.vertices) nmv += o.geometry.vertices.length;
+          else if (o instanceof THREE.Mesh && o.geometry.attributes.position) nmv += o.geometry.attributes.position.length;
+        });
+        self.navigationMesh.traverse(function(o){
+          if (o instanceof THREE.Mesh && o.geometry) gv += o.geometry.vertices.length;
+          else if (o instanceof THREE.Mesh && o.geometry.attributes.position) gv += o.geometry.attributes.position.length;
+        });
+        console.log('navigation mesh has %o vertices, ground has %o vertices', nmv, gv);
+
+        self.intersectObjects.push(self.navigationMesh);          
+
         if (callback) { callback(null, self.navigationMesh); }
       })
     );
@@ -8366,6 +8390,7 @@ Arena.Account    = require('./account');
 'use strict';
 
 var debug = require('debug')('controls:mouse');
+var now   = require('now');
 
 var settings = require('../settings');
 
@@ -8382,6 +8407,8 @@ function MouseControl (arena) {
   this.arena = arena;
 
   this.enabled = settings.data.controls.mouseEnabled;
+
+  this._lastMouseUp = 0;
 
   this.arena.settings.container.addEventListener('mouseup', this._onDocumentMouseUp.bind(this), false);
   this.arena.settings.container.addEventListener('mousedown', this._onDocumentMouseDown.bind(this), false);
@@ -8411,6 +8438,14 @@ MouseControl.prototype._onMouseScroll = function(event) {
 MouseControl.prototype._onDocumentMouseUp = function(event) {
 
   if (! settings.data.controls.mouseEnabled) { return false; }
+
+  var lastMouseUp = now();
+  if (lastMouseUp - this._lastMouseUp < 1000) {
+    debug('ignored mouse event');
+    // setTimeout(function(){ this._onDocumentMouseUp(event); }, 50);
+    this._lastMouseUp = lastMouseUp;
+    return false;
+  }
 
   // disable gamepad
   settings.data.controls.gamepadEnabled = false;
@@ -8453,7 +8488,7 @@ MouseControl.prototype._onDocumentMouseUp = function(event) {
     //   );
 
     } else if (arena._testKey(event.button, 'MOVE_BUTTON') &&
-      intersects[0].object && Utils.childOf(intersects[0].object, Terrain)) {
+      intersects[0].object && (intersects[0].object.isNavigationMesh || Utils.childOf(intersects[0].object, Terrain))) {
 
       arena.endAllInteractions();
 
@@ -8639,7 +8674,7 @@ MouseControl.prototype._onDocumentMouseMove = function(event) {
   this.arena.updateSelectionCoords(event.clientX, event.clientY);
 };
 
-},{"../elements/collectible":43,"../elements/interactiveobject":47,"../elements/terrain":54,"../entity":58,"../settings":72,"../utils":89,"debug":98}],65:[function(require,module,exports){
+},{"../elements/collectible":43,"../elements/interactiveobject":47,"../elements/terrain":54,"../entity":58,"../settings":72,"../utils":89,"debug":98,"now":146}],65:[function(require,module,exports){
 'use strict';
 
 module.exports = Inventory;
