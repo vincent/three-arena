@@ -3525,6 +3525,19 @@ Crowd.prototype.update = function() {
 
   var self = this;
 
+  if (this.updateTime && self._stillUpdating) {
+    debug('Crowd.update has been called twice !');
+
+    if (now() - this.updateTime < 100) {
+      debug('but it was a long time ago');
+
+    } else {
+      return;
+    }
+  }
+
+  self._stillUpdating = true;
+
   if (self.agentsCount > 0) {
 
     // update routes visibility
@@ -3688,12 +3701,13 @@ Crowd.prototype._updateAgents = function(agents){
   for (var a = 0; a < agents.length; a++) {
     this._updateAgent(agents[a]);
   }
-  // async.each(agents, this._updateAgent.bind(this));
 
   if (this.updateDurationMax < this.updateDuration) {
     this.updateDurationMax = this.updateDuration;
     debug('pathfinder update took %oms', this.updateDuration);
   }
+
+  this._stillUpdating = false;
 };
 
 function crowdOptions(options) {
@@ -33534,7 +33548,7 @@ var Recast = function (worker_url, onWorkerReady) {
                 worker.onmessage = null;
                 onReady(worker);
             };
-            worker.postMessage({});
+            worker.postMessage();
             return worker;
         };
 
