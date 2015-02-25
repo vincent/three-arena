@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "async": "~0.2.9",
+    "bluebird": "^2.9.12",
     "cookies-js": "^1.2.1",
     "debug": "~0.7.4",
     "express": "^4.11.2",

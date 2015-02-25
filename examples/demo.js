@@ -93,12 +93,28 @@ arena.addInteractive(shop);
 
 
 // Some flies
-0 && arena.on('set:terrain', function(){
+arena.on('set:terrain', function(){
 
-  arena.addStatic(function (done) {
+  /* */
+  // Add some trees
+  for (var i = 0; i < 10; i++) {
+    new Arena.Elements.Tree({
+      onLoad: function(){
+        var tree = this;
+        arena.randomPositionOnterrain(function(x, y, z){
+          tree.position.set(x, y, z);
+          arena.addStatic(tree);
+        });
+      }
+    });
+  }
+  /* */
+
+
+  0 && arena.addStatic(function (done) {
     var flies = new Arena.Elements.Flies(10);
-    arena.randomPositionOnterrain(function(point){
-      flies.position.copy(point);
+    arena.randomPositionOnterrain(function(x, y, z){
+      flies.position.set(x, y, z);
       arena.on('update', flies.update.bind(flies));
       done(flies);
     });
