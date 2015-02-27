@@ -97,16 +97,24 @@ arena.on('set:terrain', function(){
 
   /* */
   // Add some trees
-  for (var i = 0; i < 10; i++) {
-    new Arena.Elements.Tree({
-      onLoad: function(){
-        var tree = this;
-        arena.randomPositionOnterrain(function(x, y, z){
-          tree.position.set(x, y, z);
-          arena.addStatic(tree);
-        });
-      }
-    });
+  var trees = new Arena.Elements.MergedTrees();
+  for (var i = 0; i < 100; i++) {
+    (function (i) {
+      new Arena.Elements.Tree({
+        onLoad: function(){
+          var tree = this;
+          arena.randomPositionOnterrain(function(x, y, z){
+            tree.position.set(x, y, z);
+
+            trees.merge(tree);
+            if (i === 99) {
+              debugger;
+              arena.addStatic(trees);
+            }
+          });
+        }
+      });
+    })(i);
   }
   /* */
 
@@ -147,7 +155,8 @@ arena.on('set:terrain', function(){
         // character.learnSpell(Arena.Spells.FlatFireAura);
         character.learnSpell(Arena.Spells.Lightbolt);
 
-        character.position.copy(arena.settings.positions.nearcamp);
+        // character.position.copy(arena.settings.positions.nearcamp);
+        character.position.set(-15, 10, 80);
 
         arena.asPlayer(character);
 
@@ -182,7 +191,11 @@ pool.on('spawnedone', function (character) {
   character.state.autoAttackSpell = 0;
 
   // character.position.set( 34.51927152670307, 16.415442854566393, -55.559584976370715 );
-  character.position.copy(objective2.position);
+  character.position.set(
+    objective2.position.x - 15,
+    objective2.position.y,
+    objective2.position.z + 15
+  );
 
   character.objective = objective1;
   character.behaviour = Arena.Behaviours.Minion;
@@ -200,7 +213,7 @@ arena.addStatic(pool);
 
 $('#loading-bar, #loading-bar .progress').show();
 
-arena.on('set:terrain', function(){
+arena.once('set:terrain', function(){
   arena.init(function(arena){
     var completed = 0;
     arena.preload(
