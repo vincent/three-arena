@@ -10,7 +10,7 @@ var arena = window.arena = new Arena({
   visibleCharactersBBox: false,
 
   lights: {
-    ambientColor: 0x646464,
+    ambientColor: 0x070707,
     pointColor: 0x786D53,
     directionalColor: 0x2F1717
   },
@@ -33,8 +33,8 @@ arena.on('set:lights', function () {
 arena.setTerrain('/gamedata/maps/dota/mountains.obj', {
   minimap: THREE.ImageUtils.loadTexture('/gamedata/maps/dota/dota_map_full_compress3.jpg'),
   map: THREE.ImageUtils.loadTexture('/gamedata/maps/dota/dota_map_full_compress3.jpg'),
-  // bumpMap: THREE.ImageUtils.loadTexture('/gamedata//maps/dota/dota_map_full_compress3.jpg'),
-  // bumpScale: 0.005,
+  // bumpMap: THREE.ImageUtils.loadTexture('/gamedata//maps/dota/dota_map_full_compress3_bump.jpg'),
+  // bumpScale: 2,
 });
 
 
@@ -111,7 +111,7 @@ arena.on('set:terrain', function(){
 
   // Another character
   arena.addCharacter(function(done){
-    var hero = new Arena.Characters.OO7({
+    var hero = new Arena.Characters.Ogro({
       name: Arena.Account.username(),
       maxSpeed: 20.0,
       onLoad: function(){
