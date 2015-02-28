@@ -108,7 +108,7 @@ arena.on('set:terrain', function(){
 
             trees.merge(tree);
             if (i === 99) {
-              debugger;
+              i = -1;
               arena.addStatic(trees);
             }
           });
