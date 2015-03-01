@@ -10,7 +10,7 @@ var arena = window.arena = new Arena({
   visibleCharactersBBox: false,
 
   lights: {
-    ambientColor: 0x646464,
+    ambientColor: 0x070707,
     pointColor: 0x786D53,
     directionalColor: 0x2F1717
   },
@@ -33,8 +33,8 @@ arena.on('set:lights', function () {
 arena.setTerrain('/gamedata/maps/dota/mountains.obj', {
   minimap: THREE.ImageUtils.loadTexture('/gamedata/maps/dota/dota_map_full_compress3.jpg'),
   map: THREE.ImageUtils.loadTexture('/gamedata/maps/dota/dota_map_full_compress3.jpg'),
-  // bumpMap: THREE.ImageUtils.loadTexture('/gamedata//maps/dota/dota_map_full_compress3.jpg'),
-  // bumpScale: 0.005,
+  // bumpMap: THREE.ImageUtils.loadTexture('/gamedata//maps/dota/dota_map_full_compress3_bump.jpg'),
+  // bumpScale: 2,
 });
 
 
@@ -99,16 +99,24 @@ arena.on('set:terrain', function(){
   // Add some trees
   var trees = new Arena.Elements.MergedTrees();
   for (var i = 0; i < 100; i++) {
-    (function (i) {
+    (function (j) {
       new Arena.Elements.Tree({
         onLoad: function(){
-          var tree = this;
+          var tree = this.children[0];
+          tree.geometry = tree.geometry.clone();
+
           arena.randomPositionOnterrain(function(x, y, z){
+
             tree.position.set(x, y, z);
+            tree.updateMatrix();
 
             trees.merge(tree);
-            if (i === 99) {
-              i = -1;
+
+            arena.addObstacle(tree.position, 10.0);
+
+            if (j === 99) {
+              j = 0;
+              trees.alreadyGrounded = true;
               arena.addStatic(trees);
             }
           });
@@ -135,7 +143,7 @@ arena.on('set:terrain', function(){
 
   // Another character
   arena.addCharacter(function(done){
-    var hero = new Arena.Characters.OO7({
+    var hero = new Arena.Characters.Ogro({
       name: Arena.Account.username(),
       maxSpeed: 20.0,
       onLoad: function(){

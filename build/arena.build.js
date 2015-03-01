@@ -18,7 +18,7 @@ function d(enabled){
   }
 }
 
-},{"./lib/index.js":65,"debug":101}],2:[function(require,module,exports){
+},{"./lib/index.js":66,"debug":102}],2:[function(require,module,exports){
 'use strict';
 
 var cookies = require('cookies-js');
@@ -45,7 +45,7 @@ module.exports = {
     }
 };
 
-},{"./character/dictionnaries/elvish":16,"cookies-js":100}],3:[function(require,module,exports){
+},{"./character/dictionnaries/elvish":17,"cookies-js":101}],3:[function(require,module,exports){
 module.exports = {
   Controlled: require('./controlled'),
   Collector: require('./collector'),
@@ -320,7 +320,7 @@ Character.prototype.moveAlong = function(linepoints, options) {
 
 Character.prototype.constructor = Character;
 
-},{"./entity":60,"./utils":91,"debug":101,"inherits":136,"lodash":147}],14:[function(require,module,exports){
+},{"./entity":61,"./utils":92,"debug":102,"inherits":137,"lodash":148}],14:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -437,7 +437,7 @@ function ZeroZeroSeven ( options ) {
 
 inherits(ZeroZeroSeven, Character);
 
-},{"../character":13,"inherits":136,"lodash":147}],15:[function(require,module,exports){
+},{"../character":13,"inherits":137,"lodash":148}],15:[function(require,module,exports){
 module.exports = {
   Dummy: require('./dummy'),
   OO7: require('./007'),
@@ -448,9 +448,83 @@ module.exports = {
   SCV: require('./scv'),
   Ghost: require('./ghost'),
   Zombie: require('./zombie'),
-  Marine: require('./marine')
+  Marine: require('./marine'),
+  Archer: require('./archer')
 };
-},{"./007":14,"./dummy":17,"./ghost":18,"./human":19,"./marine":20,"./monsterdog":21,"./ogro":22,"./ratamahatta":23,"./scv":24,"./zombie":25}],16:[function(require,module,exports){
+},{"./007":14,"./archer":16,"./dummy":18,"./ghost":19,"./human":20,"./marine":21,"./monsterdog":22,"./ogro":23,"./ratamahatta":24,"./scv":25,"./zombie":26}],16:[function(require,module,exports){
+'use strict';
+
+var _ = require('lodash');
+var inherits = require('inherits');
+
+var Character = require('../character');
+
+module.exports = Archer;
+
+/**
+ * @exports threearena/character/archer
+ *
+ * @constructor
+ */
+function Archer ( options ) {
+
+  var self = this;
+
+  options = _.merge({
+
+    life: 100,
+    mana: false,
+
+    radius: 4.0,
+
+    speed: 100,
+
+    name: 'Archer',
+    image: '/gamedata/models/monster/portrait.gif',
+
+    onLoad: null,
+
+  }, options);
+
+  Character.apply( this, [ options ]);
+
+  var loader = new THREE.ColladaLoader();
+  loader.options.convertUpAxis = true;
+  loader.load( '/gamedata/models/archer/archer.dae', function ( collada ) {
+
+    self.character = collada.scene;
+    self.skin = collada.skins[ 0 ];
+
+    self.character.traverse(function (child) {
+      if (child instanceof THREE.SkinnedMesh) {
+        var animation = new THREE.Animation(child, child.geometry.animation);
+        animation.play();
+      }
+    });
+
+    self.skin.geometry.computeFaceNormals();
+
+    self.character.children[0].rotation.y = 180 * Math.PI / 2;
+    self.character.children[1].rotation.y = 180 * Math.PI / 2;
+
+    self.character.scale.x = self.character.scale.y = self.character.scale.z = 0.005;
+    self.character.updateMatrix();
+
+    self.character.controls = {};
+    self.character.setAnimation = function () { };
+
+    self.character.update = function(delta) {
+      THREE.AnimationHandler.update(delta / 10);
+    };
+
+    self.add(self.character);
+    if (options.onLoad) { options.onLoad.apply(self); }
+  });
+}
+
+inherits(Archer, Character);
+
+},{"../character":13,"inherits":137,"lodash":148}],17:[function(require,module,exports){
 module.exports = [
   'Sindarin',
   'Quenya',
@@ -826,7 +900,7 @@ module.exports = [
   'Athae',
   'Asëa '
 ];
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -895,7 +969,7 @@ Dummy.prototype.setCharacter = function(object) {
 };
 
 
-},{"../character":13,"inherits":136,"lodash":147}],18:[function(require,module,exports){
+},{"../character":13,"inherits":137,"lodash":148}],19:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -985,7 +1059,7 @@ Ghost.prototype.update = function(arena) {
   this.character.update(arena.delta);
 };
 
-},{"../character":13,"inherits":136,"lodash":147}],19:[function(require,module,exports){
+},{"../character":13,"inherits":137,"lodash":148}],20:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1036,7 +1110,7 @@ function Human ( options ) {
 
 inherits(Human, Character);
 
-},{"../character":13,"inherits":136,"lodash":147}],20:[function(require,module,exports){
+},{"../character":13,"inherits":137,"lodash":148}],21:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1111,7 +1185,7 @@ function Marine (options) {
 inherits(Marine, Character);
 
 
-},{"../character":13,"inherits":136,"lodash":147}],21:[function(require,module,exports){
+},{"../character":13,"inherits":137,"lodash":148}],22:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1123,7 +1197,7 @@ module.exports = Monsterdog;
 
 /**
  * @exports threearena/character/monsterdog
- * 
+ *
  * @constructor
  */
 function Monsterdog ( options ) {
@@ -1155,6 +1229,13 @@ function Monsterdog ( options ) {
     self.character = collada.scene;
     self.skin = collada.skins[ 0 ];
 
+    self.character.traverse(function (child) {
+      if (child instanceof THREE.SkinnedMesh) {
+        var animation = new THREE.Animation(child, child.geometry.animation);
+        animation.play();
+      }
+    });
+
     self.skin.geometry.computeFaceNormals();
 
     self.character.children[0].rotation.y = 180 * Math.PI / 2;
@@ -1166,23 +1247,8 @@ function Monsterdog ( options ) {
     self.character.controls = {};
     self.character.setAnimation = function () { };
 
-    var t = 0;
     self.character.update = function(delta) {
-      if ( t > 1 ) { t = 0; }
-
-      // guess this can be done smarter...
-      // (Indeed, there are way more frames than needed and interpolation is not used at all
-      //  could be something like - one morph per each skinning pose keyframe, or even less,
-      //  animation could be resampled, morphing interpolation handles sparse keyframes quite well.
-      //  Simple animation cycles like this look ok with 10-15 frames instead of 100 ;)
-
-      for ( var i = 0; i < self.skin.morphTargetInfluences.length; i++ ) {
-        self.skin.morphTargetInfluences[ i ] = 0;
-      }
-
-      self.skin.morphTargetInfluences[ Math.floor( t * 30 ) ] = 1;
-
-      t += delta;
+      THREE.AnimationHandler.update(delta / 10);
     };
 
     self.add(self.character);
@@ -1192,7 +1258,7 @@ function Monsterdog ( options ) {
 
 inherits(Monsterdog, Character);
 
-},{"../character":13,"inherits":136,"lodash":147}],22:[function(require,module,exports){
+},{"../character":13,"inherits":137,"lodash":148}],23:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1312,7 +1378,7 @@ function Ogro ( options ) {
 inherits(Ogro, Character);
 
 
-},{"../character":13,"inherits":136,"lodash":147}],23:[function(require,module,exports){
+},{"../character":13,"inherits":137,"lodash":148}],24:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1388,7 +1454,7 @@ function Ratamahatta ( options ) {
 
 inherits(Ratamahatta, Character);
 
-},{"../character":13,"inherits":136,"lodash":147}],24:[function(require,module,exports){
+},{"../character":13,"inherits":137,"lodash":148}],25:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1446,7 +1512,7 @@ function SCV (options) {
 inherits(SCV, Character);
 
 
-},{"../character":13,"inherits":136,"lodash":147}],25:[function(require,module,exports){
+},{"../character":13,"inherits":137,"lodash":148}],26:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -1458,7 +1524,7 @@ module.exports = Zombie;
 
 /**
  * @exports threearena/character/zombie
- * 
+ *
  * @constructor
  */
 function Zombie ( options ) {
@@ -1490,6 +1556,13 @@ function Zombie ( options ) {
     self.character = collada.scene;
     self.skin = collada.skins[ 0 ];
 
+    self.character.traverse(function (child) {
+      if (child instanceof THREE.SkinnedMesh) {
+        var animation = new THREE.Animation(child, child.geometry.animation);
+        animation.play();
+      }
+    });
+
     self.character.meshBody = self.character.children[1];
 
     self.skin.geometry.computeFaceNormals();
@@ -1506,23 +1579,8 @@ function Zombie ( options ) {
     self.character.controls = {};
     self.character.setAnimation = function () { };
 
-    var t = 0;
     self.character.update = function(delta) {
-      if ( t > 1 ) { t = 0; }
-
-      // guess this can be done smarter...
-      // (Indeed, there are way more frames than needed and interpolation is not used at all
-      //  could be something like - one morph per each skinning pose keyframe, or even less,
-      //  animation could be resampled, morphing interpolation handles sparse keyframes quite well.
-      //  Simple animation cycles like this look ok with 10-15 frames instead of 100 ;)
-
-      for ( var i = 0; i < self.skin.morphTargetInfluences.length; i++ ) {
-        self.skin.morphTargetInfluences[ i ] = 0;
-      }
-
-      self.skin.morphTargetInfluences[ Math.floor( t * 30 ) ] = 1;
-
-      t += delta;
+      THREE.AnimationHandler.update(delta / 10);
     };
 
     self.add(self.character);
@@ -1532,7 +1590,7 @@ function Zombie ( options ) {
 
 inherits(Zombie, Character);
 
-},{"../character":13,"inherits":136,"lodash":147}],26:[function(require,module,exports){
+},{"../character":13,"inherits":137,"lodash":148}],27:[function(require,module,exports){
 'use strict'
 
 var settings = require('../settings')
@@ -1557,7 +1615,7 @@ module.exports = function (arena) {
 }
 
 
-},{"../controls/destinationmarker":34,"../settings":74}],27:[function(require,module,exports){
+},{"../controls/destinationmarker":35,"../settings":75}],28:[function(require,module,exports){
 'use strict'
 
 var _ = require('lodash');
@@ -1623,7 +1681,7 @@ function attachHelpers (arena, entity) {
   arena.intersectObjects.push(entity.bboxHelper);
 }
 
-},{"../settings":74,"lodash":147}],28:[function(require,module,exports){
+},{"../settings":75,"lodash":148}],29:[function(require,module,exports){
 'use strict';
 
 module.exports = function (arena) {
@@ -1667,7 +1725,7 @@ function attachLifebar (arena, entity) {
   arena.on('update', updateLifebar);
 }
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict'
 
 var settings = require('../settings');
@@ -1735,30 +1793,33 @@ function attachName (arena, entity) {
   settings.on('entityNamesChanged', entityNamesChanged);
 }
 
-},{"../settings":74}],30:[function(require,module,exports){
+},{"../settings":75}],31:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
 
-var Entity = require('../entity');
-var Tree   = require('../elements/tree');
-var Shop   = require('../elements/shop');
+var Entity      = require('../entity');
+var Tree        = require('../elements/tree');
+var MergedTrees = require('../elements/merged-trees');
+var Shop        = require('../elements/shop');
 
 module.exports = function (arena, options) {
+
+  var overloadedMaterials = {};
 
   arena.on('set:terrain', function () {
 
     var teamVisions = new Int32Array(32);
     teamVisions[0] = 1;
 
-    var entities = new Float32Array(3 * 100);
+    var entities = new Float32Array(3 * 128);
 
     options = _.merge({
 
       gridDiviser    : 5,
       sightDistance  : 60,
       unvisitedColor : new THREE.Color(0.1, 0.1, 0.1),
-      visitedColor   : new THREE.Color(0.4, 0.4, 0.4),
+      visitedColor   : new THREE.Color(0.6, 0.6, 0.6),
       visitedistance : 4
 
     }, options);
@@ -1780,552 +1841,6 @@ module.exports = function (arena, options) {
       1: new Uint8Array(gridSize.width * gridSize.height * 4)
     };
 
-
-    var overloadedMaterials = {};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /* * /
-
-    var shader = {
-
-        uniforms: THREE.UniformsUtils.merge( [
-
-            THREE.UniformsLib[ "common" ],
-            THREE.UniformsLib[ "bump" ],
-            THREE.UniformsLib[ "normalmap" ],
-            THREE.UniformsLib[ "fog" ],
-            THREE.UniformsLib[ "lights" ],
-            THREE.UniformsLib[ "shadowmap" ],
-
-            {
-                "ambient"  : { type: "c", value: new THREE.Color( 0xffffff ) },
-                "emissive" : { type: "c", value: new THREE.Color( 0x000000 ) },
-                "specular" : { type: "c", value: new THREE.Color( 0x111111 ) },
-                "shininess": { type: "f", value: 30 },
-                "wrapRGB"  : { type: "v3", value: new THREE.Vector3( 1, 1, 1 ) }
-            }
-
-        ] ),
-
-        vertexShader: [
-
-            "#define PHONG",
-
-            "varying vec3 vViewPosition;",
-            "varying vec3 vNormal;",
-
-            THREE.ShaderChunk[ "map_pars_vertex" ],
-            THREE.ShaderChunk[ "lightmap_pars_vertex" ],
-            THREE.ShaderChunk[ "envmap_pars_vertex" ],
-            THREE.ShaderChunk[ "lights_phong_pars_vertex" ],
-            THREE.ShaderChunk[ "color_pars_vertex" ],
-            THREE.ShaderChunk[ "morphtarget_pars_vertex" ],
-            THREE.ShaderChunk[ "skinning_pars_vertex" ],
-            THREE.ShaderChunk[ "shadowmap_pars_vertex" ],
-            THREE.ShaderChunk[ "logdepthbuf_pars_vertex" ],
-
-            "void main() {",
-
-                THREE.ShaderChunk[ "map_vertex" ],
-                THREE.ShaderChunk[ "lightmap_vertex" ],
-                THREE.ShaderChunk[ "color_vertex" ],
-
-                THREE.ShaderChunk[ "morphnormal_vertex" ],
-                THREE.ShaderChunk[ "skinbase_vertex" ],
-                THREE.ShaderChunk[ "skinnormal_vertex" ],
-                THREE.ShaderChunk[ "defaultnormal_vertex" ],
-
-            "   vNormal = normalize( transformedNormal );",
-
-                THREE.ShaderChunk[ "morphtarget_vertex" ],
-                THREE.ShaderChunk[ "skinning_vertex" ],
-                THREE.ShaderChunk[ "default_vertex" ],
-                THREE.ShaderChunk[ "logdepthbuf_vertex" ],
-
-            "   vViewPosition = -mvPosition.xyz;",
-
-                THREE.ShaderChunk[ "worldpos_vertex" ],
-                THREE.ShaderChunk[ "envmap_vertex" ],
-                THREE.ShaderChunk[ "lights_phong_vertex" ],
-                THREE.ShaderChunk[ "shadowmap_vertex" ],
-
-            "}"
-
-        ].join("\n"),
-
-        fragmentShader: [
-
-            "#define PHONG",
-
-            "uniform vec3 diffuse;",
-            "uniform float opacity;",
-
-            "uniform vec3 ambient;",
-            "uniform vec3 emissive;",
-            "uniform vec3 specular;",
-            "uniform float shininess;",
-
-            THREE.ShaderChunk[ "color_pars_fragment" ],
-            THREE.ShaderChunk[ "map_pars_fragment" ],
-            THREE.ShaderChunk[ "alphamap_pars_fragment" ],
-            THREE.ShaderChunk[ "lightmap_pars_fragment" ],
-            THREE.ShaderChunk[ "envmap_pars_fragment" ],
-            THREE.ShaderChunk[ "fog_pars_fragment" ],
-            THREE.ShaderChunk[ "lights_phong_pars_fragment" ],
-            THREE.ShaderChunk[ "shadowmap_pars_fragment" ],
-            THREE.ShaderChunk[ "bumpmap_pars_fragment" ],
-            THREE.ShaderChunk[ "normalmap_pars_fragment" ],
-            THREE.ShaderChunk[ "specularmap_pars_fragment" ],
-            THREE.ShaderChunk[ "logdepthbuf_pars_fragment" ],
-
-            "void main() {",
-
-            "   gl_FragColor = vec4( vec3( 1.0 ), opacity );",
-
-                THREE.ShaderChunk[ "logdepthbuf_fragment" ],
-                THREE.ShaderChunk[ "map_fragment" ],
-                THREE.ShaderChunk[ "alphamap_fragment" ],
-                THREE.ShaderChunk[ "alphatest_fragment" ],
-                THREE.ShaderChunk[ "specularmap_fragment" ],
-
-                THREE.ShaderChunk[ "lights_phong_fragment" ],
-
-                THREE.ShaderChunk[ "lightmap_fragment" ],
-                THREE.ShaderChunk[ "color_fragment" ],
-                THREE.ShaderChunk[ "envmap_fragment" ],
-                THREE.ShaderChunk[ "shadowmap_fragment" ],
-
-                THREE.ShaderChunk[ "linear_to_gamma_fragment" ],
-
-                THREE.ShaderChunk[ "fog_fragment" ],
-
-            "}"
-
-        ].join("\n")
-
-    };
-
-    /* */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /* // material
-    var material = new THREE.ShaderMaterial({
-
-      uniforms: THREE.UniformsUtils.merge( [
-
-        THREE.UniformsLib[ 'fog' ],
-        THREE.UniformsLib[ 'lights' ],
-        THREE.UniformsLib[ 'shadowmap' ],
-
-        {
-
-        'enableDiffuse1'    : { type: 'i', value: 1 },
-        'enableDiffuse2'    : { type: 'i', value: 1 },
-        'enableSpecular'    : { type: 'i', value: 0 },
-        'enableReflection'  : { type: 'i', value: 0 },
-
-        'tDiffuse1'         : { type: 't', value: null },
-        'tDiffuse2'         : { type: 't', value: null },
-        'tDiffuse3'         : { type: 't', value: null },
-        'tDetail'           : { type: 't', value: null },
-        'tNormal'           : { type: 't', value: null },
-        'tSpecular'         : { type: 't', value: null },
-        'tDisplacement'     : { type: 't', value: null },
-
-        'uNormalScale'      : { type: 'f', value: 1.0 },
-
-        'uDisplacementBias' : { type: 'f', value: 0.0 },
-        'uDisplacementScale': { type: 'f', value: 0.0 },
-
-        'ambientLightColor' : { type: 'fv', value: [ 200, 200, 200] },
-        'diffuse'           : { type: 'c', value: new THREE.Color( 0xffffff ) },
-        'specular'          : { type: 'c', value: new THREE.Color( 0xffffff ) },
-        'ambient'           : { type: 'c', value: new THREE.Color( 0xffffff ) },
-        'shininess'         : { type: 'f', value: 30 },
-        'opacity'           : { type: 'f', value: 1 },
-
-        'uRepeatBase'       : { type: 'v2', value: new THREE.Vector2( 1, 1 ) },
-        'uRepeatOverlay'    : { type: 'v2', value: new THREE.Vector2( 1, 1 ) },
-
-        'uOffset'           : { type: 'v2', value: new THREE.Vector2( 0, 0 ) }
-
-        }
-
-      ] ),
-
-      fragmentShader: [
-
-        '#define FOG_OF_WAR',
-
-        'uniform vec3 ambient;',
-        'uniform vec3 diffuse;',
-        'uniform vec3 specular;',
-        'uniform float shininess;',
-        'uniform float opacity;',
-
-        'uniform bool enableDiffuse1;',
-        'uniform bool enableDiffuse2;',
-        'uniform bool enableSpecular;',
-
-        'uniform sampler2D tDiffuse1;',
-        'uniform sampler2D tDiffuse2;',
-        'uniform sampler2D tDiffuse3;',
-        'uniform sampler2D tDetail;',
-        'uniform sampler2D tNormal;',
-        'uniform sampler2D tSpecular;',
-        'uniform sampler2D tDisplacement;',
-
-        'uniform float uNormalScale;',
-
-        'uniform vec2 uRepeatOverlay;',
-        'uniform vec2 uRepeatBase;',
-
-        'uniform vec2 uOffset;',
-
-        'varying vec3 vTangent;',
-        'varying vec3 vBinormal;',
-        'varying vec3 vNormal;',
-        'varying vec2 vUv;',
-
-        'uniform vec3 ambientLightColor;',
-
-        '#if MAX_DIR_LIGHTS > 0',
-
-          'uniform vec3 directionalLightColor[ MAX_DIR_LIGHTS ];',
-          'uniform vec3 directionalLightDirection[ MAX_DIR_LIGHTS ];',
-
-        '#endif',
-
-        '#if MAX_HEMI_LIGHTS > 0',
-
-          'uniform vec3 hemisphereLightSkyColor[ MAX_HEMI_LIGHTS ];',
-          'uniform vec3 hemisphereLightGroundColor[ MAX_HEMI_LIGHTS ];',
-          'uniform vec3 hemisphereLightDirection[ MAX_HEMI_LIGHTS ];',
-
-        '#endif',
-
-        '#if MAX_POINT_LIGHTS > 0',
-
-          'uniform vec3 pointLightColor[ MAX_POINT_LIGHTS ];',
-          'uniform vec3 pointLightPosition[ MAX_POINT_LIGHTS ];',
-          'uniform float pointLightDistance[ MAX_POINT_LIGHTS ];',
-
-        '#endif',
-
-        'varying vec3 vViewPosition;',
-
-        THREE.ShaderChunk[ 'shadowmap_pars_fragment' ],
-        THREE.ShaderChunk[ 'fog_pars_fragment' ],
-
-        'void main() {',
-
-          'gl_FragColor = vec4( vec3( 1.0 ), opacity );',
-
-          'vec3 specularTex = vec3( 1.0 );',
-
-          'vec2 uvOverlay = uRepeatOverlay * vUv + uOffset;',
-          'vec2 uvBase = uRepeatBase * vUv;',
-
-          'vec3 normalTex = texture2D( tDetail, uvOverlay ).xyz * 2.0 - 1.0;',
-          'normalTex.xy *= uNormalScale;',
-          'normalTex = normalize( normalTex );',
-
-          'if( enableDiffuse1 && enableDiffuse2 ) {',
-
-            'vec4 colDiffuse1 = texture2D( tDiffuse1, uvOverlay );',
-            'vec4 colDiffuse2 = texture2D( tDiffuse2, uvOverlay );',
-
-            '#ifdef GAMMA_INPUT',
-
-              'colDiffuse1.xyz *= colDiffuse1.xyz;',
-              'colDiffuse2.xyz *= colDiffuse2.xyz;',
-
-            '#endif',
-
-            // 'gl_FragColor = gl_FragColor * mix ( colDiffuse1, colDiffuse2, 1.0 - texture2D( tDisplacement, uvBase ) );',
-            'gl_FragColor = gl_FragColor * texture2D( tDiffuse1, uvOverlay );',
-            'gl_FragColor = gl_FragColor * texture2D( tDiffuse2, uvOverlay );',
-
-          '} else if( enableDiffuse1 ) {',
-
-            'gl_FragColor = gl_FragColor * texture2D( tDiffuse1, uvOverlay );',
-
-          '} else if( enableDiffuse2 ) {',
-
-            'gl_FragColor = gl_FragColor * texture2D( tDiffuse2, uvOverlay );',
-
-          '}',
-
-          'if( enableSpecular )',
-            'specularTex = texture2D( tSpecular, uvOverlay ).xyz;',
-
-          'mat3 tsb = mat3( vTangent, vBinormal, vNormal );',
-          'vec3 finalNormal = tsb * normalTex;',
-
-          'vec3 normal = normalize( finalNormal );',
-          'vec3 viewPosition = normalize( vViewPosition );',
-
-          // point lights
-
-          '#if MAX_POINT_LIGHTS > 0',
-
-            'vec3 pointDiffuse = vec3( 0.0 );',
-            'vec3 pointSpecular = vec3( 0.0 );',
-
-            'for ( int i = 0; i < MAX_POINT_LIGHTS; i ++ ) {',
-
-              'vec4 lPosition = viewMatrix * vec4( pointLightPosition[ i ], 1.0 );',
-              'vec3 lVector = lPosition.xyz + vViewPosition.xyz;',
-
-              'float lDistance = 1.0;',
-              'if ( pointLightDistance[ i ] > 0.0 )',
-                'lDistance = 1.0 - min( ( length( lVector ) / pointLightDistance[ i ] ), 1.0 );',
-
-              'lVector = normalize( lVector );',
-
-              'vec3 pointHalfVector = normalize( lVector + viewPosition );',
-              'float pointDistance = lDistance;',
-
-              'float pointDotNormalHalf = max( dot( normal, pointHalfVector ), 0.0 );',
-              'float pointDiffuseWeight = max( dot( normal, lVector ), 0.0 );',
-
-              'float pointSpecularWeight = specularTex.r * max( pow( pointDotNormalHalf, shininess ), 0.0 );',
-
-              'pointDiffuse += pointDistance * pointLightColor[ i ] * diffuse * pointDiffuseWeight;',
-              'pointSpecular += pointDistance * pointLightColor[ i ] * specular * pointSpecularWeight * pointDiffuseWeight;',
-
-            '}',
-
-          '#endif',
-
-          // directional lights
-
-          '#if MAX_DIR_LIGHTS > 0',
-
-            'vec3 dirDiffuse = vec3( 0.0 );',
-            'vec3 dirSpecular = vec3( 0.0 );',
-
-            'for( int i = 0; i < MAX_DIR_LIGHTS; i++ ) {',
-
-              'vec4 lDirection = viewMatrix * vec4( directionalLightDirection[ i ], 0.0 );',
-
-              'vec3 dirVector = normalize( lDirection.xyz );',
-              'vec3 dirHalfVector = normalize( dirVector + viewPosition );',
-
-              'float dirDotNormalHalf = max( dot( normal, dirHalfVector ), 0.0 );',
-              'float dirDiffuseWeight = max( dot( normal, dirVector ), 0.0 );',
-
-              'float dirSpecularWeight = specularTex.r * max( pow( dirDotNormalHalf, shininess ), 0.0 );',
-
-              'dirDiffuse += directionalLightColor[ i ] * diffuse * dirDiffuseWeight;',
-              'dirSpecular += directionalLightColor[ i ] * specular * dirSpecularWeight * dirDiffuseWeight;',
-
-            '}',
-
-          '#endif',
-
-          // hemisphere lights
-
-          '#if MAX_HEMI_LIGHTS > 0',
-
-            'vec3 hemiDiffuse  = vec3( 0.0 );',
-            'vec3 hemiSpecular = vec3( 0.0 );' ,
-
-            'for( int i = 0; i < MAX_HEMI_LIGHTS; i ++ ) {',
-
-              'vec4 lDirection = viewMatrix * vec4( hemisphereLightDirection[ i ], 0.0 );',
-              'vec3 lVector = normalize( lDirection.xyz );',
-
-              // diffuse
-
-              'float dotProduct = dot( normal, lVector );',
-              'float hemiDiffuseWeight = 0.5 * dotProduct + 0.5;',
-
-              'hemiDiffuse += diffuse * mix( hemisphereLightGroundColor[ i ], hemisphereLightSkyColor[ i ], hemiDiffuseWeight );',
-
-              // specular (sky light)
-
-              'float hemiSpecularWeight = 0.0;',
-
-              'vec3 hemiHalfVectorSky = normalize( lVector + viewPosition );',
-              'float hemiDotNormalHalfSky = 0.5 * dot( normal, hemiHalfVectorSky ) + 0.5;',
-              'hemiSpecularWeight += specularTex.r * max( pow( hemiDotNormalHalfSky, shininess ), 0.0 );',
-
-              // specular (ground light)
-
-              'vec3 lVectorGround = -lVector;',
-
-              'vec3 hemiHalfVectorGround = normalize( lVectorGround + viewPosition );',
-              'float hemiDotNormalHalfGround = 0.5 * dot( normal, hemiHalfVectorGround ) + 0.5;',
-              'hemiSpecularWeight += specularTex.r * max( pow( hemiDotNormalHalfGround, shininess ), 0.0 );',
-
-              'hemiSpecular += specular * mix( hemisphereLightGroundColor[ i ], hemisphereLightSkyColor[ i ], hemiDiffuseWeight ) * hemiSpecularWeight * hemiDiffuseWeight;',
-
-            '}',
-
-          '#endif',
-
-          // all lights contribution summation
-
-          'vec3 totalDiffuse = vec3( 0.0 );',
-          'vec3 totalSpecular = vec3( 0.0 );',
-
-          '#if MAX_DIR_LIGHTS > 0',
-
-            'totalDiffuse += dirDiffuse;',
-            'totalSpecular += dirSpecular;',
-
-          '#endif',
-
-          '#if MAX_HEMI_LIGHTS > 0',
-
-            'totalDiffuse += hemiDiffuse;',
-            'totalSpecular += hemiSpecular;',
-
-          '#endif',
-
-          '#if MAX_POINT_LIGHTS > 0',
-
-            'totalDiffuse += pointDiffuse;',
-            'totalSpecular += pointSpecular;',
-
-          '#endif',
-
-          // 'gl_FragColor.xyz = gl_FragColor.xyz * ( totalDiffuse + ambientLightColor * ambient) + totalSpecular;',
-          'gl_FragColor.xyz = gl_FragColor.xyz * ( totalDiffuse + ambientLightColor * ambient + totalSpecular );',
-
-          THREE.ShaderChunk[ 'shadowmap_fragment' ],
-          THREE.ShaderChunk[ 'linear_to_gamma_fragment' ],
-          THREE.ShaderChunk[ 'fog_fragment' ],
-
-        '}'
-
-      ].join('\n'),
-
-      vertexShader: [
-
-        'attribute vec4 tangent;',
-
-        'uniform vec2 uRepeatBase;',
-
-        'uniform sampler2D tNormal;',
-
-        'varying vec3 vTangent;',
-        'varying vec3 vBinormal;',
-        'varying vec3 vNormal;',
-        'varying vec2 vUv;',
-
-        'varying vec3 vViewPosition;',
-
-        THREE.ShaderChunk[ 'shadowmap_pars_vertex' ],
-
-        'void main() {',
-
-          'vNormal = normalize( normalMatrix * normal );',
-
-          // tangent and binormal vectors
-
-          'vTangent = normalize( normalMatrix * tangent.xyz );',
-
-          'vBinormal = cross( vNormal, vTangent ) * tangent.w;',
-          'vBinormal = normalize( vBinormal );',
-
-          // texture coordinates
-
-          'vUv = uv;',
-
-          'vec2 uvBase = uv * uRepeatBase;',
-
-          'vec4 worldPosition = modelMatrix * vec4( position, 1.0 );',
-          'vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
-
-          'gl_Position = projectionMatrix * mvPosition;',
-
-          'vViewPosition = -mvPosition.xyz;',
-
-          'vec3 normalTex = texture2D( tNormal, uvBase ).xyz * 2.0 - 1.0;',
-          'vNormal = normalMatrix * normalTex;',
-
-          THREE.ShaderChunk[ 'shadowmap_vertex' ],
-
-        '}'
-
-      ].join('\n'),
-
-      overdraw: true,
-      lights: true,
-      fog: true
-    });
-    */
-
     var textureVisitedByTeam1 = new THREE.DataTexture(teamVisited[0], gridSize.width, gridSize.height, THREE.RGBAFormat, THREE.UnsignedByteType, THREE.UVMapping, THREE.ClampToEdgeWrapping, THREE.ClampToEdgeWrapping, THREE.LinearFilter, THREE.LinearFilter, 1);
     var textureVisitedByTeam2 = new THREE.DataTexture(teamVisited[1], gridSize.width, gridSize.height, THREE.RGBAFormat, THREE.UnsignedByteType, THREE.UVMapping, THREE.ClampToEdgeWrapping, THREE.ClampToEdgeWrapping, THREE.LinearFilter, THREE.LinearFilter, 1);
 
@@ -2339,148 +1854,340 @@ module.exports = function (arena, options) {
         showVisited:   false
       };
 
-      var uniforms = {
+      var uniforms = {};
 
-        'diffuse'         : { type: 'fv',  value: [ 1, 1, 1 ] },
-        'map'             : { type: 't',   value: oldMaterial.map },
+      var uniformsShaderChunk = [
+          'varying vec4 worldPosition;',
+      ];
+      if (shaderOptions.showProximity || shaderOptions.showVisited) {
 
-        'entities'        : { type: 'fv',  value: entities },
-        'entitiesCount'   : { type: 'i',   value: arena.entities.length },
+        uniforms['teamVisions'] = { type: 'iv1',  value: teamVisions };
 
-        'sightDistance'   : { type: 'f',   value: options.sightDistance },
-
-        'unvisitedColor'  : { type: 'c',   value: options.unvisitedColor },
-        'visitedColor'    : { type: 'c',   value: options.visitedColor   },
-
-        'teamVisions'     : { type: 'iv1', value: teamVisions },
-
-      };
-
-      if (shaderOptions.showVisited) {
-        uniforms['visitedByTeam1'] = { type: 't',  value: textureVisitedByTeam1  };
-        uniforms['visitedByTeam2'] = { type: 't',  value: textureVisitedByTeam2  };
+        uniformsShaderChunk.push('uniform int teamVisions[32];');
       }
 
-      var mapShaderPart = ! oldMaterial.map ? '' : [
-          '   vec4 texelColor = texture2D( map, vUv );',
+      /* */
+      var mapShaderChunk = [];
+      if (oldMaterial.map) {
 
+        // uniforms['map'] = { type: 't', value: oldMaterial.map };
+
+        // uniformsShaderChunk.push('uniform sampler2D map;');
+
+        mapShaderChunk = [
+          '   // use map',
+          '   vec4 texelColor = texture2D( map, vUv );',
+          '',
           '   #ifdef GAMMA_INPUT',
           '       texelColor.xyz *= texelColor.xyz;',
           '   #endif',
-
+          '',
           '   gl_FragColor.xyz = gl_FragColor.xyz * texelColor.xyz;',
-
+          '',
           '   #ifdef GAMMA_OUTPUT',
           '       gl_FragColor.xyz = sqrt( gl_FragColor.xyz );',
           '   #endif',
-      ].join('\n');
+          '',
+        ];
+      }
+      /* */
 
-      var proximityShaderPart = ! shaderOptions.showProximity ? '' : [
-          //   color at entities' proximity
-          '    for ( int i = 0; i <= MAX_ENTITIES; ++i ) {',
-          '        if (i > int(entitiesCount)) break;',
+      var proximityShaderChunk = [];
+      if (shaderOptions.showProximity) {
 
-          //       check teams
-          '        if ( int(entities[i].y) == 0 && teamVisions[0] == 0 ) continue;',
-          '        if ( int(entities[i].y) == 1 && teamVisions[1] == 0 ) continue;',
+        uniforms['entities']       = { type: 'fv',  value: entities };
+        uniforms['entitiesCount']  = { type: 'i',   value: arena.entities.length };
+        uniforms['sightDistance']  = { type: 'f',   value: options.sightDistance };
+        uniforms['unvisitedColor'] = { type: 'c',   value: options.unvisitedColor };
 
-          '        float dist = smoothstep(1.0, 4.0, sightDistance / distance( worldPosition.xz, entities[i].xz ) ) * 10.0;',
-          '        gl_FragColor = max( gl_FragColor, max( minFragColor, minFragColor * dist ) );',
-          '    }',
-      ].join('\n');
+        uniformsShaderChunk.push('#define MAX_ENTITIES 10');
+        uniformsShaderChunk.push('uniform vec3 entities[' + (entities.length / 3) + '];');
+        uniformsShaderChunk.push('uniform int entitiesCount;');
+        uniformsShaderChunk.push('uniform float sightDistance;');
+        uniformsShaderChunk.push('uniform vec3 unvisitedColor;');
 
-      var visitShaderPart = ! shaderOptions.showVisited ? '' : [
-          '    vec4 visCell;',
-          //   color at visited grid cells (team 1)
-          '    if ( teamVisions[0] > 0 ) {',
-          '        visCell = texture2D( visitedByTeam1, vUv );',
-          '        gl_FragColor = max( gl_FragColor, visCell * visitedFragColor );',
-          '    }',
-          //   color at visited grid cells (team 2)
-          '    if ( teamVisions[1] > 0 ) {',
-          '        visCell = texture2D( visitedByTeam2, vUv );',
-          '        gl_FragColor = max( gl_FragColor, visCell * visitedFragColor );',
-          '    }',
-      ].join('\n');
+        proximityShaderChunk = [
+            '    vec4 unvisitedFragColor = gl_FragColor * vec4( unvisitedColor, 1.0 );',
+            ! shaderOptions.showVisited ? '' : '    vec4 visitedFragColor = gl_FragColor * vec4( visitedColor, 1.0 );',
 
-      // // material
-      var material = new THREE.ShaderMaterial({
+            '',
+            '    // by default, set to darkest (unvisited),',
+            '    gl_FragColor = unvisitedFragColor;',
+            '',
+            '    // color at entities proximity',
+            '    for ( int i = 0; i <= MAX_ENTITIES; ++i ) {',
+            '        if (i > entitiesCount) break;',
+            '',
+            '        // check teams',
+            '        if ( int(entities[i].y) == 0 && teamVisions[0] == 0 ) continue;',
+            '        if ( int(entities[i].y) == 1 && teamVisions[1] == 0 ) continue;',
+            '',
+            '        // adjust color by distance',
+            '        float dist = smoothstep(1.0, 4.0, sightDistance / distance( worldPosition.xz, entities[i].xz ) ) * 10.0;',
+            '        gl_FragColor = max( gl_FragColor, max( unvisitedFragColor, unvisitedFragColor * dist ) );',
+            '    }',
+            '',
+        ];
+      }
+
+      var visitedShaderChunk = [];
+      if (shaderOptions.showVisited) {
+
+        uniforms['visitedByTeam1'] = { type: 't', value: textureVisitedByTeam1 };
+        uniforms['visitedByTeam2'] = { type: 't', value: textureVisitedByTeam2 };
+        uniforms['visitedColor']   = { type: 'c', value: options.visitedColor  };
+
+        uniformsShaderChunk.push('uniform sampler2D visitedByTeam1;');
+        uniformsShaderChunk.push('uniform sampler2D visitedByTeam2;');
+        uniformsShaderChunk.push('uniform vec3 visitedColor;');
+
+        visitedShaderChunk = [
+            '    vec4 visCell;',
+            '',
+            shaderOptions.showProximity ? '' : '    vec4 visitedFragColor = gl_FragColor * vec4( visitedColor, 1.0 );',
+            '',
+            '    // color at visited grid cells (team 1)',
+            '    if ( teamVisions[0] > 0 ) {',
+            '        visCell = texture2D( visitedByTeam1, vUv );',
+            '        gl_FragColor = max( gl_FragColor, visCell * visitedFragColor );',
+            '    }',
+            '',
+            '    // color at visited grid cells (team 2)',
+            '    if ( teamVisions[1] > 0 ) {',
+            '        visCell = texture2D( visitedByTeam2, vUv );',
+            '        gl_FragColor = max( gl_FragColor, visCell * visitedFragColor );',
+            '    }',
+            '',
+        ];
+      }
+
+      /*
+      var _material = new THREE.ShaderMaterial({
 
         uniforms: uniforms,
 
         fragmentShader: [
 
-          '#define GAMMA_INPUT',
-          '#define GAMMA_OUTPUT',
-          'varying vec2 vUv;',
-
-
-          '#define MAX_ENTITIES 10',
-
-          'varying vec4 worldPosition;',
-
           'uniform vec3 diffuse;',
 
-          'uniform sampler2D map;',
-
-          'uniform vec3 entities[1024];',
-          'uniform int entitiesCount;',
-
-          'uniform float sightDistance;',
-          'uniform vec3 unvisitedColor;',
-          'uniform vec3 visitedColor;',
-
-          'uniform int teamVisions[32];',
-
-          'uniform sampler2D visitedByTeam1;',
-          'uniform sampler2D visitedByTeam2;',
+          uniformsShaderChunk.join('\n'),
 
           'void main() {',
-          '    gl_FragColor = vec4( diffuse, 0.0 );',
+          '   gl_FragColor = vec4( diffuse, 0.0 );',
 
-          mapShaderPart,
+              mapShaderChunk.join('\n'),
 
-          '    vec4 visitedFragColor = gl_FragColor * vec4( visitedColor, 1.0 );',
-          '    vec4 minFragColor     = gl_FragColor * vec4( unvisitedColor, 1.0 );',
+              proximityShaderChunk.join('\n'),
 
-          //   by default, set to darkest (unvisited)
-          '    gl_FragColor          = minFragColor;',
-
-          proximityShaderPart,
-
-          visitShaderPart,
+              visitedShaderChunk.join('\n'),
 
         '}'
         ].join('\n'),
 
         vertexShader: [
 
-        'varying vec2 vUv;',
-        'varying vec4 worldPosition;',
-        'uniform vec4 offsetRepeat;',
-
-        'void main() {',
-
-        // '    vUv = uv * offsetRepeat.zw + offsetRepeat.xy;',
-        '    vUv = uv;',
-
-        '    worldPosition = modelMatrix * vec4( position, 1.0 );',
-
-        '    vec3 objectNormal = normal;',
-
-        '    vec3 transformedNormal = normalMatrix * objectNormal;',
-        '    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
-
-        '    gl_Position = projectionMatrix * mvPosition;',
-
-        '    vec3 worldNormal = mat3( modelMatrix[ 0 ].xyz, modelMatrix[ 1 ].xyz, modelMatrix[ 2 ].xyz ) * objectNormal;',
-        '    worldNormal = normalize( worldNormal );',
-        '    vec3 cameraToVertex = normalize( worldPosition.xyz - cameraPosition );',
-
-        '}'
+          'varying vec2 vUv;',
+          'varying vec4 worldPosition;',
+          '',
+          'void main() {',
+          '',
+          '    vUv = uv;',
+          '',
+          '    worldPosition = modelMatrix * vec4( position, 1.0 );',
+          '',
+          '    vec3 objectNormal = normal;',
+          '',
+          '    vec3 transformedNormal = normalMatrix * objectNormal;',
+          '    vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
+          '',
+          '    gl_Position = projectionMatrix * mvPosition;',
+          '',
+          '    vec3 worldNormal = mat3( modelMatrix[ 0 ].xyz, modelMatrix[ 1 ].xyz, modelMatrix[ 2 ].xyz ) * objectNormal;',
+          '    worldNormal = normalize( worldNormal );',
+          '    vec3 cameraToVertex = normalize( worldPosition.xyz - cameraPosition );',
+          '',
+          '}'
 
         ].join('\n')
       });
+      */
+
+
+
+      var FogOfWarShader = {
+
+        uniforms: THREE.UniformsUtils.merge( [
+
+          THREE.UniformsLib[ 'common' ],
+          THREE.UniformsLib[ 'bump' ],
+          THREE.UniformsLib[ 'normalmap' ],
+          THREE.UniformsLib[ 'fog' ],
+          THREE.UniformsLib[ 'lights' ],
+          THREE.UniformsLib[ 'shadowmap' ],
+
+          {
+            'ambient'  : { type: 'c',  value: new THREE.Color( 0xffffff ) },
+            'emissive' : { type: 'c',  value: new THREE.Color( 0x000000 ) },
+            'specular' : { type: 'c',  value: new THREE.Color( 0x000000 ) },
+            'shininess': { type: 'f',  value: 30 },
+            'wrapRGB'  : { type: 'v3', value: new THREE.Vector3( 1, 1, 1 ) }
+          },
+
+          uniforms
+
+        ] ),
+
+        vertexShader: [
+
+          '#define PHONG',
+
+          'varying vec4 worldPosition;',
+          'varying vec3 vViewPosition;',
+          'varying vec3 vNormal;',
+
+          THREE.ShaderChunk[ 'map_pars_vertex' ],
+          THREE.ShaderChunk[ 'lightmap_pars_vertex' ],
+          THREE.ShaderChunk[ 'envmap_pars_vertex' ],
+          THREE.ShaderChunk[ 'lights_phong_pars_vertex' ],
+          THREE.ShaderChunk[ 'color_pars_vertex' ],
+          THREE.ShaderChunk[ 'morphtarget_pars_vertex' ],
+          THREE.ShaderChunk[ 'skinning_pars_vertex' ],
+          THREE.ShaderChunk[ 'shadowmap_pars_vertex' ],
+          THREE.ShaderChunk[ 'logdepthbuf_pars_vertex' ],
+
+          'void main() {',
+
+          ' vUv = uv;',
+          ' worldPosition = modelMatrix * vec4( position, 1.0 );',
+
+            THREE.ShaderChunk[ 'map_vertex' ],
+            THREE.ShaderChunk[ 'lightmap_vertex' ],
+            THREE.ShaderChunk[ 'color_vertex' ],
+
+            THREE.ShaderChunk[ 'morphnormal_vertex' ],
+            THREE.ShaderChunk[ 'skinbase_vertex' ],
+            THREE.ShaderChunk[ 'skinnormal_vertex' ],
+            THREE.ShaderChunk[ 'defaultnormal_vertex' ],
+
+          ' vNormal = normalize( transformedNormal );',
+
+            THREE.ShaderChunk[ 'morphtarget_vertex' ],
+            THREE.ShaderChunk[ 'skinning_vertex' ],
+            THREE.ShaderChunk[ 'default_vertex' ],
+            THREE.ShaderChunk[ 'logdepthbuf_vertex' ],
+
+          ' vViewPosition = -mvPosition.xyz;',
+
+            THREE.ShaderChunk[ 'worldpos_vertex' ],
+            THREE.ShaderChunk[ 'envmap_vertex' ],
+            THREE.ShaderChunk[ 'lights_phong_vertex' ],
+            THREE.ShaderChunk[ 'shadowmap_vertex' ],
+
+          '}'
+
+        ].join('\n'),
+
+        fragmentShader: [
+
+          '#define PHONG',
+
+          'uniform vec3 diffuse;',
+          'uniform float opacity;',
+
+          'uniform vec3 ambient;',
+          'uniform vec3 emissive;',
+          'uniform vec3 specular;',
+          'uniform float shininess;',
+
+          THREE.ShaderChunk[ 'color_pars_fragment' ],
+          THREE.ShaderChunk[ 'map_pars_fragment' ],
+          THREE.ShaderChunk[ 'alphamap_pars_fragment' ],
+          THREE.ShaderChunk[ 'lightmap_pars_fragment' ],
+          THREE.ShaderChunk[ 'envmap_pars_fragment' ],
+          THREE.ShaderChunk[ 'fog_pars_fragment' ],
+          THREE.ShaderChunk[ 'lights_phong_pars_fragment' ],
+          THREE.ShaderChunk[ 'shadowmap_pars_fragment' ],
+          THREE.ShaderChunk[ 'bumpmap_pars_fragment' ],
+          THREE.ShaderChunk[ 'normalmap_pars_fragment' ],
+          THREE.ShaderChunk[ 'specularmap_pars_fragment' ],
+          THREE.ShaderChunk[ 'logdepthbuf_pars_fragment' ],
+
+          uniformsShaderChunk.join('\n'),
+
+          'void main() {',
+
+          ' gl_FragColor = vec4( vec3( 1.0 ), opacity );',
+
+            THREE.ShaderChunk[ 'logdepthbuf_fragment' ],
+
+            // THREE.ShaderChunk[ 'map_fragment' ],
+
+            mapShaderChunk.join('\n'),
+            proximityShaderChunk.join('\n'),
+            visitedShaderChunk.join('\n'),
+
+            THREE.ShaderChunk[ 'alphamap_fragment' ],
+            THREE.ShaderChunk[ 'alphatest_fragment' ],
+            THREE.ShaderChunk[ 'specularmap_fragment' ],
+            THREE.ShaderChunk[ 'lights_phong_fragment' ],
+            THREE.ShaderChunk[ 'lightmap_fragment' ],
+            THREE.ShaderChunk[ 'color_fragment' ],
+            THREE.ShaderChunk[ 'envmap_fragment' ],
+            THREE.ShaderChunk[ 'shadowmap_fragment' ],
+            THREE.ShaderChunk[ 'linear_to_gamma_fragment' ],
+            THREE.ShaderChunk[ 'fog_fragment' ],
+
+          '}'
+
+        ].join('\n')
+
+      };
+
+      var _uniforms = THREE.UniformsUtils.clone(FogOfWarShader.uniforms);
+
+      var material = new THREE.ShaderMaterial({
+        fragmentShader: FogOfWarShader.fragmentShader,
+        vertexShader: FogOfWarShader.vertexShader,
+        fog: oldMaterial.fog,
+        uniforms: _uniforms,
+        lights: true,
+      });
+
+      if (oldMaterial.alphaMap) {
+        _uniforms.alphaMap.value  = oldMaterial.alphaMap;
+      }
+      if (oldMaterial.alphaTest) {
+        _uniforms.alphaTest.value = oldMaterial.alphaTest;
+      }
+      if (oldMaterial.ambient) {
+        _uniforms.ambient.value   = oldMaterial.ambient;
+      }
+      if (oldMaterial.specular) {
+        _uniforms.specular.value  = oldMaterial.specular;
+      }
+      if (oldMaterial.bumpMap) {
+        material.bumpMap = true;
+        _uniforms.bumpMap.value   = oldMaterial.bumpMap;
+      }
+      if (oldMaterial.bumpScale) {
+        _uniforms.bumpScale.value = oldMaterial.bumpScale;
+      }
+      if (oldMaterial.emissive) {
+        _uniforms.emissive.value  = oldMaterial.emissive;
+      }
+      if (oldMaterial.envMap) {
+        _uniforms.envMap.value    = oldMaterial.envMap;
+      }
+      if (oldMaterial.lightMap) {
+        _uniforms.lightMap.value  = oldMaterial.lightMap;
+      }
+      if (oldMaterial.map) {
+        material.map = true;
+        _uniforms.map.value = oldMaterial.map;
+      }
+
+      // console.log(material.uniforms);
+      // console.log(material.fragmentShader);
 
       return material;
     }
@@ -2491,13 +2198,10 @@ module.exports = function (arena, options) {
         if (child instanceof THREE.Mesh) {
           if (overloadedMaterials[child.material.uuid]) {
             child.material = overloadedMaterials[child.material.uuid];
-            child.material.needsUpdate = true;
           } else {
-            material = overloadMaterial(child.material, shaderOptions);
-            overloadedMaterials[child.material.uuid] = material;
-            child.material = material;
-            child.material.needsUpdate = true;
+            material = child.material = overloadedMaterials[child.material.uuid] = overloadMaterial(child.material, shaderOptions);
           }
+          child.material.needsUpdate = true;
         }
       });
       return material;
@@ -2507,7 +2211,7 @@ module.exports = function (arena, options) {
     //  'added:entity'
 
     arena.on('added:static', function (object) {
-      if (object instanceof Tree) {
+      if (object instanceof Tree || object instanceof MergedTrees) {
         patchObject3D(object);
       }
     });
@@ -2548,6 +2252,7 @@ module.exports = function (arena, options) {
     }
     function updateFOWs_unvisitedColor(c) {
       _.each(overloadedMaterials, function (m) {
+        if (! m.uniforms.unvisitedColor) { return; }
         m.uniforms.unvisitedColor.value.r = c;
         m.uniforms.unvisitedColor.value.g = c;
         m.uniforms.unvisitedColor.value.b = c;
@@ -2555,6 +2260,7 @@ module.exports = function (arena, options) {
     }
     function updateFOWs_visitedColor(c) {
       _.each(overloadedMaterials, function (m) {
+        if (! m.uniforms.visitedColor) { return; }
         m.uniforms.visitedColor.value.r = c;
         m.uniforms.visitedColor.value.g = c;
         m.uniforms.visitedColor.value.b = c;
@@ -2609,7 +2315,13 @@ module.exports = function (arena, options) {
 
       // update entities count
       _.each(overloadedMaterials, function (m) {
-        m.uniforms.entitiesCount.value = arena.entities.length;
+        if (m.uniforms.entitiesCount) {
+          m.uniforms.entitiesCount.value = arena.entities.length;
+        }
+        if (m.uniforms.visitedByTeam1) {
+          m.uniforms.visitedByTeam1.value.needsUpdate = true;
+          m.uniforms.visitedByTeam2.value.needsUpdate = true;
+        }
       });
 
       // update shader
@@ -2627,7 +2339,7 @@ function nearestPow2 (aSize) {
   return Math.pow(2, Math.round(Math.log(aSize) / Math.log(2)));
 }
 
-},{"../elements/shop":51,"../elements/tree":57,"../entity":60,"lodash":147}],31:[function(require,module,exports){
+},{"../elements/merged-trees":49,"../elements/shop":52,"../elements/tree":58,"../entity":61,"lodash":148}],32:[function(require,module,exports){
 'use strict';
 
 var TrackballControls = require('three.trackball');
@@ -2716,7 +2428,7 @@ module.exports = function (arena) {
 };
 
 
-},{"../settings":74,"three.trackball":151}],32:[function(require,module,exports){
+},{"../settings":75,"three.trackball":152}],33:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -2829,7 +2541,7 @@ function SpellTexts (arena, _options) {
   arena.on('added:entity', _bindEntity);
 }
 
-},{"lodash":147,"tween":153}],33:[function(require,module,exports){
+},{"lodash":148,"tween":154}],34:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2874,7 +2586,7 @@ AttackCircle.prototype.place = function ( object ) {
   return position;
 };
 
-},{"inherits":136}],34:[function(require,module,exports){
+},{"inherits":137}],35:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -2928,7 +2640,7 @@ DestinationMarker.prototype.animate = function () {
 };
 
 
-},{"../shaders/lightbolt":77,"inherits":136}],35:[function(require,module,exports){
+},{"../shaders/lightbolt":78,"inherits":137}],36:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3277,7 +2989,7 @@ DotaControls.prototype.getContainerDimensions = function() {
 
 
 
-},{"lodash":147}],36:[function(require,module,exports){
+},{"lodash":148}],37:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -3343,7 +3055,7 @@ ZoneSelector.prototype.emit = function (event, data) {
 };
 
 
-},{"inherits":136,"lodash":147}],37:[function(require,module,exports){
+},{"inherits":137,"lodash":148}],38:[function(require,module,exports){
 
 var utils = require('../utils');
 var Entity;
@@ -3452,7 +3164,7 @@ CoverSystem.prototype.nearestHidingPositionFrom = function(fromTarget, near, max
     return best;
 };
 
-},{"../entity":60,"../utils":91}],38:[function(require,module,exports){
+},{"../entity":61,"../utils":92}],39:[function(require,module,exports){
 'use strict';
 
 var debug = require('debug')('crowd');
@@ -3931,7 +3643,7 @@ function crowdOptions(options) {
   return options;
 }
 
-},{"./settings":74,"async":98,"debug":101,"lodash":147,"now":149}],39:[function(require,module,exports){
+},{"./settings":75,"async":99,"debug":102,"lodash":148,"now":150}],40:[function(require,module,exports){
 module.exports = {
   SpawningPool: require('./autospawn'),
   DefenseTower: require('./tower'),
@@ -3950,7 +3662,7 @@ module.exports = {
   MergedTrees: require('./merged-trees')
 };
 
-},{"./autospawn":40,"./checkpoint":41,"./chest":42,"./collectible":43,"./commandcenter":44,"./flies":45,"./grass":46,"./merged-trees":48,"./mineral":49,"./nexus":50,"./shop":51,"./spikes":54,"./tower":56,"./tree":57,"./water2":59}],40:[function(require,module,exports){
+},{"./autospawn":41,"./checkpoint":42,"./chest":43,"./collectible":44,"./commandcenter":45,"./flies":46,"./grass":47,"./merged-trees":49,"./mineral":50,"./nexus":51,"./shop":52,"./spikes":55,"./tower":57,"./tree":58,"./water2":60}],41:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -4050,7 +3762,7 @@ AutoSpawn.prototype.spanwOne = function() {
 };
 
 
-},{"inherits":136,"lodash":147}],41:[function(require,module,exports){
+},{"inherits":137,"lodash":148}],42:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -4111,7 +3823,7 @@ Checkpoint.prototype.update = function(arena) {
     }
   }
 };
-},{"../shaders/lightbolt":77,"inherits":136,"lodash":147}],42:[function(require,module,exports){
+},{"../shaders/lightbolt":78,"inherits":137,"lodash":148}],43:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -4186,7 +3898,7 @@ Collectible.prototype.collectedBy = function(entity, callback) {
 };
 
 
-},{"inherits":136,"lodash":147}],43:[function(require,module,exports){
+},{"inherits":137,"lodash":148}],44:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -4275,7 +3987,7 @@ Collectible.prototype.collectedBy = function(entity, callback) {
 };
 
 
-},{"inherits":136,"lodash":147}],44:[function(require,module,exports){
+},{"inherits":137,"lodash":148}],45:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -4311,7 +4023,7 @@ function CommandCenter (options) {
 }
 
 inherits(CommandCenter, Entity);
-},{"../entity":60,"inherits":136}],45:[function(require,module,exports){
+},{"../entity":61,"inherits":137}],46:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -4393,7 +4105,7 @@ Flies.prototype.update = function(game) {
     this.points.vertices[i].set(point.x, point.y, point.z);
   }
 };
-},{"inherits":136}],46:[function(require,module,exports){
+},{"inherits":137}],47:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -4504,7 +4216,7 @@ Grass.prototype.update = function(arena) {
   }
 };
 
-},{"inherits":136}],47:[function(require,module,exports){
+},{"inherits":137}],48:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -4563,11 +4275,10 @@ InteractiveObject.prototype.isNearEnough = function(object) {
   return this.position.distanceTo(object.position) <= 20;
 };
 
-},{"../utils":91,"inherits":136}],48:[function(require,module,exports){
+},{"../utils":92,"inherits":137}],49:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
-var Promise  = require('bluebird');
 
 module.exports = MergedTrees;
 
@@ -4580,22 +4291,75 @@ function MergedTrees (options) {
 
   THREE.Object3D.apply(this, [ options ]);
 
-  this.trees   = null;
-  this.offset  = 0;
+  this.offset  = -1;
+
+  var geometry = new THREE.BufferGeometry();
+
+  // itemSize = 3 because there are 3 values (components) per vertex
+  geometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array( 100 * 300 * 3 ), 3 ) );
+  geometry.addAttribute( 'normal'  , new THREE.BufferAttribute( new Float32Array( 100 * 300 * 3 ), 3 ) );
+  geometry.addAttribute( 'uv'      , new THREE.BufferAttribute( new Float32Array( 100 * 300 * 3 ), 3 ) );
+  var material = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
+
+  this.trees = new THREE.Mesh( geometry, material );
+
 }
 
 inherits(MergedTrees, THREE.Object3D);
 
 MergedTrees.prototype.merge = function(tree) {
-    if (! this.trees) {
-        this.trees = tree;
-    } else {
-        this.trees.children[0].geometry.merge(tree.children[0].geometry, this.offset++);
+
+  // var geometry;
+
+  if (! this.trees) {
+
+    this.trees = tree;
+
+  // } else if (this.trees.geometry instanceof THREE.Geometry && tree.geometry instanceof THREE.BufferGeometry) {
+
+  //   geometry = new THREE.Geometry();
+
+  //   this.trees.geometry.merge(geometry.fromBufferGeometry(tree.geometry), tree.matrix);
+  //   this.trees.material = tree.material;
+
+  // } else if (this.trees.geometry instanceof THREE.BufferGeometry && tree.geometry instanceof THREE.Geometry) {
+
+  //   geometry = new THREE.BufferGeometry();
+
+  //   this.trees.geometry.merge(tree.geometry.fromGeometry(tree.geometry), ++this.offset);
+  //   this.trees.material = tree.material;
+
+  } else if (this.trees.geometry instanceof THREE.BufferGeometry) {
+
+    // transform vertices
+    var tmpv = new THREE.Vector3();
+
+    var array = tree.geometry.attributes.position.array;
+    for (var i = 0; i < tree.geometry.attributes.position.array.length - 2; i+=3) {
+
+      tmpv.set(array[i], array[i+1], array[i+2]);
+
+      tmpv.applyMatrix4(tree.matrix);
+
+      array[i]   = tmpv.x;
+      array[i+1] = tmpv.y;
+      array[i+2] = tmpv.z;
     }
 
-    this.add(this.trees);
+    this.trees.geometry.merge(tree.geometry, ++this.offset * 300);
+    this.trees.material = tree.material;
+
+  // } else if (this.trees.geometry instanceof THREE.Geometry) {
+
+  //   this.trees.geometry.merge(tree.geometry, tree.matrix);
+  //   this.trees.material = tree.material;
+
+  }
+
+  this.add(this.trees);
+
 };
-},{"bluebird":99,"inherits":136}],49:[function(require,module,exports){
+},{"inherits":137}],50:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -4636,7 +4400,7 @@ function Mineral (options) {
 
 inherits(Mineral, Collectible);
 
-},{"./collectible":43,"inherits":136,"lodash":147}],50:[function(require,module,exports){
+},{"./collectible":44,"inherits":137,"lodash":148}],51:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -4677,7 +4441,7 @@ function Nexus (options) {
 
 inherits(Nexus, Entity);
 
-},{"../entity":60,"inherits":136}],51:[function(require,module,exports){
+},{"../entity":61,"inherits":137}],52:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -4711,7 +4475,7 @@ function Shop (options) {
 }
 
 inherits(Shop, InteractiveObject);
-},{"./interactiveobject":47,"inherits":136}],52:[function(require,module,exports){
+},{"./interactiveobject":48,"inherits":137}],53:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -4764,7 +4528,7 @@ LifeBar.prototype.update = function(delta) {
 };
 
 
-},{"../shaders/lifebar":76,"inherits":136,"lodash":147}],53:[function(require,module,exports){
+},{"../shaders/lifebar":77,"inherits":137,"lodash":148}],54:[function(require,module,exports){
 'use strict';
 
 module.exports = Sound;
@@ -4809,7 +4573,7 @@ function Sound ( sources, radius, volume ) {
   };
 
 }
-},{}],54:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -4916,7 +4680,7 @@ Spikes.prototype.update = function(arena) {
   }
 };
 
-},{"../spell":78,"inherits":136,"tween":153}],55:[function(require,module,exports){
+},{"../spell":79,"inherits":137,"tween":154}],56:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -5095,7 +4859,7 @@ inherits(Terrain, THREE.Object3D);
 
 
 
-},{"./water":58,"inherits":136,"lodash":147}],56:[function(require,module,exports){
+},{"./water":59,"inherits":137,"lodash":148}],57:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -5273,7 +5037,7 @@ DefenseTower.prototype.fireTo = function(target) {
     .start();
 };
 
-},{"../entity":60,"../particles/cloud":70,"../particles/stemkoski_ParticleEngine":71,"../spell":78,"inherits":136,"lodash":147,"tween":153}],57:[function(require,module,exports){
+},{"../entity":61,"../particles/cloud":71,"../particles/stemkoski_ParticleEngine":72,"../spell":79,"inherits":137,"lodash":148,"tween":154}],58:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -5330,7 +5094,7 @@ function Tree (options) {
 
     var object = new THREE.Mesh(template.geometry, template.material);
 
-    object.scale.set(8, 8, 8);
+    object.scale.set(7, 7, 7);
 
     self.add(object);
 
@@ -5342,7 +5106,7 @@ function Tree (options) {
 
 inherits(Tree, THREE.Object3D);
 
-},{"bluebird":99,"inherits":136}],58:[function(require,module,exports){
+},{"bluebird":100,"inherits":137}],59:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -5401,7 +5165,7 @@ Water.prototype.update = function(game) {
 };
 
 
-},{"inherits":136,"lodash":147}],59:[function(require,module,exports){
+},{"inherits":137,"lodash":148}],60:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -5452,7 +5216,7 @@ Water.prototype.update = function(game) {
 };
 
 
-},{"../materials/water":69,"inherits":136,"lodash":147}],60:[function(require,module,exports){
+},{"../materials/water":70,"inherits":137,"lodash":148}],61:[function(require,module,exports){
 'use strict';
 
 var now = require('now');
@@ -6140,7 +5904,7 @@ Entity.prototype.hit = function(spell) {
   }
 };
 
-},{"./ai/steering":10,"./controls/attackcircle":33,"./cover-system":37,"./elements/slifebar":52,"./inventory":67,"./log":68,"./settings":74,"./spell/flatlearn":84,"./target-system":90,"debug":101,"inherits":136,"lodash":147,"now":149}],61:[function(require,module,exports){
+},{"./ai/steering":10,"./controls/attackcircle":34,"./cover-system":38,"./elements/slifebar":53,"./inventory":68,"./log":69,"./settings":75,"./spell/flatlearn":85,"./target-system":91,"debug":102,"inherits":137,"lodash":148,"now":150}],62:[function(require,module,exports){
 'use strict';
 
 module.exports = Spiral;
@@ -6197,12 +5961,12 @@ function Spiral (radiusTop, radiusBottom, height, radialSegments, heightSegments
     return spline;
 }
 
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 module.exports = {
   GameHud: require('./ingame'),
   Sidemenu: require('./sidemenu')
 };
-},{"./ingame":63,"./sidemenu":64}],63:[function(require,module,exports){
+},{"./ingame":64,"./sidemenu":65}],64:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -6369,7 +6133,7 @@ GameHud.prototype.startInteraction = function(object) {
 };
 
 
-},{"../elements/interactiveobject":47,"../entity":60,"../views/dialogview":92,"../views/entityview":93,"../views/gameview":94,"../views/interactiveview":95,"../views/questdialogview":96,"knockout":146,"lodash":147}],64:[function(require,module,exports){
+},{"../elements/interactiveobject":48,"../entity":61,"../views/dialogview":93,"../views/entityview":94,"../views/gameview":95,"../views/interactiveview":96,"../views/questdialogview":97,"knockout":147,"lodash":148}],65:[function(require,module,exports){
 'use strict';
 
 module.exports = Sidemenu;
@@ -6403,7 +6167,7 @@ Sidemenu.prototype.isOpen = function () {
   // return this.root.classList.contains( 'fadeInLeft' );
 };
 
-},{}],65:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -6678,7 +6442,7 @@ Arena.prototype.use = function(component) {
 Arena.prototype.notCapable = function() {
 
   if (! detector().webgl) {
-    this.settings.container.append(this.notCapableMessage());
+    // this.settings.container.append(this.notCapableMessage());
     return true;
   }
   return false;
@@ -7572,13 +7336,13 @@ Arena.prototype.setTerrain = function(file, options) {
 
           self.pathfinder.OBJLoader(file.url ? file.url : file, self.pathfinder.cb(function () {
 
-            function onBuild () {
+            function onBuild (mode) {
 
               self.computeNavigationMesh();
 
               self.pathfinder.initCrowd(100, 1.0);
 
-              debug('terrain ready');
+              debug(mode + ' terrain ready');
 
               self.emit('set:terrain', self.ground);
             }
@@ -7647,12 +7411,12 @@ Arena.prototype.computeNavigationMesh = function(callback) {
 
         var nmv = 0, gv = 0;
         self.ground.traverse(function(o){
-          if (o instanceof THREE.Mesh && o.geometry.vertices) nmv += o.geometry.vertices.length;
-          else if (o instanceof THREE.Mesh && o.geometry.attributes.position) nmv += o.geometry.attributes.position.length;
+          if (o instanceof THREE.Mesh && o.geometry.vertices) {nmv += o.geometry.vertices.length;}
+          else if (o instanceof THREE.Mesh && o.geometry.attributes.position) {nmv += o.geometry.attributes.position.length;}
         });
         self.navigationMesh.traverse(function(o){
-          if (o instanceof THREE.Mesh && o.geometry) gv += o.geometry.vertices.length;
-          else if (o instanceof THREE.Mesh && o.geometry.attributes.position) gv += o.geometry.attributes.position.length;
+          if (o instanceof THREE.Mesh && o.geometry) {gv += o.geometry.vertices.length;}
+          else if (o instanceof THREE.Mesh && o.geometry.attributes.position) {gv += o.geometry.attributes.position.length;}
         });
         console.log('navigation mesh has %o vertices, ground has %o vertices', nmv, gv);
 
@@ -7675,6 +7439,8 @@ Arena.prototype.computeNavigationMesh = function(callback) {
 Arena.prototype.groundObject = function(object) {
 
   var self = this;
+
+  if (object.alreadyGrounded) return;
 
   if (self.ground) {
     // double-check the elevation, objects cannot be under ground
@@ -7726,7 +7492,7 @@ Arena.prototype.addObstacle = function(position, radius, flag) {
   }
 
   // this.pathfinder.setPolyFlags(position, radius, flag);
-  this.pathfinder.addTempObstacle(position.x, position.y, position.z, radius.z, function (e) {
+  this.pathfinder.addTempObstacle(position.x, position.y, position.z, radius.z, function () {
     debug('added a temporary obstacle at', position);
   });
 };
@@ -8682,7 +8448,7 @@ Arena.Account    = require('./account');
 
 
 }).call(this,require('_process'))
-},{"../vendor/detector":154,"../vendor/stats":155,"./account":2,"./ai/behaviours/all":3,"./character/all":15,"./components/destination-marker":26,"./components/entity-helpers":27,"./components/entity-lifebar":28,"./components/entity-name":29,"./components/fog-of-war":30,"./components/paused-camera":31,"./components/spelltexts":32,"./controls/dota":35,"./controls/zoneselector":36,"./crowd":38,"./elements/all":39,"./elements/collectible":43,"./elements/interactiveobject":47,"./elements/slifebar":52,"./elements/terrain":55,"./entity":60,"./hud":62,"./input/mouse":66,"./particles/stemkoski_ParticleEngine":71,"./quests":72,"./settings":74,"./settings-gui":73,"./spell/all":79,"./utils":91,"EventEmitter":97,"_process":163,"async":98,"debug":101,"inherits":136,"interact":137,"lodash":147,"machinejs":148,"now":149,"recastjs/lib/recast.withworker":150,"tic":152,"tween":153}],66:[function(require,module,exports){
+},{"../vendor/detector":155,"../vendor/stats":156,"./account":2,"./ai/behaviours/all":3,"./character/all":15,"./components/destination-marker":27,"./components/entity-helpers":28,"./components/entity-lifebar":29,"./components/entity-name":30,"./components/fog-of-war":31,"./components/paused-camera":32,"./components/spelltexts":33,"./controls/dota":36,"./controls/zoneselector":37,"./crowd":39,"./elements/all":40,"./elements/collectible":44,"./elements/interactiveobject":48,"./elements/slifebar":53,"./elements/terrain":56,"./entity":61,"./hud":63,"./input/mouse":67,"./particles/stemkoski_ParticleEngine":72,"./quests":73,"./settings":75,"./settings-gui":74,"./spell/all":80,"./utils":92,"EventEmitter":98,"_process":165,"async":99,"debug":102,"inherits":137,"interact":138,"lodash":148,"machinejs":149,"now":150,"recastjs/lib/recast.withworker":151,"tic":153,"tween":154}],67:[function(require,module,exports){
 'use strict';
 
 var debug = require('debug')('controls:mouse');
@@ -8970,7 +8736,7 @@ MouseControl.prototype._onDocumentMouseMove = function(event) {
   this.arena.updateSelectionCoords(event.clientX, event.clientY);
 };
 
-},{"../elements/collectible":43,"../elements/interactiveobject":47,"../elements/terrain":55,"../entity":60,"../settings":74,"../utils":91,"debug":101,"now":149}],67:[function(require,module,exports){
+},{"../elements/collectible":44,"../elements/interactiveobject":48,"../elements/terrain":56,"../entity":61,"../settings":75,"../utils":92,"debug":102,"now":150}],68:[function(require,module,exports){
 'use strict';
 
 module.exports = Inventory;
@@ -9023,7 +8789,7 @@ Inventory.prototype.has = function(kind) {
 
   return amount;
 };
-},{}],68:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 'use strict';
 
 module.exports = Log;
@@ -9043,7 +8809,7 @@ Log.SYS_INFO  = 'SYS_INFO';
 Log.SYS_ERROR = 'SYS_ERROR';
 Log.COMBAT    = 'COMBAT';
 
-},{}],69:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 /**
  * @author jbouny / https://github.com/jbouny
  *
@@ -9401,7 +9167,7 @@ THREE.Water.prototype.renderTemp = function () {
     }
 
 };
-},{}],70:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -9664,7 +9430,7 @@ function Aura ( geometry, particulesCount, texture, light ) {
   return cloud;
 }
 
-},{}],71:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 /**
 * @author Lee Stemkoski   http://www.adelphi.edu/~stemkoski/
 */
@@ -10520,7 +10286,7 @@ module.exports = {
   Type: Type,
   Tween: Tween
 };
-},{}],72:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -10685,7 +10451,7 @@ Quests.prototype.markEntity = function(entity, questMarkType) {
     settings.on('entityQuestMarkChanged', entityQuestMarkChanged);
 };
 
-},{"../settings":74,"hoodie":103,"lodash":147}],73:[function(require,module,exports){
+},{"../settings":75,"hoodie":104,"lodash":148}],74:[function(require,module,exports){
 'use strict';
 
 /* global dat: true, _gaq: true */
@@ -11024,7 +10790,7 @@ exports.shortcut = function(label){
 };
 
 
-},{"./settings":74}],74:[function(require,module,exports){
+},{"./settings":75}],75:[function(require,module,exports){
 'use strict';
 
 /**
@@ -11297,7 +11063,7 @@ settings.data = {
 
 
 
-},{"events":160}],75:[function(require,module,exports){
+},{"events":162}],76:[function(require,module,exports){
 module.exports = [
 
 '//',
@@ -11481,7 +11247,7 @@ module.exports = [
 ].join("\n");
 
 
-},{}],76:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 'use strict';
 
 var TWEEN = require('tween');
@@ -11624,7 +11390,7 @@ LifebarShaderMaterial.prototype.setMana = function(value) {
 };
 
 
-},{"inherits":136,"tween":153}],77:[function(require,module,exports){
+},{"inherits":137,"tween":154}],78:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -11741,7 +11507,7 @@ function LightboltShaderMaterial (strands) {
 
 inherits(LightboltShaderMaterial, THREE.ShaderMaterial);
 
-},{"./ashima/classicnoise3D.glsl":75,"inherits":136}],78:[function(require,module,exports){
+},{"./ashima/classicnoise3D.glsl":76,"inherits":137}],79:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -11866,7 +11632,7 @@ Spell.prototype.startCooldown = function (source) {
   setTimeout(updateCD, 50);
 };
 
-},{"EventEmitter":97,"debug":101,"inherits":136,"lodash":147}],79:[function(require,module,exports){
+},{"EventEmitter":98,"debug":102,"inherits":137,"lodash":148}],80:[function(require,module,exports){
 module.exports = {
   Bite: require('./bite'),
   FireAura: require('./fireaura'),
@@ -11880,7 +11646,7 @@ module.exports = {
   FlatLearn: require('./flatlearn')
 };
 
-},{"./bite":80,"./fireaura":81,"./firebullet":82,"./flatfireaura":83,"./flatlearn":84,"./heal":85,"./learn":86,"./lightbolt":87,"./placeobject":88,"./teleport":89}],80:[function(require,module,exports){
+},{"./bite":81,"./fireaura":82,"./firebullet":83,"./flatfireaura":84,"./flatlearn":85,"./heal":86,"./learn":87,"./lightbolt":88,"./placeobject":89,"./teleport":90}],81:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -11938,7 +11704,7 @@ Bite.prototype.start = function(source, target) {
   target.hit(this);
 };
 
-},{"../elements/sound":53,"../spell":78,"inherits":136,"lodash":147}],81:[function(require,module,exports){
+},{"../elements/sound":54,"../spell":79,"inherits":137,"lodash":148}],82:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -11988,7 +11754,7 @@ FireAura.prototype.start = function (caster, target) {
   }, 5000);
 };
 
-},{"../particles/cloud":70,"../spell":78,"inherits":136,"lodash":147}],82:[function(require,module,exports){
+},{"../particles/cloud":71,"../spell":79,"inherits":137,"lodash":148}],83:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -12081,7 +11847,7 @@ FireBullet.prototype.start = function (caster, target) {
     .start();
 };
 
-},{"../elements/sound":53,"../particles/cloud":70,"../particles/stemkoski_ParticleEngine":71,"../spell":78,"../utils":91,"inherits":136,"lodash":147,"tween":153}],83:[function(require,module,exports){
+},{"../elements/sound":54,"../particles/cloud":71,"../particles/stemkoski_ParticleEngine":72,"../spell":79,"../utils":92,"inherits":137,"lodash":148,"tween":154}],84:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -12139,7 +11905,7 @@ FlatFireAura.prototype.start = function (caster, target) {
   }, 5000);
 };
 
-},{"../spell":78,"inherits":136,"lodash":147}],84:[function(require,module,exports){
+},{"../spell":79,"inherits":137,"lodash":148}],85:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -12216,7 +11982,7 @@ FlatFireAura.prototype.start = function (caster, target) {
   }, 2000);
 };
 
-},{"../spell":78,"inherits":136,"lodash":147}],85:[function(require,module,exports){
+},{"../spell":79,"inherits":137,"lodash":148}],86:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
@@ -12316,7 +12082,7 @@ Heal.prototype.start = function (caster, target) {
     .start();
 };
 
-},{"../elements/sound":53,"../particles/cloud":70,"../particles/stemkoski_ParticleEngine":71,"../spell":78,"../utils":91,"inherits":136,"lodash":147,"tween":153}],86:[function(require,module,exports){
+},{"../elements/sound":54,"../particles/cloud":71,"../particles/stemkoski_ParticleEngine":72,"../spell":79,"../utils":92,"inherits":137,"lodash":148,"tween":154}],87:[function(require,module,exports){
 'use strict';
 
 var inherits  = require('inherits');
@@ -12408,7 +12174,7 @@ Learn.prototype.start = function (caster, target) {
     .start();
 };
 
-},{"../elements/sound":53,"../geometries/spiral":61,"../particles/cloud":70,"../particles/stemkoski_ParticleEngine":71,"../spell":78,"../utils":91,"inherits":136,"lodash":147,"tween":153}],87:[function(require,module,exports){
+},{"../elements/sound":54,"../geometries/spiral":62,"../particles/cloud":71,"../particles/stemkoski_ParticleEngine":72,"../spell":79,"../utils":92,"inherits":137,"lodash":148,"tween":154}],88:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -12515,7 +12281,7 @@ Lightbolt.prototype.start = function (caster, target) {
   .start();
 };
 
-},{"../shaders/lightbolt":77,"../spell":78,"inherits":136,"lodash":147,"tween":153}],88:[function(require,module,exports){
+},{"../shaders/lightbolt":78,"../spell":79,"inherits":137,"lodash":148,"tween":154}],89:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -12656,7 +12422,7 @@ PlaceObject.prototype.updateZoneSelector = function(source, arena) {
 
 
 
-},{"../elements/sound":53,"../settings":74,"../spell":78,"inherits":136,"lodash":147,"tween":153}],89:[function(require,module,exports){
+},{"../elements/sound":54,"../settings":75,"../spell":79,"inherits":137,"lodash":148,"tween":154}],90:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -12773,7 +12539,7 @@ Teleport.prototype.updateZoneSelector = function(source, arena) {
   }
 };
 
-},{"../elements/sound":53,"../settings":74,"../spell":78,"inherits":136,"lodash":147,"tween":153}],90:[function(require,module,exports){
+},{"../elements/sound":54,"../settings":75,"../spell":79,"inherits":137,"lodash":148,"tween":154}],91:[function(require,module,exports){
 module.exports = TargetSystem;
 
 function TargetSystem (arena, entity) {
@@ -12859,7 +12625,7 @@ TargetSystem.prototype.bestSpellForTarget = function(entity) {
 };
 
 
-},{}],91:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -13049,7 +12815,7 @@ module.exports = {
 
 };
 
-},{"lodash":147,"tween":153}],92:[function(require,module,exports){
+},{"lodash":148,"tween":154}],93:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -13084,7 +12850,7 @@ function DialogViewModel (dialog) {
 
   dialog.on('changed', this.update.bind(this));
 }
-},{"knockout":146,"lodash":147}],93:[function(require,module,exports){
+},{"knockout":147,"lodash":148}],94:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -13174,7 +12940,7 @@ function EntityViewModel (entity, game) {
 
   entity.on('changed', this.update.bind(this));
 }
-},{"../entity":60,"../utils":91,"knockout":146,"lodash":147}],94:[function(require,module,exports){
+},{"../entity":61,"../utils":92,"knockout":147,"lodash":148}],95:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -13430,7 +13196,7 @@ GameViewModel.prototype.onMapClick = function(gameview, event) {
 GameViewModel.prototype.onCharacterHover = function(event) {
 };
 
-},{"../settings":74,"knockout":146,"lodash":147}],95:[function(require,module,exports){
+},{"../settings":75,"knockout":147,"lodash":148}],96:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -13465,7 +13231,7 @@ function InteractiveViewModel (interactive) {
 
   interactive.on('changed', this.update.bind(this));
 }
-},{"knockout":146,"lodash":147}],96:[function(require,module,exports){
+},{"knockout":147,"lodash":148}],97:[function(require,module,exports){
 'use strict';
 
 var _ = require('lodash');
@@ -13542,481 +13308,481 @@ function QuestDialogViewModel (quests, questGiver) {
     };
 }
 
-},{"knockout":146,"lodash":147}],97:[function(require,module,exports){
+},{"knockout":147,"lodash":148}],98:[function(require,module,exports){
 /*!
- * EventEmitter v4.2.8 - git.io/ee
- * Oliver Caldwell
- * MIT license
+ * EventEmitter v4.2.11 - git.io/ee
+ * Unlicense - http://unlicense.org/
+ * Oliver Caldwell - http://oli.me.uk/
  * @preserve
  */
 
-(function () {
-	'use strict';
+;(function () {
+    'use strict';
 
-	/**
-	 * Class for managing events.
-	 * Can be extended to provide event functionality in other classes.
-	 *
-	 * @class EventEmitter Manages event registering and emitting.
-	 */
-	function EventEmitter() {}
+    /**
+     * Class for managing events.
+     * Can be extended to provide event functionality in other classes.
+     *
+     * @class EventEmitter Manages event registering and emitting.
+     */
+    function EventEmitter() {}
 
-	// Shortcuts to improve speed and size
-	var proto = EventEmitter.prototype;
-	var exports = this;
-	var originalGlobalValue = exports.EventEmitter;
+    // Shortcuts to improve speed and size
+    var proto = EventEmitter.prototype;
+    var exports = this;
+    var originalGlobalValue = exports.EventEmitter;
 
-	/**
-	 * Finds the index of the listener for the event in its storage array.
-	 *
-	 * @param {Function[]} listeners Array of listeners to search through.
-	 * @param {Function} listener Method to look for.
-	 * @return {Number} Index of the specified listener, -1 if not found
-	 * @api private
-	 */
-	function indexOfListener(listeners, listener) {
-		var i = listeners.length;
-		while (i--) {
-			if (listeners[i].listener === listener) {
-				return i;
-			}
-		}
+    /**
+     * Finds the index of the listener for the event in its storage array.
+     *
+     * @param {Function[]} listeners Array of listeners to search through.
+     * @param {Function} listener Method to look for.
+     * @return {Number} Index of the specified listener, -1 if not found
+     * @api private
+     */
+    function indexOfListener(listeners, listener) {
+        var i = listeners.length;
+        while (i--) {
+            if (listeners[i].listener === listener) {
+                return i;
+            }
+        }
 
-		return -1;
-	}
+        return -1;
+    }
 
-	/**
-	 * Alias a method while keeping the context correct, to allow for overwriting of target method.
-	 *
-	 * @param {String} name The name of the target method.
-	 * @return {Function} The aliased method
-	 * @api private
-	 */
-	function alias(name) {
-		return function aliasClosure() {
-			return this[name].apply(this, arguments);
-		};
-	}
+    /**
+     * Alias a method while keeping the context correct, to allow for overwriting of target method.
+     *
+     * @param {String} name The name of the target method.
+     * @return {Function} The aliased method
+     * @api private
+     */
+    function alias(name) {
+        return function aliasClosure() {
+            return this[name].apply(this, arguments);
+        };
+    }
 
-	/**
-	 * Returns the listener array for the specified event.
-	 * Will initialise the event object and listener arrays if required.
-	 * Will return an object if you use a regex search. The object contains keys for each matched event. So /ba[rz]/ might return an object containing bar and baz. But only if you have either defined them with defineEvent or added some listeners to them.
-	 * Each property in the object response is an array of listener functions.
-	 *
-	 * @param {String|RegExp} evt Name of the event to return the listeners from.
-	 * @return {Function[]|Object} All listener functions for the event.
-	 */
-	proto.getListeners = function getListeners(evt) {
-		var events = this._getEvents();
-		var response;
-		var key;
+    /**
+     * Returns the listener array for the specified event.
+     * Will initialise the event object and listener arrays if required.
+     * Will return an object if you use a regex search. The object contains keys for each matched event. So /ba[rz]/ might return an object containing bar and baz. But only if you have either defined them with defineEvent or added some listeners to them.
+     * Each property in the object response is an array of listener functions.
+     *
+     * @param {String|RegExp} evt Name of the event to return the listeners from.
+     * @return {Function[]|Object} All listener functions for the event.
+     */
+    proto.getListeners = function getListeners(evt) {
+        var events = this._getEvents();
+        var response;
+        var key;
 
-		// Return a concatenated array of all matching events if
-		// the selector is a regular expression.
-		if (evt instanceof RegExp) {
-			response = {};
-			for (key in events) {
-				if (events.hasOwnProperty(key) && evt.test(key)) {
-					response[key] = events[key];
-				}
-			}
-		}
-		else {
-			response = events[evt] || (events[evt] = []);
-		}
+        // Return a concatenated array of all matching events if
+        // the selector is a regular expression.
+        if (evt instanceof RegExp) {
+            response = {};
+            for (key in events) {
+                if (events.hasOwnProperty(key) && evt.test(key)) {
+                    response[key] = events[key];
+                }
+            }
+        }
+        else {
+            response = events[evt] || (events[evt] = []);
+        }
 
-		return response;
-	};
+        return response;
+    };
 
-	/**
-	 * Takes a list of listener objects and flattens it into a list of listener functions.
-	 *
-	 * @param {Object[]} listeners Raw listener objects.
-	 * @return {Function[]} Just the listener functions.
-	 */
-	proto.flattenListeners = function flattenListeners(listeners) {
-		var flatListeners = [];
-		var i;
+    /**
+     * Takes a list of listener objects and flattens it into a list of listener functions.
+     *
+     * @param {Object[]} listeners Raw listener objects.
+     * @return {Function[]} Just the listener functions.
+     */
+    proto.flattenListeners = function flattenListeners(listeners) {
+        var flatListeners = [];
+        var i;
 
-		for (i = 0; i < listeners.length; i += 1) {
-			flatListeners.push(listeners[i].listener);
-		}
+        for (i = 0; i < listeners.length; i += 1) {
+            flatListeners.push(listeners[i].listener);
+        }
 
-		return flatListeners;
-	};
+        return flatListeners;
+    };
 
-	/**
-	 * Fetches the requested listeners via getListeners but will always return the results inside an object. This is mainly for internal use but others may find it useful.
-	 *
-	 * @param {String|RegExp} evt Name of the event to return the listeners from.
-	 * @return {Object} All listener functions for an event in an object.
-	 */
-	proto.getListenersAsObject = function getListenersAsObject(evt) {
-		var listeners = this.getListeners(evt);
-		var response;
+    /**
+     * Fetches the requested listeners via getListeners but will always return the results inside an object. This is mainly for internal use but others may find it useful.
+     *
+     * @param {String|RegExp} evt Name of the event to return the listeners from.
+     * @return {Object} All listener functions for an event in an object.
+     */
+    proto.getListenersAsObject = function getListenersAsObject(evt) {
+        var listeners = this.getListeners(evt);
+        var response;
 
-		if (listeners instanceof Array) {
-			response = {};
-			response[evt] = listeners;
-		}
+        if (listeners instanceof Array) {
+            response = {};
+            response[evt] = listeners;
+        }
 
-		return response || listeners;
-	};
+        return response || listeners;
+    };
 
-	/**
-	 * Adds a listener function to the specified event.
-	 * The listener will not be added if it is a duplicate.
-	 * If the listener returns true then it will be removed after it is called.
-	 * If you pass a regular expression as the event name then the listener will be added to all events that match it.
-	 *
-	 * @param {String|RegExp} evt Name of the event to attach the listener to.
-	 * @param {Function} listener Method to be called when the event is emitted. If the function returns true then it will be removed after calling.
-	 * @return {Object} Current instance of EventEmitter for chaining.
-	 */
-	proto.addListener = function addListener(evt, listener) {
-		var listeners = this.getListenersAsObject(evt);
-		var listenerIsWrapped = typeof listener === 'object';
-		var key;
+    /**
+     * Adds a listener function to the specified event.
+     * The listener will not be added if it is a duplicate.
+     * If the listener returns true then it will be removed after it is called.
+     * If you pass a regular expression as the event name then the listener will be added to all events that match it.
+     *
+     * @param {String|RegExp} evt Name of the event to attach the listener to.
+     * @param {Function} listener Method to be called when the event is emitted. If the function returns true then it will be removed after calling.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.addListener = function addListener(evt, listener) {
+        var listeners = this.getListenersAsObject(evt);
+        var listenerIsWrapped = typeof listener === 'object';
+        var key;
 
-		for (key in listeners) {
-			if (listeners.hasOwnProperty(key) && indexOfListener(listeners[key], listener) === -1) {
-				listeners[key].push(listenerIsWrapped ? listener : {
-					listener: listener,
-					once: false
-				});
-			}
-		}
+        for (key in listeners) {
+            if (listeners.hasOwnProperty(key) && indexOfListener(listeners[key], listener) === -1) {
+                listeners[key].push(listenerIsWrapped ? listener : {
+                    listener: listener,
+                    once: false
+                });
+            }
+        }
 
-		return this;
-	};
+        return this;
+    };
 
-	/**
-	 * Alias of addListener
-	 */
-	proto.on = alias('addListener');
+    /**
+     * Alias of addListener
+     */
+    proto.on = alias('addListener');
 
-	/**
-	 * Semi-alias of addListener. It will add a listener that will be
-	 * automatically removed after its first execution.
-	 *
-	 * @param {String|RegExp} evt Name of the event to attach the listener to.
-	 * @param {Function} listener Method to be called when the event is emitted. If the function returns true then it will be removed after calling.
-	 * @return {Object} Current instance of EventEmitter for chaining.
-	 */
-	proto.addOnceListener = function addOnceListener(evt, listener) {
-		return this.addListener(evt, {
-			listener: listener,
-			once: true
-		});
-	};
+    /**
+     * Semi-alias of addListener. It will add a listener that will be
+     * automatically removed after its first execution.
+     *
+     * @param {String|RegExp} evt Name of the event to attach the listener to.
+     * @param {Function} listener Method to be called when the event is emitted. If the function returns true then it will be removed after calling.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.addOnceListener = function addOnceListener(evt, listener) {
+        return this.addListener(evt, {
+            listener: listener,
+            once: true
+        });
+    };
 
-	/**
-	 * Alias of addOnceListener.
-	 */
-	proto.once = alias('addOnceListener');
+    /**
+     * Alias of addOnceListener.
+     */
+    proto.once = alias('addOnceListener');
 
-	/**
-	 * Defines an event name. This is required if you want to use a regex to add a listener to multiple events at once. If you don't do this then how do you expect it to know what event to add to? Should it just add to every possible match for a regex? No. That is scary and bad.
-	 * You need to tell it what event names should be matched by a regex.
-	 *
-	 * @param {String} evt Name of the event to create.
-	 * @return {Object} Current instance of EventEmitter for chaining.
-	 */
-	proto.defineEvent = function defineEvent(evt) {
-		this.getListeners(evt);
-		return this;
-	};
+    /**
+     * Defines an event name. This is required if you want to use a regex to add a listener to multiple events at once. If you don't do this then how do you expect it to know what event to add to? Should it just add to every possible match for a regex? No. That is scary and bad.
+     * You need to tell it what event names should be matched by a regex.
+     *
+     * @param {String} evt Name of the event to create.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.defineEvent = function defineEvent(evt) {
+        this.getListeners(evt);
+        return this;
+    };
 
-	/**
-	 * Uses defineEvent to define multiple events.
-	 *
-	 * @param {String[]} evts An array of event names to define.
-	 * @return {Object} Current instance of EventEmitter for chaining.
-	 */
-	proto.defineEvents = function defineEvents(evts) {
-		for (var i = 0; i < evts.length; i += 1) {
-			this.defineEvent(evts[i]);
-		}
-		return this;
-	};
+    /**
+     * Uses defineEvent to define multiple events.
+     *
+     * @param {String[]} evts An array of event names to define.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.defineEvents = function defineEvents(evts) {
+        for (var i = 0; i < evts.length; i += 1) {
+            this.defineEvent(evts[i]);
+        }
+        return this;
+    };
 
-	/**
-	 * Removes a listener function from the specified event.
-	 * When passed a regular expression as the event name, it will remove the listener from all events that match it.
-	 *
-	 * @param {String|RegExp} evt Name of the event to remove the listener from.
-	 * @param {Function} listener Method to remove from the event.
-	 * @return {Object} Current instance of EventEmitter for chaining.
-	 */
-	proto.removeListener = function removeListener(evt, listener) {
-		var listeners = this.getListenersAsObject(evt);
-		var index;
-		var key;
+    /**
+     * Removes a listener function from the specified event.
+     * When passed a regular expression as the event name, it will remove the listener from all events that match it.
+     *
+     * @param {String|RegExp} evt Name of the event to remove the listener from.
+     * @param {Function} listener Method to remove from the event.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.removeListener = function removeListener(evt, listener) {
+        var listeners = this.getListenersAsObject(evt);
+        var index;
+        var key;
 
-		for (key in listeners) {
-			if (listeners.hasOwnProperty(key)) {
-				index = indexOfListener(listeners[key], listener);
+        for (key in listeners) {
+            if (listeners.hasOwnProperty(key)) {
+                index = indexOfListener(listeners[key], listener);
 
-				if (index !== -1) {
-					listeners[key].splice(index, 1);
-				}
-			}
-		}
+                if (index !== -1) {
+                    listeners[key].splice(index, 1);
+                }
+            }
+        }
 
-		return this;
-	};
+        return this;
+    };
 
-	/**
-	 * Alias of removeListener
-	 */
-	proto.off = alias('removeListener');
+    /**
+     * Alias of removeListener
+     */
+    proto.off = alias('removeListener');
 
-	/**
-	 * Adds listeners in bulk using the manipulateListeners method.
-	 * If you pass an object as the second argument you can add to multiple events at once. The object should contain key value pairs of events and listeners or listener arrays. You can also pass it an event name and an array of listeners to be added.
-	 * You can also pass it a regular expression to add the array of listeners to all events that match it.
-	 * Yeah, this function does quite a bit. That's probably a bad thing.
-	 *
-	 * @param {String|Object|RegExp} evt An event name if you will pass an array of listeners next. An object if you wish to add to multiple events at once.
-	 * @param {Function[]} [listeners] An optional array of listener functions to add.
-	 * @return {Object} Current instance of EventEmitter for chaining.
-	 */
-	proto.addListeners = function addListeners(evt, listeners) {
-		// Pass through to manipulateListeners
-		return this.manipulateListeners(false, evt, listeners);
-	};
+    /**
+     * Adds listeners in bulk using the manipulateListeners method.
+     * If you pass an object as the second argument you can add to multiple events at once. The object should contain key value pairs of events and listeners or listener arrays. You can also pass it an event name and an array of listeners to be added.
+     * You can also pass it a regular expression to add the array of listeners to all events that match it.
+     * Yeah, this function does quite a bit. That's probably a bad thing.
+     *
+     * @param {String|Object|RegExp} evt An event name if you will pass an array of listeners next. An object if you wish to add to multiple events at once.
+     * @param {Function[]} [listeners] An optional array of listener functions to add.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.addListeners = function addListeners(evt, listeners) {
+        // Pass through to manipulateListeners
+        return this.manipulateListeners(false, evt, listeners);
+    };
 
-	/**
-	 * Removes listeners in bulk using the manipulateListeners method.
-	 * If you pass an object as the second argument you can remove from multiple events at once. The object should contain key value pairs of events and listeners or listener arrays.
-	 * You can also pass it an event name and an array of listeners to be removed.
-	 * You can also pass it a regular expression to remove the listeners from all events that match it.
-	 *
-	 * @param {String|Object|RegExp} evt An event name if you will pass an array of listeners next. An object if you wish to remove from multiple events at once.
-	 * @param {Function[]} [listeners] An optional array of listener functions to remove.
-	 * @return {Object} Current instance of EventEmitter for chaining.
-	 */
-	proto.removeListeners = function removeListeners(evt, listeners) {
-		// Pass through to manipulateListeners
-		return this.manipulateListeners(true, evt, listeners);
-	};
+    /**
+     * Removes listeners in bulk using the manipulateListeners method.
+     * If you pass an object as the second argument you can remove from multiple events at once. The object should contain key value pairs of events and listeners or listener arrays.
+     * You can also pass it an event name and an array of listeners to be removed.
+     * You can also pass it a regular expression to remove the listeners from all events that match it.
+     *
+     * @param {String|Object|RegExp} evt An event name if you will pass an array of listeners next. An object if you wish to remove from multiple events at once.
+     * @param {Function[]} [listeners] An optional array of listener functions to remove.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.removeListeners = function removeListeners(evt, listeners) {
+        // Pass through to manipulateListeners
+        return this.manipulateListeners(true, evt, listeners);
+    };
 
-	/**
-	 * Edits listeners in bulk. The addListeners and removeListeners methods both use this to do their job. You should really use those instead, this is a little lower level.
-	 * The first argument will determine if the listeners are removed (true) or added (false).
-	 * If you pass an object as the second argument you can add/remove from multiple events at once. The object should contain key value pairs of events and listeners or listener arrays.
-	 * You can also pass it an event name and an array of listeners to be added/removed.
-	 * You can also pass it a regular expression to manipulate the listeners of all events that match it.
-	 *
-	 * @param {Boolean} remove True if you want to remove listeners, false if you want to add.
-	 * @param {String|Object|RegExp} evt An event name if you will pass an array of listeners next. An object if you wish to add/remove from multiple events at once.
-	 * @param {Function[]} [listeners] An optional array of listener functions to add/remove.
-	 * @return {Object} Current instance of EventEmitter for chaining.
-	 */
-	proto.manipulateListeners = function manipulateListeners(remove, evt, listeners) {
-		var i;
-		var value;
-		var single = remove ? this.removeListener : this.addListener;
-		var multiple = remove ? this.removeListeners : this.addListeners;
+    /**
+     * Edits listeners in bulk. The addListeners and removeListeners methods both use this to do their job. You should really use those instead, this is a little lower level.
+     * The first argument will determine if the listeners are removed (true) or added (false).
+     * If you pass an object as the second argument you can add/remove from multiple events at once. The object should contain key value pairs of events and listeners or listener arrays.
+     * You can also pass it an event name and an array of listeners to be added/removed.
+     * You can also pass it a regular expression to manipulate the listeners of all events that match it.
+     *
+     * @param {Boolean} remove True if you want to remove listeners, false if you want to add.
+     * @param {String|Object|RegExp} evt An event name if you will pass an array of listeners next. An object if you wish to add/remove from multiple events at once.
+     * @param {Function[]} [listeners] An optional array of listener functions to add/remove.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.manipulateListeners = function manipulateListeners(remove, evt, listeners) {
+        var i;
+        var value;
+        var single = remove ? this.removeListener : this.addListener;
+        var multiple = remove ? this.removeListeners : this.addListeners;
 
-		// If evt is an object then pass each of its properties to this method
-		if (typeof evt === 'object' && !(evt instanceof RegExp)) {
-			for (i in evt) {
-				if (evt.hasOwnProperty(i) && (value = evt[i])) {
-					// Pass the single listener straight through to the singular method
-					if (typeof value === 'function') {
-						single.call(this, i, value);
-					}
-					else {
-						// Otherwise pass back to the multiple function
-						multiple.call(this, i, value);
-					}
-				}
-			}
-		}
-		else {
-			// So evt must be a string
-			// And listeners must be an array of listeners
-			// Loop over it and pass each one to the multiple method
-			i = listeners.length;
-			while (i--) {
-				single.call(this, evt, listeners[i]);
-			}
-		}
+        // If evt is an object then pass each of its properties to this method
+        if (typeof evt === 'object' && !(evt instanceof RegExp)) {
+            for (i in evt) {
+                if (evt.hasOwnProperty(i) && (value = evt[i])) {
+                    // Pass the single listener straight through to the singular method
+                    if (typeof value === 'function') {
+                        single.call(this, i, value);
+                    }
+                    else {
+                        // Otherwise pass back to the multiple function
+                        multiple.call(this, i, value);
+                    }
+                }
+            }
+        }
+        else {
+            // So evt must be a string
+            // And listeners must be an array of listeners
+            // Loop over it and pass each one to the multiple method
+            i = listeners.length;
+            while (i--) {
+                single.call(this, evt, listeners[i]);
+            }
+        }
 
-		return this;
-	};
+        return this;
+    };
 
-	/**
-	 * Removes all listeners from a specified event.
-	 * If you do not specify an event then all listeners will be removed.
-	 * That means every event will be emptied.
-	 * You can also pass a regex to remove all events that match it.
-	 *
-	 * @param {String|RegExp} [evt] Optional name of the event to remove all listeners for. Will remove from every event if not passed.
-	 * @return {Object} Current instance of EventEmitter for chaining.
-	 */
-	proto.removeEvent = function removeEvent(evt) {
-		var type = typeof evt;
-		var events = this._getEvents();
-		var key;
+    /**
+     * Removes all listeners from a specified event.
+     * If you do not specify an event then all listeners will be removed.
+     * That means every event will be emptied.
+     * You can also pass a regex to remove all events that match it.
+     *
+     * @param {String|RegExp} [evt] Optional name of the event to remove all listeners for. Will remove from every event if not passed.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.removeEvent = function removeEvent(evt) {
+        var type = typeof evt;
+        var events = this._getEvents();
+        var key;
 
-		// Remove different things depending on the state of evt
-		if (type === 'string') {
-			// Remove all listeners for the specified event
-			delete events[evt];
-		}
-		else if (evt instanceof RegExp) {
-			// Remove all events matching the regex.
-			for (key in events) {
-				if (events.hasOwnProperty(key) && evt.test(key)) {
-					delete events[key];
-				}
-			}
-		}
-		else {
-			// Remove all listeners in all events
-			delete this._events;
-		}
+        // Remove different things depending on the state of evt
+        if (type === 'string') {
+            // Remove all listeners for the specified event
+            delete events[evt];
+        }
+        else if (evt instanceof RegExp) {
+            // Remove all events matching the regex.
+            for (key in events) {
+                if (events.hasOwnProperty(key) && evt.test(key)) {
+                    delete events[key];
+                }
+            }
+        }
+        else {
+            // Remove all listeners in all events
+            delete this._events;
+        }
 
-		return this;
-	};
+        return this;
+    };
 
-	/**
-	 * Alias of removeEvent.
-	 *
-	 * Added to mirror the node API.
-	 */
-	proto.removeAllListeners = alias('removeEvent');
+    /**
+     * Alias of removeEvent.
+     *
+     * Added to mirror the node API.
+     */
+    proto.removeAllListeners = alias('removeEvent');
 
-	/**
-	 * Emits an event of your choice.
-	 * When emitted, every listener attached to that event will be executed.
-	 * If you pass the optional argument array then those arguments will be passed to every listener upon execution.
-	 * Because it uses `apply`, your array of arguments will be passed as if you wrote them out separately.
-	 * So they will not arrive within the array on the other side, they will be separate.
-	 * You can also pass a regular expression to emit to all events that match it.
-	 *
-	 * @param {String|RegExp} evt Name of the event to emit and execute listeners for.
-	 * @param {Array} [args] Optional array of arguments to be passed to each listener.
-	 * @return {Object} Current instance of EventEmitter for chaining.
-	 */
-	proto.emitEvent = function emitEvent(evt, args) {
-		var listeners = this.getListenersAsObject(evt);
-		var listener;
-		var i;
-		var key;
-		var response;
+    /**
+     * Emits an event of your choice.
+     * When emitted, every listener attached to that event will be executed.
+     * If you pass the optional argument array then those arguments will be passed to every listener upon execution.
+     * Because it uses `apply`, your array of arguments will be passed as if you wrote them out separately.
+     * So they will not arrive within the array on the other side, they will be separate.
+     * You can also pass a regular expression to emit to all events that match it.
+     *
+     * @param {String|RegExp} evt Name of the event to emit and execute listeners for.
+     * @param {Array} [args] Optional array of arguments to be passed to each listener.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.emitEvent = function emitEvent(evt, args) {
+        var listeners = this.getListenersAsObject(evt);
+        var listener;
+        var i;
+        var key;
+        var response;
 
-		for (key in listeners) {
-			if (listeners.hasOwnProperty(key)) {
-				i = listeners[key].length;
+        for (key in listeners) {
+            if (listeners.hasOwnProperty(key)) {
+                i = listeners[key].length;
 
-				while (i--) {
-					// If the listener returns true then it shall be removed from the event
-					// The function is executed either with a basic call or an apply if there is an args array
-					listener = listeners[key][i];
+                while (i--) {
+                    // If the listener returns true then it shall be removed from the event
+                    // The function is executed either with a basic call or an apply if there is an args array
+                    listener = listeners[key][i];
 
-					if (listener.once === true) {
-						this.removeListener(evt, listener.listener);
-					}
+                    if (listener.once === true) {
+                        this.removeListener(evt, listener.listener);
+                    }
 
-					response = listener.listener.apply(this, args || []);
+                    response = listener.listener.apply(this, args || []);
 
-					if (response === this._getOnceReturnValue()) {
-						this.removeListener(evt, listener.listener);
-					}
-				}
-			}
-		}
+                    if (response === this._getOnceReturnValue()) {
+                        this.removeListener(evt, listener.listener);
+                    }
+                }
+            }
+        }
 
-		return this;
-	};
+        return this;
+    };
 
-	/**
-	 * Alias of emitEvent
-	 */
-	proto.trigger = alias('emitEvent');
+    /**
+     * Alias of emitEvent
+     */
+    proto.trigger = alias('emitEvent');
 
-	/**
-	 * Subtly different from emitEvent in that it will pass its arguments on to the listeners, as opposed to taking a single array of arguments to pass on.
-	 * As with emitEvent, you can pass a regex in place of the event name to emit to all events that match it.
-	 *
-	 * @param {String|RegExp} evt Name of the event to emit and execute listeners for.
-	 * @param {...*} Optional additional arguments to be passed to each listener.
-	 * @return {Object} Current instance of EventEmitter for chaining.
-	 */
-	proto.emit = function emit(evt) {
-		var args = Array.prototype.slice.call(arguments, 1);
-		return this.emitEvent(evt, args);
-	};
+    /**
+     * Subtly different from emitEvent in that it will pass its arguments on to the listeners, as opposed to taking a single array of arguments to pass on.
+     * As with emitEvent, you can pass a regex in place of the event name to emit to all events that match it.
+     *
+     * @param {String|RegExp} evt Name of the event to emit and execute listeners for.
+     * @param {...*} Optional additional arguments to be passed to each listener.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.emit = function emit(evt) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        return this.emitEvent(evt, args);
+    };
 
-	/**
-	 * Sets the current value to check against when executing listeners. If a
-	 * listeners return value matches the one set here then it will be removed
-	 * after execution. This value defaults to true.
-	 *
-	 * @param {*} value The new value to check for when executing listeners.
-	 * @return {Object} Current instance of EventEmitter for chaining.
-	 */
-	proto.setOnceReturnValue = function setOnceReturnValue(value) {
-		this._onceReturnValue = value;
-		return this;
-	};
+    /**
+     * Sets the current value to check against when executing listeners. If a
+     * listeners return value matches the one set here then it will be removed
+     * after execution. This value defaults to true.
+     *
+     * @param {*} value The new value to check for when executing listeners.
+     * @return {Object} Current instance of EventEmitter for chaining.
+     */
+    proto.setOnceReturnValue = function setOnceReturnValue(value) {
+        this._onceReturnValue = value;
+        return this;
+    };
 
-	/**
-	 * Fetches the current value to check against when executing listeners. If
-	 * the listeners return value matches this one then it should be removed
-	 * automatically. It will return true by default.
-	 *
-	 * @return {*|Boolean} The current value to check for or the default, true.
-	 * @api private
-	 */
-	proto._getOnceReturnValue = function _getOnceReturnValue() {
-		if (this.hasOwnProperty('_onceReturnValue')) {
-			return this._onceReturnValue;
-		}
-		else {
-			return true;
-		}
-	};
+    /**
+     * Fetches the current value to check against when executing listeners. If
+     * the listeners return value matches this one then it should be removed
+     * automatically. It will return true by default.
+     *
+     * @return {*|Boolean} The current value to check for or the default, true.
+     * @api private
+     */
+    proto._getOnceReturnValue = function _getOnceReturnValue() {
+        if (this.hasOwnProperty('_onceReturnValue')) {
+            return this._onceReturnValue;
+        }
+        else {
+            return true;
+        }
+    };
 
-	/**
-	 * Fetches the events object and creates one if required.
-	 *
-	 * @return {Object} The events storage object.
-	 * @api private
-	 */
-	proto._getEvents = function _getEvents() {
-		return this._events || (this._events = {});
-	};
+    /**
+     * Fetches the events object and creates one if required.
+     *
+     * @return {Object} The events storage object.
+     * @api private
+     */
+    proto._getEvents = function _getEvents() {
+        return this._events || (this._events = {});
+    };
 
-	/**
-	 * Reverts the global {@link EventEmitter} to its previous value and returns a reference to this version.
-	 *
-	 * @return {Function} Non conflicting EventEmitter class.
-	 */
-	EventEmitter.noConflict = function noConflict() {
-		exports.EventEmitter = originalGlobalValue;
-		return EventEmitter;
-	};
+    /**
+     * Reverts the global {@link EventEmitter} to its previous value and returns a reference to this version.
+     *
+     * @return {Function} Non conflicting EventEmitter class.
+     */
+    EventEmitter.noConflict = function noConflict() {
+        exports.EventEmitter = originalGlobalValue;
+        return EventEmitter;
+    };
 
-	// Expose the class either via AMD, CommonJS or the global object
-	if (typeof define === 'function' && define.amd) {
-		define(function () {
-			return EventEmitter;
-		});
-	}
-	else if (typeof module === 'object' && module.exports){
-		module.exports = EventEmitter;
-	}
-	else {
-		this.EventEmitter = EventEmitter;
-	}
+    // Expose the class either via AMD, CommonJS or the global object
+    if (typeof define === 'function' && define.amd) {
+        define(function () {
+            return EventEmitter;
+        });
+    }
+    else if (typeof module === 'object' && module.exports){
+        module.exports = EventEmitter;
+    }
+    else {
+        exports.EventEmitter = EventEmitter;
+    }
 }.call(this));
 
-},{}],98:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 (function (process){
 /*global setImmediate: false, setTimeout: false, console: false */
 (function () {
@@ -14978,7 +14744,7 @@ function QuestDialogViewModel (quests, questGiver) {
 }());
 
 }).call(this,require('_process'))
-},{"_process":163}],99:[function(require,module,exports){
+},{"_process":165}],100:[function(require,module,exports){
 (function (process,global){
 /* @preserve
  * The MIT License (MIT)
@@ -15005,7 +14771,7 @@ function QuestDialogViewModel (quests, questGiver) {
  * 
  */
 /**
- * bluebird build version 2.9.12
+ * bluebird build version 2.9.13
  * Features enabled: core, race, call_get, generators, map, nodeify, promisify, props, reduce, settle, some, progress, cancel, using, filter, any, each, timers
 */
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Promise=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof _dereq_=="function"&&_dereq_;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof _dereq_=="function"&&_dereq_;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
@@ -16778,6 +16544,7 @@ module.exports = function(Promise,
                           apiRejection,
                           tryConvertToPromise,
                           INTERNAL) {
+var async = _dereq_("./async.js");
 var util = _dereq_("./util.js");
 var tryCatch = util.tryCatch;
 var errorObj = util.errorObj;
@@ -16794,9 +16561,10 @@ function MappingPromiseArray(promises, fn, limit, _filter) {
     this._limit = limit;
     this._inFlight = 0;
     this._queue = limit >= 1 ? [] : EMPTY_ARRAY;
-    this._init$(undefined, -2);
+    async.invoke(init, this, undefined);
 }
 util.inherits(MappingPromiseArray, PromiseArray);
+function init() {this._init$(undefined, -2);}
 
 MappingPromiseArray.prototype._init = function () {};
 
@@ -16902,7 +16670,7 @@ Promise.map = function (promises, fn, options, _filter) {
 
 };
 
-},{"./util.js":38}],20:[function(_dereq_,module,exports){
+},{"./async.js":2,"./util.js":38}],20:[function(_dereq_,module,exports){
 "use strict";
 module.exports =
 function(Promise, INTERNAL, tryConvertToPromise, apiRejection) {
@@ -18578,6 +18346,7 @@ module.exports = function(Promise,
                           apiRejection,
                           tryConvertToPromise,
                           INTERNAL) {
+var async = _dereq_("./async.js");
 var util = _dereq_("./util.js");
 var tryCatch = util.tryCatch;
 var errorObj = util.errorObj;
@@ -18607,7 +18376,10 @@ function ReductionPromiseArray(promises, fn, accum, _each) {
     if (!(isPromise || this._zerothIsAccum)) this._gotAccum = true;
     this._callback = fn;
     this._accum = accum;
-    if (!rejected) this._init$(undefined, -5);
+    if (!rejected) async.invoke(init, this, undefined);
+}
+function init() {
+    this._init$(undefined, -5);
 }
 util.inherits(ReductionPromiseArray, PromiseArray);
 
@@ -18715,7 +18487,7 @@ Promise.reduce = function (promises, fn, initialValue, _each) {
 };
 };
 
-},{"./util.js":38}],31:[function(_dereq_,module,exports){
+},{"./async.js":2,"./util.js":38}],31:[function(_dereq_,module,exports){
 "use strict";
 var schedule;
 if (_dereq_("./util.js").isNode) {
@@ -19645,7 +19417,7 @@ module.exports = ret;
 },{"./es5.js":14}]},{},[4])(4)
 });                    ;if (typeof window !== 'undefined' && window !== null) {                               window.P = window.Promise;                                                     } else if (typeof self !== 'undefined' && self !== null) {                             self.P = self.Promise;                                                         }
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":163}],100:[function(require,module,exports){
+},{"_process":165}],101:[function(require,module,exports){
 /*
  * Cookies.js - 1.2.1
  * https://github.com/ScottHamper/Cookies
@@ -19807,7 +19579,7 @@ module.exports = ret;
         global.Cookies = cookiesExport;
     }
 })(typeof window === 'undefined' ? this : window);
-},{}],101:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -19946,7 +19718,7 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],102:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 var hasOwn = Object.prototype.hasOwnProperty;
 var toString = Object.prototype.toString;
 
@@ -20026,7 +19798,7 @@ module.exports = function extend() {
 	return target;
 };
 
-},{}],103:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 (function (global){
 // Hoodie Core
 // -------------
@@ -20194,7 +19966,7 @@ function applyExtensions(hoodie) {
 module.exports = Hoodie;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./hoodie/account":104,"./hoodie/connection":105,"./hoodie/id":106,"./hoodie/open":107,"./hoodie/remote":108,"./hoodie/request":109,"./hoodie/store":110,"./hoodie/task":111,"./lib":117,"./lib/events":116,"./utils":127}],104:[function(require,module,exports){
+},{"./hoodie/account":105,"./hoodie/connection":106,"./hoodie/id":107,"./hoodie/open":108,"./hoodie/remote":109,"./hoodie/request":110,"./hoodie/store":111,"./hoodie/task":112,"./lib":118,"./lib/events":117,"./utils":128}],105:[function(require,module,exports){
 (function (global){
 // Hoodie.Account
 // ================
@@ -20469,9 +20241,7 @@ function hoodieAccount(hoodie) {
 
     return promise.done( function(newUsername, newHoodieId) {
       if (options.moveData) {
-        if (!isSilent) {
-          account.trigger('movedata');
-        }
+        account.trigger('movedata');
       }
       if (!isReauthenticating && !options.moveData) {
         cleanup();
@@ -20502,6 +20272,10 @@ function hoodieAccount(hoodie) {
 
     if (!account.hasAccount()) {
       return cleanupMethod();
+    }
+
+    if (options.moveData) {
+      return sendSignOutRequest();
     }
 
     return pushLocalChanges(options).then(disconnect).then(sendSignOutRequest).then(cleanupMethod);
@@ -21228,12 +21002,12 @@ function hoodieAccount(hoodie) {
           // we do signOut explicitly although signOut is build into hoodie.signIn to
           // work around trouble in case of local changes. See
           // https://github.com/hoodiehq/hoodie.js/issues/256
-          return account.signOut({silent:true, ignoreLocalChanges: true}).then(function() {
-            return account.signIn(newUsername, newPassword, {moveData: true});
+          return account.signOut({silent:true, moveData: true}).then(function() {
+            return account.signIn(newUsername, newPassword, {moveData: true, silent: true});
           });
         });
       } else {
-        return account.signIn(currentUsername, newPassword);
+        return account.signIn(currentUsername, newPassword, {silent: true});
       }
     };
   }
@@ -21401,7 +21175,7 @@ function hoodieAccount(hoodie) {
 module.exports = hoodieAccount;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../lib/events":116,"../utils/config":124,"../utils/generate_id":125,"../utils/promise/defer":129,"../utils/promise/reject":132,"../utils/promise/reject_with":133,"../utils/promise/resolve":134,"../utils/promise/resolve_with":135,"extend":102}],105:[function(require,module,exports){
+},{"../lib/events":117,"../utils/config":125,"../utils/generate_id":126,"../utils/promise/defer":130,"../utils/promise/reject":133,"../utils/promise/reject_with":134,"../utils/promise/resolve":135,"../utils/promise/resolve_with":136,"extend":103}],106:[function(require,module,exports){
 (function (global){
 // hoodie.checkConnection() & hoodie.isConnected()
 // =================================================
@@ -21502,7 +21276,7 @@ function hoodieConnection(hoodie) {
 module.exports = hoodieConnection;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../utils/promise/reject":132,"../utils/promise/resolve":134}],106:[function(require,module,exports){
+},{"../utils/promise/reject":133,"../utils/promise/resolve":135}],107:[function(require,module,exports){
 // hoodie.id
 // =========
 
@@ -21575,7 +21349,7 @@ function hoodieId (hoodie) {
 
 module.exports = hoodieId;
 
-},{"../utils/config":124,"../utils/generate_id":125}],107:[function(require,module,exports){
+},{"../utils/config":125,"../utils/generate_id":126}],108:[function(require,module,exports){
 // Open stores
 // -------------
 
@@ -21606,7 +21380,7 @@ function hoodieOpen(hoodie) {
 
 module.exports = hoodieOpen;
 
-},{"../lib/store/remote":120,"extend":102}],108:[function(require,module,exports){
+},{"../lib/store/remote":121,"extend":103}],109:[function(require,module,exports){
 // AccountRemote
 // ===============
 
@@ -21618,10 +21392,10 @@ module.exports = hoodieOpen;
 // When hoodie.remote is continuously syncing (default),
 // it will continuously  synchronize with local store,
 // otherwise sync, pull or push can be called manually
-// 
+//
 // Note that hoodieRemote must be initialized before the
 // API is available:
-// 
+//
 //     hoodieRemote(hoodie);
 //     hoodie.remote.init();
 //
@@ -21737,6 +21511,7 @@ function hoodieRemote (hoodie) {
     hoodie.on('account:signup:anonymous', remote.connect);
     hoodie.on('account:signin', remote.connect);
     hoodie.on('account:signin:anonymous', remote.connect);
+    hoodie.on('account:changeusername', remote.connect);
 
     hoodie.on('account:reauthenticated', remote.connect);
     hoodie.on('account:signout', remote.disconnect);
@@ -21767,7 +21542,7 @@ function hoodieRemoteFactory(hoodie) {
 
 module.exports = hoodieRemoteFactory;
 
-},{"../utils/config":124,"../utils/promise/reject_with":133}],109:[function(require,module,exports){
+},{"../utils/config":125,"../utils/promise/reject_with":134}],110:[function(require,module,exports){
 //
 // hoodie.request
 // ================
@@ -21923,7 +21698,7 @@ function hoodieRequest(hoodie) {
 
 module.exports = hoodieRequest;
 
-},{"../utils/hoodiefy_request_error_name":126,"../utils/promise/reject_with":133,"extend":102}],110:[function(require,module,exports){
+},{"../utils/hoodiefy_request_error_name":127,"../utils/promise/reject_with":134,"extend":103}],111:[function(require,module,exports){
 (function (global){
 // LocalStore
 // ============
@@ -22886,7 +22661,7 @@ function hoodieStore (hoodie) {
 module.exports = hoodieStore;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../lib/error/object_id":114,"../lib/error/object_type":115,"../lib/store/api":118,"../utils/generate_id":125,"../utils/local_storage_wrapper":128,"../utils/promise/defer":129,"../utils/promise/reject_with":133,"../utils/promise/resolve_with":135,"extend":102}],111:[function(require,module,exports){
+},{"../lib/error/object_id":115,"../lib/error/object_type":116,"../lib/store/api":119,"../utils/generate_id":126,"../utils/local_storage_wrapper":129,"../utils/promise/defer":130,"../utils/promise/reject_with":134,"../utils/promise/resolve_with":136,"extend":103}],112:[function(require,module,exports){
 // Tasks
 // ============
 
@@ -23196,7 +22971,7 @@ function hoodieTask(hoodie) {
 
 module.exports = hoodieTask;
 
-},{"../lib/error/error":112,"../lib/events":116,"../lib/task/scoped":123,"../utils/promise/defer":129,"extend":102}],112:[function(require,module,exports){
+},{"../lib/error/error":113,"../lib/events":117,"../lib/task/scoped":124,"../utils/promise/defer":130,"extend":103}],113:[function(require,module,exports){
 // Hoodie Error
 // -------------
 
@@ -23262,14 +23037,14 @@ HoodieError.prototype.constructor = HoodieError;
 module.exports = HoodieError;
 
 
-},{"extend":102}],113:[function(require,module,exports){
+},{"extend":103}],114:[function(require,module,exports){
 module.exports = {
   error: require('./error'),
   objectId: require('./object_id'),
   objectType: require('./object_type')
 };
 
-},{"./error":112,"./object_id":114,"./object_type":115}],114:[function(require,module,exports){
+},{"./error":113,"./object_id":115,"./object_type":116}],115:[function(require,module,exports){
 // Hoodie Invalid Type Or Id Error
 // -------------------------------
 
@@ -23296,7 +23071,7 @@ HoodieObjectIdError.prototype.rules = 'Lowercase letters, numbers and dashes all
 
 module.exports = HoodieObjectIdError;
 
-},{"./error":112}],115:[function(require,module,exports){
+},{"./error":113}],116:[function(require,module,exports){
 // Hoodie Invalid Type Or Id Error
 // -------------------------------
 
@@ -23330,7 +23105,7 @@ HoodieObjectTypeError.prototype.rules = 'lowercase letters, numbers and dashes a
 
 module.exports = HoodieObjectTypeError;
 
-},{"./error":112}],116:[function(require,module,exports){
+},{"./error":113}],117:[function(require,module,exports){
 // Events
 // ========
 //
@@ -23494,7 +23269,7 @@ function hoodieEvents(hoodie, options) {
 
 module.exports = hoodieEvents;
 
-},{}],117:[function(require,module,exports){
+},{}],118:[function(require,module,exports){
 module.exports = {
   error: require('./error'),
   events: require('./events'),
@@ -23502,7 +23277,7 @@ module.exports = {
   task: require('./task')
 };
 
-},{"./error":113,"./events":116,"./store":119,"./task":122}],118:[function(require,module,exports){
+},{"./error":114,"./events":117,"./store":120,"./task":123}],119:[function(require,module,exports){
 // Store
 // ============
 
@@ -23940,14 +23715,14 @@ function hoodieStoreApi(hoodie, options) {
 
 module.exports = hoodieStoreApi;
 
-},{"../../utils/promise/defer":129,"../../utils/promise/is_promise":131,"../../utils/promise/reject_with":133,"../../utils/promise/resolve_with":135,"../error/error":112,"../error/object_id":114,"../error/object_type":115,"../events":116,"./scoped":121,"extend":102}],119:[function(require,module,exports){
+},{"../../utils/promise/defer":130,"../../utils/promise/is_promise":132,"../../utils/promise/reject_with":134,"../../utils/promise/resolve_with":136,"../error/error":113,"../error/object_id":115,"../error/object_type":116,"../events":117,"./scoped":122,"extend":103}],120:[function(require,module,exports){
 module.exports = {
   api: require('./api'),
   remote: require('./remote'),
   scoped: require('./scoped')
 };
 
-},{"./api":118,"./remote":120,"./scoped":121}],120:[function(require,module,exports){
+},{"./api":119,"./remote":121,"./scoped":122}],121:[function(require,module,exports){
 (function (global){
 // Remote
 // ========
@@ -24743,7 +24518,7 @@ function hoodieRemoteStore(hoodie, options) {
 module.exports = hoodieRemoteStore;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../../utils/generate_id":125,"../../utils/promise/resolve_with":135,"./api":118,"extend":102}],121:[function(require,module,exports){
+},{"../../utils/generate_id":126,"../../utils/promise/resolve_with":136,"./api":119,"extend":103}],122:[function(require,module,exports){
 // scoped Store
 // ============
 
@@ -24856,12 +24631,12 @@ function hoodieScopedStoreApi(hoodie, storeApi, options) {
 
 module.exports = hoodieScopedStoreApi;
 
-},{"../events":116}],122:[function(require,module,exports){
+},{"../events":117}],123:[function(require,module,exports){
 module.exports = {
   scoped: require('./scoped')
 };
 
-},{"./scoped":123}],123:[function(require,module,exports){
+},{"./scoped":124}],124:[function(require,module,exports){
 // scoped Store
 // ============
 
@@ -24938,7 +24713,7 @@ function hoodieScopedTask(hoodie, taskApi, options) {
 
 module.exports = hoodieScopedTask;
 
-},{"../events":116}],124:[function(require,module,exports){
+},{"../events":117}],125:[function(require,module,exports){
 // Hoodie Config API
 // ===================
 
@@ -25008,7 +24783,7 @@ init();
 module.exports = config;
 
 
-},{"../utils/local_storage_wrapper":128,"extend":102}],125:[function(require,module,exports){
+},{"../utils/local_storage_wrapper":129,"extend":103}],126:[function(require,module,exports){
 var chars, i, radix;
 
 // uuids consist of numbers and lowercase letters only.
@@ -25039,7 +24814,7 @@ function generateId (length) {
 
 module.exports = generateId;
 
-},{}],126:[function(require,module,exports){
+},{}],127:[function(require,module,exports){
 var findLettersToUpperCase = /(^\w|_\w)/g;
 
 function hoodiefyRequestErrorName (name) {
@@ -25051,7 +24826,7 @@ function hoodiefyRequestErrorName (name) {
 }
 
 module.exports = hoodiefyRequestErrorName;
-},{}],127:[function(require,module,exports){
+},{}],128:[function(require,module,exports){
 module.exports = {
   config: require('./config'),
   generateId: require('./generate_id'),
@@ -25060,7 +24835,7 @@ module.exports = {
 };
 
 
-},{"./config":124,"./generate_id":125,"./local_storage_wrapper":128,"./promise":130}],128:[function(require,module,exports){
+},{"./config":125,"./generate_id":126,"./local_storage_wrapper":129,"./promise":131}],129:[function(require,module,exports){
 (function (global){
 // public API
 var store = {};
@@ -25175,11 +24950,11 @@ init();
 module.exports = store;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],129:[function(require,module,exports){
+},{}],130:[function(require,module,exports){
 (function (global){
 module.exports = global.jQuery.Deferred;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],130:[function(require,module,exports){
+},{}],131:[function(require,module,exports){
 module.exports = {
   defer: require('./defer'),
   isPromise: require('./is_promise'),
@@ -25189,7 +24964,7 @@ module.exports = {
   resolve: require('./resolve'),
 };
 
-},{"./defer":129,"./is_promise":131,"./reject":132,"./reject_with":133,"./resolve":134,"./resolve_with":135}],131:[function(require,module,exports){
+},{"./defer":130,"./is_promise":132,"./reject":133,"./reject_with":134,"./resolve":135,"./resolve_with":136}],132:[function(require,module,exports){
 // returns true if passed object is a promise (but not a deferred),
 // otherwise false.
 function isPromise(object) {
@@ -25199,7 +24974,7 @@ function isPromise(object) {
 }
 
 module.exports = isPromise;
-},{}],132:[function(require,module,exports){
+},{}],133:[function(require,module,exports){
 var defer = require('./defer');
 //
 function reject() {
@@ -25207,7 +24982,7 @@ function reject() {
 }
 
 module.exports = reject;
-},{"./defer":129}],133:[function(require,module,exports){
+},{"./defer":130}],134:[function(require,module,exports){
 var getDefer = require('./defer');
 var HoodieError = require('../../lib/error/error');
 
@@ -25219,7 +24994,7 @@ function rejectWith(errorProperties) {
 
 module.exports = rejectWith;
 
-},{"../../lib/error/error":112,"./defer":129}],134:[function(require,module,exports){
+},{"../../lib/error/error":113,"./defer":130}],135:[function(require,module,exports){
 var defer = require('./defer');
 //
 function resolve() {
@@ -25227,7 +25002,7 @@ function resolve() {
 }
 
 module.exports = resolve;
-},{"./defer":129}],135:[function(require,module,exports){
+},{"./defer":130}],136:[function(require,module,exports){
 var getDefer = require('./defer');
 
 //
@@ -25238,7 +25013,7 @@ function resolveWith() {
 
 module.exports = resolveWith;
 
-},{"./defer":129}],136:[function(require,module,exports){
+},{"./defer":130}],137:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -25263,7 +25038,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],137:[function(require,module,exports){
+},{}],138:[function(require,module,exports){
 var lock = require('pointer-lock')
   , drag = require('drag-stream')
   , full = require('fullscreen')
@@ -25370,7 +25145,7 @@ function usedrag(el) {
   return ee
 }
 
-},{"drag-stream":138,"events":160,"fullscreen":144,"pointer-lock":145,"stream":176}],138:[function(require,module,exports){
+},{"drag-stream":139,"events":162,"fullscreen":145,"pointer-lock":146,"stream":177}],139:[function(require,module,exports){
 module.exports = dragstream
 
 var Stream = require('stream')
@@ -25438,10 +25213,10 @@ function dragstream(el) {
   }
 }
 
-},{"domnode-dom":139,"stream":176,"through":143}],139:[function(require,module,exports){
+},{"domnode-dom":140,"stream":177,"through":144}],140:[function(require,module,exports){
 module.exports = require('./lib/index')
 
-},{"./lib/index":140}],140:[function(require,module,exports){
+},{"./lib/index":141}],141:[function(require,module,exports){
 var WriteStream = require('./writable')
   , ReadStream = require('./readable')
   , DOMStream = {}
@@ -25479,7 +25254,7 @@ DOMStream.createEventStream = function(el, type, preventDefault) {
 module.exports = DOMStream
 
 
-},{"./readable":141,"./writable":142}],141:[function(require,module,exports){
+},{"./readable":142,"./writable":143}],142:[function(require,module,exports){
 module.exports = DOMStream
 
 var Stream = require('stream').Stream
@@ -25590,7 +25365,7 @@ function valueFromElement(el) {
   return el.value
 }
 
-},{"stream":176}],142:[function(require,module,exports){
+},{"stream":177}],143:[function(require,module,exports){
 module.exports = DOMStream
 
 var Stream = require('stream').Stream
@@ -25672,7 +25447,7 @@ proto.constructTextPlain = function(data) {
   return [textNode]
 }
 
-},{"stream":176}],143:[function(require,module,exports){
+},{"stream":177}],144:[function(require,module,exports){
 (function (process){
 var Stream = require('stream')
 
@@ -25779,7 +25554,7 @@ function through (write, end) {
 
 
 }).call(this,require('_process'))
-},{"_process":163,"stream":176}],144:[function(require,module,exports){
+},{"_process":165,"stream":177}],145:[function(require,module,exports){
 module.exports = fullscreen
 fullscreen.available = available
 
@@ -25870,7 +25645,7 @@ function shim(el) {
     el.oRequestFullScreen)
 }
 
-},{"events":160}],145:[function(require,module,exports){
+},{"events":162}],146:[function(require,module,exports){
 module.exports = pointer
 
 pointer.available = available
@@ -26034,7 +25809,7 @@ function shim(el) {
     null
 }
 
-},{"events":160,"stream":176}],146:[function(require,module,exports){
+},{"events":162,"stream":177}],147:[function(require,module,exports){
 /*!
  * Knockout JavaScript library v3.2.0
  * (c) Steven Sanderson - http://knockoutjs.com/
@@ -31335,7 +31110,7 @@ ko.exportSymbol('nativeTemplateEngine', ko.nativeTemplateEngine);
 }());
 })();
 
-},{}],147:[function(require,module,exports){
+},{}],148:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -38124,7 +37899,7 @@ ko.exportSymbol('nativeTemplateEngine', ko.nativeTemplateEngine);
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],148:[function(require,module,exports){
+},{}],149:[function(require,module,exports){
 /*
   Machine.js
   by mary rose cook
@@ -38400,7 +38175,7 @@ ko.exportSymbol('nativeTemplateEngine', ko.nativeTemplateEngine);
 })();
 
 
-},{}],149:[function(require,module,exports){
+},{}],150:[function(require,module,exports){
 
 module.exports = (function() {
   return typeof window != 'undefined' && window.performance
@@ -38413,7 +38188,7 @@ module.exports = (function() {
     : Date.now || function(){ return +new Date() };
 })()
 
-},{}],150:[function(require,module,exports){
+},{}],151:[function(require,module,exports){
 (function (process){
 /*jshint onevar: false, indent:4, strict:false */
 /*global setImmediate: false, setTimeout: false, console: false, module: true, process: true, define: true, require: true */
@@ -38677,8 +38452,7 @@ Recast.prototype.queryPolygons = function (sx, sy, sz, dx, dy, dz, maxPolys, cal
 
 Recast.prototype.setPolyFlags = function (position, radius, flags, callback_id) {
     callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
-    if (typeof radius === 'number') radius = { x:radius, y:radius, z:radius };
-    this.worker.postMessage({type: 'setPolyFlags', data: { sx:position.x, sy:position.x, sz:position.x, dx:radius.x, dy:radius.y, dz:radius.z, flags:flags}, callback: callback_id });
+    this.worker.postMessage({type: 'setPolyFlags', data: { sx:position.x, sy:position.x, sz:position.x, dx:radius, dy:radius, dz:radius, flags:flags}, callback: callback_id });
 };
 Recast.prototype.setPolyFlagsByRef = function (ref, flags, callback_id) {
     callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
@@ -38740,18 +38514,22 @@ Recast.prototype.addTempObstacle = function (posX, posY, posZ, radius, callback_
 };
 
 Recast.prototype.removeTempObstacle = function (ref, callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
     this.worker.postMessage({ type: 'removeTempObstacle', data: ref, callback: callback_id });
 };
 
 Recast.prototype.removeAllTempObstacles = function (callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
     this.worker.postMessage({ type: 'removeAllTempObstacles', data: null, callback: callback_id });
 };
 
 Recast.prototype.getAllTempObstacles = function (callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
     this.worker.postMessage({ type: 'getAllTempObstacles', data: null, callback: callback_id });
 };
 
 Recast.prototype.addOffMeshConnection = function (startX, startY, startZ,endX, endY, endZ, radius, bidir, callback_id) {
+    callback_id = typeof callback_id === 'number' ? callback_id : this.cb(callback_id);
     this.worker.postMessage({ type: 'addOffMeshConnection', data: { startX:startX, startY:startY, startZ:startZ, endX:endX, endY:endY, endZ:endZ, radius:radius, bidir:bidir }, callback: callback_id });
 };
 
@@ -38791,7 +38569,7 @@ else {
 }
 
 }).call(this,require('_process'))
-},{"_process":163,"child_process":156}],151:[function(require,module,exports){
+},{"_process":165,"child_process":157}],152:[function(require,module,exports){
 /**
  * @author Eberhard Graether / http://egraether.com/
  * @author Mark Lundin / http://mark-lundin.com
@@ -39417,7 +39195,7 @@ function preventEvent( event ) { event.preventDefault(); }
 
 Trackball.prototype = Object.create(THREE.EventDispatcher.prototype);
 
-},{}],152:[function(require,module,exports){
+},{}],153:[function(require,module,exports){
 /*
  * tic
  * https://github.com/shama/tic
@@ -39464,7 +39242,7 @@ Tic.prototype.tick = function(dt) {
   });
 };
 
-},{}],153:[function(require,module,exports){
+},{}],154:[function(require,module,exports){
 // tween.js - http://github.com/sole/tween.js
 /**
  * @author sole / http://soledadpenades.com
@@ -40209,7 +39987,7 @@ TWEEN.Interpolation = {
 };
 
 module.exports=TWEEN;
-},{}],154:[function(require,module,exports){
+},{}],155:[function(require,module,exports){
 /**
  * @author alteredq / http://alteredqualia.com/
  * @author mr.doob / http://mrdoob.com/
@@ -40270,7 +40048,7 @@ module.exports = function() {
   };
 }
 
-},{}],155:[function(require,module,exports){
+},{}],156:[function(require,module,exports){
 /**
  * @author mrdoob / http://mrdoob.com/
  */
@@ -40416,9 +40194,9 @@ var Stats = function () {
 };
 
 module.exports = Stats
-},{}],156:[function(require,module,exports){
-
 },{}],157:[function(require,module,exports){
+
+},{}],158:[function(require,module,exports){
 /*!
  * The buffer module from node.js, for the browser.
  *
@@ -40428,14 +40206,18 @@ module.exports = Stats
 
 var base64 = require('base64-js')
 var ieee754 = require('ieee754')
+var isArray = require('is-array')
 
 exports.Buffer = Buffer
-exports.SlowBuffer = Buffer
+exports.SlowBuffer = SlowBuffer
 exports.INSPECT_MAX_BYTES = 50
-Buffer.poolSize = 8192
+Buffer.poolSize = 8192 // not used by this implementation
+
+var kMaxLength = 0x3fffffff
+var rootParent = {}
 
 /**
- * If `TYPED_ARRAY_SUPPORT`:
+ * If `Buffer.TYPED_ARRAY_SUPPORT`:
  *   === true    Use Uint8Array implementation (fastest)
  *   === false   Use Object implementation (most compatible, even IE6)
  *
@@ -40453,10 +40235,10 @@ Buffer.poolSize = 8192
  *  - IE10 has a broken `TypedArray.prototype.subarray` function which returns arrays of
  *    incorrect length in some situations.
  *
- * We detect these buggy browsers and set `TYPED_ARRAY_SUPPORT` to `false` so they will
+ * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they will
  * get the Object implementation, which is slower but will work correctly.
  */
-var TYPED_ARRAY_SUPPORT = (function () {
+Buffer.TYPED_ARRAY_SUPPORT = (function () {
   try {
     var buf = new ArrayBuffer(0)
     var arr = new Uint8Array(buf)
@@ -40492,18 +40274,20 @@ function Buffer (subject, encoding, noZero) {
   if (type === 'number')
     length = subject > 0 ? subject >>> 0 : 0
   else if (type === 'string') {
-    if (encoding === 'base64')
-      subject = base64clean(subject)
     length = Buffer.byteLength(subject, encoding)
   } else if (type === 'object' && subject !== null) { // assume object is array-like
     if (subject.type === 'Buffer' && isArray(subject.data))
       subject = subject.data
     length = +subject.length > 0 ? Math.floor(+subject.length) : 0
   } else
-    throw new Error('First argument needs to be a number, array or string.')
+    throw new TypeError('must start with number, buffer, array or string')
+
+  if (length > kMaxLength)
+    throw new RangeError('Attempt to allocate Buffer larger than maximum ' +
+      'size: 0x' + kMaxLength.toString(16) + ' bytes')
 
   var buf
-  if (TYPED_ARRAY_SUPPORT) {
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
     // Preferred: Return an augmented `Uint8Array` instance for best performance
     buf = Buffer._augment(new Uint8Array(length))
   } else {
@@ -40514,7 +40298,7 @@ function Buffer (subject, encoding, noZero) {
   }
 
   var i
-  if (TYPED_ARRAY_SUPPORT && typeof subject.byteLength === 'number') {
+  if (Buffer.TYPED_ARRAY_SUPPORT && typeof subject.byteLength === 'number') {
     // Speed optimization -- use set if we're copying from a typed array
     buf._set(subject)
   } else if (isArrayish(subject)) {
@@ -40528,17 +40312,46 @@ function Buffer (subject, encoding, noZero) {
     }
   } else if (type === 'string') {
     buf.write(subject, 0, encoding)
-  } else if (type === 'number' && !TYPED_ARRAY_SUPPORT && !noZero) {
+  } else if (type === 'number' && !Buffer.TYPED_ARRAY_SUPPORT && !noZero) {
     for (i = 0; i < length; i++) {
       buf[i] = 0
     }
   }
 
+  if (length > 0 && length <= Buffer.poolSize)
+    buf.parent = rootParent
+
   return buf
 }
 
-// STATIC METHODS
-// ==============
+function SlowBuffer(subject, encoding, noZero) {
+  if (!(this instanceof SlowBuffer))
+    return new SlowBuffer(subject, encoding, noZero)
+
+  var buf = new Buffer(subject, encoding, noZero)
+  delete buf.parent
+  return buf
+}
+
+Buffer.isBuffer = function (b) {
+  return !!(b != null && b._isBuffer)
+}
+
+Buffer.compare = function (a, b) {
+  if (!Buffer.isBuffer(a) || !Buffer.isBuffer(b))
+    throw new TypeError('Arguments must be Buffers')
+
+  var x = a.length
+  var y = b.length
+  for (var i = 0, len = Math.min(x, y); i < len && a[i] === b[i]; i++) {}
+  if (i !== len) {
+    x = a[i]
+    y = b[i]
+  }
+  if (x < y) return -1
+  if (y < x) return 1
+  return 0
+}
 
 Buffer.isEncoding = function (encoding) {
   switch (String(encoding).toLowerCase()) {
@@ -40559,43 +40372,8 @@ Buffer.isEncoding = function (encoding) {
   }
 }
 
-Buffer.isBuffer = function (b) {
-  return !!(b != null && b._isBuffer)
-}
-
-Buffer.byteLength = function (str, encoding) {
-  var ret
-  str = str.toString()
-  switch (encoding || 'utf8') {
-    case 'hex':
-      ret = str.length / 2
-      break
-    case 'utf8':
-    case 'utf-8':
-      ret = utf8ToBytes(str).length
-      break
-    case 'ascii':
-    case 'binary':
-    case 'raw':
-      ret = str.length
-      break
-    case 'base64':
-      ret = base64ToBytes(str).length
-      break
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      ret = str.length * 2
-      break
-    default:
-      throw new Error('Unknown encoding')
-  }
-  return ret
-}
-
 Buffer.concat = function (list, totalLength) {
-  assert(isArray(list), 'Usage: Buffer.concat(list[, length])')
+  if (!isArray(list)) throw new TypeError('Usage: Buffer.concat(list[, length])')
 
   if (list.length === 0) {
     return new Buffer(0)
@@ -40621,26 +40399,118 @@ Buffer.concat = function (list, totalLength) {
   return buf
 }
 
-Buffer.compare = function (a, b) {
-  assert(Buffer.isBuffer(a) && Buffer.isBuffer(b), 'Arguments must be Buffers')
-  var x = a.length
-  var y = b.length
-  for (var i = 0, len = Math.min(x, y); i < len && a[i] === b[i]; i++) {}
-  if (i !== len) {
-    x = a[i]
-    y = b[i]
+Buffer.byteLength = function (str, encoding) {
+  var ret
+  str = str + ''
+  switch (encoding || 'utf8') {
+    case 'ascii':
+    case 'binary':
+    case 'raw':
+      ret = str.length
+      break
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      ret = str.length * 2
+      break
+    case 'hex':
+      ret = str.length >>> 1
+      break
+    case 'utf8':
+    case 'utf-8':
+      ret = utf8ToBytes(str).length
+      break
+    case 'base64':
+      ret = base64ToBytes(str).length
+      break
+    default:
+      ret = str.length
   }
-  if (x < y) {
-    return -1
-  }
-  if (y < x) {
-    return 1
-  }
-  return 0
+  return ret
 }
 
-// BUFFER INSTANCE METHODS
-// =======================
+// pre-set for values that may exist in the future
+Buffer.prototype.length = undefined
+Buffer.prototype.parent = undefined
+
+// toString(encoding, start=0, end=buffer.length)
+Buffer.prototype.toString = function (encoding, start, end) {
+  var loweredCase = false
+
+  start = start >>> 0
+  end = end === undefined || end === Infinity ? this.length : end >>> 0
+
+  if (!encoding) encoding = 'utf8'
+  if (start < 0) start = 0
+  if (end > this.length) end = this.length
+  if (end <= start) return ''
+
+  while (true) {
+    switch (encoding) {
+      case 'hex':
+        return hexSlice(this, start, end)
+
+      case 'utf8':
+      case 'utf-8':
+        return utf8Slice(this, start, end)
+
+      case 'ascii':
+        return asciiSlice(this, start, end)
+
+      case 'binary':
+        return binarySlice(this, start, end)
+
+      case 'base64':
+        return base64Slice(this, start, end)
+
+      case 'ucs2':
+      case 'ucs-2':
+      case 'utf16le':
+      case 'utf-16le':
+        return utf16leSlice(this, start, end)
+
+      default:
+        if (loweredCase)
+          throw new TypeError('Unknown encoding: ' + encoding)
+        encoding = (encoding + '').toLowerCase()
+        loweredCase = true
+    }
+  }
+}
+
+Buffer.prototype.equals = function (b) {
+  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
+  return Buffer.compare(this, b) === 0
+}
+
+Buffer.prototype.inspect = function () {
+  var str = ''
+  var max = exports.INSPECT_MAX_BYTES
+  if (this.length > 0) {
+    str = this.toString('hex', 0, max).match(/.{2}/g).join(' ')
+    if (this.length > max)
+      str += ' ... '
+  }
+  return '<Buffer ' + str + '>'
+}
+
+Buffer.prototype.compare = function (b) {
+  if (!Buffer.isBuffer(b)) throw new TypeError('Argument must be a Buffer')
+  return Buffer.compare(this, b)
+}
+
+// `get` will be removed in Node 0.13+
+Buffer.prototype.get = function (offset) {
+  console.log('.get() is deprecated. Access using array indexes instead.')
+  return this.readUInt8(offset)
+}
+
+// `set` will be removed in Node 0.13+
+Buffer.prototype.set = function (v, offset) {
+  console.log('.set() is deprecated. Access using array indexes instead.')
+  return this.writeUInt8(v, offset)
+}
 
 function hexWrite (buf, string, offset, length) {
   offset = Number(offset) || 0
@@ -40656,21 +40526,21 @@ function hexWrite (buf, string, offset, length) {
 
   // must be an even number of digits
   var strLen = string.length
-  assert(strLen % 2 === 0, 'Invalid hex string')
+  if (strLen % 2 !== 0) throw new Error('Invalid hex string')
 
   if (length > strLen / 2) {
     length = strLen / 2
   }
   for (var i = 0; i < length; i++) {
     var byte = parseInt(string.substr(i * 2, 2), 16)
-    assert(!isNaN(byte), 'Invalid hex string')
+    if (isNaN(byte)) throw new Error('Invalid hex string')
     buf[offset + i] = byte
   }
   return i
 }
 
 function utf8Write (buf, string, offset, length) {
-  var charsWritten = blitBuffer(utf8ToBytes(string), buf, offset, length)
+  var charsWritten = blitBuffer(utf8ToBytes(string, buf.length - offset), buf, offset, length)
   return charsWritten
 }
 
@@ -40689,7 +40559,7 @@ function base64Write (buf, string, offset, length) {
 }
 
 function utf16leWrite (buf, string, offset, length) {
-  var charsWritten = blitBuffer(utf16leToBytes(string), buf, offset, length)
+  var charsWritten = blitBuffer(utf16leToBytes(string, buf.length - offset), buf, offset, length, 2)
   return charsWritten
 }
 
@@ -40709,6 +40579,10 @@ Buffer.prototype.write = function (string, offset, length, encoding) {
   }
 
   offset = Number(offset) || 0
+
+  if (length < 0 || offset < 0 || offset > this.length)
+    throw new RangeError('attempt to write outside buffer bounds');
+
   var remaining = this.length - offset
   if (!length) {
     length = remaining
@@ -40745,48 +40619,7 @@ Buffer.prototype.write = function (string, offset, length, encoding) {
       ret = utf16leWrite(this, string, offset, length)
       break
     default:
-      throw new Error('Unknown encoding')
-  }
-  return ret
-}
-
-Buffer.prototype.toString = function (encoding, start, end) {
-  var self = this
-
-  encoding = String(encoding || 'utf8').toLowerCase()
-  start = Number(start) || 0
-  end = (end === undefined) ? self.length : Number(end)
-
-  // Fastpath empty strings
-  if (end === start)
-    return ''
-
-  var ret
-  switch (encoding) {
-    case 'hex':
-      ret = hexSlice(self, start, end)
-      break
-    case 'utf8':
-    case 'utf-8':
-      ret = utf8Slice(self, start, end)
-      break
-    case 'ascii':
-      ret = asciiSlice(self, start, end)
-      break
-    case 'binary':
-      ret = binarySlice(self, start, end)
-      break
-    case 'base64':
-      ret = base64Slice(self, start, end)
-      break
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      ret = utf16leSlice(self, start, end)
-      break
-    default:
-      throw new Error('Unknown encoding')
+      throw new TypeError('Unknown encoding: ' + encoding)
   }
   return ret
 }
@@ -40795,52 +40628,6 @@ Buffer.prototype.toJSON = function () {
   return {
     type: 'Buffer',
     data: Array.prototype.slice.call(this._arr || this, 0)
-  }
-}
-
-Buffer.prototype.equals = function (b) {
-  assert(Buffer.isBuffer(b), 'Argument must be a Buffer')
-  return Buffer.compare(this, b) === 0
-}
-
-Buffer.prototype.compare = function (b) {
-  assert(Buffer.isBuffer(b), 'Argument must be a Buffer')
-  return Buffer.compare(this, b)
-}
-
-// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
-Buffer.prototype.copy = function (target, target_start, start, end) {
-  var source = this
-
-  if (!start) start = 0
-  if (!end && end !== 0) end = this.length
-  if (!target_start) target_start = 0
-
-  // Copy 0 bytes; we're done
-  if (end === start) return
-  if (target.length === 0 || source.length === 0) return
-
-  // Fatal error conditions
-  assert(end >= start, 'sourceEnd < sourceStart')
-  assert(target_start >= 0 && target_start < target.length,
-      'targetStart out of bounds')
-  assert(start >= 0 && start < source.length, 'sourceStart out of bounds')
-  assert(end >= 0 && end <= source.length, 'sourceEnd out of bounds')
-
-  // Are we oob?
-  if (end > this.length)
-    end = this.length
-  if (target.length - target_start < end - start)
-    end = target.length - target_start + start
-
-  var len = end - start
-
-  if (len < 100 || !TYPED_ARRAY_SUPPORT) {
-    for (var i = 0; i < len; i++) {
-      target[i + target_start] = this[i + start]
-    }
-  } else {
-    target._set(this.subarray(start, start + len), target_start)
   }
 }
 
@@ -40874,13 +40661,19 @@ function asciiSlice (buf, start, end) {
   end = Math.min(buf.length, end)
 
   for (var i = start; i < end; i++) {
-    ret += String.fromCharCode(buf[i])
+    ret += String.fromCharCode(buf[i] & 0x7F)
   }
   return ret
 }
 
 function binarySlice (buf, start, end) {
-  return asciiSlice(buf, start, end)
+  var ret = ''
+  end = Math.min(buf.length, end)
+
+  for (var i = start; i < end; i++) {
+    ret += String.fromCharCode(buf[i])
+  }
+  return ret
 }
 
 function hexSlice (buf, start, end) {
@@ -40929,377 +40722,436 @@ Buffer.prototype.slice = function (start, end) {
   if (end < start)
     end = start
 
-  if (TYPED_ARRAY_SUPPORT) {
-    return Buffer._augment(this.subarray(start, end))
+  var newBuf
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    newBuf = Buffer._augment(this.subarray(start, end))
   } else {
     var sliceLen = end - start
-    var newBuf = new Buffer(sliceLen, undefined, true)
+    newBuf = new Buffer(sliceLen, undefined, true)
     for (var i = 0; i < sliceLen; i++) {
       newBuf[i] = this[i + start]
     }
-    return newBuf
   }
+
+  if (newBuf.length)
+    newBuf.parent = this.parent || this
+
+  return newBuf
 }
 
-// `get` will be removed in Node 0.13+
-Buffer.prototype.get = function (offset) {
-  console.log('.get() is deprecated. Access using array indexes instead.')
-  return this.readUInt8(offset)
+/*
+ * Need to make sure that buffer isn't trying to write out of bounds.
+ */
+function checkOffset (offset, ext, length) {
+  if ((offset % 1) !== 0 || offset < 0)
+    throw new RangeError('offset is not uint')
+  if (offset + ext > length)
+    throw new RangeError('Trying to access beyond buffer length')
 }
 
-// `set` will be removed in Node 0.13+
-Buffer.prototype.set = function (v, offset) {
-  console.log('.set() is deprecated. Access using array indexes instead.')
-  return this.writeUInt8(v, offset)
+Buffer.prototype.readUIntLE = function (offset, byteLength, noAssert) {
+  offset = offset >>> 0
+  byteLength = byteLength >>> 0
+  if (!noAssert)
+    checkOffset(offset, byteLength, this.length)
+
+  var val = this[offset]
+  var mul = 1
+  var i = 0
+  while (++i < byteLength && (mul *= 0x100))
+    val += this[offset + i] * mul
+
+  return val
+}
+
+Buffer.prototype.readUIntBE = function (offset, byteLength, noAssert) {
+  offset = offset >>> 0
+  byteLength = byteLength >>> 0
+  if (!noAssert)
+    checkOffset(offset, byteLength, this.length)
+
+  var val = this[offset + --byteLength]
+  var mul = 1
+  while (byteLength > 0 && (mul *= 0x100))
+    val += this[offset + --byteLength] * mul;
+
+  return val
 }
 
 Buffer.prototype.readUInt8 = function (offset, noAssert) {
-  if (!noAssert) {
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset < this.length, 'Trying to read beyond buffer length')
-  }
-
-  if (offset >= this.length)
-    return
-
+  if (!noAssert)
+    checkOffset(offset, 1, this.length)
   return this[offset]
 }
 
-function readUInt16 (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 1 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  var val
-  if (littleEndian) {
-    val = buf[offset]
-    if (offset + 1 < len)
-      val |= buf[offset + 1] << 8
-  } else {
-    val = buf[offset] << 8
-    if (offset + 1 < len)
-      val |= buf[offset + 1]
-  }
-  return val
-}
-
 Buffer.prototype.readUInt16LE = function (offset, noAssert) {
-  return readUInt16(this, offset, true, noAssert)
+  if (!noAssert)
+    checkOffset(offset, 2, this.length)
+  return this[offset] | (this[offset + 1] << 8)
 }
 
 Buffer.prototype.readUInt16BE = function (offset, noAssert) {
-  return readUInt16(this, offset, false, noAssert)
-}
-
-function readUInt32 (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  var val
-  if (littleEndian) {
-    if (offset + 2 < len)
-      val = buf[offset + 2] << 16
-    if (offset + 1 < len)
-      val |= buf[offset + 1] << 8
-    val |= buf[offset]
-    if (offset + 3 < len)
-      val = val + (buf[offset + 3] << 24 >>> 0)
-  } else {
-    if (offset + 1 < len)
-      val = buf[offset + 1] << 16
-    if (offset + 2 < len)
-      val |= buf[offset + 2] << 8
-    if (offset + 3 < len)
-      val |= buf[offset + 3]
-    val = val + (buf[offset] << 24 >>> 0)
-  }
-  return val
+  if (!noAssert)
+    checkOffset(offset, 2, this.length)
+  return (this[offset] << 8) | this[offset + 1]
 }
 
 Buffer.prototype.readUInt32LE = function (offset, noAssert) {
-  return readUInt32(this, offset, true, noAssert)
+  if (!noAssert)
+    checkOffset(offset, 4, this.length)
+
+  return ((this[offset]) |
+      (this[offset + 1] << 8) |
+      (this[offset + 2] << 16)) +
+      (this[offset + 3] * 0x1000000)
 }
 
 Buffer.prototype.readUInt32BE = function (offset, noAssert) {
-  return readUInt32(this, offset, false, noAssert)
+  if (!noAssert)
+    checkOffset(offset, 4, this.length)
+
+  return (this[offset] * 0x1000000) +
+      ((this[offset + 1] << 16) |
+      (this[offset + 2] << 8) |
+      this[offset + 3])
+}
+
+Buffer.prototype.readIntLE = function (offset, byteLength, noAssert) {
+  offset = offset >>> 0
+  byteLength = byteLength >>> 0
+  if (!noAssert)
+    checkOffset(offset, byteLength, this.length)
+
+  var val = this[offset]
+  var mul = 1
+  var i = 0
+  while (++i < byteLength && (mul *= 0x100))
+    val += this[offset + i] * mul
+  mul *= 0x80
+
+  if (val >= mul)
+    val -= Math.pow(2, 8 * byteLength)
+
+  return val
+}
+
+Buffer.prototype.readIntBE = function (offset, byteLength, noAssert) {
+  offset = offset >>> 0
+  byteLength = byteLength >>> 0
+  if (!noAssert)
+    checkOffset(offset, byteLength, this.length)
+
+  var i = byteLength
+  var mul = 1
+  var val = this[offset + --i]
+  while (i > 0 && (mul *= 0x100))
+    val += this[offset + --i] * mul
+  mul *= 0x80
+
+  if (val >= mul)
+    val -= Math.pow(2, 8 * byteLength)
+
+  return val
 }
 
 Buffer.prototype.readInt8 = function (offset, noAssert) {
-  if (!noAssert) {
-    assert(offset !== undefined && offset !== null,
-        'missing offset')
-    assert(offset < this.length, 'Trying to read beyond buffer length')
-  }
-
-  if (offset >= this.length)
-    return
-
-  var neg = this[offset] & 0x80
-  if (neg)
-    return (0xff - this[offset] + 1) * -1
-  else
-    return this[offset]
-}
-
-function readInt16 (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 1 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  var val = readUInt16(buf, offset, littleEndian, true)
-  var neg = val & 0x8000
-  if (neg)
-    return (0xffff - val + 1) * -1
-  else
-    return val
+  if (!noAssert)
+    checkOffset(offset, 1, this.length)
+  if (!(this[offset] & 0x80))
+    return (this[offset])
+  return ((0xff - this[offset] + 1) * -1)
 }
 
 Buffer.prototype.readInt16LE = function (offset, noAssert) {
-  return readInt16(this, offset, true, noAssert)
+  if (!noAssert)
+    checkOffset(offset, 2, this.length)
+  var val = this[offset] | (this[offset + 1] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
 }
 
 Buffer.prototype.readInt16BE = function (offset, noAssert) {
-  return readInt16(this, offset, false, noAssert)
-}
-
-function readInt32 (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  var val = readUInt32(buf, offset, littleEndian, true)
-  var neg = val & 0x80000000
-  if (neg)
-    return (0xffffffff - val + 1) * -1
-  else
-    return val
+  if (!noAssert)
+    checkOffset(offset, 2, this.length)
+  var val = this[offset + 1] | (this[offset] << 8)
+  return (val & 0x8000) ? val | 0xFFFF0000 : val
 }
 
 Buffer.prototype.readInt32LE = function (offset, noAssert) {
-  return readInt32(this, offset, true, noAssert)
+  if (!noAssert)
+    checkOffset(offset, 4, this.length)
+
+  return (this[offset]) |
+      (this[offset + 1] << 8) |
+      (this[offset + 2] << 16) |
+      (this[offset + 3] << 24)
 }
 
 Buffer.prototype.readInt32BE = function (offset, noAssert) {
-  return readInt32(this, offset, false, noAssert)
-}
+  if (!noAssert)
+    checkOffset(offset, 4, this.length)
 
-function readFloat (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset + 3 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  return ieee754.read(buf, offset, littleEndian, 23, 4)
+  return (this[offset] << 24) |
+      (this[offset + 1] << 16) |
+      (this[offset + 2] << 8) |
+      (this[offset + 3])
 }
 
 Buffer.prototype.readFloatLE = function (offset, noAssert) {
-  return readFloat(this, offset, true, noAssert)
+  if (!noAssert)
+    checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, true, 23, 4)
 }
 
 Buffer.prototype.readFloatBE = function (offset, noAssert) {
-  return readFloat(this, offset, false, noAssert)
-}
-
-function readDouble (buf, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset + 7 < buf.length, 'Trying to read beyond buffer length')
-  }
-
-  return ieee754.read(buf, offset, littleEndian, 52, 8)
+  if (!noAssert)
+    checkOffset(offset, 4, this.length)
+  return ieee754.read(this, offset, false, 23, 4)
 }
 
 Buffer.prototype.readDoubleLE = function (offset, noAssert) {
-  return readDouble(this, offset, true, noAssert)
+  if (!noAssert)
+    checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, true, 52, 8)
 }
 
 Buffer.prototype.readDoubleBE = function (offset, noAssert) {
-  return readDouble(this, offset, false, noAssert)
+  if (!noAssert)
+    checkOffset(offset, 8, this.length)
+  return ieee754.read(this, offset, false, 52, 8)
+}
+
+function checkInt (buf, value, offset, ext, max, min) {
+  if (!Buffer.isBuffer(buf)) throw new TypeError('buffer must be a Buffer instance')
+  if (value > max || value < min) throw new RangeError('value is out of bounds')
+  if (offset + ext > buf.length) throw new RangeError('index out of range')
+}
+
+Buffer.prototype.writeUIntLE = function (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  byteLength = byteLength >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, byteLength, Math.pow(2, 8 * byteLength), 0)
+
+  var mul = 1
+  var i = 0
+  this[offset] = value & 0xFF
+  while (++i < byteLength && (mul *= 0x100))
+    this[offset + i] = (value / mul) >>> 0 & 0xFF
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeUIntBE = function (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  byteLength = byteLength >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, byteLength, Math.pow(2, 8 * byteLength), 0)
+
+  var i = byteLength - 1
+  var mul = 1
+  this[offset + i] = value & 0xFF
+  while (--i >= 0 && (mul *= 0x100))
+    this[offset + i] = (value / mul) >>> 0 & 0xFF
+
+  return offset + byteLength
 }
 
 Buffer.prototype.writeUInt8 = function (value, offset, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset < this.length, 'trying to write beyond buffer length')
-    verifuint(value, 0xff)
-  }
-
-  if (offset >= this.length) return
-
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 1, 0xff, 0)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
   this[offset] = value
   return offset + 1
 }
 
-function writeUInt16 (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 1 < buf.length, 'trying to write beyond buffer length')
-    verifuint(value, 0xffff)
+function objectWriteUInt16 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffff + value + 1
+  for (var i = 0, j = Math.min(buf.length - offset, 2); i < j; i++) {
+    buf[offset + i] = (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
+      (littleEndian ? i : 1 - i) * 8
   }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  for (var i = 0, j = Math.min(len - offset, 2); i < j; i++) {
-    buf[offset + i] =
-        (value & (0xff << (8 * (littleEndian ? i : 1 - i)))) >>>
-            (littleEndian ? i : 1 - i) * 8
-  }
-  return offset + 2
 }
 
 Buffer.prototype.writeUInt16LE = function (value, offset, noAssert) {
-  return writeUInt16(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeUInt16BE = function (value, offset, noAssert) {
-  return writeUInt16(this, value, offset, false, noAssert)
-}
-
-function writeUInt32 (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'trying to write beyond buffer length')
-    verifuint(value, 0xffffffff)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  for (var i = 0, j = Math.min(len - offset, 4); i < j; i++) {
-    buf[offset + i] =
-        (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
-  }
-  return offset + 4
-}
-
-Buffer.prototype.writeUInt32LE = function (value, offset, noAssert) {
-  return writeUInt32(this, value, offset, true, noAssert)
-}
-
-Buffer.prototype.writeUInt32BE = function (value, offset, noAssert) {
-  return writeUInt32(this, value, offset, false, noAssert)
-}
-
-Buffer.prototype.writeInt8 = function (value, offset, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset < this.length, 'Trying to write beyond buffer length')
-    verifsint(value, 0x7f, -0x80)
-  }
-
-  if (offset >= this.length)
-    return
-
-  if (value >= 0)
-    this.writeUInt8(value, offset, noAssert)
-  else
-    this.writeUInt8(0xff + value + 1, offset, noAssert)
-  return offset + 1
-}
-
-function writeInt16 (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 1 < buf.length, 'Trying to write beyond buffer length')
-    verifsint(value, 0x7fff, -0x8000)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  if (value >= 0)
-    writeUInt16(buf, value, offset, littleEndian, noAssert)
-  else
-    writeUInt16(buf, 0xffff + value + 1, offset, littleEndian, noAssert)
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 2, 0xffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = value
+    this[offset + 1] = (value >>> 8)
+  } else objectWriteUInt16(this, value, offset, true)
   return offset + 2
 }
 
-Buffer.prototype.writeInt16LE = function (value, offset, noAssert) {
-  return writeInt16(this, value, offset, true, noAssert)
+Buffer.prototype.writeUInt16BE = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 2, 0xffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8)
+    this[offset + 1] = value
+  } else objectWriteUInt16(this, value, offset, false)
+  return offset + 2
 }
 
-Buffer.prototype.writeInt16BE = function (value, offset, noAssert) {
-  return writeInt16(this, value, offset, false, noAssert)
-}
-
-function writeInt32 (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'Trying to write beyond buffer length')
-    verifsint(value, 0x7fffffff, -0x80000000)
+function objectWriteUInt32 (buf, value, offset, littleEndian) {
+  if (value < 0) value = 0xffffffff + value + 1
+  for (var i = 0, j = Math.min(buf.length - offset, 4); i < j; i++) {
+    buf[offset + i] = (value >>> (littleEndian ? i : 3 - i) * 8) & 0xff
   }
+}
 
-  var len = buf.length
-  if (offset >= len)
-    return
-
-  if (value >= 0)
-    writeUInt32(buf, value, offset, littleEndian, noAssert)
-  else
-    writeUInt32(buf, 0xffffffff + value + 1, offset, littleEndian, noAssert)
+Buffer.prototype.writeUInt32LE = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 4, 0xffffffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset + 3] = (value >>> 24)
+    this[offset + 2] = (value >>> 16)
+    this[offset + 1] = (value >>> 8)
+    this[offset] = value
+  } else objectWriteUInt32(this, value, offset, true)
   return offset + 4
 }
 
+Buffer.prototype.writeUInt32BE = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 4, 0xffffffff, 0)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24)
+    this[offset + 1] = (value >>> 16)
+    this[offset + 2] = (value >>> 8)
+    this[offset + 3] = value
+  } else objectWriteUInt32(this, value, offset, false)
+  return offset + 4
+}
+
+Buffer.prototype.writeIntLE = function (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert) {
+    checkInt(this,
+             value,
+             offset,
+             byteLength,
+             Math.pow(2, 8 * byteLength - 1) - 1,
+             -Math.pow(2, 8 * byteLength - 1))
+  }
+
+  var i = 0
+  var mul = 1
+  var sub = value < 0 ? 1 : 0
+  this[offset] = value & 0xFF
+  while (++i < byteLength && (mul *= 0x100))
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeIntBE = function (value, offset, byteLength, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert) {
+    checkInt(this,
+             value,
+             offset,
+             byteLength,
+             Math.pow(2, 8 * byteLength - 1) - 1,
+             -Math.pow(2, 8 * byteLength - 1))
+  }
+
+  var i = byteLength - 1
+  var mul = 1
+  var sub = value < 0 ? 1 : 0
+  this[offset + i] = value & 0xFF
+  while (--i >= 0 && (mul *= 0x100))
+    this[offset + i] = ((value / mul) >> 0) - sub & 0xFF
+
+  return offset + byteLength
+}
+
+Buffer.prototype.writeInt8 = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 1, 0x7f, -0x80)
+  if (!Buffer.TYPED_ARRAY_SUPPORT) value = Math.floor(value)
+  if (value < 0) value = 0xff + value + 1
+  this[offset] = value
+  return offset + 1
+}
+
+Buffer.prototype.writeInt16LE = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = value
+    this[offset + 1] = (value >>> 8)
+  } else objectWriteUInt16(this, value, offset, true)
+  return offset + 2
+}
+
+Buffer.prototype.writeInt16BE = function (value, offset, noAssert) {
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 2, 0x7fff, -0x8000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 8)
+    this[offset + 1] = value
+  } else objectWriteUInt16(this, value, offset, false)
+  return offset + 2
+}
+
 Buffer.prototype.writeInt32LE = function (value, offset, noAssert) {
-  return writeInt32(this, value, offset, true, noAssert)
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = value
+    this[offset + 1] = (value >>> 8)
+    this[offset + 2] = (value >>> 16)
+    this[offset + 3] = (value >>> 24)
+  } else objectWriteUInt32(this, value, offset, true)
+  return offset + 4
 }
 
 Buffer.prototype.writeInt32BE = function (value, offset, noAssert) {
-  return writeInt32(this, value, offset, false, noAssert)
+  value = +value
+  offset = offset >>> 0
+  if (!noAssert)
+    checkInt(this, value, offset, 4, 0x7fffffff, -0x80000000)
+  if (value < 0) value = 0xffffffff + value + 1
+  if (Buffer.TYPED_ARRAY_SUPPORT) {
+    this[offset] = (value >>> 24)
+    this[offset + 1] = (value >>> 16)
+    this[offset + 2] = (value >>> 8)
+    this[offset + 3] = value
+  } else objectWriteUInt32(this, value, offset, false)
+  return offset + 4
+}
+
+function checkIEEE754 (buf, value, offset, ext, max, min) {
+  if (value > max || value < min) throw new RangeError('value is out of bounds')
+  if (offset + ext > buf.length) throw new RangeError('index out of range')
+  if (offset < 0) throw new RangeError('index out of range')
 }
 
 function writeFloat (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 3 < buf.length, 'Trying to write beyond buffer length')
-    verifIEEE754(value, 3.4028234663852886e+38, -3.4028234663852886e+38)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
+  if (!noAssert)
+    checkIEEE754(buf, value, offset, 4, 3.4028234663852886e+38, -3.4028234663852886e+38)
   ieee754.write(buf, value, offset, littleEndian, 23, 4)
   return offset + 4
 }
@@ -41313,19 +41165,8 @@ Buffer.prototype.writeFloatBE = function (value, offset, noAssert) {
 }
 
 function writeDouble (buf, value, offset, littleEndian, noAssert) {
-  if (!noAssert) {
-    assert(value !== undefined && value !== null, 'missing value')
-    assert(typeof littleEndian === 'boolean', 'missing or invalid endian')
-    assert(offset !== undefined && offset !== null, 'missing offset')
-    assert(offset + 7 < buf.length,
-        'Trying to write beyond buffer length')
-    verifIEEE754(value, 1.7976931348623157E+308, -1.7976931348623157E+308)
-  }
-
-  var len = buf.length
-  if (offset >= len)
-    return
-
+  if (!noAssert)
+    checkIEEE754(buf, value, offset, 8, 1.7976931348623157E+308, -1.7976931348623157E+308)
   ieee754.write(buf, value, offset, littleEndian, 52, 8)
   return offset + 8
 }
@@ -41338,20 +41179,59 @@ Buffer.prototype.writeDoubleBE = function (value, offset, noAssert) {
   return writeDouble(this, value, offset, false, noAssert)
 }
 
+// copy(targetBuffer, targetStart=0, sourceStart=0, sourceEnd=buffer.length)
+Buffer.prototype.copy = function (target, target_start, start, end) {
+  var source = this
+
+  if (!start) start = 0
+  if (!end && end !== 0) end = this.length
+  if (target_start >= target.length) target_start = target.length
+  if (!target_start) target_start = 0
+  if (end > 0 && end < start) end = start
+
+  // Copy 0 bytes; we're done
+  if (end === start) return 0
+  if (target.length === 0 || source.length === 0) return 0
+
+  // Fatal error conditions
+  if (target_start < 0)
+    throw new RangeError('targetStart out of bounds')
+  if (start < 0 || start >= source.length) throw new RangeError('sourceStart out of bounds')
+  if (end < 0) throw new RangeError('sourceEnd out of bounds')
+
+  // Are we oob?
+  if (end > this.length)
+    end = this.length
+  if (target.length - target_start < end - start)
+    end = target.length - target_start + start
+
+  var len = end - start
+
+  if (len < 1000 || !Buffer.TYPED_ARRAY_SUPPORT) {
+    for (var i = 0; i < len; i++) {
+      target[i + target_start] = this[i + start]
+    }
+  } else {
+    target._set(this.subarray(start, start + len), target_start)
+  }
+
+  return len
+}
+
 // fill(value, start=0, end=buffer.length)
 Buffer.prototype.fill = function (value, start, end) {
   if (!value) value = 0
   if (!start) start = 0
   if (!end) end = this.length
 
-  assert(end >= start, 'end < start')
+  if (end < start) throw new RangeError('end < start')
 
   // Fill 0 bytes; we're done
   if (end === start) return
   if (this.length === 0) return
 
-  assert(start >= 0 && start < this.length, 'start out of bounds')
-  assert(end >= 0 && end <= this.length, 'end out of bounds')
+  if (start < 0 || start >= this.length) throw new RangeError('start out of bounds')
+  if (end < 0 || end > this.length) throw new RangeError('end out of bounds')
 
   var i
   if (typeof value === 'number') {
@@ -41369,26 +41249,13 @@ Buffer.prototype.fill = function (value, start, end) {
   return this
 }
 
-Buffer.prototype.inspect = function () {
-  var out = []
-  var len = this.length
-  for (var i = 0; i < len; i++) {
-    out[i] = toHex(this[i])
-    if (i === exports.INSPECT_MAX_BYTES) {
-      out[i + 1] = '...'
-      break
-    }
-  }
-  return '<Buffer ' + out.join(' ') + '>'
-}
-
 /**
  * Creates a new `ArrayBuffer` with the *copied* memory of the buffer instance.
  * Added in Node 0.12. Only available in browsers that support ArrayBuffer.
  */
 Buffer.prototype.toArrayBuffer = function () {
   if (typeof Uint8Array !== 'undefined') {
-    if (TYPED_ARRAY_SUPPORT) {
+    if (Buffer.TYPED_ARRAY_SUPPORT) {
       return (new Buffer(this)).buffer
     } else {
       var buf = new Uint8Array(this.length)
@@ -41398,7 +41265,7 @@ Buffer.prototype.toArrayBuffer = function () {
       return buf.buffer
     }
   } else {
-    throw new Error('Buffer.toArrayBuffer not supported in this browser')
+    throw new TypeError('Buffer.toArrayBuffer not supported in this browser')
   }
 }
 
@@ -41411,6 +41278,7 @@ var BP = Buffer.prototype
  * Augment a Uint8Array *instance* (not the Uint8Array class!) with Buffer methods
  */
 Buffer._augment = function (arr) {
+  arr.constructor = Buffer
   arr._isBuffer = true
 
   // save reference to original Uint8Array get/set methods before overwriting
@@ -41429,11 +41297,15 @@ Buffer._augment = function (arr) {
   arr.compare = BP.compare
   arr.copy = BP.copy
   arr.slice = BP.slice
+  arr.readUIntLE = BP.readUIntLE
+  arr.readUIntBE = BP.readUIntBE
   arr.readUInt8 = BP.readUInt8
   arr.readUInt16LE = BP.readUInt16LE
   arr.readUInt16BE = BP.readUInt16BE
   arr.readUInt32LE = BP.readUInt32LE
   arr.readUInt32BE = BP.readUInt32BE
+  arr.readIntLE = BP.readIntLE
+  arr.readIntBE = BP.readIntBE
   arr.readInt8 = BP.readInt8
   arr.readInt16LE = BP.readInt16LE
   arr.readInt16BE = BP.readInt16BE
@@ -41444,10 +41316,14 @@ Buffer._augment = function (arr) {
   arr.readDoubleLE = BP.readDoubleLE
   arr.readDoubleBE = BP.readDoubleBE
   arr.writeUInt8 = BP.writeUInt8
+  arr.writeUIntLE = BP.writeUIntLE
+  arr.writeUIntBE = BP.writeUIntBE
   arr.writeUInt16LE = BP.writeUInt16LE
   arr.writeUInt16BE = BP.writeUInt16BE
   arr.writeUInt32LE = BP.writeUInt32LE
   arr.writeUInt32BE = BP.writeUInt32BE
+  arr.writeIntLE = BP.writeIntLE
+  arr.writeIntBE = BP.writeIntBE
   arr.writeInt8 = BP.writeInt8
   arr.writeInt16LE = BP.writeInt16LE
   arr.writeInt16BE = BP.writeInt16BE
@@ -41464,11 +41340,15 @@ Buffer._augment = function (arr) {
   return arr
 }
 
-var INVALID_BASE64_RE = /[^+\/0-9A-z]/g
+var INVALID_BASE64_RE = /[^+\/0-9A-z\-]/g
 
 function base64clean (str) {
   // Node strips out invalid characters like \n and \t from the string, base64-js does not
   str = stringtrim(str).replace(INVALID_BASE64_RE, '')
+  // replace url-safe space and slash
+  str = str.replace(/-/g, '+').replace(/_/g, '/')
+  // Node converts strings with length < 2 to ''
+  if (str.length < 2) return ''
   // Node allows for non-padded base64 strings (missing trailing ===), base64-js does not
   while (str.length % 4 !== 0) {
     str = str + '='
@@ -41479,12 +41359,6 @@ function base64clean (str) {
 function stringtrim (str) {
   if (str.trim) return str.trim()
   return str.replace(/^\s+|\s+$/g, '')
-}
-
-function isArray (subject) {
-  return (Array.isArray || function (subject) {
-    return Object.prototype.toString.call(subject) === '[object Array]'
-  })(subject)
 }
 
 function isArrayish (subject) {
@@ -41498,22 +41372,100 @@ function toHex (n) {
   return n.toString(16)
 }
 
-function utf8ToBytes (str) {
-  var byteArray = []
-  for (var i = 0; i < str.length; i++) {
-    var b = str.charCodeAt(i)
-    if (b <= 0x7F) {
-      byteArray.push(b)
-    } else {
-      var start = i
-      if (b >= 0xD800 && b <= 0xDFFF) i++
-      var h = encodeURIComponent(str.slice(start, i+1)).substr(1).split('%')
-      for (var j = 0; j < h.length; j++) {
-        byteArray.push(parseInt(h[j], 16))
+function utf8ToBytes(string, units) {
+  var codePoint, length = string.length
+  var leadSurrogate = null
+  units = units || Infinity
+  var bytes = []
+  var i = 0
+
+  for (; i<length; i++) {
+    codePoint = string.charCodeAt(i)
+
+    // is surrogate component
+    if (codePoint > 0xD7FF && codePoint < 0xE000) {
+
+      // last char was a lead
+      if (leadSurrogate) {
+
+        // 2 leads in a row
+        if (codePoint < 0xDC00) {
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          leadSurrogate = codePoint
+          continue
+        }
+
+        // valid surrogate pair
+        else {
+          codePoint = leadSurrogate - 0xD800 << 10 | codePoint - 0xDC00 | 0x10000
+          leadSurrogate = null
+        }
+      }
+
+      // no lead yet
+      else {
+
+        // unexpected trail
+        if (codePoint > 0xDBFF) {
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          continue
+        }
+
+        // unpaired lead
+        else if (i + 1 === length) {
+          if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+          continue
+        }
+
+        // valid lead
+        else {
+          leadSurrogate = codePoint
+          continue
+        }
       }
     }
+
+    // valid bmp char, but last char was a lead
+    else if (leadSurrogate) {
+      if ((units -= 3) > -1) bytes.push(0xEF, 0xBF, 0xBD)
+      leadSurrogate = null
+    }
+
+    // encode utf8
+    if (codePoint < 0x80) {
+      if ((units -= 1) < 0) break
+      bytes.push(codePoint)
+    }
+    else if (codePoint < 0x800) {
+      if ((units -= 2) < 0) break
+      bytes.push(
+        codePoint >> 0x6 | 0xC0,
+        codePoint & 0x3F | 0x80
+      );
+    }
+    else if (codePoint < 0x10000) {
+      if ((units -= 3) < 0) break
+      bytes.push(
+        codePoint >> 0xC | 0xE0,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      );
+    }
+    else if (codePoint < 0x200000) {
+      if ((units -= 4) < 0) break
+      bytes.push(
+        codePoint >> 0x12 | 0xF0,
+        codePoint >> 0xC & 0x3F | 0x80,
+        codePoint >> 0x6 & 0x3F | 0x80,
+        codePoint & 0x3F | 0x80
+      );
+    }
+    else {
+      throw new Error('Invalid code point')
+    }
   }
-  return byteArray
+
+  return bytes
 }
 
 function asciiToBytes (str) {
@@ -41525,10 +41477,13 @@ function asciiToBytes (str) {
   return byteArray
 }
 
-function utf16leToBytes (str) {
+function utf16leToBytes (str, units) {
   var c, hi, lo
   var byteArray = []
   for (var i = 0; i < str.length; i++) {
+
+    if ((units -= 2) < 0) break
+
     c = str.charCodeAt(i)
     hi = c >> 8
     lo = c % 256
@@ -41540,10 +41495,11 @@ function utf16leToBytes (str) {
 }
 
 function base64ToBytes (str) {
-  return base64.toByteArray(str)
+  return base64.toByteArray(base64clean(str))
 }
 
-function blitBuffer (src, dst, offset, length) {
+function blitBuffer (src, dst, offset, length, unitSize) {
+  if (unitSize) length -= length % unitSize;
   for (var i = 0; i < length; i++) {
     if ((i + offset >= dst.length) || (i >= src.length))
       break
@@ -41560,36 +41516,7 @@ function decodeUtf8Char (str) {
   }
 }
 
-/*
- * We have to make sure that the value is a valid integer. This means that it
- * is non-negative. It has no fractional component and that it does not
- * exceed the maximum allowed value.
- */
-function verifuint (value, max) {
-  assert(typeof value === 'number', 'cannot write a non-number as a number')
-  assert(value >= 0, 'specified a negative value for writing an unsigned value')
-  assert(value <= max, 'value is larger than maximum value for type')
-  assert(Math.floor(value) === value, 'value has a fractional component')
-}
-
-function verifsint (value, max, min) {
-  assert(typeof value === 'number', 'cannot write a non-number as a number')
-  assert(value <= max, 'value larger than maximum allowed value')
-  assert(value >= min, 'value smaller than minimum allowed value')
-  assert(Math.floor(value) === value, 'value has a fractional component')
-}
-
-function verifIEEE754 (value, max, min) {
-  assert(typeof value === 'number', 'cannot write a non-number as a number')
-  assert(value <= max, 'value larger than maximum allowed value')
-  assert(value >= min, 'value smaller than minimum allowed value')
-}
-
-function assert (test, message) {
-  if (!test) throw new Error(message || 'Failed assertion')
-}
-
-},{"base64-js":158,"ieee754":159}],158:[function(require,module,exports){
+},{"base64-js":159,"ieee754":160,"is-array":161}],159:[function(require,module,exports){
 var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 ;(function (exports) {
@@ -41711,7 +41638,7 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 	exports.fromByteArray = uint8ToBase64
 }(typeof exports === 'undefined' ? (this.base64js = {}) : exports))
 
-},{}],159:[function(require,module,exports){
+},{}],160:[function(require,module,exports){
 exports.read = function(buffer, offset, isLE, mLen, nBytes) {
   var e, m,
       eLen = nBytes * 8 - mLen - 1,
@@ -41797,7 +41724,42 @@ exports.write = function(buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128;
 };
 
-},{}],160:[function(require,module,exports){
+},{}],161:[function(require,module,exports){
+
+/**
+ * isArray
+ */
+
+var isArray = Array.isArray;
+
+/**
+ * toString
+ */
+
+var str = Object.prototype.toString;
+
+/**
+ * Whether or not the given `val`
+ * is an array.
+ *
+ * example:
+ *
+ *        isArray([]);
+ *        // > true
+ *        isArray(arguments);
+ *        // > false
+ *        isArray('');
+ *        // > false
+ *
+ * @param {mixed} val
+ * @return {bool}
+ */
+
+module.exports = isArray || function (val) {
+  return !! val && '[object Array]' == str.call(val);
+};
+
+},{}],162:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -41857,10 +41819,8 @@ EventEmitter.prototype.emit = function(type) {
       er = arguments[1];
       if (er instanceof Error) {
         throw er; // Unhandled 'error' event
-      } else {
-        throw TypeError('Uncaught, unspecified "error" event.');
       }
-      return false;
+      throw TypeError('Uncaught, unspecified "error" event.');
     }
   }
 
@@ -42102,14 +42062,14 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],161:[function(require,module,exports){
-module.exports=require(136)
-},{}],162:[function(require,module,exports){
+},{}],163:[function(require,module,exports){
+arguments[4][137][0].apply(exports,arguments)
+},{"dup":137}],164:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],163:[function(require,module,exports){
+},{}],165:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -42117,6 +42077,8 @@ var process = module.exports = {};
 process.nextTick = (function () {
     var canSetImmediate = typeof window !== 'undefined'
     && window.setImmediate;
+    var canMutationObserver = typeof window !== 'undefined'
+    && window.MutationObserver;
     var canPost = typeof window !== 'undefined'
     && window.postMessage && window.addEventListener
     ;
@@ -42125,8 +42087,29 @@ process.nextTick = (function () {
         return function (f) { return window.setImmediate(f) };
     }
 
+    var queue = [];
+
+    if (canMutationObserver) {
+        var hiddenDiv = document.createElement("div");
+        var observer = new MutationObserver(function () {
+            var queueList = queue.slice();
+            queue.length = 0;
+            queueList.forEach(function (fn) {
+                fn();
+            });
+        });
+
+        observer.observe(hiddenDiv, { attributes: true });
+
+        return function nextTick(fn) {
+            if (!queue.length) {
+                hiddenDiv.setAttribute('yes', 'no');
+            }
+            queue.push(fn);
+        };
+    }
+
     if (canPost) {
-        var queue = [];
         window.addEventListener('message', function (ev) {
             var source = ev.source;
             if ((source === window || source === null) && ev.data === 'process-tick') {
@@ -42166,7 +42149,7 @@ process.emit = noop;
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
-}
+};
 
 // TODO(shtylman)
 process.cwd = function () { return '/' };
@@ -42174,10 +42157,10 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],164:[function(require,module,exports){
+},{}],166:[function(require,module,exports){
 module.exports = require("./lib/_stream_duplex.js")
 
-},{"./lib/_stream_duplex.js":165}],165:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":167}],167:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -42270,7 +42253,7 @@ function forEach (xs, f) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_readable":167,"./_stream_writable":169,"_process":163,"core-util-is":170,"inherits":161}],166:[function(require,module,exports){
+},{"./_stream_readable":169,"./_stream_writable":171,"_process":165,"core-util-is":172,"inherits":163}],168:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -42318,7 +42301,7 @@ PassThrough.prototype._transform = function(chunk, encoding, cb) {
   cb(null, chunk);
 };
 
-},{"./_stream_transform":168,"core-util-is":170,"inherits":161}],167:[function(require,module,exports){
+},{"./_stream_transform":170,"core-util-is":172,"inherits":163}],169:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -43304,7 +43287,7 @@ function indexOf (xs, x) {
 }
 
 }).call(this,require('_process'))
-},{"_process":163,"buffer":157,"core-util-is":170,"events":160,"inherits":161,"isarray":162,"stream":176,"string_decoder/":171}],168:[function(require,module,exports){
+},{"_process":165,"buffer":158,"core-util-is":172,"events":162,"inherits":163,"isarray":164,"stream":177,"string_decoder/":178}],170:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -43516,7 +43499,7 @@ function done(stream, er) {
   return stream.push(null);
 }
 
-},{"./_stream_duplex":165,"core-util-is":170,"inherits":161}],169:[function(require,module,exports){
+},{"./_stream_duplex":167,"core-util-is":172,"inherits":163}],171:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -43906,7 +43889,7 @@ function endWritable(stream, state, cb) {
 }
 
 }).call(this,require('_process'))
-},{"./_stream_duplex":165,"_process":163,"buffer":157,"core-util-is":170,"inherits":161,"stream":176}],170:[function(require,module,exports){
+},{"./_stream_duplex":167,"_process":165,"buffer":158,"core-util-is":172,"inherits":163,"stream":177}],172:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -44016,7 +43999,155 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 }).call(this,require("buffer").Buffer)
-},{"buffer":157}],171:[function(require,module,exports){
+},{"buffer":158}],173:[function(require,module,exports){
+module.exports = require("./lib/_stream_passthrough.js")
+
+},{"./lib/_stream_passthrough.js":168}],174:[function(require,module,exports){
+var Stream = require('stream'); // hack to fix a circular dependency issue when used with browserify
+exports = module.exports = require('./lib/_stream_readable.js');
+exports.Stream = Stream;
+exports.Readable = exports;
+exports.Writable = require('./lib/_stream_writable.js');
+exports.Duplex = require('./lib/_stream_duplex.js');
+exports.Transform = require('./lib/_stream_transform.js');
+exports.PassThrough = require('./lib/_stream_passthrough.js');
+
+},{"./lib/_stream_duplex.js":167,"./lib/_stream_passthrough.js":168,"./lib/_stream_readable.js":169,"./lib/_stream_transform.js":170,"./lib/_stream_writable.js":171,"stream":177}],175:[function(require,module,exports){
+module.exports = require("./lib/_stream_transform.js")
+
+},{"./lib/_stream_transform.js":170}],176:[function(require,module,exports){
+module.exports = require("./lib/_stream_writable.js")
+
+},{"./lib/_stream_writable.js":171}],177:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+module.exports = Stream;
+
+var EE = require('events').EventEmitter;
+var inherits = require('inherits');
+
+inherits(Stream, EE);
+Stream.Readable = require('readable-stream/readable.js');
+Stream.Writable = require('readable-stream/writable.js');
+Stream.Duplex = require('readable-stream/duplex.js');
+Stream.Transform = require('readable-stream/transform.js');
+Stream.PassThrough = require('readable-stream/passthrough.js');
+
+// Backwards-compat with node 0.4.x
+Stream.Stream = Stream;
+
+
+
+// old-style streams.  Note that the pipe method (the only relevant
+// part of this class) is overridden in the Readable class.
+
+function Stream() {
+  EE.call(this);
+}
+
+Stream.prototype.pipe = function(dest, options) {
+  var source = this;
+
+  function ondata(chunk) {
+    if (dest.writable) {
+      if (false === dest.write(chunk) && source.pause) {
+        source.pause();
+      }
+    }
+  }
+
+  source.on('data', ondata);
+
+  function ondrain() {
+    if (source.readable && source.resume) {
+      source.resume();
+    }
+  }
+
+  dest.on('drain', ondrain);
+
+  // If the 'end' option is not supplied, dest.end() will be called when
+  // source gets the 'end' or 'close' events.  Only dest.end() once.
+  if (!dest._isStdio && (!options || options.end !== false)) {
+    source.on('end', onend);
+    source.on('close', onclose);
+  }
+
+  var didOnEnd = false;
+  function onend() {
+    if (didOnEnd) return;
+    didOnEnd = true;
+
+    dest.end();
+  }
+
+
+  function onclose() {
+    if (didOnEnd) return;
+    didOnEnd = true;
+
+    if (typeof dest.destroy === 'function') dest.destroy();
+  }
+
+  // don't leave dangling pipes when there are errors.
+  function onerror(er) {
+    cleanup();
+    if (EE.listenerCount(this, 'error') === 0) {
+      throw er; // Unhandled stream error in pipe.
+    }
+  }
+
+  source.on('error', onerror);
+  dest.on('error', onerror);
+
+  // remove all the event listeners that were added.
+  function cleanup() {
+    source.removeListener('data', ondata);
+    dest.removeListener('drain', ondrain);
+
+    source.removeListener('end', onend);
+    source.removeListener('close', onclose);
+
+    source.removeListener('error', onerror);
+    dest.removeListener('error', onerror);
+
+    source.removeListener('end', cleanup);
+    source.removeListener('close', cleanup);
+
+    dest.removeListener('close', cleanup);
+  }
+
+  source.on('end', cleanup);
+  source.on('close', cleanup);
+
+  dest.on('close', cleanup);
+
+  dest.emit('pipe', source);
+
+  // Allow for unix-like usage: A.pipe(B).pipe(C)
+  return dest;
+};
+
+},{"events":162,"inherits":163,"readable-stream/duplex.js":166,"readable-stream/passthrough.js":173,"readable-stream/readable.js":174,"readable-stream/transform.js":175,"readable-stream/writable.js":176}],178:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -44239,150 +44370,4 @@ function base64DetectIncompleteChar(buffer) {
   this.charLength = this.charReceived ? 3 : 0;
 }
 
-},{"buffer":157}],172:[function(require,module,exports){
-module.exports = require("./lib/_stream_passthrough.js")
-
-},{"./lib/_stream_passthrough.js":166}],173:[function(require,module,exports){
-exports = module.exports = require('./lib/_stream_readable.js');
-exports.Readable = exports;
-exports.Writable = require('./lib/_stream_writable.js');
-exports.Duplex = require('./lib/_stream_duplex.js');
-exports.Transform = require('./lib/_stream_transform.js');
-exports.PassThrough = require('./lib/_stream_passthrough.js');
-
-},{"./lib/_stream_duplex.js":165,"./lib/_stream_passthrough.js":166,"./lib/_stream_readable.js":167,"./lib/_stream_transform.js":168,"./lib/_stream_writable.js":169}],174:[function(require,module,exports){
-module.exports = require("./lib/_stream_transform.js")
-
-},{"./lib/_stream_transform.js":168}],175:[function(require,module,exports){
-module.exports = require("./lib/_stream_writable.js")
-
-},{"./lib/_stream_writable.js":169}],176:[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-module.exports = Stream;
-
-var EE = require('events').EventEmitter;
-var inherits = require('inherits');
-
-inherits(Stream, EE);
-Stream.Readable = require('readable-stream/readable.js');
-Stream.Writable = require('readable-stream/writable.js');
-Stream.Duplex = require('readable-stream/duplex.js');
-Stream.Transform = require('readable-stream/transform.js');
-Stream.PassThrough = require('readable-stream/passthrough.js');
-
-// Backwards-compat with node 0.4.x
-Stream.Stream = Stream;
-
-
-
-// old-style streams.  Note that the pipe method (the only relevant
-// part of this class) is overridden in the Readable class.
-
-function Stream() {
-  EE.call(this);
-}
-
-Stream.prototype.pipe = function(dest, options) {
-  var source = this;
-
-  function ondata(chunk) {
-    if (dest.writable) {
-      if (false === dest.write(chunk) && source.pause) {
-        source.pause();
-      }
-    }
-  }
-
-  source.on('data', ondata);
-
-  function ondrain() {
-    if (source.readable && source.resume) {
-      source.resume();
-    }
-  }
-
-  dest.on('drain', ondrain);
-
-  // If the 'end' option is not supplied, dest.end() will be called when
-  // source gets the 'end' or 'close' events.  Only dest.end() once.
-  if (!dest._isStdio && (!options || options.end !== false)) {
-    source.on('end', onend);
-    source.on('close', onclose);
-  }
-
-  var didOnEnd = false;
-  function onend() {
-    if (didOnEnd) return;
-    didOnEnd = true;
-
-    dest.end();
-  }
-
-
-  function onclose() {
-    if (didOnEnd) return;
-    didOnEnd = true;
-
-    if (typeof dest.destroy === 'function') dest.destroy();
-  }
-
-  // don't leave dangling pipes when there are errors.
-  function onerror(er) {
-    cleanup();
-    if (EE.listenerCount(this, 'error') === 0) {
-      throw er; // Unhandled stream error in pipe.
-    }
-  }
-
-  source.on('error', onerror);
-  dest.on('error', onerror);
-
-  // remove all the event listeners that were added.
-  function cleanup() {
-    source.removeListener('data', ondata);
-    dest.removeListener('drain', ondrain);
-
-    source.removeListener('end', onend);
-    source.removeListener('close', onclose);
-
-    source.removeListener('error', onerror);
-    dest.removeListener('error', onerror);
-
-    source.removeListener('end', cleanup);
-    source.removeListener('close', cleanup);
-
-    dest.removeListener('close', cleanup);
-  }
-
-  source.on('end', cleanup);
-  source.on('close', cleanup);
-
-  dest.on('close', cleanup);
-
-  dest.emit('pipe', source);
-
-  // Allow for unix-like usage: A.pipe(B).pipe(C)
-  return dest;
-};
-
-},{"events":160,"inherits":161,"readable-stream/duplex.js":164,"readable-stream/passthrough.js":172,"readable-stream/readable.js":173,"readable-stream/transform.js":174,"readable-stream/writable.js":175}]},{},[1]);
+},{"buffer":158}]},{},[1]);
