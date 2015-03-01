@@ -97,7 +97,7 @@ arena.addInteractive(shop);
 // Some flies
 arena.on('set:terrain', function(){
 
-  /* */
+  /* * /
   // Add some trees
   var trees = new Arena.Elements.MergedTrees();
   for (var i = 0; i < 50; i++) {

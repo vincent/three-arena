@@ -1,3 +1,5 @@
+'use strict';
+
 var _       = require('lodash');
 var express = require('express');
 var app     = express();
@@ -29,6 +31,10 @@ io.on('connection', function(socket){
   socket.on('move', function(data, name){
     // console.log(socket.id, '(', name, ')', 'is at', data);
     PLAYER_POSITIONS[name] = data;
+  });
+
+  socket.on('cast', function(data){
+    console.log(socket.id, 'player', data.source, 'casts', data.spell.name, (data.target ? 'against '+data.target : undefined));
   });
 
   setInterval(function () {
