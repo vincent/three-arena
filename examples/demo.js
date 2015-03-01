@@ -6,6 +6,8 @@ var arena = window.arena = new Arena({
 
   container: document.getElementById('game-container'),
 
+  navigationLayer: 'average',
+
   cameraFollowsPlayer: true,
   visibleCharactersBBox: false,
 
@@ -98,7 +100,7 @@ arena.on('set:terrain', function(){
   /* */
   // Add some trees
   var trees = new Arena.Elements.MergedTrees();
-  for (var i = 0; i < 100; i++) {
+  for (var i = 0; i < 50; i++) {
     (function (j) {
       new Arena.Elements.Tree({
         onLoad: function(){
@@ -114,7 +116,7 @@ arena.on('set:terrain', function(){
 
             arena.addObstacle(tree.position, 10.0);
 
-            if (j === 99) {
+            if (j === 49) {
               j = 0;
               trees.alreadyGrounded = true;
               arena.addStatic(trees);
