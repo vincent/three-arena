@@ -32,16 +32,21 @@ arena.on('set:lights', function () {
   arena.directionalLight.intensity = 0.7;
 });
 
+var mapTexture = THREE.ImageUtils.loadTexture('/gamedata/textures/grass-blurry.png');
+mapTexture.needsUpdate = true;
+mapTexture.wrapS = mapTexture.wrapT = THREE.RepeatWrapping;
+mapTexture.repeat.set(1000, 1000);
+
 arena.setTerrain('/gamedata/maps/dota/mountains.obj', {
   minimap: THREE.ImageUtils.loadTexture('/gamedata/maps/dota/dota_map_full_compress3.jpg'),
-  map: THREE.ImageUtils.loadTexture('/gamedata/maps/dota/dota_map_full_compress3.jpg'),
+  map: mapTexture,
   // bumpMap: THREE.ImageUtils.loadTexture('/gamedata//maps/dota/dota_map_full_compress3_bump.jpg'),
   // bumpScale: 2,
 });
 
 
-var objective1 = new Arena.Elements.Nexus({ life: 1000000, color: '#F33' }),
-    objective2 = new Arena.Elements.Nexus({ life: 1000000, color: '#3F3' });
+var objective1 = new Arena.Elements.Nexus({ name: 'Ancient 1', life: 1000000, color: '#F33' }),
+    objective2 = new Arena.Elements.Nexus({ name: 'Ancient 2', life: 1000000, color: '#3F3' });
 
 objective1.dialog = {
 
@@ -97,7 +102,7 @@ arena.addInteractive(shop);
 // Some flies
 arena.on('set:terrain', function(){
 
-  /* * /
+  /* */
   // Add some trees
   var trees = new Arena.Elements.MergedTrees();
   for (var i = 0; i < 50; i++) {
@@ -145,7 +150,7 @@ arena.on('set:terrain', function(){
 
   // Another character
   arena.addCharacter(function(done){
-    var hero = new Arena.Characters.Ogro({
+    var hero = new Arena.Characters.OO7({
       name: Arena.Account.username(),
       maxSpeed: 20.0,
       onLoad: function(){
