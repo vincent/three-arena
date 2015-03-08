@@ -33,9 +33,9 @@ arena.on('set:lights', function () {
 });
 
 var mapTexture = THREE.ImageUtils.loadTexture('/gamedata/textures/grass-blurry.png');
-mapTexture.needsUpdate = true;
 mapTexture.wrapS = mapTexture.wrapT = THREE.RepeatWrapping;
-mapTexture.repeat.set(1000, 1000);
+mapTexture.repeat.set(3, 3);
+mapTexture.needsUpdate = true;
 
 arena.setTerrain('/gamedata/maps/dota/mountains.obj', {
   minimap: THREE.ImageUtils.loadTexture('/gamedata/maps/dota/dota_map_full_compress3.jpg'),

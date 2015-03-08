@@ -1874,13 +1874,13 @@ module.exports = function (arena, options) {
       var mapShaderChunk = [];
       if (oldMaterial.map) {
 
-        // uniforms['map'] = { type: 't', value: oldMaterial.map };
+        uniforms['textureRepeat'] = { type: 'v2', value: oldMaterial.map.repeat };
 
-        // uniformsShaderChunk.push('uniform sampler2D map;');
+        uniformsShaderChunk.push('uniform vec2 textureRepeat;');
 
         mapShaderChunk = [
           '   // use map',
-          '   vec4 texelColor = texture2D( map, vUv );',
+          '   vec4 texelColor = texture2D( map, vUv * textureRepeat );',
           '',
           '   #ifdef GAMMA_INPUT',
           '       texelColor.xyz *= texelColor.xyz;',
@@ -2061,8 +2061,8 @@ module.exports = function (arena, options) {
 
           'void main() {',
 
-          // ' vUv = uv;',
-          ' vUv = uv * offsetRepeat.zw + offsetRepeat.xy;',
+          ' vUv = uv;',
+          // ' vUv = uv * offsetRepeat.zw + offsetRepeat.xy;',
           ' worldPosition = modelMatrix * vec4( position, 1.0 );',
 
             THREE.ShaderChunk[ 'map_vertex' ],
@@ -2168,7 +2168,7 @@ module.exports = function (arena, options) {
         _uniforms.ambient.value   = oldMaterial.ambient;
       }
       if (oldMaterial.specular) {
-        _uniforms.specular.value  = oldMaterial.specular;
+        // _uniforms.specular.value  = oldMaterial.specular;
       }
       if (oldMaterial.bumpMap) {
         material.bumpMap = true;
@@ -2194,8 +2194,7 @@ module.exports = function (arena, options) {
         _uniforms.lightMap.value  = oldMaterial.lightMap;
       }
       if (oldMaterial.map) {
-        material.map = true;
-        _uniforms.map.value = oldMaterial.map;
+        material.map = _uniforms.map.value = oldMaterial.map;
       }
 
       // console.log(material.uniforms);
@@ -5199,34 +5198,36 @@ module.exports = Tree;
 
 var cachedTreeGeometry;
 var cachedTreeMaterial;
-var trees;
 
 var treeLoader = new Promise(function(resolve) {
 
-  if (cachedTreeGeometry) return callback(cachedTreeGeometry, cachedTreeMaterial);
+  var treeTexture = THREE.ImageUtils.loadTexture('/gamedata/textures/tree.png', THREE.UVMapping, function () {
 
-  var loader = new THREE.OBJLoader();
+    var treeAlphaTexture = THREE.ImageUtils.loadTexture('/gamedata/textures/tree.png', THREE.UVMapping, function () {
 
-  loader.load( '/gamedata/elements/tree.obj', function ( object ) {
+      var loader = new THREE.OBJLoader();
 
-    object = object.children[0];
+      loader.load( '/gamedata/elements/tree.obj', function ( object ) {
 
-    cachedTreeMaterial = object.material;
-    cachedTreeMaterial.map = THREE.ImageUtils.loadTexture( '/gamedata/textures/tree.png' );
-    cachedTreeMaterial.alphaMap = THREE.ImageUtils.loadTexture( '/gamedata/textures/tree_alpha.png' );
-    cachedTreeMaterial.map.needsUpdate = true;
-    cachedTreeMaterial.alphaMap.needsUpdate = true;
-    cachedTreeMaterial.transparent = true;
+        object = object.children[0];
 
-    cachedTreeGeometry = object.geometry;
-    cachedTreeGeometry.dynamic = false;
+        cachedTreeMaterial = object.material;
+        cachedTreeMaterial.map = treeTexture;
+        cachedTreeMaterial.alphaMap = treeAlphaTexture;
+        cachedTreeMaterial.map.needsUpdate = true;
+        cachedTreeMaterial.alphaMap.needsUpdate = true;
+        cachedTreeMaterial.transparent = true;
 
-    resolve({
-      geometry: cachedTreeGeometry,
-      material: cachedTreeMaterial
+        cachedTreeGeometry = object.geometry;
+        cachedTreeGeometry.dynamic = false;
+
+        resolve({
+          geometry: cachedTreeGeometry,
+          material: cachedTreeMaterial
+        });
+      });
     });
   });
-
 });
 
 /**
@@ -11576,8 +11577,8 @@ var Promise   = require('bluebird');
 var texLoader = new Promise(function(resolve) {
   var baseImage = THREE.ImageUtils.loadTexture('/gamedata/textures/lifebar.png', THREE.UVMapping, function (texture) {
     texture.needsUpdate = true;
-    texture.magFilter   = THREE.NearestFilter;
-    texture.minFilter   = THREE.NearestFilter;
+    texture.magFilter   = THREE.LinearFilter;
+    texture.minFilter   = THREE.LinearFilter;
     resolve(texture);
   });
 });
