@@ -4633,7 +4633,7 @@ inherits(Shop, InteractiveObject);
 var _ = require('lodash');
 var inherits = require('inherits');
 
-var LifeBarShader = require('../shaders/lifebar');
+var LifeBarShader = require('../shaders/imglifebar');
 
 module.exports = LifeBar;
 
@@ -4651,9 +4651,9 @@ function LifeBar (options) {
   // life bar
   this.lifebarMaterial = new LifeBarShader();
 
-  this.lifebar = new THREE.Mesh(new THREE.PlaneBufferGeometry(10, 1, 50, 1), this.lifebarMaterial);
+  this.lifebar = new THREE.Mesh(new THREE.PlaneBufferGeometry(10, 2, 1, 1), this.lifebarMaterial);
   this.lifebar.position.setY(10);
-  this.lifebar.scale.set(1, 5, 1);
+  // this.lifebar.scale.set(1, 5, 1);
 
   this.add(this.lifebar);
 
@@ -4680,7 +4680,7 @@ LifeBar.prototype.update = function(delta) {
 };
 
 
-},{"../shaders/lifebar":79,"inherits":139,"lodash":150}],56:[function(require,module,exports){
+},{"../shaders/imglifebar":79,"inherits":139,"lodash":150}],56:[function(require,module,exports){
 'use strict';
 
 module.exports = Sound;
@@ -11466,101 +11466,75 @@ module.exports = LifebarShaderMaterial;
  */
 function LifebarShaderMaterial () {
 
+  var self = this;
+
+  texLoader.then(function (texture) {
+    self.shaderOptions.uniforms.baseImage.value = texture;
+  });
+
   this.shaderOptions = {
 
-    shading: THREE.AdditiveBlending,
+    // shading: THREE.AdditiveBlending,
     // side: THREE.DoubleSide,
     transparent: true,
-    overdraw: 1.0,
+    overdraw: 0.1,
 
     uniforms: {
-      background: { type: 'c', value: new THREE.Color(0x000000) },
+      baseImage:     { type: 't', value: null },
 
-      bar1Color: { type: 'c', value: new THREE.Color(0xFF0000) },
-      bar1Size: { type: 'f', value: 1.0 },
-      bar1WarningSpeed: { type: 'f', value: 0.0 },
+      lifeThreshold: { type: 'f', value: 0.5  },
+      manaThreshold: { type: 'f', value: 0.5  },
 
-      bar2Color: { type: 'c', value: new THREE.Color(0x0000FF) },
-      bar2Size: { type: 'f', value: 1.0 },
-      bar2WarningSpeed: { type: 'f', value: 0.0 },
-
-      time: { type: 'f', value: 1.0 },
-      resolution: { type: 'v2', value: new THREE.Vector2() }
+      life:          { type: 'f', value: 1.0  },
+      mana:          { type: 'f', value: 1.0  }
     },
 
     vertexShader: [
       'varying vec2 vUv;',
-      'void main()',
-      '{',
+      'void main() {',
       '   vUv = uv;',
       '   vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
       '   gl_Position = projectionMatrix * mvPosition;',
-      '}' ].join(''),
+      '}'
+    ].join('\n'),
 
     fragmentShader: [
       'varying vec2 vUv;',
-      'uniform float lifeWarning;',
-      'uniform float manaWarning;',
-      'uniform float warningSpeed;',
 
-      'uniform float time;',
-      'uniform vec2 mouse;',
-      'uniform vec2 resolution;',
-
-      'uniform vec4 background;',
-      'uniform vec3 bar2Color;',
-      'uniform float bar2Size;',
-      'uniform vec3 bar1Color;',
-      'uniform float bar1Size;',
-      'uniform float bar2WarningSpeed;',
-      'uniform float bar1WarningSpeed;',
-      'float barWidth = 0.2;',
-
-      'bool inBar2(float y, float border) {',
-      '   return (y > 0.3 - barWidth - border && y < 0.1 + barWidth + border);',
-      '}',
-
-      'bool inBar1(float y, float border) {',
-      '',
-      '   return (y > (0.6 + border) && y < 0.6 + (barWidth - border));',
-      '}',
+      'uniform sampler2D baseImage;',
+      'uniform float lifeThreshold;',
+      'uniform float manaThreshold;',
+      'uniform float life;',
+      'uniform float mana;',
 
       'void main( void ) {',
-      '   vec4 background = vec4(1.0, 1.0, 1.0, 0.0);',
-      '   vec3 bar2Color = vec3(0.0, 1.0, 0.0);',
-      // + '   float bar2Size = 0.9;',
-      '   vec3 bar1Color = vec3(0.0, 0.0, 1.0);',
-      // + '   float bar1Size = 0.1;'
-      // + '   float bar2WarningSpeed = 10.0;'
-      // + '   float bar1WarningSpeed = 10.0;'
-      '   float lifeWarning;',
-      '   float manaWarning;',
-      '   vec2 position = vUv;',
 
-      '   float x = fract(position.x);',
-      '   float y = fract(position.y);',
+      '   // use map',
+      '   vec4 texelColor = texture2D( baseImage, vUv );',
 
-      '   vec4 color;',
-      '   float opacity = sin(x);',
+      '   #ifdef GAMMA_INPUT',
+      '     texelColor.xyz *= texelColor.xyz;',
+      '   #endif',
 
-      '   if (inBar2(y, 0.02)) {',
-      '       color = vec4(0, 0, 1, opacity)  *  x  /  (bar2Size - x);',
-      '   }',
-      '   else if (inBar2(y, 0.02)) {',
-      '       color = vec4(sin(time * bar2WarningSpeed), 0, 0, 1.0 - manaWarning);',
-      '   }',
-      '   else if (inBar1(y, 0.02)) {',
-      '       color = vec4(0, 1, 0, opacity)  *  x  /  (bar1Size - x);',
-      '   }',
-      '   else if (inBar1(y, 0.02)) {',
-      '       color = vec4(sin(time * bar1WarningSpeed), 0, 0, 1.0 - lifeWarning);',
-      '   }',
-      '   else {',
-      '       color = background;',
+      '   gl_FragColor.xyz = gl_FragColor.xyz * texelColor.xyz;',
+
+      '   #ifdef GAMMA_OUTPUT',
+      '     gl_FragColor.xyz = sqrt( gl_FragColor.xyz );',
+      '   #endif',
+
+      '   // in life bar',
+      '   if ( texelColor.g >= lifeThreshold ) {',
+      '     texelColor.a = ( life > vUv.x ) ? 1.0 : 0.5;',
       '   }',
 
-      '   gl_FragColor = color;',
-      '} ' ].join('')
+      '   // in mana bar',
+      '   if ( texelColor.b >= manaThreshold ) {',
+      '     texelColor.a = ( mana > vUv.x ) ? 1.0 : 0.5;',
+      '   }',
+
+      '   gl_FragColor = texelColor;',
+      '} '
+    ].join('\n')
   };
 
   THREE.ShaderMaterial.apply(this, [ this.shaderOptions ]);
@@ -11569,16 +11543,17 @@ function LifebarShaderMaterial () {
 inherits(LifebarShaderMaterial, THREE.ShaderMaterial);
 
 LifebarShaderMaterial.prototype.update = function(delta) {
+  return;
 
   this.shaderOptions.uniforms.time.value = delta;
 };
 
 LifebarShaderMaterial.prototype.setLife = function(value) {
 
-  // this.shaderOptions.uniforms.bar1Size.value = value;
-  this.shaderOptions.uniforms.bar1WarningSpeed.value = (this.shaderOptions.uniforms.bar1Size.value < 0.3) ? 20 : 0;
+  // // this.shaderOptions.uniforms.bar1Size.value = value;
+  // this.shaderOptions.uniforms.bar1WarningSpeed.value = (this.shaderOptions.uniforms.bar1Size.value < 0.3) ? 20 : 0;
 
-  new TWEEN.Tween(this.shaderOptions.uniforms.bar1Size)
+  new TWEEN.Tween(this.shaderOptions.uniforms.life)
     .to({ value: value }, 100)
     .easing( TWEEN.Easing.Linear.None )
     .start();
@@ -11586,17 +11561,27 @@ LifebarShaderMaterial.prototype.setLife = function(value) {
 
 LifebarShaderMaterial.prototype.setMana = function(value) {
 
-  // this.shaderOptions.uniforms.bar2Size.value = value;
-  this.shaderOptions.uniforms.bar2WarningSpeed.value = (this.shaderOptions.uniforms.bar2Size.value < 0.3) ? 20 : 0;
+  // // this.shaderOptions.uniforms.bar2Size.value = value;
+  // this.shaderOptions.uniforms.bar2WarningSpeed.value = (this.shaderOptions.uniforms.bar2Size.value < 0.3) ? 20 : 0;
 
-  new TWEEN.Tween(this.shaderOptions.uniforms.bar2Size)
+  new TWEEN.Tween(this.shaderOptions.uniforms.mana)
     .to({ value: value }, 100)
     .easing( TWEEN.Easing.Linear.None )
     .start();
 };
 
 
-},{"inherits":139,"tween":205}],80:[function(require,module,exports){
+
+var Promise   = require('bluebird');
+var texLoader = new Promise(function(resolve) {
+  var baseImage = THREE.ImageUtils.loadTexture('/gamedata/textures/lifebar.png', THREE.UVMapping, function (texture) {
+    texture.needsUpdate = true;
+    texture.magFilter   = THREE.NearestFilter;
+    texture.minFilter   = THREE.NearestFilter;
+    resolve(texture);
+  });
+});
+},{"bluebird":102,"inherits":139,"tween":205}],80:[function(require,module,exports){
 'use strict';
 
 var inherits = require('inherits');
