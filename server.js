@@ -49,5 +49,5 @@ io.on('connection', function(socket){
 
 
 http.listen(8081, function(){
-  console.log('listening on *:8081');
+  console.log('listening on http://localhost:8081/');
 });
