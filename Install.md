@@ -11,6 +11,11 @@ Install dependancies
 ===
 
 ```sh
+git submodule init
+git submodule update
+```
+
+```sh
 cd three-arena
 npm install
 ```
